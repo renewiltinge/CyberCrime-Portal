@@ -2415,6 +2415,249 @@
     container.append(shell('<b>BLUF-herschrijven</b> — conclusie eerst', wrap, false));
   });
 
+
+  // ---- gedeelde helper: een blok vraag → antwoord-check (voor puzzels) ----
+  function puzzleAsk(wrap, ask, onAllSolved) {
+    if (!ask || !ask.length) return;
+    const solved = new Array(ask.length).fill(false);
+    wrap.append(el('label', { text: ask.length > 1 ? 'Vragen' : 'Vraag' }));
+    ask.forEach((a, i) => {
+      const box = el('div', { style: 'margin:6px 0' });
+      box.append(el('div', { style: 'font-weight:600;margin-bottom:4px', html: esc(a.q) }));
+      const row = el('div', { class: 'ans-row' });
+      const inp = el('input', { type: 'text', placeholder: 'antwoord…', style: 'flex:1', autocomplete: 'off', spellcheck: 'false' });
+      const btn = el('button', { class: 'btn small primary', text: 'Check' });
+      const fb = el('span', { class: 'found-note' });
+      const answers = (Array.isArray(a.answer) ? a.answer : [a.answer]).map((x) => String(x).trim().toLowerCase());
+      const check = () => {
+        const v = inp.value.trim().toLowerCase();
+        if (!v) return;
+        const ok = answers.some((x) => x === v);
+        fb.textContent = ok ? ('✓ ' + (a.explain || 'Juist!')) : '✗ Nog niet. ' + (a.hint ? 'Tip: ' + a.hint : '');
+        fb.style.color = ok ? 'var(--good)' : 'var(--bad)';
+        if (ok) { inp.disabled = true; btn.disabled = true; solved[i] = true; if (solved.every(Boolean) && onAllSolved) onAllSolved(); }
+      };
+      btn.addEventListener('click', check);
+      inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') check(); });
+      row.append(inp, btn);
+      box.append(row, fb);
+      wrap.append(box);
+    });
+  }
+  function shuffle(a) { const r = a.slice(); for (let i = r.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [r[i], r[j]] = [r[j], r[i]]; } return r; }
+
+  // =====================================================================
+  //  FLOW — geld-/datastroom volgen (follow the money/data)
+  // =====================================================================
+  CS.registerLab('flow', function (container, cfg) {
+    const unit = cfg.unit || '€';
+    const nodes = cfg.nodes || [];
+    const edges = cfg.edges || [];
+    const byId = {}; nodes.forEach((n) => (byId[n.id] = n));
+    const ICON = { source: '🎯', victim: '😟', account: '🏦', wallet: '💰', mule: '🐴', mixer: '🌀', exchange: '🏛️', merchant: '🛒', service: '🧩', cashout: '💸' };
+    const fmt = (n) => (unit === '€' ? '€ ' : '') + (Math.round(n * 1e8) / 1e8) + (unit !== '€' ? ' ' + unit : '');
+    const wrap = el('div', { class: 'lab-pad' });
+    if (cfg.scenario) wrap.append(el('div', { class: 'callout info', html: esc(cfg.scenario) }));
+    wrap.append(el('div', { class: 'found-note', text: 'Volg de stroom: klik een knoop om in- en uitgaand verkeer te zien, of lees de transactietabel. Let op splitsingen (laagjes), kosten en waar het geld/data uiteindelijk uitstroomt (meestal een exchange of cash-out).' }));
+    const cols = el('div', { class: 'lab-grid2' });
+    const left = el('div', {}), right = el('div', {});
+    cols.append(left, right);
+    // node list by type
+    const groups = {}; nodes.forEach((n) => { (groups[n.type] = groups[n.type] || []).push(n); });
+    left.append(el('label', { text: 'Knopen (klik om te volgen)' }));
+    Object.keys(groups).forEach((t) => {
+      left.append(el('div', { class: 'found-note', style: 'margin-top:4px', text: (ICON[t] || '•') + ' ' + t }));
+      const row = el('div', { class: 'chip-row', style: 'margin:2px 0' });
+      groups[t].forEach((n) => row.append(el('span', { class: 'chip', text: n.label, onclick: () => showNode(n.id) })));
+      left.append(row);
+    });
+    const detail = el('div', { class: 'lab-out', style: 'min-height:120px' });
+    right.append(el('label', { text: 'Knoop-detail' }), detail);
+    function showNode(id) {
+      const n = byId[id]; if (!n) return;
+      const ins = edges.filter((e) => e.to === id), outs = edges.filter((e) => e.from === id);
+      const sin = ins.reduce((s, e) => s + (+e.amount || 0), 0), sout = outs.reduce((s, e) => s + (+e.amount || 0), 0);
+      detail.innerHTML = '';
+      detail.append(el('div', { html: '<strong>' + (ICON[n.type] || '•') + ' ' + esc(n.label) + '</strong> <span style="color:var(--muted)">(' + esc(n.type) + ')</span>' }));
+      detail.append(el('div', { class: 'found-note', html: 'in: <strong style="color:var(--good)">' + fmt(sin) + '</strong> · uit: <strong style="color:var(--bad)">' + fmt(sout) + '</strong> · saldo: <strong>' + fmt(sin - sout) + '</strong>' }));
+      ins.forEach((e) => detail.append(el('div', { style: 'margin-top:3px;cursor:pointer', onclick: () => showNode(e.from), html: '← ' + fmt(+e.amount) + ' van <strong>' + esc((byId[e.from] || {}).label || e.from) + '</strong>' + (e.note ? ' <span style="color:var(--muted)">' + esc(e.note) + '</span>' : '') })));
+      outs.forEach((e) => detail.append(el('div', { style: 'margin-top:3px;cursor:pointer', onclick: () => showNode(e.to), html: '→ ' + fmt(+e.amount) + ' naar <strong>' + esc((byId[e.to] || {}).label || e.to) + '</strong>' + (e.note ? ' <span style="color:var(--muted)">' + esc(e.note) + '</span>' : '') })));
+    }
+    wrap.append(cols);
+    // transactieledger
+    wrap.append(el('label', { text: 'Transactieoverzicht (van → naar · bedrag · tijd)' }));
+    const ledger = el('div', { class: 'logview', style: 'max-height:220px' });
+    edges.slice().sort((a, b) => String(a.time || '').localeCompare(String(b.time || ''))).forEach((e, i) => {
+      const ln = el('div', { class: 'ln' });
+      ln.append(el('span', { class: 'n', text: String(i + 1) }), el('span', { html: esc((byId[e.from] || {}).label || e.from) + ' <span style="color:var(--muted)">→</span> ' + esc((byId[e.to] || {}).label || e.to) + '  <strong>' + fmt(+e.amount) + '</strong>' + (e.time ? ' <span style="color:#7f8db5">' + esc(e.time) + '</span>' : '') + (e.note ? ' <span style="color:var(--muted)">· ' + esc(e.note) + '</span>' : '') }));
+      ledger.append(ln);
+    });
+    wrap.append(ledger);
+    puzzleAsk(wrap, cfg.ask);
+    container.append(shell('<b>Stroom volgen</b> — ' + esc(cfg.title || 'follow the money/data'), wrap, false));
+  });
+
+  // =====================================================================
+  //  ORDERING — reconstrueer de juiste volgorde (tijdlijn/keten)
+  // =====================================================================
+  CS.registerLab('ordering', function (container, cfg) {
+    const items = cfg.items || [];
+    const correct = cfg.correct || items.map((i) => i.id);
+    let order = shuffle(items.map((i) => i.id));
+    if (order.length > 1 && order.join() === correct.join()) order = order.reverse();
+    const byId = {}; items.forEach((i) => (byId[i.id] = i));
+    const wrap = el('div', { class: 'lab-pad' });
+    if (cfg.prompt) wrap.append(el('div', { class: 'callout info', html: esc(cfg.prompt) }));
+    wrap.append(el('div', { class: 'found-note', text: 'Zet de stukken in de juiste volgorde met ▲/▼ en controleer.' }));
+    const list = el('div', {});
+    const out = el('div', { class: 'lab-out', style: 'margin-top:8px' });
+    function render() {
+      list.innerHTML = '';
+      order.forEach((id, idx) => {
+        const row = el('div', { style: 'display:flex;gap:8px;align-items:center;background:var(--bg-2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;margin:5px 0' });
+        const btns = el('div', { style: 'display:flex;flex-direction:column;gap:2px' });
+        btns.append(
+          el('button', { class: 'btn small', text: '▲', disabled: idx === 0, onclick: () => { const t = order[idx - 1]; order[idx - 1] = order[idx]; order[idx] = t; render(); } }),
+          el('button', { class: 'btn small', text: '▼', disabled: idx === order.length - 1, onclick: () => { const t = order[idx + 1]; order[idx + 1] = order[idx]; order[idx] = t; render(); } }),
+        );
+        row.append(el('span', { style: 'color:var(--faint);width:20px', text: String(idx + 1) }), btns, el('span', { style: 'flex:1', html: esc(byId[id] ? byId[id].label : id) }));
+        list.append(row);
+      });
+    }
+    render();
+    const btn = el('button', { class: 'btn primary', text: '✓ Controleer volgorde', style: 'margin-top:8px' });
+    btn.addEventListener('click', () => {
+      let good = 0; order.forEach((id, idx) => { if (id === correct[idx]) good++; });
+      out.innerHTML = '';
+      if (good === correct.length) {
+        out.append(el('div', { html: '<strong style="color:var(--good)">✓ Perfect — alles in de juiste volgorde!</strong>' + (cfg.flag ? ' Vlag: <code>' + esc(cfg.flag) + '</code>' : '') }));
+        if (cfg.explain) out.append(el('div', { class: 'found-note', html: esc(cfg.explain) }));
+      } else {
+        out.append(el('div', { html: '<strong style="color:var(--warn)">' + good + ' / ' + correct.length + ' op de juiste plek.</strong> Blijf schuiven.' }));
+      }
+    });
+    wrap.append(list, btn, out);
+    container.append(shell('<b>Volgorde-puzzel</b> — ' + esc(cfg.title || 'reconstrueer de keten'), wrap, false));
+  });
+
+  // =====================================================================
+  //  REGEXGOLF — schrijf één patroon dat A matcht en B mijdt
+  // =====================================================================
+  CS.registerLab('regexgolf', function (container, cfg) {
+    const match = cfg.match || [], avoid = cfg.avoid || [];
+    const wrap = el('div', { class: 'lab-pad' });
+    if (cfg.prompt) wrap.append(el('div', { class: 'callout info', html: esc(cfg.prompt) }));
+    wrap.append(el('div', { class: 'found-note', text: 'Schrijf één regex die ALLE groene regels matcht en GEEN enkele rode. Korter = mooier (golf).' }));
+    const row = el('div', { class: 'ans-row' });
+    const pat = el('input', { type: 'text', placeholder: 'jouw regex…', style: 'flex:1', autocomplete: 'off', spellcheck: 'false' }); pat.value = cfg.start || '';
+    const flags = el('input', { type: 'text', placeholder: 'flags', style: 'width:64px' }); flags.value = cfg.flags != null ? cfg.flags : '';
+    row.append(el('span', { style: 'font-family:var(--mono)', text: '/' }), pat, el('span', { style: 'font-family:var(--mono)', text: '/' }), flags);
+    wrap.append(row);
+    const status = el('div', { class: 'found-note' });
+    const cols = el('div', { class: 'lab-grid2' });
+    const mcol = el('div', {}), acol = el('div', {});
+    cols.append(mcol, acol);
+    mcol.append(el('label', { text: '✅ Moet matchen' }));
+    acol.append(el('label', { text: '⛔ Mag niet matchen' }));
+    const mbox = el('div', { class: 'logview', style: 'max-height:200px' }), abox = el('div', { class: 'logview', style: 'max-height:200px' });
+    mcol.append(mbox); acol.append(abox);
+    wrap.append(status, cols);
+    function run() {
+      let re = null, err = null;
+      if (pat.value) { try { re = new RegExp(pat.value, (flags.value || '').replace(/[^gimsuy]/g, '')); } catch (e) { err = e.message; } }
+      mbox.innerHTML = ''; abox.innerHTML = '';
+      let okCount = 0, total = match.length + avoid.length;
+      match.forEach((s) => { const hit = re ? re.test(s) : false; if (hit) okCount++; const ln = el('div', { class: 'ln' }); ln.append(el('span', { style: 'width:20px;color:' + (hit ? '#8ec7ab' : '#d18a8a'), text: hit ? '✓' : '✗' }), el('span', { text: s })); mbox.append(ln); });
+      avoid.forEach((s) => { const hit = re ? re.test(s) : false; if (!hit) okCount++; const ln = el('div', { class: 'ln' }); ln.append(el('span', { style: 'width:20px;color:' + (!hit ? '#8ec7ab' : '#d18a8a'), text: !hit ? '✓' : '✗' }), el('span', { text: s })); abox.append(ln); });
+      if (err) { status.textContent = 'Ongeldige regex: ' + err; status.style.color = 'var(--bad)'; return; }
+      const solved = okCount === total && pat.value;
+      status.innerHTML = solved ? ('<strong style="color:var(--good)">✓ Opgelost!</strong> Lengte: ' + pat.value.length + ' tekens.' + (cfg.flag ? ' Vlag: <code>' + esc(cfg.flag) + '</code>' : '')) : (okCount + ' / ' + total + ' regels correct · patroonlengte ' + pat.value.length);
+      status.style.color = solved ? '' : 'var(--muted)';
+    }
+    [pat, flags].forEach((n) => n.addEventListener('input', run));
+    wrap.append(el('details', { html: '<summary>📑 Regex-spiekbrief</summary><div class="found-note" style="margin-top:6px"><code>\\d</code> cijfer · <code>\\w</code> woordteken · <code>.</code> elk teken · <code>[abc]</code> klasse · <code>[^..]</code> negatie · <code>+ * ?</code> herhaling · <code>{n,m}</code> aantal · <code>^ $</code> begin/eind · <code>( | )</code> groep/of · <code>\\b</code> woordgrens</div>' }));
+    run();
+    container.append(shell('<b>Regex-golf</b> — ' + esc(cfg.title || 'match A, mijd B'), wrap, false));
+  });
+
+  // =====================================================================
+  //  OSINTPUZZLE — correleer records en ontmasker het antwoord
+  // =====================================================================
+  CS.registerLab('osintpuzzle', function (container, cfg) {
+    const records = cfg.records || [];
+    const wrap = el('div', { class: 'lab-pad' });
+    if (cfg.scenario) wrap.append(el('div', { class: 'callout info', html: esc(cfg.scenario) }));
+    wrap.append(el('div', { class: 'found-note', text: 'Leg de fragmenten naast elkaar. Hergebruikte gebruikersnamen, e-mails, tijdstippen, metadata en schrijfstijl verraden verbanden. Alles hieronder is fictief.' }));
+    const grid = el('div', { class: 'grid', style: 'grid-template-columns:repeat(auto-fill,minmax(240px,1fr))' });
+    records.forEach((r) => {
+      const card = el('div', { class: 'task', style: 'margin:0;padding:12px 14px' });
+      card.append(el('div', { style: 'font-weight:700;margin-bottom:4px', html: (r.icon ? esc(r.icon) + ' ' : '') + esc(r.title || 'fragment') }));
+      (r.lines || []).forEach((l) => card.append(el('div', { style: 'font-size:.86rem;color:var(--muted);margin:2px 0', html: esc(l) })));
+      grid.append(card);
+    });
+    wrap.append(grid);
+    puzzleAsk(wrap, cfg.ask);
+    container.append(shell('<b>OSINT-puzzel</b> — ' + esc(cfg.title || 'leg de verbanden'), wrap, false));
+  });
+
+  // =====================================================================
+  //  CONNECTIONS — groepeer 16 items in 4 categorieën
+  // =====================================================================
+  CS.registerLab('connections', function (container, cfg) {
+    const groups = cfg.groups || [];
+    const wrap = el('div', { class: 'lab-pad' });
+    if (cfg.prompt) wrap.append(el('div', { class: 'callout info', html: esc(cfg.prompt) }));
+    wrap.append(el('div', { class: 'found-note', text: 'Selecteer vier items die bij elkaar horen en controleer. Vind alle groepen.' }));
+    const all = [];
+    groups.forEach((g, gi) => (g.items || []).forEach((it) => all.push({ label: it, gi })));
+    let pool = shuffle(all);
+    const solvedGroups = [];
+    let selected = [];
+    let mistakes = 0;
+    const solvedWrap = el('div', {});
+    const board = el('div', { style: 'display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:8px 0' });
+    const status = el('div', { class: 'found-note' });
+    const COLORS = ['var(--good)', 'var(--info)', 'var(--warn)', 'var(--accent)'];
+    function render() {
+      solvedWrap.innerHTML = ''; board.innerHTML = '';
+      solvedGroups.forEach((gi) => {
+        const g = groups[gi];
+        solvedWrap.append(el('div', { style: 'background:' + COLORS[solvedGroups.indexOf(gi) % 4] + ';color:#06140f;border-radius:8px;padding:8px 10px;margin:5px 0;font-weight:700', html: esc(g.name) + ': <span style="font-weight:500">' + g.items.map(esc).join(' · ') + '</span>' }));
+      });
+      pool.forEach((item) => {
+        const on = selected.indexOf(item) >= 0;
+        const chip = el('button', { class: 'btn small' + (on ? ' primary' : ''), style: 'width:100%;white-space:normal;min-height:44px', text: item.label, onclick: () => {
+          const i = selected.indexOf(item);
+          if (i >= 0) selected.splice(i, 1); else if (selected.length < 4) selected.push(item);
+          render();
+        } });
+        board.append(chip);
+      });
+    }
+    render();
+    const btn = el('button', { class: 'btn primary', text: 'Controleer groep', onclick: () => {
+      if (selected.length !== 4) { status.textContent = 'Kies precies vier items.'; status.style.color = 'var(--warn)'; return; }
+      const gis = selected.map((s) => s.gi);
+      if (gis.every((g) => g === gis[0])) {
+        const gi = gis[0];
+        solvedGroups.push(gi);
+        pool = pool.filter((x) => x.gi !== gi);
+        selected = [];
+        if (solvedGroups.length === groups.length) { status.innerHTML = '<strong style="color:var(--good)">✓ Alle groepen gevonden!</strong> Fouten: ' + mistakes + (cfg.flag ? ' · vlag: <code>' + esc(cfg.flag) + '</code>' : ''); }
+        else { status.textContent = 'Groep goed! Nog ' + (groups.length - solvedGroups.length) + ' te gaan.'; status.style.color = 'var(--good)'; }
+      } else {
+        mistakes++;
+        const cnt = {}; gis.forEach((g) => (cnt[g] = (cnt[g] || 0) + 1));
+        const near = Math.max.apply(null, Object.values(cnt)) === 3;
+        status.textContent = '✗ Niet goed' + (near ? ' — maar drie horen bij elkaar (eentje te veel).' : '.') + ' Fouten: ' + mistakes;
+        status.style.color = 'var(--bad)';
+      }
+      render();
+    } });
+    wrap.append(solvedWrap, board, el('div', { class: 'ans-row' }, [btn, el('button', { class: 'btn', text: 'Deselecteer', onclick: () => { selected = []; render(); } })]), status);
+    container.append(shell('<b>Verbanden</b> — ' + esc(cfg.title || 'groepeer de 16'), wrap, false));
+  });
+
   // =====================================================================
   //  Encoding & hash helpers
   // =====================================================================

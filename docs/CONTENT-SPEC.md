@@ -10,7 +10,7 @@ laadt de bestanden als gewone `<script>`-tags, zodat het ook werkt door `index.h
 /* Room: Netwerken — de basis */
 CS.registerRoom({
   id: 'netwerken-basis',            // gelijk aan de bestandsnaam, kebab-case
-  path: 'fundamenten',              // 'fundamenten' | 'security-kern' | 'offensief' | 'defensief' | 'forensie' | 'intelligence' | 'eindopdracht'
+  path: 'fundamenten',              // 'fundamenten' | 'security-kern' | 'offensief' | 'defensief' | 'forensie' | 'intelligence' | 'puzzels' | 'eindopdracht'
   order: 2,                         // volgorde binnen het leerpad
   title: 'Netwerken: de basis',
   icon: '🌐',                       // één emoji
@@ -528,3 +528,53 @@ lab: {
 ```
 Toont een voorberekende tabel (hash → woord) en een opzoekveld: een onvergezouten hash wordt direct gevonden, een gesalte
 hash niet — zo zie je waarom salt precomputatie breekt. Hashes worden met de echte lab-hashfunctie berekend.
+
+### `flow`: geld-/datastroom volgen (follow the money/data)
+
+```js
+lab: {
+  type: 'flow', title: 'Operatie X', unit: 'BTC',            // unit: '€' of een ticker
+  scenario: '<intro>',
+  nodes: [ { id: 'v', type: 'victim', label: 'Slachtoffer' }, { id: 'ex', type: 'exchange', label: 'Exchange X' }, ... ],
+  // types: source, victim, account, wallet, mule, mixer, exchange, merchant, service, cashout
+  edges: [ { from: 'v', to: 'm1', amount: 2.0, time: '10:00', note: 'fee' }, ... ],
+  ask: [ { q: 'Hoeveel komt bij de exchange aan?', answer: ['1.8'], hint: '...' } ],
+}
+```
+Een knoop-verkenner (in/uit/saldo per knoop) + een transactieledger (op tijd gesorteerd) + zelf-checkende vragen.
+Ideaal voor "datastromen": laagjes (layering), splitsingen, mixers en cash-out bij een exchange. **Reken je bedragen na.**
+
+### `ordering`: reconstrueer de juiste volgorde
+
+```js
+lab: { type: 'ordering', prompt: 'Zet de gebeurtenissen op tijd.',
+  items: [ { id: 'a', label: '08:00 VPN-login' }, { id: 'b', label: '09:00 exfiltratie' }, ... ],
+  correct: ['a', 'b', ...], flag: 'JVT{...}', explain: '...' }   // flag/explain optioneel
+```
+Toont de items geschud; de leerling schuift ze met ▲/▼ en controleert. Goed voor tijdlijnen, kill-chain-fasen of een crime script.
+
+### `regexgolf`: één patroon dat A matcht en B mijdt
+
+```js
+lab: { type: 'regexgolf', prompt: 'Match de kwaadaardige domeinen.',
+  match: ['boos.jvt.lab', 'kwaad.jvt.lab'], avoid: ['bank.nl', 'post.nl'], flags: '', flag: 'JVT{...}' }
+```
+Live per regel ✓/✗; "Opgelost" als alle match-regels matchen en geen enkele avoid-regel. Toont de patroonlengte (golf).
+
+### `osintpuzzle`: correleer records
+
+```js
+lab: { type: 'osintpuzzle', scenario: '<intro>',
+  records: [ { title: 'Forumpost', icon: '💬', lines: ['user: n1ghtcrawl3r', 'mailt vanaf nc@mail.jvt.lab'] }, ... ],
+  ask: [ { q: 'Welke gebruikersnaam linkt de twee bronnen?', answer: ['n1ghtcrawl3r'], hint: '...' } ] }
+```
+Toont fictieve fragmenten als kaarten; de leerling correleert (hergebruikte aliassen, e-mails, tijden, metadata) en beantwoordt zelf-checkende vragen. **Alles fictief.**
+
+### `connections`: groepeer 16 items in 4 categorieën
+
+```js
+lab: { type: 'connections', prompt: '...', flag: 'JVT{...}',
+  groups: [ { name: 'Hashes', items: ['MD5','SHA-1','SHA-256','NTLM'] }, ...4 groepen van 4... ] }
+```
+16 geschudde items; selecteer vier die bij elkaar horen en controleer. Geeft "drie goed" als hint. Leuk voor hashtypes,
+ATT&CK-tactieken, cybercrime-rollen, IOC-soorten, enz. Geef precies 4 groepen van 4.
