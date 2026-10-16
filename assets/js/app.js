@@ -195,6 +195,9 @@
         el('button', { class: 'btn', text: '🎯 Oefenarena', onclick: () => go('#/arena') }),
         el('button', { class: 'btn', text: '🃏 Begrippentrainer', onclick: () => go('#/flashcards') }),
         el('button', { class: 'btn', text: '🧰 Gereedschapskist', onclick: () => go('#/tools') }),
+        el('button', { class: 'btn', text: '🎓 Examen', onclick: () => go('#/examen') }),
+        el('button', { class: 'btn', text: '🔥 Dagchallenge', onclick: () => go('#/daily') }),
+        el('button', { class: 'btn', text: '📊 Scorebord', onclick: () => go('#/scorebord') }),
         el('button', { class: 'btn ghost', text: '🏅 Badges', onclick: showBadges }),
       ]),
       el('div', { class: 'stat-row' }, [
@@ -753,6 +756,7 @@
     { type: 'ordering', icon: '🔢', name: 'Volgorde-puzzel', desc: 'Reconstrueer de juiste volgorde van een aanval (tijdlijn/kill chain).', cfg: { prompt: 'Zet de fasen van de Cyber Kill Chain op volgorde.', items: [{ id: '1', label: 'Reconnaissance' }, { id: '2', label: 'Weaponization' }, { id: '3', label: 'Delivery' }, { id: '4', label: 'Exploitation' }, { id: '5', label: 'Installation' }, { id: '6', label: 'Command & Control' }, { id: '7', label: 'Actions on Objectives' }], correct: ['1', '2', '3', '4', '5', '6', '7'], explain: 'Dit is de volgorde van de Lockheed Martin Cyber Kill Chain.' } },
     { type: 'regexgolf', icon: '🎯', name: 'Regex-golf', desc: 'Schrijf één patroon dat de kwaadaardige regels matcht en de goede mijdt.', cfg: { prompt: 'Match alleen de phishing-domeinen.', match: ['login-nederbank.jvt.lab', 'verify-postnl.jvt.lab', 'ideal-check.jvt.lab'], avoid: ['nederbank.nl', 'postnl.nl', 'ideal.nl'] } },
     { type: 'osintpuzzle', icon: '🔎', name: 'OSINT-puzzel', desc: 'Correleer fictieve fragmenten en ontmasker het verband.', cfg: { scenario: 'Drie fragmenten over verdachte "M". Welke draad verbindt ze?', records: [{ title: 'Hackforum-post', icon: '💬', lines: ['gebruiker: <b>n1ghtcrawl3r</b>', 'biedt loader-dienst aan', 'contact: nc_sales@mail.jvt.lab'] }, { title: 'WHOIS (crt.sh)', icon: '📜', lines: ['domein: loader-shop.jvt.lab', 'registrant-e-mail: nc_sales@mail.jvt.lab'] }, { title: 'Wallet-tag', icon: '💰', lines: ['alias n1ghtcrawl3r gelinkt', 'aan wallet bc1qfictief…'] }], ask: [{ q: 'Welke gebruikersnaam/alias verbindt alle drie de bronnen?', answer: ['n1ghtcrawl3r'], hint: 'Zoek wat letterlijk terugkomt.' }, { q: 'Welk e-mailadres linkt de forumpost aan het domein?', answer: ['nc_sales@mail.jvt.lab'], hint: 'Vergelijk contact en registrant.' }] } },
+    { type: 'chaintrace', icon: '⛓️', name: 'Blockchain-tracer', desc: 'Volg vuil geld door transacties: common-input-clustering en taint-analyse.', cfg: { unit: 'BTC', scenario: 'Losgeld van 10 BTC gaat de keten in. Hoeveel bereikt de exchange?', labels: { D: 'Ransom-wallet', EX: 'Exchange Zuid', C: 'Schone handelaar' }, exchanges: ['EX'], origins: [{ addr: 'D', amount: 10 }, { addr: 'C', amount: 5, dirty: false }], txs: [{ inputs: ['D'], outputs: [{ addr: 'A', amount: 6 }, { addr: 'B', amount: 4 }], time: '10:00' }, { inputs: ['A'], outputs: [{ addr: 'EX', amount: 3 }, { addr: 'M', amount: 3 }], time: '11:00' }, { inputs: ['B', 'C'], outputs: [{ addr: 'EX', amount: 9 }], time: '12:00' }], ask: [{ q: 'Hoeveel vuil geld (BTC) bereikt de exchange?', answer: ['7'], hint: 'Lees de taint-kolom bij de exchange.' }] } },
     { type: 'connections', icon: '🧩', name: 'Verbanden', desc: 'Groepeer 16 begrippen in 4 categorieën — zoals NYT Connections, maar cyber.', cfg: { prompt: 'Vind de vier groepen van vier.', groups: [{ name: 'Hashtypes', items: ['MD5', 'SHA-256', 'NTLM', 'bcrypt'] }, { name: 'Cybercrime-rollen', items: ['IAB', 'Affiliate', 'Moneymule', 'Bulletproof hoster'] }, { name: 'ATT&CK-tactieken', items: ['Execution', 'Persistence', 'Exfiltration', 'Impact'] }, { name: 'OSINT-bronnen', items: ['crt.sh', 'Shodan', 'VirusTotal', 'abuse.ch'] }] } },
     { type: 'password', icon: '🔑', name: 'Wachtwoord-analyse', desc: 'Live de sterkte en kraaktijd van een wachtwoord zien.', cfg: {} },
     { type: 'subnet', icon: '🧮', name: 'Subnet-calculator', desc: 'Subnetten uitrekenen en oefenvragen genereren.', cfg: {} },
@@ -808,6 +812,214 @@
   }
 
   // =======================================================================
+  //  Gedeelde quizkaart (voor examen & dagchallenge)
+  // =======================================================================
+  function quizCard(item, onDone) {
+    const card = el('div', { class: 'task' });
+    card.append(el('div', { style: 'color:var(--muted);font-size:.82rem;margin-bottom:6px', text: item.room.icon + ' ' + item.room.title }));
+    card.append(el('div', { class: 'qtext', style: 'font-weight:600;margin-bottom:12px', html: esc(item.q.q) }));
+    const fb = el('div', { class: 'feedback' });
+    let done = false;
+    if (Array.isArray(item.q.options)) {
+      const mc = el('div', { class: 'mc' });
+      item.q.options.forEach((opt, oi) => {
+        const bt = el('button', { html: esc(opt), onclick: () => {
+          if (done) return; done = true;
+          const ok = oi === item.q.answer;
+          bt.classList.add('chosen', ok ? 'ok' : 'no');
+          $$('button', mc).forEach((x, xi) => { x.disabled = true; if (xi === item.q.answer) x.classList.add('reveal-ok'); });
+          fb.textContent = ok ? '✓ Goed!' : '✗ Mis'; fb.className = 'feedback show ' + (ok ? 'ok' : 'no');
+          if (item.q.explain) card.append(el('div', { class: 'explain show', html: esc(item.q.explain) }));
+          onDone(ok);
+        } });
+        mc.append(bt);
+      });
+      card.append(mc);
+    } else {
+      const answers = (Array.isArray(item.q.answer) ? item.q.answer : [item.q.answer]).map(String);
+      const input = el('input', { type: 'text', placeholder: 'antwoord…', autocomplete: 'off', spellcheck: 'false' });
+      const submit = el('button', { class: 'btn small primary', text: 'Controleer' });
+      const check = () => {
+        if (done) return; const val = norm(input.value).toLowerCase(); if (!val) return;
+        const ok = answers.some((a) => norm(a).toLowerCase() === val);
+        done = true; input.disabled = true; submit.disabled = true;
+        input.classList.add(ok ? 'ok' : 'no');
+        fb.textContent = ok ? '✓ Correct!' : ('✗ Juist: ' + answers[0]); fb.className = 'feedback show ' + (ok ? 'ok' : 'no');
+        if (item.q.explain) card.append(el('div', { class: 'explain show', html: esc(item.q.explain) }));
+        onDone(ok);
+      };
+      submit.addEventListener('click', check);
+      input.addEventListener('keydown', (e) => { if (e.key === 'Enter') check(); });
+      card.append(el('div', { class: 'ans-row' }, [input, submit]));
+    }
+    card.append(fb);
+    return card;
+  }
+  function seededPick(pool, n, seed) {
+    let t = seed >>> 0;
+    const rnd = () => { t += 0x6D2B79F5; let r = Math.imul(t ^ (t >>> 15), 1 | t); r ^= r + Math.imul(r ^ (r >>> 7), 61 | r); return ((r ^ (r >>> 14)) >>> 0) / 4294967296; };
+    const idx = pool.map((_, i) => i);
+    for (let i = idx.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); const tmp = idx[i]; idx[i] = idx[j]; idx[j] = tmp; }
+    return idx.slice(0, n).map((i) => pool[i]);
+  }
+
+  // =======================================================================
+  //  EXAMEN — getimede, gescoorde toets met willekeurige vragen
+  // =======================================================================
+  function renderExam() {
+    const root = $('#app'); root.innerHTML = '';
+    const wrap = el('section', { class: 'roomview wrap' });
+    wrap.append(el('div', { class: 'crumbs' }, [el('a', { text: '🏠 Home', onclick: () => go('#/') }), document.createTextNode('  ›  '), el('strong', { text: '🎓 Examen' })]));
+    wrap.append(el('h1', { text: '🎓 Examen' }));
+    wrap.append(el('p', { class: 'sum', style: 'color:var(--muted);max-width:640px', text: 'Een getimede toets met willekeurige vragen uit alle lessen. Haal je 70% of meer, dan slaag je. Dit verandert je lesvoortgang niet.' }));
+    if (STATE.examBest) wrap.append(el('div', { class: 'found-note', text: '🏆 Jouw beste score: ' + STATE.examBest + '%' }));
+
+    let len = 20, filter = 'alles';
+    const lenRow = el('div', { class: 'chip-row' });
+    [10, 20, 30].forEach((n) => { const c = el('span', { class: 'chip' + (n === len ? ' on' : ''), text: n + ' vragen', onclick: () => { len = n; $$('.chip', lenRow).forEach((x) => x.classList.remove('on')); c.classList.add('on'); } }); lenRow.append(c); });
+    const pathRow = el('div', { class: 'chip-row' });
+    const paths = [{ id: 'alles', title: 'Alles' }].concat(PATHS.filter((p) => ROOMS.some((r) => r.path === p.id)).map((p) => ({ id: p.id, title: p.icon + ' ' + p.title })));
+    paths.forEach((p) => { const c = el('span', { class: 'chip' + (p.id === filter ? ' on' : ''), text: p.title, onclick: () => { filter = p.id; $$('.chip', pathRow).forEach((x) => x.classList.remove('on')); c.classList.add('on'); } }); pathRow.append(c); });
+    const startBtn = el('button', { class: 'btn primary', text: '▶ Start examen', style: 'margin-top:12px' });
+    const examArea = el('div', {});
+    wrap.append(el('label', { text: 'Aantal vragen' }), lenRow, el('label', { text: 'Onderwerp' }), pathRow, startBtn, examArea);
+    root.append(wrap); renderFooter(root); window.scrollTo(0, 0);
+
+    startBtn.addEventListener('click', () => {
+      const pool = shuffle(allQuestions(filter));
+      const qs = pool.slice(0, Math.min(len, pool.length));
+      if (!qs.length) { examArea.innerHTML = ''; examArea.append(el('div', { class: 'callout warn', text: 'Geen vragen in deze categorie.' })); return; }
+      startBtn.style.display = 'none'; lenRow.style.display = 'none'; pathRow.style.display = 'none';
+      let idx = 0, score = 0, answered = false;
+      const started = Date.now();
+      const progress = el('div', { class: 'found-note' });
+      const qbox = el('div', {});
+      const nav = el('div', { class: 'room-foot' });
+      examArea.innerHTML = ''; examArea.append(progress, qbox, nav);
+      function showResult() {
+        const secs = Math.round((Date.now() - started) / 1000);
+        const pctScore = Math.round((score / qs.length) * 100);
+        const pass = pctScore >= 70;
+        if (!STATE.examBest || pctScore > STATE.examBest) { STATE.examBest = pctScore; saveState(); }
+        qbox.innerHTML = ''; nav.innerHTML = ''; progress.textContent = '';
+        qbox.append(el('div', { class: 'callout ' + (pass ? 'tip' : 'warn'), html: (pass ? '🎉 <strong>Geslaagd!</strong>' : '📚 <strong>Nog niet gehaald.</strong>') + ' Je scoorde <strong>' + score + ' / ' + qs.length + '</strong> (' + pctScore + '%) in ' + Math.floor(secs / 60) + 'm ' + (secs % 60) + 's.' + (pass ? ' Mooi werk!' : ' De grens is 70% — probeer het nog eens.') }));
+        if (pass) qbox.append(el('div', { class: 'task', style: 'text-align:center' }, [
+          el('div', { style: 'font-size:2.4rem', text: '🎓' }),
+          el('div', { style: 'font-weight:800;font-size:1.2rem', text: 'JVT Cyber Dojo — Examencertificaat' }),
+          el('div', { class: 'found-note', text: 'Score ' + pctScore + '% · ' + qs.length + ' vragen · onderwerp: ' + (paths.find((p) => p.id === filter) || {}).title }),
+        ]));
+        nav.append(el('button', { class: 'btn', text: '↺ Opnieuw', onclick: () => renderExam() }), el('button', { class: 'btn primary', text: '🏠 Naar home', onclick: () => go('#/') }));
+      }
+      function next() {
+        if (idx >= qs.length) return showResult();
+        answered = false;
+        qbox.innerHTML = ''; nav.innerHTML = '';
+        progress.textContent = 'Vraag ' + (idx + 1) + ' / ' + qs.length + ' · score ' + score;
+        const nextBtn = el('button', { class: 'btn primary', text: idx === qs.length - 1 ? 'Afronden →' : 'Volgende →', onclick: () => { if (!answered) return; idx++; next(); } });
+        nextBtn.disabled = true;
+        qbox.append(quizCard(qs[idx], (ok) => { if (answered) return; answered = true; if (ok) score++; nextBtn.disabled = false; progress.textContent = 'Vraag ' + (idx + 1) + ' / ' + qs.length + ' · score ' + score; }));
+        nav.append(el('span', {}), nextBtn);
+      }
+      next();
+    });
+  }
+
+  // =======================================================================
+  //  DAGCHALLENGE — elke dag dezelfde 5 vragen, met streak
+  // =======================================================================
+  function renderDaily() {
+    const root = $('#app'); root.innerHTML = '';
+    const wrap = el('section', { class: 'roomview wrap' });
+    wrap.append(el('div', { class: 'crumbs' }, [el('a', { text: '🏠 Home', onclick: () => go('#/') }), document.createTextNode('  ›  '), el('strong', { text: '🔥 Dagchallenge' })]));
+    wrap.append(el('h1', { text: '🔥 Dagchallenge' }));
+    const today = new Date();
+    const key = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+    const seed = parseInt(key.replace(/-/g, ''), 10);
+    STATE.daily = STATE.daily || { last: '', streak: 0, best: 0, doneToday: '', todayScore: 0 };
+    const D = STATE.daily;
+    wrap.append(el('p', { class: 'sum', style: 'color:var(--muted);max-width:640px', text: 'Elke dag vijf nieuwe vragen — voor iedereen dezelfde. Kom elke dag terug om je reeks (streak) op te bouwen.' }));
+    wrap.append(el('div', { class: 'stat-row', style: 'margin:10px 0 16px' }, [
+      stat('🔥 ' + (D.streak || 0), 'dagen op rij'),
+      stat('🏅 ' + (D.best || 0), 'langste reeks'),
+    ]));
+
+    const pool = allQuestions('alles');
+    const qs = seededPick(pool, Math.min(5, pool.length), seed);
+    const area = el('div', {});
+    wrap.append(area);
+    root.append(wrap); renderFooter(root); window.scrollTo(0, 0);
+
+    if (D.doneToday === key) {
+      area.append(el('div', { class: 'callout tip', html: '✅ <strong>Je hebt de challenge van vandaag al gedaan</strong> (' + (D.todayScore || 0) + '/' + qs.length + '). Kom morgen terug voor vijf nieuwe vragen!' }));
+      return;
+    }
+    let idx = 0, score = 0, answered = false;
+    const progress = el('div', { class: 'found-note' });
+    const qbox = el('div', {});
+    const nav = el('div', { class: 'room-foot' });
+    area.append(progress, qbox, nav);
+    function finish() {
+      // streak-logica
+      const y = new Date(today); y.setDate(y.getDate() - 1);
+      const yk = y.getFullYear() + '-' + String(y.getMonth() + 1).padStart(2, '0') + '-' + String(y.getDate()).padStart(2, '0');
+      D.streak = (D.last === yk) ? (D.streak || 0) + 1 : 1;
+      D.last = key; D.doneToday = key; D.todayScore = score;
+      if (D.streak > (D.best || 0)) D.best = D.streak;
+      saveState();
+      qbox.innerHTML = ''; nav.innerHTML = ''; progress.textContent = '';
+      qbox.append(el('div', { class: 'callout tip', html: '🔥 <strong>Challenge klaar!</strong> ' + score + ' / ' + qs.length + ' goed. Je reeks staat nu op <strong>' + D.streak + ' dag' + (D.streak === 1 ? '' : 'en') + '</strong>. Tot morgen!' }));
+      nav.append(el('span', {}), el('button', { class: 'btn primary', text: '🏠 Naar home', onclick: () => go('#/') }));
+    }
+    function next() {
+      if (idx >= qs.length) return finish();
+      answered = false; qbox.innerHTML = ''; nav.innerHTML = '';
+      progress.textContent = 'Vraag ' + (idx + 1) + ' / ' + qs.length;
+      const nextBtn = el('button', { class: 'btn primary', text: idx === qs.length - 1 ? 'Afronden →' : 'Volgende →', onclick: () => { if (!answered) return; idx++; next(); } });
+      nextBtn.disabled = true;
+      qbox.append(quizCard(qs[idx], (ok) => { if (answered) return; answered = true; if (ok) score++; nextBtn.disabled = false; }));
+      nav.append(el('span', {}), nextBtn);
+    }
+    next();
+  }
+
+  // =======================================================================
+  //  SCOREBORD — persoonlijk voortgangsoverzicht (lokaal)
+  // =======================================================================
+  function renderScorebord() {
+    const root = $('#app'); root.innerHTML = '';
+    const wrap = el('section', { class: 'roomview wrap' });
+    wrap.append(el('div', { class: 'crumbs' }, [el('a', { text: '🏠 Home', onclick: () => go('#/') }), document.createTextNode('  ›  '), el('strong', { text: '📊 Scorebord' })]));
+    wrap.append(el('h1', { text: '📊 Scorebord' }));
+    wrap.append(el('p', { class: 'sum', style: 'color:var(--muted);max-width:640px', text: 'Jouw voortgang in één overzicht. Alles wordt lokaal op dit apparaat bewaard (in je browser).' }));
+    const L = levelFor(STATE.xp);
+    const doneRooms = ROOMS.filter(roomDone).length;
+    const doneQ = ROOMS.reduce((n, r) => n + roomAnsweredCount(r), 0);
+    const totalQ = ROOMS.reduce((n, r) => n + roomQuestionCount(r), 0);
+    wrap.append(el('div', { class: 'stat-row', style: 'margin:10px 0 18px' }, [
+      stat('Lv ' + L.lvl, STATE.xp + ' XP'),
+      stat(doneRooms + '/' + ROOMS.length, 'rooms voltooid'),
+      stat(doneQ + '/' + totalQ, 'vragen beantwoord'),
+      stat('🚩 ' + (STATE.flags || 0), 'vlaggen'),
+      stat('🏅 ' + Object.keys(STATE.badges || {}).length + '/' + BADGES.length, 'badges'),
+      stat('🎯 ' + (STATE.bestStreak || 0), 'beste arena-reeks'),
+      stat('🎓 ' + (STATE.examBest || 0) + '%', 'beste examen'),
+      stat('🔥 ' + ((STATE.daily && STATE.daily.best) || 0), 'langste dagreeks'),
+    ]));
+    wrap.append(el('h3', { text: 'Voortgang per leerpad' }));
+    PATHS.forEach((p) => {
+      const rs = ROOMS.filter((r) => r.path === p.id); if (!rs.length) return;
+      const done = rs.filter(roomDone).length;
+      wrap.append(el('div', { class: 'section-head', style: 'margin:14px 0 4px' }, [el('h2', { style: 'font-size:1.05rem', text: p.icon + ' ' + p.title }), el('span', { class: 'meta', text: done + '/' + rs.length + ' af' })]));
+      wrap.append(el('div', { class: 'pathbar', style: 'margin:0 0 6px' }, el('i', { style: 'width:' + Math.round((done / rs.length) * 100) + '%' })));
+    });
+    wrap.append(el('div', { class: 'room-foot', style: 'margin-top:18px' }, [
+      el('button', { class: 'btn', text: '🎓 Doe een examen', onclick: () => go('#/examen') }),
+      el('button', { class: 'btn', text: '🔥 Dagchallenge', onclick: () => go('#/daily') }),
+    ]));
+    root.append(wrap); renderFooter(root); window.scrollTo(0, 0);
+  }
+
+  // =======================================================================
   //  Footer + router
   // =======================================================================
   function renderFooter(root) {
@@ -826,6 +1038,9 @@
     else if (h === '#/arena') renderArena();
     else if (h === '#/flashcards') renderFlashcards();
     else if (h === '#/tools') renderTools();
+    else if (h === '#/examen') renderExam();
+    else if (h === '#/daily') renderDaily();
+    else if (h === '#/scorebord') renderScorebord();
     else renderHome();
   }
   window.addEventListener('hashchange', route);

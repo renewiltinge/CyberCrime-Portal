@@ -578,3 +578,21 @@ lab: { type: 'connections', prompt: '...', flag: 'JVT{...}',
 ```
 16 geschudde items; selecteer vier die bij elkaar horen en controleer. Geeft "drie goed" als hint. Leuk voor hashtypes,
 ATT&CK-tactieken, cybercrime-rollen, IOC-soorten, enz. Geef precies 4 groepen van 4.
+
+### `chaintrace`: blockchain-tracer (common-input-clustering + taint)
+
+```js
+lab: {
+  type: 'chaintrace', title: 'Operatie X', unit: 'BTC',
+  scenario: '<intro>',
+  labels: { D: 'Vuile wallet', EX: 'Exchange X' },     // optioneel: leesbare namen
+  exchanges: ['EX'],                                    // cash-out-adressen
+  origins: [ { addr: 'D', amount: 10 }, { addr: 'C', amount: 5, dirty: false } ], // startsaldo; dirty:false = schone bron
+  txs: [ { inputs: ['D'], outputs: [ { addr: 'A', amount: 6 }, { addr: 'B', amount: 4 } ], time: '10:00' }, ... ],
+  ask: [ { q: 'Hoeveel vuil geld bereikt de exchange?', answer: ['7'] } ],
+}
+```
+Rekent **taint** (haircut: welk deel van een adres uit de vuile bron komt) en **clusters** (common-input-heuristiek:
+adressen die samen input zijn = één eigenaar) en toont beide, plus hoeveel vuil geld een exchange bereikt. Inputs
+besteden hun volledige saldo (vereenvoudigd UTXO). **De lab toont alle getallen, dus `ask`-antwoorden zijn afleidbaar;
+reken ze na.**

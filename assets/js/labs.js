@@ -2658,6 +2658,85 @@
     container.append(shell('<b>Verbanden</b> — ' + esc(cfg.title || 'groepeer de 16'), wrap, false));
   });
 
+
+  // =====================================================================
+  //  CHAINTRACE — blockchain-tracer: common-input-clustering + taint
+  // =====================================================================
+  CS.registerLab('chaintrace', function (container, cfg) {
+    const unit = cfg.unit || 'BTC';
+    const labels = cfg.labels || {};
+    const exchanges = new Set(cfg.exchanges || []);
+    const origins = cfg.origins || [];       // [{addr, amount, dirty}] — startsaldo; dirty!==false => 100% taint (gebruik dirty:false voor schone bron)
+    const txs = cfg.txs || [];               // [{id, inputs:[addr], outputs:[{addr,amount}], time?}]
+    const lab = (a) => labels[a] || a;
+    const fmt = (n) => (Math.round(n * 1e8) / 1e8) + ' ' + unit;
+    const pct = (n) => (Math.round(n * 1000) / 10) + '%';
+
+    // ---- taint-haircut berekenen (inputs besteden hun volledige saldo) ----
+    const bal = {}, taint = {};
+    origins.forEach((o) => { bal[o.addr] = (bal[o.addr] || 0) + o.amount; taint[o.addr] = (taint[o.addr] || 0) + (o.dirty === false ? 0 : o.amount * (o.taint != null ? o.taint : 1)); });
+    txs.forEach((tx) => {
+      let inTotal = 0, inTaint = 0;
+      (tx.inputs || []).forEach((a) => { inTotal += (bal[a] || 0); inTaint += (taint[a] || 0); });
+      const frac = inTotal > 0 ? inTaint / inTotal : 0;
+      (tx.inputs || []).forEach((a) => { bal[a] = 0; taint[a] = 0; });
+      (tx.outputs || []).forEach((o) => { bal[o.addr] = (bal[o.addr] || 0) + o.amount; taint[o.addr] = (taint[o.addr] || 0) + o.amount * frac; });
+    });
+    // ---- common-input-clustering (union-find over adressen die samen inputs zijn) ----
+    const parent = {};
+    const find = (x) => { if (parent[x] == null) parent[x] = x; return parent[x] === x ? x : (parent[x] = find(parent[x])); };
+    const union = (a, b) => { parent[find(a)] = find(b); };
+    const allAddr = new Set();
+    origins.forEach((o) => allAddr.add(o.addr));
+    txs.forEach((tx) => { (tx.inputs || []).forEach((a) => allAddr.add(a)); (tx.outputs || []).forEach((o) => allAddr.add(o.addr)); });
+    allAddr.forEach((a) => find(a));
+    txs.forEach((tx) => { const ins = tx.inputs || []; for (let i = 1; i < ins.length; i++) union(ins[0], ins[i]); });
+    const clusters = {};
+    allAddr.forEach((a) => { const r = find(a); (clusters[r] = clusters[r] || []).push(a); });
+    const clusterList = Object.values(clusters).filter((c) => c.length > 1);
+
+    const wrap = el('div', { class: 'lab-pad' });
+    if (cfg.scenario) wrap.append(el('div', { class: 'callout info', html: esc(cfg.scenario) }));
+    wrap.append(el('div', { class: 'found-note', text: 'Analyseer de keten. "Taint" = welk deel van het geld op een adres oorspronkelijk uit de vuile bron komt (haircut-methode). "Clustering" (common-input-heuristiek) groepeert adressen die samen als input in één transactie zitten — waarschijnlijk dezelfde eigenaar.' }));
+
+    // transactieledger
+    wrap.append(el('label', { text: 'Transacties (inputs → outputs)' }));
+    const ledger = el('div', { class: 'logview', style: 'max-height:240px' });
+    txs.forEach((tx, i) => {
+      const ins = (tx.inputs || []).map((a) => lab(a)).join(' + ');
+      const outs = (tx.outputs || []).map((o) => lab(o.addr) + ' (' + fmt(o.amount) + ')').join(', ');
+      const ln = el('div', { class: 'ln' });
+      ln.append(el('span', { class: 'n', text: String(i + 1) }), el('span', { html: '<strong>' + esc(ins) + '</strong> <span style="color:var(--muted)">→</span> ' + esc(outs) + (tx.time ? ' <span style="color:#7f8db5">' + esc(tx.time) + '</span>' : '') }));
+      ledger.append(ln);
+    });
+    wrap.append(ledger);
+
+    // taint-tabel
+    wrap.append(el('label', { text: 'Adres-overzicht: saldo en taint' }));
+    const rows = Array.from(allAddr).filter((a) => (bal[a] || 0) > 1e-9).sort((a, b) => (taint[b] || 0) - (taint[a] || 0));
+    const tbl = el('table', { style: 'width:100%;font-size:.84rem' }, el('tbody', {}, [el('tr', {}, [el('th', { text: 'Adres' }), el('th', { text: 'Saldo' }), el('th', { text: 'Taint' }), el('th', { text: '' })])].concat(
+      rows.map((a) => el('tr', {}, [
+        el('td', { html: esc(lab(a)) + (exchanges.has(a) ? ' <span style="color:var(--warn)">🏛️ exchange</span>' : '') }),
+        el('td', { text: fmt(bal[a] || 0) }),
+        el('td', { html: '<strong style="color:' + ((taint[a] || 0) / (bal[a] || 1) > 0.5 ? 'var(--bad)' : 'var(--muted)') + '">' + pct((taint[a] || 0) / (bal[a] || 1)) + '</strong> (' + fmt(taint[a] || 0) + ')' }),
+        el('td', { text: (taint[a] || 0) > 1e-9 && exchanges.has(a) ? '← vuil geld bereikt cash-out' : '' }),
+      ]))
+    )));
+    wrap.append(tbl);
+
+    // clusters
+    if (clusterList.length) {
+      wrap.append(el('details', { html: '<summary>🔗 Clusters (common-input-heuristiek) — ' + clusterList.length + ' gevonden</summary>' +
+        '<div style="margin-top:6px">' + clusterList.map((c, i) => '<div class="found-note">Cluster ' + (i + 1) + ': ' + c.map((a) => esc(lab(a))).join(' = ') + ' (waarschijnlijk één eigenaar)</div>').join('') + '</div>' }));
+    }
+    // samenvatting vuil geld bij exchanges
+    let dirtyAtEx = 0; exchanges.forEach((e) => { dirtyAtEx += (taint[e] || 0); });
+    if (exchanges.size) wrap.append(el('div', { class: 'callout ' + (dirtyAtEx > 1e-9 ? 'warn' : 'tip'), html: 'Vuil geld dat een exchange bereikt (cash-out, aangrijppunt voor opsporing): <strong>' + fmt(dirtyAtEx) + '</strong>.' }));
+
+    puzzleAsk(wrap, cfg.ask);
+    container.append(shell('<b>Blockchain-tracer</b> — ' + esc(cfg.title || 'cluster & taint'), wrap, false));
+  });
+
   // =====================================================================
   //  Encoding & hash helpers
   // =====================================================================

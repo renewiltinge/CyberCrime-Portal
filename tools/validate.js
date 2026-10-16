@@ -16,7 +16,7 @@ const LABS = ['terminal', 'cyberchef', 'hashcrack', 'password', 'phishing', 'log
   'jwt', 'regex', 'cvss', 'timestamp', 'ioc', 'url', 'yara', 'timeline', 'chmod', 'numconv',
   'hashid', 'cipher', 'crackme', 'multidecode', 'rainbow',
   'ach', 'crimescript', 'admiralty', 'probability', 'attackmap', 'pivot', 'bluf',
-  'flow', 'ordering', 'regexgolf', 'osintpuzzle', 'connections'];
+  'flow', 'ordering', 'regexgolf', 'osintpuzzle', 'connections', 'chaintrace'];
 
 const args = process.argv.slice(2);
 const files = args.length
