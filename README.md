@@ -82,6 +82,17 @@ De weg naar digitaal rechercheur — sporen vinden, veiligstellen en duiden.
 11. **Forensie-CTF: Zaak Zilverlab** — een volledig onderzoek als oefening.
 12. **Verder leren** — boeken, tools en platforms.
 
+### 🧠 Cyber-intelligence & opsporing
+Van fenomeen naar interventie: denken en werken als intelligence-analist.
+1. **Het cybercrime-ecosysteem** — crime-as-a-service, RaaS, leksites en interventietypes (met casussen).
+2. **Crime scripting** — delicten ontleden in fasen (Cornish) en de interventiematrix.
+3. **Intelligencecyclus, CSAE & analyse** — bronbeoordeling (Admiralty), waarschijnlijkheidstaal, ACH en denkfouten.
+4. **Threat intelligence-modellen** — Kill Chain, ATT&CK, Diamond Model en de Pyramid of Pain.
+5. **Infrastructuur-OSINT & pivoting** — entiteiten, bronnen, fingerprinting en een pivot-sandbox (met juridische grenzen).
+6. **Intelligenceproducten & interventieadvies** — strategisch/tactisch/operationeel, BLUF-schrijven en de STAR-methode.
+7. **Praktijkcase: de complete workflow** — één casus van tijdlijn t/m BLUF-product.
+8. **Werkblad** — alle technieken in één werkproces met een checklist.
+
 ### 🏁 Eindopdracht
 1. **Mini-CTF: Operatie KoffieKlap** — breng alles samen in een afsluitende Capture The Flag met zes vlaggen.
 2. **Grote kraak-CTF: Operatie Sleutelbos** — een uitgebreide kraak-CTF langs hashes, cijfers, codering, een crackme, een JWT en NTLM (zeven vlaggen).
@@ -119,6 +130,13 @@ Alle labs draaien **volledig in je browser** — veilig, offline, zonder dat er 
 | 🔃 **Crackme** | Reverse-engineering puzzel: lees de controlefunctie en vind de sleutel. |
 | ✨ **Multi-decoder** | Herkent en pelt lagen codering af (Base64/32, hex, binair, Morse, ROT13, URL…) en zoekt automatisch de vlag. |
 | 🌈 **Rainbow table** | Zie waarom onvergezouten hashes direct op te zoeken zijn — en hoe salt dat breekt. |
+| 🧮 **ACH-matrix** | Concurrerende hypothesen afwegen door bewijs te scoren (C/I/N) — de houdbaarste wint. |
+| 🎬 **Crime script-builder** | Een delict ontleden in zes fasen met een interventie per fase. |
+| 📊 **Bronbeoordeling** | Betrouwbaarheid (A–F) en geloofwaardigheid (1–6) apart beoordelen (Admiralty Code). |
+| 📈 **Waarschijnlijkheidstaal** | Woorden als "waarschijnlijk" aan de juiste percentage-band koppelen. |
+| 🗺️ **ATT&CK-mapping** | Een waarneming aan de juiste MITRE ATT&CK-techniek koppelen. |
+| 📡 **Pivot-sandbox** | Door een fictieve entiteit/relatie-graaf pivoteren om het dwarsverband te vinden. |
+| 📝 **BLUF-herschrijven** | Een chronologisch verhaal herschrijven naar "conclusie eerst" (met rubric-check). |
 
 Alle tools zijn ook los te gebruiken via de **🧰 Gereedschapskist** (knop op de startpagina, of `#/tools`) — handig voor je eigen, ethische oefeningen.
 
