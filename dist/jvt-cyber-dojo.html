@@ -19035,6 +19035,797 @@ CS.registerRoom({
 
 </script>
 <script>
+/* Room: Intelligenceproducten & interventieadvies */
+
+CS.registerRoom({
+  id: 'intelligenceproducten',
+  path: 'intelligence',
+  order: 6,
+  title: 'Intelligenceproducten & interventieadvies',
+  icon: '📰',
+  difficulty: 'Gemiddeld',
+  minutes: 65,
+  summary: 'Van analyse naar een product dat iemand kan gebruiken: schrijf voor het juiste niveau (strategisch, tactisch, operationeel), kies de juiste productsoort, zet de conclusie vooraan met BLUF, vertaal je jargon, bouw een interventieadvies (wat, waarom, wie, wanneer, risico\'s), coach je team en vertaal je eigen ervaring met STAR.',
+  objectives: [
+    'Het strategische, tactische en operationele niveau onderscheiden: wie leest wat, en welke beslissing neemt die lezer',
+    'De gangbare productsoorten herkennen (fenomeenanalyse, dreigingsbeeld, netwerkanalyse, subjectanalyse, zaakoverstijgende analyse) en de juiste kiezen',
+    'Een product volgens BLUF schrijven: conclusie en aanbeveling eerst, onderbouwing daarna',
+    'Jargon vertalen zodat een niet-specialist je product begrijpt en kan gebruiken',
+    'Een interventieadvies opbouwen met wat, waarom, wie (eigenaar), wanneer en risico\'s',
+    'Je team laten groeien via peer review, ingebedde methoden en betere tooling',
+    'Je eigen ervaring vertalen met de STAR-methode (Situatie, Taak, Actie, Resultaat)',
+  ],
+  tasks: [
+    {
+      title: 'Taak 1 — Strategisch, tactisch, operationeel: wie leest wat?',
+      content: `
+        <p>De beste analyse van de wereld is waardeloos als ze bij de verkeerde lezer belandt, of in de verkeerde taal.
+        Een directeur heeft niets aan een lijst met 400 IP-adressen; een SOC-analist heeft niets aan de boodschap "cyber
+        is een groeiend risico". Hetzelfde onderzoek levert dus <em>verschillende</em> producten op, afhankelijk van wie
+        het leest en welke beslissing die persoon moet nemen. We onderscheiden drie niveaus.</p>
+
+        <h3>De analogie van de kaart</h3>
+        <p>Denk aan kaarten met verschillende zoomniveaus. Een <strong>wereldbol</strong> laat je grote stromen en trends
+        zien: handig om te beslissen naar welk werelddeel je gaat. Een <strong>stadsplattegrond</strong> laat wijken en
+        hoofdwegen zien: handig om een route te plannen. Een <strong>stratenkaart</strong> toont de stoeprand waar je
+        moet afslaan: handig als je er nú bent. Alle drie kloppen, maar je kiest de kaart bij de beslissing die je moet
+        nemen. Zo is het ook met intelligence.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 320 210" role="img" aria-label="Piramide met de drie intelligenceniveaus">
+            <polygon points="160,20 280,190 40,190" fill="var(--accent-soft)" stroke="currentColor"/>
+            <line x1="120" y1="77" x2="200" y2="77" stroke="currentColor"/>
+            <line x1="80" y1="133" x2="240" y2="133" stroke="currentColor"/>
+            <text x="160" y="56" text-anchor="middle" fill="currentColor" font-size="13">Strategisch</text>
+            <text x="160" y="70" text-anchor="middle" fill="var(--muted)" font-size="11">directie, bestuur</text>
+            <text x="160" y="106" text-anchor="middle" fill="currentColor" font-size="13">Tactisch</text>
+            <text x="160" y="120" text-anchor="middle" fill="var(--muted)" font-size="11">teamleiding, coördinatie</text>
+            <text x="160" y="159" text-anchor="middle" fill="currentColor" font-size="13">Operationeel</text>
+            <text x="160" y="173" text-anchor="middle" fill="var(--muted)" font-size="11">rechercheur, analist, SOC</text>
+            <text x="12" y="28" fill="var(--muted)" font-size="11">breed, lange termijn</text>
+            <text x="12" y="203" fill="var(--muted)" font-size="11">concreet, nu</text>
+          </svg>
+          <figcaption>Dezelfde zaak levert op elk niveau een ander product op, voor een andere beslissing.</figcaption>
+        </figure>
+
+        <h3>De drie niveaus</h3>
+        <ul>
+          <li><strong>Strategisch</strong> — de lange termijn en het grote plaatje. Leest: directie, bestuur,
+          beleidsmakers. Beslissing: <em>waar zetten we mensen, geld en aandacht op in?</em> Denk aan trends, fenomenen
+          en een meerjarig dreigingsbeeld. Voorbeeld: "Helpdeskfraude tegen ouderen groeit al drie jaar; investeer in
+          preventie en in een meldpunt."</li>
+          <li><strong>Tactisch</strong> — de middellange termijn en de aanpak van een thema of type zaak. Leest:
+          teamleiding, coördinatoren, opsporingsleiding. Beslissing: <em>hoe pakken we dit soort zaken aan, en wat
+          prioriteren we?</em> Denk aan werkwijzen (modus operandi) en netwerken binnen een fenomeen. Voorbeeld: "Deze
+          fraudegolf loopt telkens via dezelfde moneymule-structuur; richt de aanpak op die tussenschakel."</li>
+          <li><strong>Operationeel</strong> — het hier en nu, één concrete zaak of één subject. Leest: rechercheurs,
+          analisten, het SOC. Beslissing: <em>wat doen we nú, met déze zaak?</em> Denk aan concrete handvatten: IOC's,
+          een verdachte verbinding, een eerstvolgende stap. Voorbeeld: "Blokkeer dit IP en isoleer werkplek WS-12."</li>
+        </ul>
+
+        <div class="callout tip">
+          <strong>Beloning:</strong> de eerste vlag van deze room vat het in één zin samen —
+          <code>JVT{juiste_lezer_juist_niveau}</code>. Schrijf altijd voor de lezer en de beslissing, niet voor jezelf.
+        </div>
+
+        <div class="callout warn">
+          <strong>Veelgemaakte fout:</strong> hetzelfde product naar alle drie de niveaus sturen. De directie haakt af
+          bij de techniek, en het SOC mist de concrete actie. Knip je bevindingen op naar niveau, of schrijf tenminste
+          per lezer een eigen samenvatting.
+        </div>
+      `,
+      questions: [
+        { q: 'Een bestuurder moet beslissen waar de organisatie de komende jaren geld en mensen op inzet. Welk niveau product past daarbij?', options: ['Strategisch', 'Tactisch', 'Operationeel', 'Geen enkel'], answer: 0, explain: 'Lange termijn, groot plaatje, een investerings- of beleidsbeslissing: dat is strategisch.' },
+        { q: 'Een SOC-analist moet nú iets doen met een verdachte verbinding in één zaak. Welk niveau past daarbij?', options: ['Strategisch', 'Tactisch', 'Operationeel'], answer: 2, explain: 'Het hier en nu, één concrete zaak met directe handvatten (IOC\'s, een blokkade): dat is operationeel.' },
+        { q: 'Op welk niveau bepaal je de aanpak en prioriteiten voor een heel type zaak of thema (bijvoorbeeld de moneymule-structuur)?', answer: ['tactisch', 'Tactisch', 'tactisch niveau'], hint: 'Tussen het grote plaatje en de losse zaak in.', explain: 'Het tactische niveau gaat over de aanpak van een thema of type zaak, voor teamleiding en coördinatie.' },
+        { q: 'Wat is de eerste vlag van deze room (zie de groene tip)?', answer: ['JVT{juiste_lezer_juist_niveau}'], hint: 'Staat in de beloning onderaan de taak.' },
+      ],
+    },
+
+    {
+      title: 'Taak 2 — Productsoorten: kies het juiste gereedschap',
+      content: `
+        <p>Binnen de drie niveaus bestaan vaste <strong>productsoorten</strong>. Ze verschillen in wat er centraal staat:
+        een verschijnsel, een dreiging, een netwerk, een persoon, of een patroon over meerdere zaken heen. Weten welke
+        soort je maakt, houdt je product scherp — je weet waar je naartoe schrijft en wat je weglaat.</p>
+
+        <table>
+          <thead><tr><th>Productsoort</th><th>Staat centraal</th><th>Typische vraag</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Fenomeenanalyse</strong></td><td>Een verschijnsel in de breedte</td><td>Hoe werkt helpdeskfraude als geheel? Welke schakels, actoren en kwetsbaarheden zitten erin?</td></tr>
+            <tr><td><strong>Dreigingsbeeld</strong></td><td>Welke dreigingen, hoe ernstig, welke trend</td><td>Wat bedreigt ons het komende jaar, en wat wordt groter of kleiner?</td></tr>
+            <tr><td><strong>Netwerkanalyse</strong></td><td>Relaties en rollen tussen actoren</td><td>Wie werkt met wie samen, en wie is de spil of de zwakke schakel?</td></tr>
+            <tr><td><strong>Subjectanalyse</strong></td><td>Eén persoon of entiteit</td><td>Wie is dit subject, wat doet het, en wat weten we met welke zekerheid?</td></tr>
+            <tr><td><strong>Zaakoverstijgende analyse</strong></td><td>Patronen over meerdere zaken heen</td><td>Horen deze losse zaken bij elkaar? Welk gemeenschappelijk kenmerk verbindt ze?</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Kort toegelicht</h3>
+        <ul>
+          <li>Een <strong>fenomeenanalyse</strong> zoomt uit: niet één dader, maar hoe een crimineel verschijnsel werkt
+          (vergelijk de crime script uit de eerdere room). Vaak strategisch of tactisch.</li>
+          <li>Een <strong>dreigingsbeeld</strong> weegt dreigingen tegen elkaar af en benoemt de trend (stijgend,
+          dalend, stabiel). Hier gebruik je waarschijnlijkheidstaal en een apart betrouwbaarheidsniveau. Vaak
+          strategisch.</li>
+          <li>Een <strong>netwerkanalyse</strong> tekent de relaties: wie stuurt aan, wie voert uit, wie int het geld.
+          Je zoekt de spil én de kwetsbare tussenschakel waar een interventie het meeste effect heeft.</li>
+          <li>Een <strong>subjectanalyse</strong> gaat de diepte in op één entiteit (persoon, groep, alias, infrastructuur).
+          Label hier streng wat <em>bekend</em>, <em>afgeleid</em> en <em>aanname</em> is — een subjectanalyse die een
+          aanname als feit presenteert, kan iemand onterecht raken.</li>
+          <li>Een <strong>zaakoverstijgende analyse</strong> legt verbanden tussen losse zaken. Dit is precies het
+          pivot-werk uit de OSINT-room: een gedeeld certificaat, een hergebruikte wallet of dezelfde werkwijze kan twee
+          zaken aan elkaar koppelen.</li>
+        </ul>
+
+        <div class="callout info">
+          <strong>Koppeling:</strong> de productsoort en het niveau hangen samen, maar zijn niet hetzelfde. Een
+          dreigingsbeeld is meestal strategisch; een subjectanalyse kan zowel tactisch (hoe pakken we dit type dader aan)
+          als operationeel (wat doen we met déze verdachte) zijn. Bepaal eerst de <em>vraag</em>, dan de soort, dan het
+          niveau en de taal.
+        </div>
+      `,
+      questions: [
+        { q: 'Je wilt weten welke dreigingen het komende jaar op je afkomen en welke groter worden. Welke productsoort maak je?', options: ['Dreigingsbeeld', 'Subjectanalyse', 'Netwerkanalyse', 'Fenomeenanalyse'], answer: 0, explain: 'Een dreigingsbeeld weegt dreigingen af en benoemt de trend, vaak op strategisch niveau.' },
+        { q: 'Welke productsoort brengt in kaart wie met wie samenwerkt en wie de spil of zwakke schakel is?', answer: ['netwerkanalyse', 'Netwerkanalyse'], hint: 'Het gaat om relaties en rollen tussen actoren.', explain: 'Een netwerkanalyse tekent relaties en rollen; je zoekt de spil en de kwetsbare tussenschakel.' },
+        { q: 'Je vermoedt dat drie losse phishingzaken bij elkaar horen door een gedeeld certificaat. Welke productsoort past?', options: ['Zaakoverstijgende analyse', 'Fenomeenanalyse', 'Dreigingsbeeld', 'Subjectanalyse'], answer: 0, explain: 'Patronen en verbanden over meerdere zaken heen zoeken is een zaakoverstijgende analyse (het pivot-werk).' },
+        { q: 'Welke productsoort gaat in de diepte over één persoon of entiteit, waarbij je bekend/afgeleid/aanname streng labelt?', answer: ['subjectanalyse', 'Subjectanalyse'], hint: 'Het "subject" is het middelpunt.', explain: 'Een subjectanalyse draait om één entiteit; onzuiver labelen kan iemand onterecht raken.' },
+      ],
+    },
+
+    {
+      title: 'Taak 3 — BLUF: zet de conclusie vooraan',
+      content: `
+        <p>Analisten schrijven graag als een detectiveverhaal: eerst alle aanwijzingen, de verdachten, de twists, en op de
+        laatste bladzijde de ontknoping. Spannend voor een roman, rampzalig voor een intelligenceproduct. Je lezer is
+        druk, scrollt op zijn telefoon tussen twee vergaderingen door, en leest misschien alleen de eerste alinea. Zet de
+        ontknoping dus bovenaan. Dat is <strong>BLUF</strong>: <em>Bottom Line Up Front</em> — de kern eerst.</p>
+
+        <h3>Wat komt bovenaan?</h3>
+        <p>In de eerste paar zinnen staat het antwoord op de vraag van de opdrachtgever, plus wat hij ermee moet. Concreet:</p>
+        <ul>
+          <li><strong>De conclusie</strong> — je oordeel, in één of twee zinnen. Met <strong>waarschijnlijkheidstaal</strong>
+          (de yardstick) en een apart <strong>betrouwbaarheidsniveau</strong> (laag/midden/hoog).</li>
+          <li><strong>De aanbeveling(en)</strong> — wat moet er gebeuren, en door wie. Dit is de "so what?" die het
+          product bruikbaar maakt.</li>
+          <li><strong>De onderbouwing daarna</strong> — pas daaronder volgt het bewijs, de tijdlijn, de details. Wie
+          verder wil, leest door; wie genoeg heeft, is na drie regels klaar.</li>
+        </ul>
+
+        <div class="callout info">
+          <strong>Omgekeerde piramide:</strong> journalisten schrijven zo al eeuwen. Het belangrijkste eerst, daarna
+          aflopend in belang. Snijdt de redactie onderaan iets weg, dan verlies je alleen detail — nooit de kern.
+        </div>
+
+        <h3>Vier vuistregels voor een goed BLUF-product</h3>
+        <ol>
+          <li><strong>Conclusie bovenaan.</strong> Geen opbouw naar een climax; het antwoord staat in regel één.</li>
+          <li><strong>Waarschijnlijkheidstaal.</strong> Niet "misschien", maar "waarschijnlijk (55–75%)". Zeg erbij hoe
+          stevig je oordeel is (betrouwbaarheidsniveau).</li>
+          <li><strong>Eigenaar per advies.</strong> Een advies zonder naam erbij voert niemand uit. Zet achter elke
+          aanbeveling wie het oppakt.</li>
+          <li><strong>Onzekerheid apart.</strong> Zet wat je nog niet weet in een eigen blokje, zodat de lezer je
+          conclusie niet verwart met je slagen om de arm.</li>
+        </ol>
+
+        <h3>Oefening: herschrijf de brontekst</h3>
+        <p>In het lab hieronder staat een <strong>chronologisch</strong> verslag van een fictief incident — precies zoals
+        het binnenkwam, van minuut tot minuut, met de belangrijke conclusie ergens verstopt. Herschrijf het naar een
+        BLUF-product: conclusie en aanbevelingen bovenaan, onderbouwing eronder, onzekerheid apart. Klik daarna op
+        "Toets tegen de rubric" voor een checklist (dat is geen AI-beoordeling, maar een geheugensteun), en vergelijk met
+        het meegeleverde modelantwoord.</p>
+
+        <div class="callout tip">
+          <strong>Beloning:</strong> de tweede vlag is de hele les in twee woorden — <code>JVT{conclusie_bovenaan}</code>.
+        </div>
+      `,
+      lab: {
+        type: 'bluf',
+        source: `CHRONOLOGISCH VERSLAG — fictief incident, Gemeente Veldewoud (fictief)
+
+Maandag 6 oktober 2026
+08:14  Een medewerker van de afdeling Financiën meldt dat ze een e-mail met een "factuurbijlage" heeft geopend. De bijlage leek een PDF maar deed niets zichtbaars.
+08:20  De helpdesk krijgt een belletje: haar werkplek (WS-FIN-12) is traag geworden.
+09:02  Het SOC ziet in de logs dat WS-FIN-12 om 08:17 verbinding maakte met een onbekend extern IP-adres (198.51.100.77) op poort 443.
+10:30  Een beheerder meldt dat drie bestandsshares kortdurend onbereikbaar waren; ze doen het nu weer.
+11:15  Op twee andere werkplekken op dezelfde afdeling worden dezelfde verbindingen naar 198.51.100.77 gezien.
+12:40  Het EDR bevestigt dat op WS-FIN-12 het hulpmiddel "rclone" is uitgevoerd (een tool om bestanden in bulk naar externe opslag te kopiëren).
+13:05  Uit passive DNS en een partnerrapport van vorige maand blijkt dat 198.51.100.77 ook opdook bij een incident bij een andere gemeente. De sectorpartner die dat IP aanleverde, heeft een goed trackrecord maar wij hebben het nog niet zelf geverifieerd.
+13:30  De back-ups van de getroffen shares draaien elke nacht en staan offline; ze zijn intact.
+14:00  Er zijn op dit moment GEEN aanwijzingen dat bestanden zijn versleuteld. Het uitgaande dataverkeer naar 198.51.100.77 wordt nog geanalyseerd; of er echt data is weggesluisd en hoeveel, is nog onbekend.
+
+Op de afdeling Financiën staan ook persoonsgegevens (salaris- en declaratiebestanden).`,
+        model: `<p><strong>BLUF.</strong> Er is <strong>waarschijnlijk (55–75%)</strong> sprake van datadiefstal op het netwerk van Gemeente Veldewoud. Vanaf werkplek WS-FIN-12 — en inmiddels nog twee werkplekken op Financiën — is verbinding gemaakt met een extern IP (198.51.100.77) dat eerder bij een incident bij een andere gemeente opdook, en op WS-FIN-12 is het exfiltratiehulpmiddel rclone uitgevoerd. Versleuteling is (nog) niet waargenomen en de offline back-ups zijn intact. <strong>Betrouwbaarheidsniveau: midden</strong> — eigen EDR-waarneming plus een partnerrapport, maar de exfiltratie zelf is nog niet in het uitgaand volume bevestigd.</p>
+<p><strong>Aanbevelingen.</strong></p>
+<ul>
+  <li>Isoleer WS-FIN-12 en de twee andere werkplekken direct van het netwerk — <strong>eigenaar: SOC</strong> — <strong>vandaag</strong>.</li>
+  <li>Blokkeer 198.51.100.77 op de firewall en analyseer al het verkeer naar dat IP — <strong>eigenaar: netwerkbeheer</strong> — <strong>vandaag</strong>.</li>
+  <li>Bereid een datalekmelding bij de Autoriteit Persoonsgegevens voor; op Financiën staan persoonsgegevens en de 72-uursklok kan al lopen — <strong>eigenaar: functionaris gegevensbescherming</strong> — <strong>binnen 24 uur</strong>.</li>
+  <li>Reset de wachtwoorden van de betrokken accounts — <strong>eigenaar: IT-beheer</strong> — <strong>binnen 24 uur</strong>.</li>
+</ul>
+<p><strong>Onzekerheid (apart).</strong> Of er daadwerkelijk data het netwerk heeft verlaten en zo ja hoeveel, is nog niet bevestigd; dat hangt af van de volume-analyse die loopt. De bron voor de koppeling aan een eerdere zaak is "meestal betrouwbaar" (Admiralty B) maar door ons nog niet geverifieerd; dat één actor achter beide zaken zit, blijft vooralsnog een aanname.</p>
+<hr>
+<p><em>Onderbouwing (chronologie) staat hieronder voor wie wil doorlezen: de bijlage om 08:14, de verbinding om 08:17, rclone om 12:40, de koppeling aan de eerdere zaak om 13:05, en de intacte offline back-ups om 13:30.</em></p>`,
+      },
+      questions: [
+        { q: 'Waar staat "BLUF" voor?', answer: ['Bottom Line Up Front', 'bottom line up front', 'bottom line upfront'], hint: 'Engels; letterlijk "de kern vooraan".', explain: 'BLUF = Bottom Line Up Front: de conclusie en aanbeveling bovenaan, de onderbouwing daaronder.' },
+        { q: 'Wat hoort volgens de vuistregels NIET in de eerste zinnen van een BLUF-product, maar pas daaronder?', options: ['De gedetailleerde chronologie en het bewijs', 'De conclusie', 'De aanbeveling', 'Het betrouwbaarheidsniveau'], answer: 0, explain: 'Conclusie, aanbeveling en de mate van zekerheid staan bovenaan; de details en de tijdlijn komen eronder.' },
+        { q: 'Waarom zet je achter elke aanbeveling een eigenaar?', options: ['Een advies zonder naam erbij voert niemand uit', 'Om het product langer te maken', 'Omdat dat verplicht is in de AVG', 'Om de bron te verbergen'], answer: 0, explain: 'Met een eigenaar (en een termijn) wordt een advies een actie; zonder eigenaar blijft het een vrome wens.' },
+        { q: 'Wat is de tweede vlag van deze room (zie de groene tip)?', answer: ['JVT{conclusie_bovenaan}'], hint: 'Staat in de beloning onderaan de taak.' },
+      ],
+    },
+
+    {
+      title: 'Taak 4 — Vertaal je jargon',
+      content: `
+        <p>Je weet wat een "C2-kanaal" is, wat "laterale beweging" betekent en waarom "T1486" eng is. Je lezer meestal
+        niet. Jargon is efficiënt tussen specialisten, maar een muur voor iedereen daarbuiten — en juist de
+        beslissers zitten daarbuiten. Een product dat de lezer niet begrijpt, kan hij niet gebruiken. Vertalen is dus
+        geen bijzaak; het is de helft van je werk.</p>
+
+        <h3>Van specialistentaal naar mensentaal</h3>
+        <p>Kijk naar hetzelfde feit, twee keer opgeschreven:</p>
+        <ul>
+          <li><strong>Voor de specialist:</strong> "De actor voerde na initial access via T1566 laterale beweging uit en
+          exfiltreerde data met rclone over een versleuteld C2-kanaal."</li>
+          <li><strong>Voor de bestuurder:</strong> "De aanvaller kwam binnen via een nepmail, werkte zich door naar
+          andere computers en kopieerde bestanden naar buiten met een gratis hulpmiddel, via een verborgen verbinding."</li>
+        </ul>
+        <p>Allebei kloppen. De tweede is langer in woorden maar korter in moeite: de lezer hoeft niets op te zoeken.</p>
+
+        <h3>Vijf technieken</h3>
+        <ol>
+          <li><strong>Leg een term één keer uit</strong> en gebruik daarna de gewone taal. "Gijzelsoftware (ransomware)"
+          — daarna gewoon "gijzelsoftware".</li>
+          <li><strong>Schrap wat de lezer niet nodig heeft.</strong> Een bestuurder hoeft de naam van de tool of de
+          ATT&CK-code niet; die hoort in een bijlage voor het SOC.</li>
+          <li><strong>Gebruik een analogie.</strong> "Laterale beweging" = "de inbreker loopt van kamer naar kamer".</li>
+          <li><strong>Vertaal het gevolg, niet het mechanisme.</strong> Niet "de shadow copies zijn gewist", maar "lokaal
+          terugdraaien kan niet meer; we hebben de offline back-up nodig".</li>
+          <li><strong>Doe de collega-test.</strong> Laat iemand buiten je vakgebied je samenvatting lezen. Struikelt die
+          over een woord, dan vertaal je het. (Dit heet ook wel de "oma-test".)</li>
+        </ol>
+
+        <div class="callout warn">
+          <strong>Pas op voor valse vertalingen.</strong> Vertalen mag nooit <em>verdraaien</em>. "Waarschijnlijk" wordt
+          geen "zeker", en een aanname wordt geen feit omdat dat lekkerder leest. Vereenvoudig de taal, niet de inhoud of
+          de onzekerheid.
+        </div>
+
+        <div class="callout tip">
+          <strong>Tip:</strong> een handige structuur is twee lagen in één product. Bovenaan een samenvatting in gewone
+          taal voor de beslisser; onderaan of in een bijlage de technische details (IOC's, tool-namen, ATT&CK-codes)
+          voor de uitvoerders. Zo bedien je beide lezers zonder twee losse documenten te schrijven.
+        </div>
+      `,
+      questions: [
+        { q: 'Je schrijft voor een bestuurder. Wat doe je met de zin "de actor exfiltreerde data met rclone over een versleuteld C2-kanaal"?', options: ['Je vertaalt het naar gewone taal, bijvoorbeeld "de aanvaller kopieerde bestanden naar buiten via een verborgen verbinding"', 'Je laat het precies zo staan', 'Je voegt nog meer afkortingen toe', 'Je laat de hele zin weg'], answer: 0, explain: 'Vertaal naar het gevolg in gewone taal; de tool-naam en technische term horen in een bijlage voor de uitvoerders.' },
+        { q: 'Hoe heet de controle waarbij je je samenvatting laat lezen door iemand buiten je vakgebied?', answer: ['collega-test', 'collegatest', 'oma-test', 'de collega-test'], hint: 'Ook wel de "oma-test" genoemd.', explain: 'Struikelt een niet-specialist over een woord, dan vertaal je het. Dat is de collega- of oma-test.' },
+        { q: 'Wat mag je bij het vertalen van jargon nooit doen?', options: ['De inhoud of de onzekerheid verdraaien (bijvoorbeeld "waarschijnlijk" tot "zeker" maken)', 'Een analogie gebruiken', 'Een term één keer uitleggen', 'Technische details naar een bijlage verplaatsen'], answer: 0, explain: 'Je vereenvoudigt de taal, niet de inhoud: een aanname blijft een aanname en "waarschijnlijk" blijft "waarschijnlijk".' },
+      ],
+    },
+
+    {
+      title: 'Taak 5 — Een interventieadvies opbouwen',
+      content: `
+        <p>Analyse zonder advies is een diagnose zonder recept. Het sluitstuk van bijna elk product is een
+        <strong>interventieadvies</strong>: een voorstel voor wat er moet gebeuren. Een goed advies is geen losse kreet
+        ("we moeten iets doen"), maar beantwoordt vijf vragen. Onthoud ze als <strong>wat, waarom, wie, wanneer,
+        risico's</strong>.</p>
+
+        <h3>De vijf bouwstenen</h3>
+        <table>
+          <thead><tr><th>Bouwsteen</th><th>De vraag</th><th>Voorbeeld</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Wat</strong></td><td>Welke concrete maatregel?</td><td>Blokkeer uitvoerbare e-mailbijlagen (.exe, .scr) op de mailgateway.</td></tr>
+            <tr><td><strong>Waarom</strong></td><td>Welke onderbouwing en welk effect? (de "so what?")</td><td>De laatste drie incidenten begonnen met zo'n bijlage; dit sluit die route af.</td></tr>
+            <tr><td><strong>Wie</strong></td><td>Wie is de eigenaar?</td><td>Het team e-mailbeheer.</td></tr>
+            <tr><td><strong>Wanneer</strong></td><td>Binnen welke termijn?</td><td>Binnen één week.</td></tr>
+            <tr><td><strong>Risico's</strong></td><td>Welke neveneffecten, en wat als we niets doen?</td><td>Legitieme bijlagen kunnen sneuvelen (regel een uitzonderingsproces); niets doen houdt de instroom open.</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Waarom elke bouwsteen telt</h3>
+        <ul>
+          <li>Zonder <strong>wat</strong> is het geen advies maar een zorg.</li>
+          <li>Zonder <strong>waarom</strong> kan de lezer je niet volgen en niet afwegen. Koppel het aan je bevinding en
+          aan de "so what?"-test uit de intelligencecyclus-room.</li>
+          <li>Zonder <strong>wie</strong> blijft het liggen. Een eigenaar is een naam of een rol, geen "iemand".</li>
+          <li>Zonder <strong>wanneer</strong> is alles "ooit". Een termijn dwingt prioriteit af.</li>
+          <li>Zonder <strong>risico's</strong> lijk je naïef. Benoem de neveneffecten (denk aan <em>displacement</em>: de
+          dader wijkt uit naar een andere route) én de prijs van niets doen, zodat de beslisser een eerlijke afweging
+          maakt.</li>
+        </ul>
+
+        <div class="callout info">
+          <strong>Koppeling met de interventiematrix:</strong> in de crime-scripting-room koppelde je per fase van een
+          crime script een maatregel aan een eigenaar. Een interventieadvies is precies zo'n cel, netjes uitgeschreven.
+          Vaak geef je meer dan één optie, met de voor- en nadelen, zodat de beslisser kan kiezen in plaats van alleen
+          ja/nee te zeggen.
+        </div>
+
+        <div class="callout tip">
+          <strong>Beloning:</strong> de derde vlag herinnert je aan de bouwsteen die het vaakst wordt vergeten —
+          <code>JVT{advies_met_eigenaar}</code>. Een advies zonder eigenaar en termijn gebeurt niet.
+        </div>
+      `,
+      questions: [
+        { q: 'Welke vijf bouwstenen horen in een volledig interventieadvies?', answer: ['wat waarom wie wanneer risico\'s', 'wat, waarom, wie, wanneer, risico\'s', 'wat waarom wie wanneer risicos'], hint: 'Een concrete maatregel, de onderbouwing, de eigenaar, de termijn en de neveneffecten.', explain: 'Wat, waarom, wie (eigenaar), wanneer (termijn) en risico\'s maken van een zorg een uitvoerbaar advies.' },
+        { q: 'Welke bouwsteen koppelt het advies aan je bevinding en aan de "so what?"-test?', options: ['Waarom', 'Wat', 'Wanneer', 'Wie'], answer: 0, explain: 'Het "waarom" geeft de onderbouwing en het verwachte effect; zonder dat kan de lezer niet afwegen.' },
+        { q: 'Een dader wijkt na je maatregel uit naar een andere route. Hoe heet dit neveneffect dat je bij de risico\'s benoemt?', answer: ['displacement', 'verplaatsing'], hint: 'Engelse term uit de crime-scripting-room; het probleem verplaatst zich.', explain: 'Displacement (verplaatsing) hoort bij de risico\'s: de interventie verplaatst het probleem in plaats van het op te lossen.' },
+        { q: 'Wat is de derde vlag van deze room (zie de groene tip)?', answer: ['JVT{advies_met_eigenaar}'], hint: 'Staat in de beloning onderaan de taak.' },
+      ],
+    },
+
+    {
+      title: 'Taak 6 — Coachen: til je team op',
+      content: `
+        <p>Naarmate je ervarener wordt, verschuift je waarde. Je maakt niet alleen betere producten, je maakt je
+        <em>team</em> beter. Dat is coachen: niet het werk overnemen, maar ervoor zorgen dat de volgende analist het
+        zelf goed doet — ook als jij er niet bent. Drie hefbomen werken bijzonder goed.</p>
+
+        <h3>1. Peer review — vier ogen op elk oordeel</h3>
+        <p>Laat een collega je product tegenlezen vóórdat het de deur uitgaat, en lees dat van anderen tegen. Een goede
+        peer review is <strong>blame-vrij</strong> en gaat over het product, niet over de persoon. Vaste vragen:</p>
+        <ul>
+          <li>Staat de conclusie bovenaan (BLUF), en volgt de onderbouwing eruit?</li>
+          <li>Zijn beweringen gelabeld als <em>bekend</em>, <em>afgeleid</em> of <em>aanname</em>? Wordt een aanname
+          nergens als feit gepresenteerd?</li>
+          <li>Klopt de waarschijnlijkheidstaal, en staat het betrouwbaarheidsniveau er apart bij?</li>
+          <li>Heeft elk advies een eigenaar en een termijn? Beantwoordt het product de "so what?"</li>
+        </ul>
+        <p>Peer review vangt niet alleen fouten; het verspreidt ook de beste aanpak door het team. Wie andermans werk
+        leest, leert minstens zoveel als wie het schrijft.</p>
+
+        <h3>2. Methoden inbedden — maak goed gedrag de makkelijkste weg</h3>
+        <p>Je wilt niet dat kwaliteit afhangt van wie toevallig de zaak draait. Bed de methoden daarom <em>in</em> het
+        werkproces in, zodat ze vanzelf gebeuren:</p>
+        <ul>
+          <li>Een <strong>sjabloon</strong> met een vaste BLUF-kop, een labelkolom en een adviesblok (wat/waarom/wie/
+          wanneer/risico's).</li>
+          <li>Een korte <strong>checklist</strong> die de analist langsloopt: Admiralty-score ingevuld? ACH gedaan bij
+          attributie? Gevoeligheidscheck uitgevoerd?</li>
+          <li>Een gedeelde <strong>begrippenlijst</strong>, zodat iedereen "waarschijnlijk" hetzelfde gebruikt.</li>
+        </ul>
+        <p>Een methode in een cursus wordt vergeten; een methode in het sjabloon wordt gebruikt.</p>
+
+        <h3>3. Tooling verbeteren — haal de sleur eruit</h3>
+        <p>Let op waar het team tijd verliest aan saai, herhaald werk: handmatig IOC's overtikken, steeds dezelfde
+        bronnen aflopen, defangen en refangen. Dát zijn kandidaten om te automatiseren of te verbeteren. Verzamel
+        feedback ("waar loop je op vast?"), deel een handig script of een graaf-tool, en vier verbeteringen. Minder
+        sleur betekent meer tijd voor het denkwerk dat alleen een mens kan doen.</p>
+
+        <div class="callout tip">
+          <strong>Onthoud:</strong> coachen is een <em>systeem</em> bouwen, geen heldendaad verrichten. Peer review,
+          ingebedde methoden en betere tooling zorgen dat kwaliteit niet aan één persoon hangt, maar aan het team.
+        </div>
+      `,
+      questions: [
+        { q: 'Wat is het belangrijkste kenmerk van een goede peer review?', options: ['Blame-vrij en gericht op het product, niet op de persoon', 'Zo hard mogelijk kritiek geven op de collega', 'Alleen spelfouten zoeken', 'Pas doen nadat het product al verstuurd is'], answer: 0, explain: 'Een blame-vrije review op het product vangt fouten én verspreidt de beste aanpak door het team.' },
+        { q: 'Waarom bed je methoden in een sjabloon en checklist in plaats van ze alleen in een cursus te behandelen?', options: ['Een methode in het sjabloon wordt gebruikt; een methode in een cursus wordt vergeten', 'Sjablonen zijn goedkoper dan cursussen', 'Omdat cursussen verboden zijn', 'Zodat niemand de methode hoeft te kennen'], answer: 0, explain: 'Door de methode in het werkproces te bedden, gebeurt goed gedrag vanzelf en hangt kwaliteit niet af van wie de zaak draait.' },
+        { q: 'Welk soort werk is de beste kandidaat om te automatiseren of met betere tooling aan te pakken?', answer: ['saai herhaald werk', 'herhaald werk', 'repeterend werk', 'sleur'], hint: 'Denk aan IOC\'s overtikken of steeds dezelfde bronnen aflopen.', explain: 'Saai, herhaald werk (zoals IOC\'s overtikken of defangen) kost tijd en voegt weinig denkwerk toe; automatiseer dat.' },
+      ],
+    },
+
+    {
+      title: 'Taak 7 — STAR: vertaal je eigen ervaring',
+      content: `
+        <p>Tot nu toe ging het over het vertalen van <em>onderzoek</em> naar een product. Maar soms is jíj de bron. Bij
+        een evaluatie (lessons learned), een overdracht, een functioneringsgesprek of een sollicitatie moet je je eigen
+        ervaring overdragen. "Ik heb veel ransomware-zaken gedaan" zegt niemand iets. De <strong>STAR-methode</strong>
+        geeft je ervaring structuur, zodat de luisteraar ziet wat je echt hebt gedaan en wat het opleverde.</p>
+
+        <h3>De vier letters</h3>
+        <ul>
+          <li><strong>S — Situatie.</strong> De context, kort. Waar en wanneer speelde het, wat was er aan de hand?
+          <em>"Tijdens een ransomware-incident bij een gemeente, vorig jaar, lagen drie bestandsservers plat."</em></li>
+          <li><strong>T — Taak.</strong> Jouw opdracht of rol daarin. Wat was aan jou? <em>"Ik moest als analist binnen
+          een dag bepalen of er ook data was weggesluisd, voor de datalekmelding."</em></li>
+          <li><strong>A — Actie.</strong> Wat deed jíj concreet (niet "we", maar "ik")? <em>"Ik reconstrueerde de
+          tijdlijn uit de EDR-logs, koppelde het externe IP via een partnerrapport aan een eerdere zaak en schreef een
+          BLUF-advies."</em></li>
+          <li><strong>R — Resultaat.</strong> De uitkomst, liefst meetbaar. <em>"Daardoor kon de FG de melding binnen de
+          72 uur onderbouwd indienen, en blokkeerde het SOC het IP dezelfde middag."</em></li>
+        </ul>
+
+        <h3>Waarom STAR werkt</h3>
+        <p>Het dwingt je weg van vaagheid ("ik ben goed in analyse") naar bewijs ("dit deed ik, dit kwam eruit"). Let op
+        twee valkuilen:</p>
+        <ul>
+          <li><strong>Blijf bij "ik".</strong> Een team doet veel, maar de luisteraar wil jóúw aandeel horen. Gebruik bij
+          de Actie bewust de ik-vorm.</li>
+          <li><strong>Vergeet het Resultaat niet.</strong> Veel mensen stoppen na de Actie. Maar zonder resultaat weet
+          niemand of het werkte. Maak het concreet: op tijd, voorkomen, teruggevonden, bespaard.</li>
+        </ul>
+
+        <div class="callout info">
+          <strong>Koppeling:</strong> STAR is familie van BLUF en van lessons learned. Waar BLUF een <em>product</em>
+          ordent (conclusie eerst), ordent STAR een <em>ervaring</em> (situatie, taak, actie, resultaat). Beide maken van
+          een brij aan details iets wat een ander kan volgen en gebruiken.
+        </div>
+
+        <h3>Samenvatting van de room</h3>
+        <ul>
+          <li>Schrijf voor het juiste <strong>niveau</strong> (strategisch, tactisch, operationeel) en de bijbehorende
+          beslissing.</li>
+          <li>Kies de juiste <strong>productsoort</strong>: fenomeenanalyse, dreigingsbeeld, netwerkanalyse,
+          subjectanalyse of zaakoverstijgende analyse.</li>
+          <li>Zet met <strong>BLUF</strong> de conclusie en aanbeveling vooraan, met waarschijnlijkheidstaal, een
+          eigenaar per advies en de onzekerheid apart.</li>
+          <li>Vertaal je <strong>jargon</strong> zonder de inhoud te verdraaien.</li>
+          <li>Bouw een <strong>interventieadvies</strong> met wat, waarom, wie, wanneer en risico's.</li>
+          <li><strong>Coach</strong> je team via peer review, ingebedde methoden en betere tooling, en vertaal je eigen
+          ervaring met <strong>STAR</strong>.</li>
+        </ul>
+      `,
+      questions: [
+        { q: 'Waar staat de A in de STAR-methode voor?', answer: ['Actie', 'actie', 'Action'], hint: 'Wat deed jíj concreet?', explain: 'A = Actie: wat je zelf concreet deed, bij voorkeur in de ik-vorm.' },
+        { q: 'Welk onderdeel van STAR vergeten mensen het vaakst, terwijl het laat zien of het werkte?', options: ['Resultaat', 'Situatie', 'Taak', 'Actie'], answer: 0, explain: 'Zonder Resultaat (liefst meetbaar) weet de luisteraar niet wat je actie opleverde.' },
+        { q: 'Waarom gebruik je bij de Actie bewust de ik-vorm in plaats van "we"?', options: ['De luisteraar wil jóúw aandeel horen, niet dat van het hele team', 'Omdat "we" grammaticaal fout is', 'Om het team te kleineren', 'Dat hoeft niet, "we" mag altijd'], answer: 0, explain: 'STAR draait om jouw bijdrage; de ik-vorm maakt duidelijk wat jij deed binnen het teamwerk.' },
+        { q: 'Ik kan voor het juiste niveau een product kiezen, een BLUF-advies schrijven met eigenaar en onzekerheid, en mijn eigen ervaring met STAR vertellen.', noAnswer: true },
+      ],
+    },
+  ],
+  terms: [
+    { term: 'Strategisch niveau', def: 'Producten voor directie en bestuur over de lange termijn en het grote plaatje; ondersteunen beleids- en investeringsbeslissingen.' },
+    { term: 'Tactisch niveau', def: 'Producten voor teamleiding en coördinatie over de aanpak en prioriteiten van een thema of type zaak op de middellange termijn.' },
+    { term: 'Operationeel niveau', def: 'Producten voor rechercheurs, analisten en het SOC over het hier en nu: één concrete zaak of subject, met directe handvatten.' },
+    { term: 'Fenomeenanalyse', def: 'Analyse van een crimineel verschijnsel in de breedte: hoe het werkt, welke schakels, actoren en kwetsbaarheden erin zitten.' },
+    { term: 'Dreigingsbeeld', def: 'Product dat dreigingen tegen elkaar afweegt, hun ernst inschat en de trend benoemt (stijgend, dalend, stabiel).' },
+    { term: 'Netwerkanalyse', def: 'Analyse van de relaties en rollen tussen actoren: wie werkt met wie, wie is de spil en wie de kwetsbare tussenschakel.' },
+    { term: 'Subjectanalyse', def: 'Analyse die in de diepte gaat over één persoon of entiteit, waarbij je bekend, afgeleid en aanname streng labelt.' },
+    { term: 'Zaakoverstijgende analyse', def: 'Analyse die patronen en verbanden zoekt over meerdere zaken heen, bijvoorbeeld via een gedeeld kenmerk (pivot).' },
+    { term: 'BLUF (Bottom Line Up Front)', def: 'Schrijfwijze waarbij conclusie en aanbeveling bovenaan staan en de onderbouwing daaronder; de kern eerst.' },
+    { term: 'Interventieadvies', def: 'Voorstel voor een maatregel dat vijf vragen beantwoordt: wat, waarom, wie (eigenaar), wanneer en welke risico\'s.' },
+    { term: 'Peer review', def: 'Blame-vrij tegenlezen van elkaars product op onder meer BLUF, labels, waarschijnlijkheidstaal en een eigenaar per advies.' },
+    { term: 'STAR-methode', def: 'Structuur om je eigen ervaring over te brengen: Situatie, Taak, Actie en Resultaat, met de Actie in de ik-vorm.' },
+  ],
+  resources: [
+    { title: 'NCSC — hulp, duiding en publicaties bij cyberdreigingen', url: 'https://www.ncsc.nl/' },
+    { title: 'Europol — Main reports (o.a. IOCTA: een strategisch dreigingsbeeld)', url: 'https://www.europol.europa.eu/publications-events/main-reports' },
+    { title: 'Animalz — Bottom Line Up Front: schrijven met de conclusie eerst', url: 'https://www.animalz.co/blog/bottom-line-up-front/' },
+    { title: 'National Careers Service (UK) — The STAR method', url: 'https://nationalcareers.service.gov.uk/careers-advice/interview-advice/the-star-method' },
+  ],
+});
+
+</script>
+<script>
+/* Room: Werkblad — alles in één werkproces (intelligence) */
+CS.registerRoom({
+  id: 'werkblad-intel',
+  path: 'intelligence',
+  order: 8,
+  title: 'Werkblad: alles in één werkproces',
+  icon: '🗂️',
+  difficulty: 'Gemiddeld',
+  minutes: 50,
+  summary: 'Het sluitstuk van het intelligence-pad: alle technieken uit de vorige lessen samengebracht in één werkproces, met een checklist die je bij elke zaak kunt aflopen, de valkuilen die je wilt vermijden, en een eindoefening waarin je een casus naar een BLUF-product herschrijft.',
+  objectives: [
+    'Het volledige intelligence-werkproces in stappen benoemen: van richten tot product',
+    'Een checklist afwerken die je bij elke nieuwe zaak kunt gebruiken',
+    'De veelgemaakte fouten herkennen en er een tegenmiddel tegenover zetten',
+    'Je werk kwaliteitsborgen met peer review, labeling en vastgelegde herkomst',
+    'Een korte casus herschrijven naar een BLUF-product met concreet interventieadvies',
+  ],
+  tasks: [
+    {
+      title: 'Taak 1 — Het werkproces in stappen',
+      content: `
+        <p>In de vorige lessen leerde je losse technieken: de intelligencecyclus, CSAE, de Admiralty Code,
+        waarschijnlijkheidstaal, ACH, de modellen (Kill Chain, ATT&CK, Diamond, Pyramid of Pain), pivoten en het
+        BLUF-product. Losse gereedschappen maken je nog geen vakman — het gaat erom dat je ze <strong>in de juiste
+        volgorde</strong> inzet. Dit werkblad rijgt alles aan elkaar tot één werkproces dat je bij elke zaak kunt
+        herhalen. Zie het als het recept waar de losse ingrediënten uit de vorige lessen in samenkomen.</p>
+
+        <h3>De zeven stappen</h3>
+        <ol>
+          <li><strong>Richten.</strong> Begin met de vraag, niet met de data. Wat wil de opdrachtgever weten, en
+          waarom? Een scherpe <em>intelligence-vraag</em> ("Hangen deze twee phishingzaken samen, en wie zit erachter?")
+          stuurt alles wat daarna komt. Zonder richting verzamel je eindeloos en concludeer je niets.</li>
+          <li><strong>Verzamelen met CSAE.</strong> Verzamel gericht (Collect), bewaar elke entiteit mét herkomst en
+          tijd (Store), duid wat je ziet (Analyse) en betrek op tijd je partners — SOC, ISAC, NCSC, politie (Engage).
+          Een losse indicator zonder bron en datum is bijna waardeloos.</li>
+          <li><strong>Modelleren.</strong> Leg je waarnemingen op de kaart. De <strong>Cyber Kill Chain</strong> ordent
+          de aanval in fasen; <strong>MITRE ATT&CK</strong> codeert het gedrag (bijvoorbeeld T1566 phishing of T1486
+          data-versleuteling); het <strong>Diamond Model</strong> verbindt tegenstander, capaciteit, infrastructuur en
+          slachtoffer; de <strong>Pyramid of Pain</strong> vertelt je hoeveel pijn een indicator de aanvaller doet.</li>
+          <li><strong>Pivoten.</strong> Verken de infrastructuur: van domein naar IP, naar certificaat, naar wallet.
+          Zoek het bruggende kenmerk tussen zaken — een herbruikt TLS-certificaat verbindt soms twee zaken die op het
+          eerste gezicht los staan. Toets steeds de <em>zeldzaamheid</em>: een gedeeld cert zegt meer dan een gedeelde
+          populaire favicon.</li>
+          <li><strong>Analyseren.</strong> Weeg je bronnen met de Admiralty Code (betrouwbaarheid A–F én
+          geloofwaardigheid 1–6, apart), zet hypothesen tegen elkaar met ACH (je weerlegt, je bevestigt niet) en
+          druk kansen uit in waarschijnlijkheidstaal met een band ("waarschijnlijk", 55–75%), met het
+          betrouwbaarheidsniveau er los naast.</li>
+          <li><strong>Product maken.</strong> Giet je oordeel in een <strong>BLUF</strong>-product: de conclusie
+          bovenaan, kort, met de onzekerheid apart benoemd. Daaronder het verhaal.</li>
+          <li><strong>Interventieadvies.</strong> Een product zonder "en dus?" is een boekverslag. Sluit af met
+          concreet advies: wát, wáárom, wíe (eigenaar) en wannéér, inclusief de risico's.</li>
+        </ol>
+
+        <div class="callout tip"><strong>Onthoud de richting:</strong> het proces loopt van de vraag naar het advies, niet
+        andersom. Wie met de data begint in plaats van met de vraag, verdwaalt. Beloning voor wie het hele proces kan
+        navertellen: <strong>JVT{van_richten_tot_product}</strong>.</div>
+      `,
+      questions: [
+        { q: 'Waarmee begin je het werkproces: met de data of met de vraag?', options: ['Met de data die je toevallig hebt', 'Met een scherpe intelligence-vraag van de opdrachtgever', 'Met het BLUF-product', 'Met het interventieadvies'], answer: 1, explain: 'Richten komt eerst: de vraag stuurt wat je verzamelt, modelleert en concludeert.' },
+        { q: 'Welke stap komt direct ná "modelleren" in dit werkproces?', options: ['Richten', 'Pivoten', 'Interventieadvies', 'Product maken'], answer: 1, explain: 'De volgorde is richten → verzamelen → modelleren → pivoten → analyseren → product → interventieadvies.' },
+        { q: 'Wat is de vlag die je als beloning krijgt voor het navertellen van het hele proces?', answer: ['JVT{van_richten_tot_product}'], hint: 'Staat vetgedrukt in de tip onderaan de taak.', explain: 'JVT{van_richten_tot_product} — van de vraag helemaal tot het advies.' },
+      ],
+    },
+
+    {
+      title: 'Taak 2 — De checklist die je bij elke zaak afloopt',
+      content: `
+        <p>Een werkproces dat alleen in je hoofd zit, sla je onder druk over. Daarom giet je het in een
+        <strong>checklist</strong>: een lijst die je letterlijk afvinkt, net als een piloot vóór het opstijgen. Niet
+        omdat je dom bent, maar juist omdat ervaren mensen onder tijdsdruk stappen vergeten. Print deze checklist, of
+        plak hem boven je bureau, en loop hem bij elke nieuwe zaak af.</p>
+
+        <h3>Checklist intelligence-zaak</h3>
+        <ol>
+          <li><strong>Richten</strong>
+            <ul>
+              <li>De intelligence-vraag staat op papier, in één zin.</li>
+              <li>Duidelijk wie de opdrachtgever is en waarvoor het product dient (strategisch, tactisch of operationeel).</li>
+            </ul>
+          </li>
+          <li><strong>Verzamelen (CSAE)</strong>
+            <ul>
+              <li>Elke entiteit (IP, domein, hash, wallet, e-mail, alias) is opgeslagen mét herkomst en tijd.</li>
+              <li>Indicatoren zijn "defanged" bewaard (hxxp, 185.220.101[.]4) zodat niemand er per ongeluk op klikt.</li>
+              <li>Partners (SOC, ISAC, NCSC, politie) zijn op tijd betrokken — en je hebt gevraagd wat zíj zien.</li>
+            </ul>
+          </li>
+          <li><strong>Modelleren</strong>
+            <ul>
+              <li>De aanval is in de Kill Chain-fasen gezet.</li>
+              <li>Het gedrag is gecodeerd met echte ATT&CK-ID's.</li>
+              <li>De Diamond-hoekpunten zijn ingevuld (voor zover bekend) en de Pyramid of Pain zegt hoe waardevol je indicatoren zijn.</li>
+            </ul>
+          </li>
+          <li><strong>Pivoten</strong>
+            <ul>
+              <li>De relaties staan in een graaf of tabel, elk met tijd en herkomst.</li>
+              <li>Het bruggende kenmerk tussen zaken is benoemd én op zeldzaamheid getoetst.</li>
+              <li>Opsec bewaakt: geen actief contact met de infrastructuur van de verdachte, geen verraderlijke uploads.</li>
+            </ul>
+          </li>
+          <li><strong>Analyseren</strong>
+            <ul>
+              <li>Elke bron heeft een Admiralty-oordeel (bron A–F én info 1–6, apart).</li>
+              <li>De hypothesen zijn met ACH afgewogen; niet-diagnostisch bewijs is herkend.</li>
+              <li>Kansen staan in waarschijnlijkheidstaal, met het betrouwbaarheidsniveau er los naast.</li>
+            </ul>
+          </li>
+          <li><strong>Product + advies</strong>
+            <ul>
+              <li>De conclusie staat bovenaan (BLUF) en is korter dan de bron.</li>
+              <li>De onzekerheid staat apart benoemd, niet weggemoffeld.</li>
+              <li>Elk interventieadvies heeft een eigenaar, een moment en een risico-afweging.</li>
+            </ul>
+          </li>
+          <li><strong>Kwaliteit (zie taak 4)</strong>
+            <ul>
+              <li>Een collega heeft meegelezen (peer review).</li>
+              <li>Alles is gelabeld als bekend, afgeleid of aanname.</li>
+            </ul>
+          </li>
+        </ol>
+
+        <div class="callout info"><strong>Waarom dit werkt:</strong> een checklist verlaagt de kans dat je de saaie-maar-
+        cruciale stappen (herkomst vastleggen, bronnen wegen, onzekerheid benoemen) overslaat als het druk wordt. Het
+        kost een paar minuten en redt je rapport in de rechtszaal.</div>
+      `,
+      questions: [
+        { q: 'Waarom gebruiken juist ervaren onderzoekers een checklist?', options: ['Omdat ze de stof niet kennen', 'Omdat ook ervaren mensen onder tijdsdruk stappen vergeten', 'Omdat het verplicht is van de wet', 'Omdat het sneller is dan nadenken'], answer: 1, explain: 'Een checklist vangt menselijke fouten op, net als de checklist van een piloot — niet omdat je onkundig bent.' },
+        { q: 'Welke twee dingen leg je volgens de checklist bij élke entiteit vast?', options: ['Kleur en grootte', 'Herkomst en tijd', 'Prijs en eigenaar', 'Taal en land'], answer: 1, explain: 'Zonder herkomst weeg je betrouwbaarheid niet; zonder tijd weet je niet of de indicator nog klopt.' },
+        { q: 'Op welk kenmerk toets je het bruggende kenmerk tussen twee zaken?', answer: ['zeldzaamheid', 'de zeldzaamheid'], hint: 'Een gedeeld cert zegt meer dan een gedeelde populaire favicon.', explain: 'Zeldzaamheid: hoe unieker het gedeelde kenmerk, hoe sterker het de zaken verbindt.' },
+      ],
+    },
+
+    {
+      title: 'Taak 3 — Veelgemaakte fouten & tegenmiddelen',
+      content: `
+        <p>De gevaarlijkste fouten in dit vak zitten niet in de techniek maar in het hoofd. Een goede analist kent zijn
+        eigen valkuilen en zet er bewust een tegenmiddel tegenover. De vier die je het vaakst zult tegenkomen:</p>
+
+        <h3>1. Denkfouten (cognitive bias)</h3>
+        <p>Je brein zoekt bevestiging. Heb je eenmaal een verdachte in gedachten, dan ga je onbewust bewijs zoeken dat
+        klopt (<em>confirmation bias</em>) en blijf je hangen bij je eerste indruk (<em>anchoring</em>).</p>
+        <ul>
+          <li><strong>Tegenmiddel:</strong> werk met ACH. Zet meerdere hypothesen náást elkaar en zoek bewust naar
+          bewijs dat ze <em>weerlegt</em>. De hypothese met de minste tegenspraak wint — niet de hypothese die je het
+          liefst wilde.</li>
+        </ul>
+
+        <h3>2. Tool = actor</h3>
+        <p>Twee zaken gebruiken dezelfde ransomware, of hetzelfde open-source hulpmiddel. Conclusie: dezelfde dader!
+        Fout. Gereedschap wordt gedeeld, gekocht en gehuurd (crime-as-a-service). Een gedeelde <em>tool</em> onderaan
+        de Pyramid of Pain bewijst nog geen gedeelde <em>actor</em>.</p>
+        <ul>
+          <li><strong>Tegenmiddel:</strong> attribueer op zeldzame, dure kenmerken (TTP's, eigen infrastructuur) hoog
+          in de piramide, niet op breed verkrijgbare tools. Label een actor-conclusie als <em>afgeleid</em>, nooit als
+          <em>bekend</em>.</li>
+        </ul>
+
+        <h3>3. Schijnprecisie</h3>
+        <p>"De aanval was voor 87,3% zeker Russisch." Dat getal suggereert een nauwkeurigheid die je helemaal niet hebt.
+        Schijnprecisie (<em>false precision</em>) misleidt de lezer en verbergt onzekerheid.</p>
+        <ul>
+          <li><strong>Tegenmiddel:</strong> gebruik de waarschijnlijkheidsbanden ("waarschijnlijk", 55–75%) en geef het
+          betrouwbaarheidsniveau er los naast. Een eerlijke band is sterker dan een vals-precies getal.</li>
+        </ul>
+
+        <h3>4. Opsec-uploads</h3>
+        <p>Je vindt een verdacht bestand en uploadt het meteen naar een online sandbox of scanner om te zien wat het is.
+        Begrijpelijk — maar de aanvaller kan meekijken: veel diensten delen samples publiek, en een plotselinge upload
+        of een probe naar zijn infrastructuur kan de dader waarschuwen dat hij ontdekt is. Dan brandt je lopende
+        onderzoek af.</p>
+        <ul>
+          <li><strong>Tegenmiddel:</strong> blijf passief waar het kan (passive DNS, crt.sh, WHOIS), weeg bewust af
+          voordat je iets uploadt of een server rechtstreeks benadert, en overleg bij twijfel met je team. Opsec is
+          onderdeel van het werkproces, geen bijzaak.</li>
+        </ul>
+
+        <div class="callout danger"><strong>Rode draad:</strong> elke fout hierboven komt erop neer dat je méér beweert dan
+        je bewijs toelaat. Het tegenmiddel is steeds hetzelfde: wees expliciet over wat je weet, wat je afleidt en wat
+        je aanneemt — en handel opsec-bewust.</div>
+      `,
+      questions: [
+        { q: 'Twee zaken gebruiken dezelfde kant-en-klare ransomware. Wat mag je daaruit concluderen?', options: ['Zeker dezelfde dader', 'Nog niets over de dader: gereedschap wordt gedeeld en gehuurd', 'Dat de tool slecht is', 'Dat er geen verband is'], answer: 1, explain: 'Tool is geen actor. Attributie bouw je op zeldzame kenmerken hoog in de Pyramid of Pain, niet op gedeelde tools.' },
+        { q: 'Wat is het beste tegenmiddel tegen confirmation bias?', options: ['Sneller werken', 'Meerdere hypothesen met ACH afwegen en bewust naar weerlegging zoeken', 'Alleen je eigen theorie onderbouwen', 'De zaak overdragen'], answer: 1, explain: 'ACH dwingt je hypothesen te weerleggen in plaats van je lievelingstheorie te bevestigen.' },
+        { q: 'Waarom kan het riskant zijn om een verdacht bestand meteen online te uploaden?', options: ['Het kost geld', 'De aanvaller kan het merken en weet dan dat hij ontdekt is', 'Het bestand wordt dan gewist', 'Dat is nooit riskant'], answer: 1, explain: 'Een opsec-lek: publieke uploads of probes kunnen de dader waarschuwen en je lopende onderzoek verraden.' },
+      ],
+    },
+
+    {
+      title: 'Taak 4 — Kwaliteitsborging',
+      content: `
+        <p>Je product belandt misschien op het bureau van een officier van justitie of een directie die er beslissingen
+        op baseert. Dan moet het kloppen — en moet aantoonbaar zijn dát het klopt. Kwaliteitsborging is geen extra laagje;
+        het is wat je werk van een mening onderscheidt. Drie pijlers.</p>
+
+        <h3>1. Peer review</h3>
+        <p>Laat altijd een collega meelezen vóór je een product uitbrengt. Een frisse blik ziet de sprong in je logica
+        die jij niet meer ziet, want jij zit al dagen in de zaak. Goede review gaat niet over spelling maar over de
+        redenering: volgt de conclusie echt uit het bewijs? Is er een hypothese over het hoofd gezien? Coach elkaar
+        zonder te oordelen — de zaak wordt er beter van, niet de ego's.</p>
+
+        <h3>2. Labelen: bekend, afgeleid of aanname</h3>
+        <p>Dit is misschien wel de belangrijkste gewoonte uit het hele pad. Markeer elke bewering expliciet:</p>
+        <ul>
+          <li><strong>Bekend</strong> — een feit of directe waarneming ("het domein <code>betaal-controle.jvt.lab</code>
+          resolvete op 2026-01 naar 203.0.113.10, bron: passive DNS").</li>
+          <li><strong>Afgeleid</strong> — een analytische conclusie uit het bewijs ("beide zaken delen één TLS-certificaat,
+          dus zijn ze waarschijnlijk door dezelfde actor opgezet").</li>
+          <li><strong>Aanname</strong> — onbewezen, nog in te vullen ("de actor is vermoedelijk Russisch" — zonder bewijs
+          een aanname, geen feit).</li>
+        </ul>
+        <p>Wie deze drie door elkaar haalt, presenteert een gok als een feit. Dat is precies waar rapporten in de
+        rechtszaal op sneuvelen. Beloning voor wie dit standaard toepast: <strong>JVT{bekend_afgeleid_aanname}</strong>.</p>
+
+        <h3>3. Herkomst en tijd vastleggen (provenance)</h3>
+        <p>Bij élke entiteit en bewering leg je vast: wáár komt het vandaan en wannéér is het waargenomen. Zonder herkomst
+        kun je de betrouwbaarheid niet wegen; zonder tijd weet je niet of de indicator nog actueel is (een IP dat vandaag
+        kwaadaardig is, kan over een maand een onschuldige webshop hosten). Deze <em>provenance</em> maakt je werk
+        reproduceerbaar: een ander moet jouw conclusie kunnen natrekken en op dezelfde uitkomst komen.</p>
+
+        <div class="callout info"><strong>Verdedigbaar werk:</strong> kun je laten zien dat je bronnen hebt gewogen, hypothesen
+        hebt afgewogen, beweringen hebt gelabeld en herkomst hebt vastgelegd, dan staat je méthode niet meer ter discussie —
+        alleen nog je bevindingen. Dat is het verschil tussen een onderbouwd oordeel en een losse flodder.</div>
+      `,
+      questions: [
+        { q: '"Beide zaken delen één zeldzaam TLS-certificaat, dus waarschijnlijk dezelfde actor." Welk label hoort hierbij?', options: ['bekend', 'afgeleid', 'aanname'], answer: 1, explain: 'Een analytische conclusie uit bewijs is afgeleid — niet een direct waargenomen feit (bekend) en niet onbewezen (aanname).' },
+        { q: 'Wat is het belangrijkste doel van peer review bij een intelligence-product?', options: ['Spelfouten verbeteren', 'Controleren of de conclusie echt uit het bewijs volgt en of een hypothese is gemist', 'Het product korter maken', 'De auteur beoordelen'], answer: 1, explain: 'Peer review toetst de redenering: een frisse blik ziet de logische sprongen die de auteur niet meer opmerkt.' },
+        { q: 'Welke vlag hoort bij het standaard labelen van je beweringen?', answer: ['JVT{bekend_afgeleid_aanname}'], hint: 'Staat vetgedrukt onder het kopje over labelen.', explain: 'JVT{bekend_afgeleid_aanname} — de drie labels die je gok van een feit onderscheiden.' },
+      ],
+    },
+
+    {
+      title: 'Taak 5 — Eindoefening: schrijf een BLUF-product',
+      content: `
+        <p>Tijd om het hele proces in één oefening samen te brengen. Hieronder staat een korte, chronologische casus zoals
+        je die ruw zou aantreffen: een opsomming van wat er gebeurde, van begin naar eind. Dat leest prettig als verhaal,
+        maar een drukke lezer wil niet eerst door de hele tijdlijn ploegen om de pointe te vinden.</p>
+
+        <p>Jouw opdracht in het lab: <strong>herschrijf deze casus naar een BLUF-product</strong> — <em>Bottom Line Up
+        Front</em>, de conclusie eerst. Zet bovenaan wat het betekent en wat er moet gebeuren; zet de onderbouwing
+        daaronder. Denk aan de rubric die je in het lab kunt aanvinken:</p>
+        <ul>
+          <li>De <strong>conclusie staat bovenaan</strong>, niet aan het eind.</li>
+          <li>Je gebruikt <strong>waarschijnlijkheidstaal</strong> (een band zoals "waarschijnlijk"), niet een vals-precies getal.</li>
+          <li>Elk <strong>interventieadvies heeft een eigenaar</strong> (wie doet het) en een moment.</li>
+          <li>Het product is <strong>beknopter dan de bron</strong>.</li>
+          <li>De <strong>onzekerheid staat apart</strong> benoemd.</li>
+        </ul>
+
+        <div class="callout tip"><strong>Aanpak:</strong> lees de casus, bepaal de kernboodschap ("wat is hier aan de hand en
+        wat moet er gebeuren?"), schrijf die als eerste zin, en vul daarna de onderbouwing en het advies aan. Het lab
+        draait een heuristische checklist over je tekst — geen AI-cijfer, maar een spiegel. Haal je alle punten, dan
+        verdien je de vlag <strong>JVT{conclusie_eerst}</strong>.</div>
+
+        <p>Vergelijk je versie daarna met het meegeleverde voorbeeld (de knop in het lab). Er is niet één juist antwoord;
+        het gaat erom dat de lezer binnen vijf seconden weet wat hij moet doen.</p>
+      `,
+      lab: {
+        type: 'bluf',
+        source: 'CASUS (ruw, chronologisch):\n\nOp 12 januari 2026 meldde de helpdesk dat drie medewerkers een e-mail hadden ontvangen met een link naar "betaal-controle.jvt.lab". Op 13 januari bevestigde onze eigen SIEM-log (A2) dat een medewerker op de link had geklikt en inloggegevens had ingevoerd. Op 15 januari zag het SOC uitgaand verkeer vanaf het werkstation naar 203.0.113.10. Via passive DNS (crt.sh en WHOIS, herkomst vastgelegd) bleek dat "betaal-controle.jvt.lab" een TLS-certificaat met vingerafdruk A1B2C3D4 presenteerde. Datzelfde certificaat A1B2C3D4 dook op 2 februari op bij een tweede phishingdomein, "inlog-verificatie.jvt.lab", dat een collega-organisatie had gemeld (bron B, nog onbevestigd). De WHOIS-contactmail bij de eerste zaak was "beheer@betaal-controle.jvt.lab". Een extern rapport (betrouwbaarheid C) noemde een losgeld-wallet bc1qfictief0alpha. De twee domeinen resolveerden naar verschillende IP-adressen, maar deelden dus wel het certificaat. Er is nog geen bewijs voor de identiteit van de actor.',
+        model: 'BLUF: Zaak Alpha (betaal-controle.jvt.lab) en Zaak Bravo (inlog-verificatie.jvt.lab) zijn waarschijnlijk (55-75%) opgezet door dezelfde actor; betrouwbaarheidsniveau: gemiddeld. De sterkste aanwijzing is een zeldzaam, herbruikt TLS-certificaat (A1B2C3D4) dat op beide domeinen voorkomt. Er is bevestigde phishing met credential-diefstal op ons eigen netwerk.\n\nADVIES:\n1. Blokkeer beide domeinen en het IP 203.0.113.10 op de proxy/DNS-filter (eigenaar: SOC, vandaag).\n2. Reset de wachtwoorden van de getroffen medewerker en schakel MFA af/opnieuw in (eigenaar: IT-beheer, binnen 24 uur).\n3. Deel certificaat A1B2C3D4 en de IOCs (defanged) met de ISAC en het NCSC (eigenaar: analist, deze week).\n\nONZEKERHEID: de identiteit van de actor is onbekend (aanname, geen bewijs). De melding van Zaak Bravo is nog onbevestigd (bron B). De losgeld-wallet komt uit een extern rapport van beperkte betrouwbaarheid (C).\n\nONDERBOUWING (kort): bevestigde klik + credential-invoer (eigen SIEM, A2) op 13-1; uitgaand verkeer naar 203.0.113.10 op 15-1; gedeeld certificaat A1B2C3D4 bij beide domeinen (crt.sh, herkomst vastgelegd). IP-adressen verschillen, het certificaat bruggt de zaken.',
+      },
+      questions: [
+        { q: 'Wat betekent BLUF?', answer: ['bottom line up front', 'bottom-line up front'], hint: 'Engelse term; de conclusie komt eerst.', explain: 'Bottom Line Up Front: zet de kernboodschap en het advies bovenaan, de onderbouwing daaronder.' },
+        { q: 'In het BLUF-voorbeeld: welk kenmerk verbindt Zaak Alpha en Zaak Bravo?', options: ['Hetzelfde IP-adres', 'Hetzelfde herbruikte TLS-certificaat (A1B2C3D4)', 'Dezelfde losgeld-wallet', 'Dezelfde medewerker'], answer: 1, explain: 'De IP-adressen verschillen; het gedeelde, zeldzame certificaat A1B2C3D4 is de brug tussen de zaken.' },
+        { q: 'Ik heb de casus naar een BLUF-product herschreven en tegen de rubric getoetst (vlag JVT{conclusie_eerst}).', noAnswer: true },
+      ],
+    },
+
+    {
+      title: 'Taak 6 — Afsluiting & hoe verder',
+      content: `
+        <p>Je hebt het hele intelligence-pad doorlopen en alles samengebracht in één werkproces. Je kunt nu van een
+        scherpe vraag, via gericht verzamelen, modelleren, pivoten en analyseren, naar een BLUF-product met concreet
+        interventieadvies — en je borgt de kwaliteit met peer review, labeling en vastgelegde herkomst. Dat is precies
+        wat een intelligence-analist bij de politie, een CERT of een SOC dag in dag uit doet.</p>
+
+        <h3>De rooms in dit pad nog eens op een rij</h3>
+        <p>Loop ze gerust terug als een stap nog niet lekker zit:</p>
+        <ul>
+          <li><strong>Het cybercrime-ecosysteem</strong> — crime-as-a-service, RaaS en de interventietypologie: de wereld waarin je werkt.</li>
+          <li><strong>Crime scripting</strong> — de misdaad in fasen ontleden en per fase een interventie kiezen.</li>
+          <li><strong>Intelligencecyclus, CSAE &amp; gestructureerd analyseren</strong> — de cyclus, de Admiralty Code, waarschijnlijkheidstaal, ACH en je eigen denkfouten.</li>
+          <li><strong>Threat intelligence-modellen</strong> — Kill Chain, MITRE ATT&CK, Diamond Model en de Pyramid of Pain.</li>
+          <li><strong>OSINT &amp; pivoting</strong> — het entiteitenmodel, passieve bronnen, fingerprinting en het bruggende kenmerk vinden.</li>
+          <li><strong>Intelligenceproducten</strong> — BLUF, jargon vertalen en een goed interventieadvies schrijven.</li>
+          <li><strong>De praktijkcase</strong> — de volledige workflow in één keer op een fictieve zaak.</li>
+        </ul>
+
+        <h3>Waar sluit dit op aan?</h3>
+        <p>Intelligence staat niet op zichzelf. Twee buurpaden versterken je direct:</p>
+        <ul>
+          <li>Het <strong>forensie-pad</strong> levert de harde sporen waar je intelligence op bouwt: schijf- en
+          geheugenonderzoek, tijdlijnen, netwerkforensie en OSINT-opsporing. Een goed onderbouwd oordeel begint bij goed
+          veiliggesteld bewijs.</li>
+          <li>Het <strong>defensief-pad</strong> laat zien hoe je intelligence <em>gebruikt</em>: detectie-engineering,
+          logs en detectie, incident response en de room over threat intelligence &amp; ATT&CK die de modellen aanvult.
+          Jouw indicatoren worden daar detectieregels en response-acties.</li>
+        </ul>
+
+        <div class="callout tip"><strong>Blijf scherp:</strong> gebruik de <strong>🎯 Oefenarena</strong> en de
+        <strong>🃏 Begrippentrainer</strong> om de begrippen uit dit pad te laten beklijven. En onthoud de kern: beweer
+        nooit méér dan je bewijs toelaat, label wat je weet, afleidt en aanneemt, en werk opsec-bewust. Succes op de weg
+        naar de digitale opsporing. 🕵️</div>
+      `,
+      questions: [
+        { q: 'Welk pad levert de harde sporen (schijf, geheugen, netwerk) waarop je intelligence voortbouwt?', options: ['Het forensie-pad', 'Het eindopdracht-pad', 'Het fundamenten-pad', 'Geen enkel pad'], answer: 0, explain: 'Forensie stelt het bewijs veilig en reconstrueert wat er gebeurde; intelligence bouwt daarop voort.' },
+        { q: 'In welk pad worden jouw indicatoren omgezet in detectieregels en response-acties?', options: ['Het offensief-pad', 'Het defensief-pad', 'Het forensie-pad', 'Het intelligence-pad'], answer: 1, explain: 'Het defensief-pad (detectie-engineering, logs, incident response) gebruikt intelligence om aanvallen te detecteren en erop te reageren.' },
+        { q: 'Ik kan het hele werkproces zelfstandig doorlopen, van richten tot interventieadvies, en ik borg de kwaliteit. 🚀', noAnswer: true },
+      ],
+    },
+  ],
+  terms: [
+    { term: 'Werkproces', def: 'De vaste volgorde waarin je de technieken inzet: richten, verzamelen, modelleren, pivoten, analyseren, product en interventieadvies.' },
+    { term: 'Richten', def: 'De eerste stap: een scherpe intelligence-vraag formuleren die alles wat daarna komt stuurt.' },
+    { term: 'CSAE', def: 'Collect, Store, Analyse, Engage: gericht verzamelen, met herkomst en tijd bewaren, duiden en partners betrekken.' },
+    { term: 'Pivoten', def: 'Langs relaties (domein, IP, cert, wallet) van de ene entiteit naar de andere springen om het bruggende kenmerk tussen zaken te vinden.' },
+    { term: 'ACH', def: 'Analysis of Competing Hypotheses: meerdere hypothesen náást elkaar zetten en zoeken naar bewijs dat ze weerlegt in plaats van bevestigt.' },
+    { term: 'Admiralty Code', def: 'Bron apart beoordelen op betrouwbaarheid (A–F) en informatie op geloofwaardigheid (1–6).' },
+    { term: 'Waarschijnlijkheidstaal', def: 'Kansen uitdrukken in vaste banden (zoals "waarschijnlijk", 55–75%) in plaats van vals-precieze getallen, met het betrouwbaarheidsniveau er los naast.' },
+    { term: 'BLUF', def: 'Bottom Line Up Front: de conclusie en het advies bovenaan, de onderbouwing eronder.' },
+    { term: 'Interventieadvies', def: 'Concreet advies bij een product: wat, waarom, wie (eigenaar) en wanneer, inclusief de risico\'s.' },
+    { term: 'Checklist', def: 'Een afvinkbare lijst die je bij elke zaak afloopt, zodat je ook onder tijdsdruk geen cruciale stap overslaat.' },
+    { term: 'Schijnprecisie', def: 'False precision: een getal gebruiken dat een nauwkeurigheid suggereert die je niet hebt; vervang het door een waarschijnlijkheidsband.' },
+    { term: 'Provenance', def: 'Herkomst en tijd die je bij elke entiteit en bewering vastlegt, zodat je werk weegbaar en reproduceerbaar is.' },
+  ],
+  resources: [
+    { title: 'MITRE ATT&CK — kennisbank van tactieken en technieken', url: 'https://attack.mitre.org/' },
+    { title: 'Lockheed Martin — Cyber Kill Chain', url: 'https://www.lockheedmartin.com/en-us/capabilities/cyber/cyber-kill-chain.html' },
+    { title: 'David Bianco — The Pyramid of Pain', url: 'https://detect-respond.blogspot.com/2013/03/the-pyramid-of-pain.html' },
+    { title: 'NCSC — hulp, adviezen en dreigingsbeeld', url: 'https://www.ncsc.nl/' },
+  ],
+});
+
+</script>
+<script>
 /* Room: Eindopdracht — Mini-CTF "Operatie KoffieKlap" */
 CS.registerRoom({
   id: 'mini-ctf',
