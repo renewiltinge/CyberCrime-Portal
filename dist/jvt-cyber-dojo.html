@@ -16983,6 +16983,2061 @@ CS.registerRoom({
 
 </script>
 <script>
+/* Room: Het cybercrime-ecosysteem */
+CS.registerRoom({
+  id: 'cybercrime-ecosysteem',
+  path: 'intelligence',
+  order: 1,
+  title: 'Het cybercrime-ecosysteem',
+  icon: '🕸️',
+  difficulty: 'Makkelijk',
+  minutes: 55,
+  summary: 'Hoe moderne cybercrime werkt als een keten van gespecialiseerde diensten (crime-as-a-service): de rollen, het ransomware-verdienmodel met dubbele afpersing en leksites, de vier interventietypen en bekende opsporingsoperaties.',
+  objectives: [
+    'Uitleggen hoe crime-as-a-service als keten met arbeidsdeling werkt',
+    'De belangrijkste rollen in het ecosysteem met een analogie beschrijven (ontwikkelaar, infostealer-operator, IAB, loader-dienst, RaaS-operator, affiliate, bulletproof hoster, witwasser)',
+    'Het ransomware-verdienmodel (RaaS, dubbele afpersing) en leksites als intelligencebron uitleggen',
+    'Een leksite-post en een anonieme tip beoordelen op betrouwbaarheid en geloofwaardigheid (Admiralty Code)',
+    'De vier interventietypen onderscheiden: strafrechtelijk, verstoren, preventief en alternatief',
+    'Bekende opsporingsoperaties aan een interventietype koppelen',
+  ],
+  tasks: [
+    {
+      title: 'Taak 1 — Misdaad als keten: wat is crime-as-a-service?',
+      content: `
+        <p>Als je aan een cybercrimineel denkt, zie je misschien één genie met een hoodie dat in zijn eentje
+        een bank leegtrekt. De werkelijkheid is bijna het tegenovergestelde. Moderne cybercrime is een hele
+        <strong>economie</strong> met <strong>arbeidsdeling</strong>: net als in de gewone wereld bouwt niemand
+        een auto helemaal alleen. De één maakt de motor, de ander de banden, een derde doet de verkoop. Elke
+        schakel is gespecialiseerd en koopt diensten in bij de volgende.</p>
+
+        <p>Die handel heeft een naam: <strong>crime-as-a-service</strong> (CaaS, "misdaad als dienst"). Criminelen
+        verkopen elkaar kant-en-klare gereedschappen en diensten, precies zoals een gewoon bedrijf software "as a
+        service" afneemt. Je hoeft geen malware te kunnen schrijven om een aanval uit te voeren &mdash; je huurt die
+        kennis gewoon in. Dat verlaagt de drempel enorm: ook iemand met weinig technische kennis kan meedoen,
+        zolang hij maar betaalt.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 690 118" role="img" aria-label="De cybercrime-keten in vijf schakels">
+            <rect x="10" y="46" width="114" height="56" rx="8" fill="var(--surface-2)" stroke="currentColor" stroke-width="1.5" />
+            <rect x="148" y="46" width="114" height="56" rx="8" fill="var(--surface-2)" stroke="currentColor" stroke-width="1.5" />
+            <rect x="286" y="46" width="114" height="56" rx="8" fill="var(--surface-2)" stroke="currentColor" stroke-width="1.5" />
+            <rect x="424" y="46" width="114" height="56" rx="8" fill="var(--surface-2)" stroke="currentColor" stroke-width="1.5" />
+            <rect x="562" y="46" width="114" height="56" rx="8" fill="var(--surface-2)" stroke="currentColor" stroke-width="1.5" />
+            <text x="67" y="72" text-anchor="middle" fill="currentColor" font-size="13">Bouwen</text>
+            <text x="67" y="90" text-anchor="middle" fill="var(--muted)" font-size="11">ontwikkelaar</text>
+            <text x="205" y="72" text-anchor="middle" fill="currentColor" font-size="13">Binnenkomen</text>
+            <text x="205" y="90" text-anchor="middle" fill="var(--muted)" font-size="11">infostealer, IAB</text>
+            <text x="343" y="72" text-anchor="middle" fill="currentColor" font-size="13">Uitvoeren</text>
+            <text x="343" y="90" text-anchor="middle" fill="var(--muted)" font-size="11">loader, affiliate</text>
+            <text x="481" y="72" text-anchor="middle" fill="currentColor" font-size="13">Verdienen</text>
+            <text x="481" y="90" text-anchor="middle" fill="var(--muted)" font-size="11">RaaS-operator</text>
+            <text x="619" y="72" text-anchor="middle" fill="currentColor" font-size="13">Verbergen</text>
+            <text x="619" y="90" text-anchor="middle" fill="var(--muted)" font-size="11">hoster, witwasser</text>
+            <line x1="124" y1="74" x2="140" y2="74" stroke="currentColor" stroke-width="1.5" />
+            <polygon points="140,70 146,74 140,78" fill="currentColor" />
+            <line x1="262" y1="74" x2="278" y2="74" stroke="currentColor" stroke-width="1.5" />
+            <polygon points="278,70 284,74 278,78" fill="currentColor" />
+            <line x1="400" y1="74" x2="416" y2="74" stroke="currentColor" stroke-width="1.5" />
+            <polygon points="416,70 422,74 416,78" fill="currentColor" />
+            <line x1="538" y1="74" x2="554" y2="74" stroke="currentColor" stroke-width="1.5" />
+            <polygon points="554,70 560,74 554,78" fill="currentColor" />
+          </svg>
+          <figcaption>De keten in vijf schakels. In elke schakel verkoopt een specialist een dienst aan de volgende &mdash; en in elke schakel kan de opsporing ingrijpen.</figcaption>
+        </figure>
+
+        <p>Waarom is dit belangrijk voor de opsporing? Omdat een keten <em>breekpunten</em> heeft. Je hoeft niet
+        elke crimineel afzonderlijk op te pakken. Haal je één belangrijke dienst uit de lucht &mdash; bijvoorbeeld een
+        populaire loader of een hostingpartij &mdash; dan raak je in één klap tientallen criminelen die daarvan
+        afhankelijk waren. Denk aan een smokkelroute: je hoeft niet elke smokkelaar te vangen als je de
+        ene cruciale brug kunt sluiten. In de volgende taken kijken we per schakel wie welke rol speelt.</p>
+
+        <div class="callout info">
+          <p><strong>Belofte:</strong> dit portaal gebruikt alleen echte, publiek beschreven feiten over operaties
+          en modellen. Namen van slachtofferbedrijven in oefeningen zijn altijd fictief (bijvoorbeeld "NederBank").</p>
+        </div>
+
+        <p>Als beloning voor het doorgronden van het ketenidee, hier je eerste vlag van dit leerpad:
+        <strong>JVT{misdaad_als_keten}</strong>.</p>
+      `,
+      questions: [
+        {
+          q: 'Welke omschrijving past het best bij crime-as-a-service?',
+          options: [
+            'Eén hacker die in zijn eentje een complete aanval van begin tot eind uitvoert',
+            'Een economie waarin criminelen gespecialiseerde gereedschappen en diensten aan elkaar verkopen',
+            'Een legale beveiligingsdienst die bedrijven inhuren',
+          ],
+          answer: 1,
+          explain: 'Crime-as-a-service draait om arbeidsdeling: specialisten verkopen elkaar diensten, zodat ook minder technische daders kunnen meedoen.',
+        },
+        {
+          q: 'Noem in één woord het principe van taakverdeling en specialisatie waarop crime-as-a-service rust.',
+          answer: ['arbeidsdeling', 'specialisatie', 'taakverdeling'],
+          hint: 'Net als in een fabriek: iedereen doet zijn eigen deel.',
+          explain: 'Arbeidsdeling (specialisatie) maakt de keten efficiënt — en geeft de opsporing meteen breekpunten.',
+        },
+        {
+          q: 'Wat is de vlag die als beloning in deze taak staat?',
+          answer: ['JVT{misdaad_als_keten}'],
+          hint: 'Hij staat vetgedrukt onderaan de uitleg.',
+          explain: 'JVT{misdaad_als_keten} — onthoud: een keten heeft breekpunten.',
+        },
+      ],
+    },
+
+    {
+      title: 'Taak 2 — De rollen die bouwen en binnenkomen',
+      content: `
+        <p>We lopen de keten langs. De eerste schakels maken het gereedschap en zorgen dat iemand überhaupt
+        <em>binnenkomt</em> in een netwerk. Elke rol krijgt een analogie uit het dagelijks leven.</p>
+
+        <h3>De ontwikkelaar (de wapensmid)</h3>
+        <p>De <strong>ontwikkelaar</strong> schrijft de kwaadaardige software: de ransomware, de infostealer, de
+        loader. Vergelijk het met een <em>wapensmid</em> die zelf nooit een bank overvalt, maar wel het wapen maakt
+        en het bouwpakket verkoopt. Ontwikkelaars zijn vaak de meest technische mensen in de keten en blijven liefst
+        uit het zicht; ze leveren het "product" en laten anderen het vuile werk doen.</p>
+
+        <h3>De infostealer-operator (de zakkenroller)</h3>
+        <p>Een <strong>infostealer</strong> is malware die massaal inloggegevens, cookies, wachtwoorden en
+        sessietokens van besmette computers steelt. De operator verspreidt die malware breed (bijvoorbeeld via nep-downloads)
+        en oogst alles wat binnenkomt. Het is de <em>zakkenroller op het station</em>: hij weet van tevoren niet wiens
+        portemonnee hij jat, pakt er zo veel mogelijk en verkoopt de buit daarna per partij door als "logs" op
+        criminele marktplaatsen. In één zo'n log kan de toegang tot je werkmail én je bedrijfsnetwerk zitten.</p>
+
+        <h3>De Initial Access Broker (de heler met de sleutel)</h3>
+        <p>Een <strong>Initial Access Broker (IAB)</strong> is gespecialiseerd in het binnenkomen én dat verkopen.
+        Hij breekt in &mdash; via gestolen wachtwoorden, een kwetsbare server of een gekochte infostealer-log &mdash; en verkoopt
+        vervolgens de kant-en-klare <em>toegang</em> tot dat bedrijfsnetwerk aan de hoogste bieder. De analogie: een
+        <em>heler die de sleutel van een gekraakt pand verkoopt</em>. Zelf steelt hij niets uit het pand; hij levert alleen
+        de toegang, zodat de volgende partij naar binnen kan lopen. IAB's zijn een geliefde schakel voor ransomwarebendes:
+        die kopen gewoon toegang in plaats van zelf in te breken.</p>
+
+        <h3>De loader-dienst (de bezorgkoerier)</h3>
+        <p>Een <strong>loader</strong> (of dropper) is een klein stukje malware dat al op een besmette computer staat
+        en vervolgens <em>andere</em> malware binnenhaalt en start. De loader-dienst verkoopt dit per installatie
+        ("pay-per-install"): heb jij ransomware die je op duizend machines wil laten landen, dan betaal je de
+        loader-dienst om jouw payload af te leveren. Het is de <em>bezorgkoerier</em> van de onderwereld: zelf geen
+        aanvaller, maar hij brengt het pakketje op het juiste adres. Loaders zijn daarom een favoriet doelwit van de
+        opsporing: schakel je de bezorgdienst uit, dan ligt een hele waslijst aan aanvallen stil.</p>
+      `,
+      questions: [
+        {
+          q: 'Hoe heet malware die massaal inloggegevens, cookies en wachtwoorden van besmette computers steelt en als "logs" doorverkoopt?',
+          answer: ['infostealer', 'infostealer-malware', 'info-stealer', 'info stealer'],
+          hint: 'De Engelse term betekent letterlijk "informatiesteler".',
+          explain: 'Een infostealer oogst gegevens die daarna per partij als logs worden verkocht.',
+        },
+        {
+          q: 'Wat verkoopt een Initial Access Broker (IAB)?',
+          options: [
+            'De broncode van de malware',
+            'Kant-en-klare toegang tot een gehackt netwerk',
+            'Gratis decryptietools voor slachtoffers',
+          ],
+          answer: 1,
+          explain: 'Een IAB breekt in en verkoopt vervolgens de toegang — als een heler die de sleutel van een gekraakt pand doorverkoopt.',
+        },
+        {
+          q: 'Een loader-dienst werkt vaak volgens welk model?',
+          options: ['Pay-per-install (betalen per besmette machine)', 'Gratis en open source', 'Vaste maandprijs voor slachtoffers'],
+          answer: 0,
+          explain: 'De loader is de bezorgkoerier: je betaalt per installatie om jouw payload op machines af te leveren.',
+        },
+      ],
+    },
+
+    {
+      title: 'Taak 3 — De rollen die uitbaten en verbergen',
+      content: `
+        <p>De toegang is er; nu moet er geld worden verdiend en weggesluisd. Deze schakels maken van een inbraak
+        een verdienmodel en zorgen dat niemand gepakt wordt.</p>
+
+        <h3>De RaaS-operator (de franchisegever)</h3>
+        <p><strong>RaaS</strong> staat voor <em>Ransomware-as-a-Service</em>. De RaaS-operator bouwt het complete
+        platform: de ransomware zelf, een onderhandelingsportaal, klantenservice voor "betalende" slachtoffers en een
+        leksite. Vergelijk het met een <em>franchisegever</em> zoals een bekende fastfoodketen: het hoofdkantoor levert
+        het recept, de huisstijl en de systemen, maar bakt zelf geen hamburgers. De operator verhuurt zijn ransomware
+        aan anderen en int een percentage van elke geslaagde afpersing.</p>
+
+        <h3>De affiliate (de franchisenemer)</h3>
+        <p>De <strong>affiliate</strong> is de <em>franchisenemer</em>: hij huurt het RaaS-platform en voert de echte
+        aanvallen uit. Hij koopt toegang bij een IAB, laat de ransomware los, exfiltreert data en doet de afpersing.
+        De buit wordt verdeeld, vaak volgens een afspraak als 70/30 (de affiliate houdt het grootste deel, de operator
+        krijgt zijn snee). Dit model verklaart waarom één ransomwaremerk door héél verschillende daders kan worden
+        ingezet: het zijn allemaal affiliates van dezelfde franchise. Voor de opsporing is dat lastig én nuttig:
+        pak je de operator, dan raak je alle affiliates in één keer.</p>
+
+        <h3>De bulletproof hoster (de huisbaas die niets vraagt)</h3>
+        <p>Alle malware, leksites en C2-servers moeten ergens draaien. <strong>Bulletproof hosting</strong>
+        ("kogelvrije hosting") is hosting die klachten en verzoeken tot verwijdering structureel negeert, vaak vanuit
+        landen die lastig te bereiken zijn voor justitie. Het is de <em>huisbaas die geen vragen stelt</em> en de politie
+        bij de voordeur tegenhoudt. Zolang je betaalt, blijft je criminele infrastructuur online. Deze schakel is
+        cruciaal: zonder een plek om te draaien, valt de hele keten stil.</p>
+
+        <h3>De witwasser en de moneymule (de geldloper)</h3>
+        <p>Tot slot moet het geld "schoon" worden. De <strong>witwasser</strong> verhult de criminele herkomst van het
+        geld. Een belangrijke hulp daarbij is de <strong>moneymule</strong> (geldezel): iemand die zijn bankrekening
+        uitleent zodat crimineel geld erdoorheen wordt gesluisd &mdash; soms bewust, soms geronseld met een "snel bijverdienen"-advertentie.
+        Bij cryptovaluta lopen de betalingen via mixers en wisseldiensten om het spoor te breken. De analogie: de
+        <em>geldloper</em> die contant geld in kleine stapjes rondbrengt tot niemand meer ziet waar het vandaan kwam.
+        Omdat crimineel geld uiteindelijk ergens de echte economie in moet, is dit vaak de plek waar het spoor
+        tóch zichtbaar wordt &mdash; en waar de opsporing kan toeslaan.</p>
+      `,
+      questions: [
+        {
+          q: 'In het RaaS-model: wie voert de daadwerkelijke aanvallen uit?',
+          options: [
+            'De RaaS-operator (de franchisegever)',
+            'De affiliate (de franchisenemer)',
+            'De bulletproof hoster',
+          ],
+          answer: 1,
+          explain: 'De operator levert het platform; de affiliate huurt het en voert de aanval uit, waarna de buit wordt gedeeld (bv. 70/30).',
+        },
+        {
+          q: 'Hoe noem je hostingdiensten die klachten en verwijderverzoeken structureel negeren, zodat criminele infrastructuur online blijft?',
+          answer: ['bulletproof hosting', 'bulletproof', 'bulletproof hoster', 'kogelvrije hosting', 'bulletproof-hosting'],
+          hint: 'De naam suggereert dat de hosting "onkwetsbaar" is voor takedowns.',
+          explain: 'Bulletproof hosting is de huisbaas die geen vragen stelt — een cruciale schakel om de keten draaiende te houden.',
+        },
+        {
+          q: 'Iemand die zijn bankrekening uitleent zodat crimineel geld erdoorheen wordt gesluisd, heet een ...',
+          answer: ['moneymule', 'money mule', 'geldezel', 'money-mule'],
+          hint: 'Engels: letterlijk een "geld-ezel".',
+          explain: 'Een moneymule (geldezel) helpt bij het witwassen — vaak geronseld via "snel bijverdienen"-advertenties.',
+        },
+      ],
+    },
+
+    {
+      title: 'Taak 4 — Het ransomware-verdienmodel: RaaS, dubbele afpersing en leksites',
+      content: `
+        <p>Ransomware is het bekendste verdienmodel in het ecosysteem, en het is slim opgebouwd. Vroeger was het
+        simpel: malware versleutelt je bestanden, je betaalt voor de sleutel. Had je een goede back-up, dan betaalde
+        je niet. Daarom bedachten de bendes een extra pressiemiddel.</p>
+
+        <h3>Dubbele afpersing</h3>
+        <p>Bij <strong>dubbele afpersing</strong> (double extortion) doen de aanvallers twee dingen. Eerst
+        <em>stelen</em> ze je gegevens (exfiltratie), dán <em>versleutelen</em> ze je systemen. De eis is dus dubbel:
+        betaal je niet, dan (1) krijg je je bestanden niet terug <em>en</em> (2) publiceren we je gestolen data online.
+        Zelfs met een perfecte back-up zit je klem, want het dreigement van een datalek &mdash; met boetes, reputatieschade
+        en boze klanten &mdash; blijft staan. Sommige groepen gaan nog verder (drievoudige afpersing): ze bellen klanten,
+        bedreigen bestuurders of leggen er een DDoS-aanval bovenop.</p>
+
+        <div class="callout warn">
+          <p><strong>Les voor verdedigers:</strong> back-ups beschermen tegen versleuteling, maar niet tegen een
+          datalek. Voorkómen dat data wordt buitgemaakt (detectie van exfiltratie) is daarom net zo belangrijk als
+          goede back-ups.</p>
+        </div>
+
+        <h3>De leksite</h3>
+        <p>Om het dreigement kracht bij te zetten, heeft bijna elke grote groep een <strong>leksite</strong> (leak site):
+        een website op het dark web waar ze slachtoffers met naam en toenaam "op de lijst" zetten, met een aftelklok en
+        stukjes van de gestolen data als bewijs. Het doel is pure druk: betaal, of je staat straks voor iedereen te kijk.</p>
+
+        <h3>De leksite als intelligencebron</h3>
+        <p>Hier zit een interessante kant voor onderzoekers. Die leksites zijn óók een <strong>intelligencebron</strong>.
+        Je kunt eruit afleiden welke groepen actief zijn, welke sectoren en landen worden geraakt, hoeveel slachtoffers
+        er zijn en welke werkwijze een groep gebruikt. Onderzoekers volgen leksites daarom nauwgezet.</p>
+        <p>Maar let op: de leksite wordt beheerd door de <em>daders zelf</em>. Dat is een partij met een duidelijk belang
+        om geloofwaardig én angstaanjagend over te komen. Ze posten echte slachtoffers, maar overdrijven ook, recyclen
+        oude zaken of claimen een inbraak die nooit heeft plaatsgevonden. Een leksite-post is dus een
+        <strong>onbevestigde claim van een onbetrouwbare partij</strong> &mdash; nuttig als signaal, maar nooit zomaar als
+        waarheid aan te nemen. Precies dat afwegen oefen je in de volgende taak.</p>
+
+        <p>Beloning voor dit inzicht: <strong>JVT{dubbele_afpersing}</strong>.</p>
+      `,
+      questions: [
+        {
+          q: 'Wat kenmerkt dubbele afpersing (double extortion)?',
+          options: [
+            'De aanvaller vraagt losgeld van twee verschillende bedrijven tegelijk',
+            'De aanvaller steelt én versleutelt data, en dreigt de gestolen data te publiceren als je niet betaalt',
+            'De aanvaller versleutelt je data twee keer achter elkaar',
+          ],
+          answer: 1,
+          explain: 'Bij dubbele afpersing wordt data eerst gestolen en dan versleuteld; de dreiging van publicatie blijft ook staan als je een back-up hebt.',
+        },
+        {
+          q: 'Waarom is een leksite-post nuttig maar onbetrouwbaar als bron?',
+          options: [
+            'Omdat leksites altijd liegen en nooit kloppen',
+            'Omdat de daders de site zelf beheren: nuttig als signaal, maar de claim is onbevestigd en soms overdreven of verzonnen',
+            'Omdat de politie de sites vult met nepinformatie',
+          ],
+          answer: 1,
+          explain: 'Een leksite is een intelligencebron, maar beheerd door de daders zelf — behandel elke post als een onbevestigde claim.',
+        },
+        {
+          q: 'Wat is de vlag die als beloning in deze taak staat?',
+          answer: ['JVT{dubbele_afpersing}'],
+          hint: 'Hij staat vetgedrukt onderaan de uitleg.',
+          explain: 'JVT{dubbele_afpersing} — het pressiemiddel dat zelfs een goede back-up omzeilt.',
+        },
+      ],
+    },
+
+    {
+      title: 'Taak 5 — Oefening: beoordeel je bron (Admiralty Code)',
+      content: `
+        <p>Als onderzoeker krijg je voortdurend informatie uit heel verschillende bronnen: een anonieme tip, een
+        post op een leksite, je eigen loggegevens. Ze zijn niet allemaal even betrouwbaar. Om daar grip op te houden
+        gebruiken analisten de <strong>Admiralty Code</strong> (ook wel NATO-systeem). Het kerninzicht: je beoordeelt
+        twee dingen <strong>apart</strong>.</p>
+        <ul>
+          <li><strong>Betrouwbaarheid van de bron</strong> (een letter A&ndash;F): hoe goed is de staat van dienst van
+            de bron zelf?</li>
+          <li><strong>Geloofwaardigheid van de informatie</strong> (een cijfer 1&ndash;6): hoe aannemelijk is déze
+            bewering, los van wie hem doet?</li>
+        </ul>
+
+        <table>
+          <thead>
+            <tr><th>Betrouwbaarheid bron</th><th>Geloofwaardigheid informatie</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>A &ndash; volledig betrouwbaar</td><td>1 &ndash; bevestigd</td></tr>
+            <tr><td>B &ndash; meestal betrouwbaar</td><td>2 &ndash; waarschijnlijk waar</td></tr>
+            <tr><td>C &ndash; tamelijk betrouwbaar</td><td>3 &ndash; mogelijk waar</td></tr>
+            <tr><td>D &ndash; niet altijd betrouwbaar</td><td>4 &ndash; twijfelachtig</td></tr>
+            <tr><td>E &ndash; onbetrouwbaar</td><td>5 &ndash; onwaarschijnlijk</td></tr>
+            <tr><td>F &ndash; niet te beoordelen</td><td>6 &ndash; niet te beoordelen</td></tr>
+          </tbody>
+        </table>
+
+        <p>Een anonieme, niet te verifiëren tip scoort bijvoorbeeld rond <code>E4</code>. Je eigen, geverifieerde
+        SIEM-log is een volledig betrouwbare bron (<code>A</code>), maar zolang één bron het beeld geeft, blijft de
+        informatie "waarschijnlijk waar" (<code>2</code>) &mdash; pas als andere bronnen het bevestigen, wordt het
+        "bevestigd" (<code>1</code>). Zo scheid je netjes <em>wie iets zegt</em> van <em>of het waar is</em>.</p>
+
+        <div class="callout tip">
+          <p><strong>Denk in labels:</strong> is iets wat je opschrijft <em>bekend</em> (feit/waarneming),
+          <em>afgeleid</em> (jouw conclusie) of een <em>aanname</em> (nog onbewezen)? Een leksite-claim is een aanname
+          tot je hem hebt geverifieerd.</p>
+        </div>
+
+        <p>Beoordeel in het lab hieronder drie bronnen op betrouwbaarheid én geloofwaardigheid, en vergelijk daarna
+        met het expertoordeel. Lukt het? Dan verdien je: <strong>JVT{beoordeel_je_bron}</strong>.</p>
+      `,
+      lab: {
+        type: 'admiralty',
+        items: [
+          {
+            source: 'Post op de leksite van een ransomwaregroep: "Bedrijf X is gehackt, 200 GB data buitgemaakt"',
+            info: 'Bedrijf X is daadwerkelijk slachtoffer van een inbraak',
+            reliability: 'C',
+            credibility: '3',
+            explain: 'De leksite wordt door de daders zelf beheerd: ze posten vaak echte slachtoffers (een zeker track record, daarom C), maar hebben er belang bij geloofwaardig en angstaanjagend over te komen en overdrijven of verzinnen soms. De specifieke claim is onbevestigd tot je die zelf verifieert: mogelijk waar (3).',
+          },
+          {
+            source: 'Anonieme tip via Meld Misdaad Anoniem',
+            info: 'Een met naam genoemde persoon plant volgende week een ransomware-aanval',
+            reliability: 'E',
+            credibility: '4',
+            explain: 'Een anonieme, onbekende bron kun je niet op betrouwbaarheid toetsen (E, onbetrouwbaar/niet vast te stellen). De onbevestigde bewering is twijfelachtig tot er onderbouwing is (4). Nuttig als startpunt, nooit als bewijs.',
+          },
+          {
+            source: 'Je eigen, geverifieerde SIEM-log van het bedrijfsnetwerk',
+            info: 'Er is op 3 oktober om 02:14 een verdachte aanmelding vanaf een extern IP-adres geweest',
+            reliability: 'A',
+            credibility: '2',
+            explain: 'Je eigen, geverifieerde loggegevens zijn een volledig betrouwbare bron (A). Omdat voorlopig één bron het beeld geeft, blijft de informatie "waarschijnlijk waar" (2); pas als andere bronnen (bv. firewall- of VPN-logs) het bevestigen, wordt het "bevestigd" (1).',
+          },
+        ],
+      },
+      questions: [
+        {
+          q: 'Beoordeel je in de Admiralty Code de betrouwbaarheid van de bron en de geloofwaardigheid van de informatie samen of apart?',
+          answer: ['apart', 'los', 'gescheiden', 'los van elkaar'],
+          hint: 'Een letter voor de bron, een cijfer voor de informatie.',
+          explain: 'Je scheidt wie iets zegt (A–F) van of het waar is (1–6). Een onbetrouwbare bron kan toevallig gelijk hebben, en andersom.',
+        },
+        {
+          q: 'Welke betrouwbaarheidsletter (A–F) past bij je eigen, geverifieerde SIEM-log?',
+          answer: ['A'],
+          hint: 'Je eigen geverifieerde systeem is de meest betrouwbare bron die er is.',
+          explain: 'Een volledig betrouwbare bron krijgt A. De informatie blijft wel 2 (waarschijnlijk waar) tot een tweede bron bevestigt.',
+        },
+        {
+          q: 'Wat is de vlag die je verdient na deze oefening?',
+          answer: ['JVT{beoordeel_je_bron}'],
+          hint: 'Hij staat vetgedrukt boven het lab.',
+          explain: 'JVT{beoordeel_je_bron} — altijd eerst wegen wie iets zegt én hoe aannemelijk het is.',
+        },
+        { q: 'Ik heb de drie bronnen in het lab beoordeeld en met het expertoordeel vergeleken.', noAnswer: true },
+      ],
+    },
+
+    {
+      title: 'Taak 6 — Vier manieren om in te grijpen: de interventietypologie',
+      content: `
+        <p>Nu je weet hoe de keten werkt, komt de vraag: hoe grijp je in? De opsporing en haar partners hebben niet
+        één knop, maar een gereedschapskist. Grofweg zijn er <strong>vier interventietypen</strong>. Ze sluiten elkaar
+        niet uit &mdash; in de praktijk combineer je ze juist.</p>
+
+        <table>
+          <thead>
+            <tr><th>Type</th><th>Doel</th><th>Voorbeeld van handelen</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Strafrechtelijk</strong></td>
+              <td>Daders identificeren, aanhouden en vervolgen</td>
+              <td>Opsporingsonderzoek, aanhoudingen, inbeslagname, een rechtszaak</td>
+            </tr>
+            <tr>
+              <td><strong>Verstoren</strong><br>(disrupt)</td>
+              <td>De keten onwerkbaar maken, ook zonder (directe) aanhoudingen</td>
+              <td>Servers en domeinen overnemen of offline halen, infiltreren, het onderlinge vertrouwen breken</td>
+            </tr>
+            <tr>
+              <td><strong>Preventief</strong></td>
+              <td>Voorkomen dat er (nieuwe) slachtoffers vallen</td>
+              <td>Waarschuwen, bewustwording, kwetsbaarheden dichten, phishing weghalen, slachtofferhulp</td>
+            </tr>
+            <tr>
+              <td><strong>Alternatief</strong></td>
+              <td>(Jonge) daders ombuigen in plaats van (alleen) straffen</td>
+              <td>Een leer- of begeleidingstraject, talent naar legale paden leiden</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p>Even uitgewerkt. Een <strong>strafrechtelijke</strong> aanpak is wat de meeste mensen voor ogen hebben:
+        bewijs verzamelen, verdachten aanhouden, voor de rechter brengen. Krachtig, maar traag en lastig als daders in
+        het buitenland zitten.</p>
+
+        <p><strong>Verstoren</strong> is de laatste jaren enorm belangrijk geworden. In plaats van (of náást) het
+        pakken van personen richt je je op de <em>infrastructuur</em> en het <em>vertrouwen</em>. Neem je de servers van
+        een ransomwaregroep over, dan ligt hun hele operatie plat &mdash; en als affiliates zien dat de politie mee kon
+        kijken, durven ze de volgende keer niet meer. Soms is verstoren het enige wat kan als aanhouden (nog) niet lukt.</p>
+
+        <p><strong>Preventie</strong> zet in aan de voorkant: potentiële slachtoffers waarschuwen, kwetsbaarheden
+        dichten, kennis delen (de rol van bijvoorbeeld het NCSC) en slachtoffers helpen die wél geraakt zijn. Elk
+        voorkomen slachtoffer ondermijnt bovendien het verdienmodel van de daders.</p>
+
+        <p>Tot slot de <strong>alternatieve</strong> interventie. Veel cybercriminelen beginnen jong en getalenteerd.
+        In plaats van een jonge first-offender meteen een strafblad te geven, kun je hem een begeleidingstraject
+        aanbieden dat zijn talent naar een legale (bijvoorbeeld security-)carrière buigt. Dat is goedkoper, effectiever
+        en voorkomt dat iemand doorgroeit in de criminaliteit.</p>
+      `,
+      questions: [
+        {
+          q: 'Welk interventietype haalt criminele infrastructuur offline en breekt het onderlinge vertrouwen, soms zonder directe aanhoudingen?',
+          options: ['Strafrechtelijk', 'Verstoren', 'Alternatief'],
+          answer: 1,
+          explain: 'Verstoren (disrupt) richt zich op de infrastructuur en het vertrouwen in de keten, ook als aanhouden (nog) niet lukt.',
+        },
+        {
+          q: 'Een traject dat een jonge first-offender hacker naar een legale carrière ombuigt in plaats van (alleen) te straffen, is een voorbeeld van welk interventietype?',
+          answer: ['alternatief', 'alternatieve interventie', 'alternatieve afdoening', 'alternatieve aanpak'],
+          hint: 'Het vierde type uit de tabel.',
+          explain: 'Dit is een alternatieve interventie: goedkoper, effectiever en gericht op het voorkomen van een criminele loopbaan.',
+        },
+        {
+          q: 'Waarom combineer je in de praktijk vaak meerdere interventietypen?',
+          options: [
+            'Omdat de wet dat verplicht',
+            'Omdat de typen elkaar aanvullen: één knop is zelden genoeg tegen een hele keten',
+            'Omdat het goedkoper is om alles tegelijk te doen',
+          ],
+          answer: 1,
+          explain: 'De keten heeft meerdere schakels; een combinatie van aanhouden, verstoren, voorkomen en ombuigen werkt het best.',
+        },
+      ],
+    },
+
+    {
+      title: 'Taak 7 — Casussen uit de praktijk, en afsluiting',
+      content: `
+        <p>Tot slot koppelen we de theorie aan een paar bekende, publiek beschreven operaties. We houden het
+        bewust <strong>hoog-over</strong>: alleen goed-gevestigde feiten, zonder in te zoomen op details die per bron
+        verschillen. Let bij elke casus op <em>welke schakel</em> werd geraakt en <em>welk interventietype</em> centraal stond.</p>
+
+        <table>
+          <thead>
+            <tr><th>Operatie</th><th>Waar het zich op richtte</th><th>Interventietype (vooral)</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Operatie Cronos</strong></td><td>De ransomwaregroep LockBit (RaaS): de infrastructuur werd overgenomen en verstoord</td><td>Verstoren (met strafrechtelijke component)</td></tr>
+            <tr><td><strong>Operatie Endgame</strong></td><td>Grootschalige actie tegen malware-loaders en droppers &mdash; de toelevering van de keten</td><td>Verstoren</td></tr>
+            <tr><td><strong>Operatie Magnus</strong></td><td>Infostealer-malware (onder meer Redline en Meta)</td><td>Verstoren</td></tr>
+            <tr><td><strong>Operatie PowerOFF</strong></td><td>Internationale aanpak van DDoS-booter/stresser-diensten</td><td>Verstoren, strafrechtelijk én preventief (waarschuwen van gebruikers)</td></tr>
+            <tr><td><strong>No More Ransom</strong></td><td>Publiek-privaat initiatief met gratis decryptietools (nomoreransom.org)</td><td>Preventief (slachtofferhulp, losgeldbetaling voorkomen)</td></tr>
+            <tr><td><strong>Hack_Right</strong></td><td>Nederlands traject voor jonge first-offender hackers</td><td>Alternatief (en preventief)</td></tr>
+          </tbody>
+        </table>
+
+        <p>Zie je het patroon? Veel recente operaties kiezen voor <strong>verstoren</strong>: raak de gedeelde
+        schakels (loaders, infostealers, RaaS-infrastructuur, booters) en je treft in één klap heel veel daders die
+        daarvan afhankelijk waren. Het <em>bekende</em> feit is telkens dát er is ingegrepen op infrastructuur; of een
+        specifieke persoon is aangehouden, is per operatie verschillend &mdash; dat soort details hoort bij de bron, niet
+        bij algemene kennis.</p>
+
+        <p><strong>No More Ransom</strong> en <strong>Hack_Right</strong> laten de andere kant zien. Gratis
+        decryptietools helpen slachtoffers én ondermijnen het verdienmodel (betaalt niemand losgeld, dan verdient de
+        bende niets). En een alternatief traject houdt getalenteerde jongeren weg uit de keten. Zo dekt de
+        gereedschapskist de hele keten af: van binnenkomen tot witwassen, van aanhouden tot ombuigen.</p>
+
+        <div class="callout tip">
+          <p><strong>Rode draad van dit leerpad:</strong> cybercrime is een ecosysteem met rollen, geld en
+          breekpunten. Wie de keten begrijpt, snapt wáár en hóé je kunt ingrijpen &mdash; en kan informatie uit dat
+          ecosysteem (zoals leksites) wegen als een echte analist.</p>
+        </div>
+
+        <p>In de volgende modules van dit pad bouw je hierop voort: je leert misdaad ontleden met een
+        <em>crime script</em>, de <em>intelligencecyclus</em> doorlopen, modellen zoals de Cyber Kill Chain en
+        MITRE ATT&amp;CK gebruiken, pivoten op infrastructuur, en je bevindingen omzetten in een helder
+        intelligenceproduct. Blijf nieuwsgierig en werk ethisch: je oefent alleen in je eigen lab of met
+        toestemming.</p>
+      `,
+      questions: [
+        {
+          q: 'Operatie Cronos richtte zich op de ransomwaregroep LockBit en nam de infrastructuur over. Onder welk interventietype valt dit vooral?',
+          options: ['Strafrechtelijk', 'Verstoren', 'Alternatief'],
+          answer: 1,
+          explain: 'Het overnemen en platleggen van de infrastructuur is een klassiek voorbeeld van verstoren (met een strafrechtelijke component).',
+        },
+        {
+          q: 'Operatie Endgame richtte zich vooral op welke schakel in de keten?',
+          options: [
+            'Witwassers en moneymules',
+            'Malware-loaders en droppers (de toelevering)',
+            'De slachtoffers zelf',
+          ],
+          answer: 1,
+          explain: 'Endgame trof de loaders/droppers — een gedeelde schakel, dus één interventie raakt veel daders.',
+        },
+        {
+          q: 'Onder welk interventietype valt Hack_Right?',
+          answer: ['alternatief', 'alternatieve interventie', 'preventief', 'alternatief en preventief'],
+          hint: 'Het gaat om het ombuigen van jonge first-offenders.',
+          explain: 'Hack_Right is een alternatieve (en preventieve) interventie: jong talent weghouden uit de keten.',
+        },
+        { q: 'Ik kan nu de rollen in de keten en de vier interventietypen benoemen, en een bron wegen met de Admiralty Code. 🕸️', noAnswer: true },
+      ],
+    },
+  ],
+  terms: [
+    { term: 'Crime-as-a-service (CaaS)', def: 'Misdaad als dienst: criminelen verkopen elkaar kant-en-klare gereedschappen en diensten, zodat ook minder technische daders kunnen meedoen.' },
+    { term: 'RaaS', def: 'Ransomware-as-a-Service: een operator bouwt en verhuurt het complete ransomwareplatform (malware, leksite, onderhandelingsportaal) en int een percentage van elke afpersing.' },
+    { term: 'Affiliate', def: 'De "franchisenemer" die een RaaS-platform huurt en de daadwerkelijke aanvallen uitvoert; de buit wordt met de operator gedeeld (bv. 70/30).' },
+    { term: 'Initial Access Broker (IAB)', def: 'Een crimineel die inbreekt en vervolgens de kant-en-klare toegang tot een netwerk doorverkoopt — als een heler die de sleutel van een gekraakt pand verkoopt.' },
+    { term: 'Infostealer', def: 'Malware die massaal inloggegevens, cookies, wachtwoorden en sessietokens van besmette computers steelt; de buit wordt als "logs" doorverkocht.' },
+    { term: 'Loader / dropper', def: 'Een klein stukje malware op een besmette machine dat andere malware binnenhaalt en start; vaak verkocht als dienst per installatie (pay-per-install).' },
+    { term: 'Dubbele afpersing', def: 'Double extortion: data wordt eerst gestolen en dan versleuteld, waarna de aanvaller dreigt de gestolen data te publiceren als er niet wordt betaald.' },
+    { term: 'Leksite', def: 'Leak site: een website (vaak op het dark web) waar een ransomwaregroep slachtoffers en gestolen data publiceert om druk uit te oefenen — en tegelijk een intelligencebron voor onderzoekers.' },
+    { term: 'Bulletproof hosting', def: 'Hosting die klachten en verwijderverzoeken structureel negeert, vaak buiten het bereik van justitie, zodat criminele infrastructuur online blijft.' },
+    { term: 'Moneymule', def: 'Geldezel: iemand die zijn bankrekening uitleent zodat crimineel geld kan worden witgewassen, soms bewust en soms geronseld via "snel bijverdienen".' },
+    { term: 'Admiralty Code', def: 'Een methode om bronnen te wegen: de betrouwbaarheid van de bron (A–F) en de geloofwaardigheid van de informatie (1–6) worden apart beoordeeld.' },
+    { term: 'Interventietypologie', def: 'De vier manieren om tegen cybercrime op te treden: strafrechtelijk, verstoren (disrupt), preventief en alternatief.' },
+  ],
+  resources: [
+    { title: 'Europol — Internet Organised Crime Threat Assessment (IOCTA)', url: 'https://www.europol.europa.eu/' },
+    { title: 'No More Ransom — gratis decryptietools en preventie', url: 'https://www.nomoreransom.org/' },
+    { title: 'Politie — aangifte en informatie over cybercrime', url: 'https://www.politie.nl/' },
+    { title: 'NCSC — Nationaal Cyber Security Centrum', url: 'https://www.ncsc.nl/' },
+  ],
+});
+
+</script>
+<script>
+/* Room: Crime scripting (Cornish) — leerpad Cyber-intelligence & opsporing */
+
+CS.registerRoom({
+  id: 'crime-scripting',
+  path: 'intelligence',
+  order: 2,
+  title: 'Crime scripting',
+  icon: '🎬',
+  difficulty: 'Gemiddeld',
+  minutes: 65,
+  summary: 'Hoe je een (cyber)misdaad als een filmdraaiboek ontleedt: het crime script van Cornish, het universele script in zes fasen van voorbereiding tot cash-out, abstractieniveaus, subscripts en displacement, en hoe je er met situationele criminaliteitspreventie en een interventiematrix op ingrijpt.',
+  objectives: [
+    'Uitleggen wat een crime script is en een scène beschrijven met handeling, actoren, middelen, locatie, randvoorwaarden en sporen',
+    'Een (cyber)misdaad in het universele script van zes fasen plaatsen, van voorbereiding tot cash-out',
+    'De abstractieniveaus metascript, protoscript, script en track onderscheiden',
+    'Subscripts herkennen en de soorten displacement (verplaatsing) benoemen',
+    'De vijf situationele-preventiestrategieën van Cornish & Clarke toepassen',
+    'Een interventiematrix (fase × strategie) opstellen met een eigenaar per maatregel en beweringen labelen als bekend, afgeleid of aanname',
+  ],
+  tasks: [
+    {
+      title: 'Taak 1 — Wat is crime scripting? Het draaiboek van een misdaad',
+      content: `
+        <p>Stel je voor dat je een film maakt. Voordat er ook maar één camera draait, ligt er een
+        <strong>draaiboek</strong> (script): scène voor scène staat erin wie er in beeld is, wat ze doen, welke
+        spullen ze nodig hebben en waar het zich afspeelt. <strong>Crime scripting</strong> doet precies hetzelfde,
+        maar dan voor een misdaad. Je schrijft als het ware het draaiboek van de dader: welke stappen zet iemand,
+        in welke volgorde, om een misdaad van begin tot eind uit te voeren?</p>
+
+        <p>De criminoloog <strong>Derek Cornish</strong> introduceerde dit idee in 1994. Zijn gedachte: een misdaad
+        is geen losse gebeurtenis maar een <em>proces</em> van achtereenvolgende handelingen. Door dat proces op te
+        knippen in scènes, zie je precies waar een dader keuzes maakt en wat er op elk moment moet kloppen. En waar
+        keuzes zijn, kun je ingrijpen. Crime scripting komt uit de "gewone" criminologie (zakkenrollerij, inbraak,
+        autodiefstal), maar het werkt uitstekend voor cybercrime, want ook een phishingcampagne of een
+        ransomware-aanval verloopt in herkenbare stappen.</p>
+
+        <h3>Een scène ontleed je op zes punten</h3>
+        <p>Elke scène in een crime script beschrijf je zo volledig mogelijk. Gebruik deze zes velden als checklist:</p>
+        <ul>
+          <li><strong>Handeling</strong> — wat gebeurt er precies in deze stap?</li>
+          <li><strong>Actoren</strong> — wie zijn erbij betrokken? Niet alleen de dader, maar ook het slachtoffer en
+          eventuele <em>facilitators</em> (handlangers of dienstverleners, zoals een bulletproof hoster of een geronselde
+          geldezel).</li>
+          <li><strong>Middelen</strong> — welke tools, infrastructuur of hulpbronnen zijn nodig (een phishingkit, een
+          domein, een botnet, een crypto-wallet)?</li>
+          <li><strong>Locatie</strong> — waar speelt het zich af? Bij cybercrime vaak digitaal: op welk systeem,
+          platform of netwerk.</li>
+          <li><strong>Randvoorwaarden</strong> — wat moet er al waar zijn vóórdat deze stap kan slagen (het slachtoffer
+          moet een account hebben, het malware-domein moet nog niet geblokkeerd zijn)?</li>
+          <li><strong>Sporen</strong> — welke sporen laat deze stap achter? Dit veld is goud voor de opsporing:
+          loginpogingen in een log, een geregistreerd domein, een transactie op de blockchain.</li>
+        </ul>
+
+        <div class="callout tip">
+          <strong>Tip:</strong> het veld <strong>sporen</strong> maakt het verschil tussen een leuk theoretisch
+          plaatje en een bruikbaar opsporingsinstrument. Elke scène die sporen achterlaat, is een scène waar jij als
+          onderzoeker kunt beginnen te graven.
+        </div>
+
+        <h3>Mini-voorbeeld</h3>
+        <p>Scène "Slachtoffer klikt op de phishinglink". <strong>Handeling:</strong> medewerker opent de e-mail en
+        klikt. <strong>Actoren:</strong> dader (verstuurder), slachtoffer, e-mailprovider. <strong>Middelen:</strong>
+        nagemaakte inlogpagina, verzenddienst. <strong>Locatie:</strong> de mailbox en de browser van het slachtoffer.
+        <strong>Randvoorwaarden:</strong> de mail passeert het spamfilter en het nepdomein is nog niet geblokkeerd.
+        <strong>Sporen:</strong> de klik in de webserverlogs, het bezochte domein, het tijdstip.</p>
+
+        <p>Zie je het? Eén zinnetje wordt een rijke, onderzoekbare stap. Daarmee heb je de kern van crime scripting
+        te pakken: <strong>JVT{script_is_het_draaiboek}</strong>.</p>
+      `,
+      questions: [
+        { q: 'Welke criminoloog introduceerde crime scripting (in 1994)?', answer: ['Cornish', 'cornish', 'Derek Cornish'], hint: 'Zijn achternaam begint met een C.', explain: 'Derek Cornish beschreef in 1994 de misdaad als een proces van scènes: het crime script.' },
+        { q: 'Welk van de zes velden is het meest waardevol voor de opsporing, omdat het aanknopingspunten voor onderzoek oplevert?', options: ['Handeling', 'Locatie', 'Sporen', 'Randvoorwaarden'], answer: 2, explain: 'Sporen (logs, domeinen, transacties) zijn precies de aanknopingspunten waarmee een onderzoeker begint.' },
+        { q: 'Hoe heet in een crime script een handlanger of dienstverlener die de misdaad mogelijk maakt, zoals een bulletproof hoster of een geldezel?', answer: ['facilitator', 'facilitators'], hint: 'Engelse term; iemand die iets faciliteert/mogelijk maakt.', explain: 'Een facilitator is een actor die de misdaad faciliteert zonder per se de hoofddader te zijn.' },
+        { q: 'Wat is de vlag die de kern van crime scripting samenvat (zie het einde van de taak)?', answer: ['JVT{script_is_het_draaiboek}'], hint: 'Staat vetgedrukt onderaan de uitleg.', explain: 'Een crime script is niets anders dan het draaiboek van een misdaad, scène voor scène.' },
+      ],
+    },
+
+    {
+      title: 'Taak 2 — Het universele script: zes fasen van voorbereiding tot cash-out',
+      content: `
+        <p>Elke misdaad heeft zijn eigen scènes, maar Cornish merkte op dat vrijwel álle scripts dezelfde grove
+        bewegingen volgen. Dat noemen we het <strong>universele script</strong>: een vaste reeks fasen die je als
+        sjabloon over elke misdaad heen legt. Voor cybercrime gebruiken we een praktische versie van
+        <strong>zes fasen</strong>, van de eerste voorbereiding tot het moment waarop het geld echt besteedbaar is
+        (de <strong>cash-out</strong>).</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 802 110" role="img" aria-label="De zes fasen van het universele script">
+            <rect x="8" y="40" width="116" height="50" rx="6" fill="var(--surface-2)" stroke="currentColor"/>
+            <rect x="142" y="40" width="116" height="50" rx="6" fill="var(--surface-2)" stroke="currentColor"/>
+            <rect x="276" y="40" width="116" height="50" rx="6" fill="var(--surface-2)" stroke="currentColor"/>
+            <rect x="410" y="40" width="116" height="50" rx="6" fill="var(--surface-2)" stroke="currentColor"/>
+            <rect x="544" y="40" width="116" height="50" rx="6" fill="var(--surface-2)" stroke="currentColor"/>
+            <rect x="678" y="40" width="116" height="50" rx="6" fill="var(--accent-soft)" stroke="var(--accent)"/>
+            <text x="66" y="62" text-anchor="middle" fill="currentColor" font-size="13">1</text>
+            <text x="66" y="79" text-anchor="middle" fill="currentColor" font-size="12">Voorbereiding</text>
+            <text x="200" y="62" text-anchor="middle" fill="currentColor" font-size="13">2</text>
+            <text x="200" y="79" text-anchor="middle" fill="currentColor" font-size="12">Binnenkomen</text>
+            <text x="334" y="62" text-anchor="middle" fill="currentColor" font-size="13">3</text>
+            <text x="334" y="79" text-anchor="middle" fill="currentColor" font-size="12">Uitvoeren</text>
+            <text x="468" y="62" text-anchor="middle" fill="currentColor" font-size="13">4</text>
+            <text x="468" y="79" text-anchor="middle" fill="currentColor" font-size="12">Buit</text>
+            <text x="602" y="62" text-anchor="middle" fill="currentColor" font-size="13">5</text>
+            <text x="602" y="79" text-anchor="middle" fill="currentColor" font-size="12">Vertrek</text>
+            <text x="736" y="62" text-anchor="middle" fill="currentColor" font-size="13">6</text>
+            <text x="736" y="79" text-anchor="middle" fill="currentColor" font-size="12">Cash-out</text>
+            <line x1="126" y1="65" x2="138" y2="65" stroke="currentColor"/>
+            <polygon points="142,65 136,61 136,69" fill="currentColor"/>
+            <line x1="260" y1="65" x2="272" y2="65" stroke="currentColor"/>
+            <polygon points="276,65 270,61 270,69" fill="currentColor"/>
+            <line x1="394" y1="65" x2="406" y2="65" stroke="currentColor"/>
+            <polygon points="410,65 404,61 404,69" fill="currentColor"/>
+            <line x1="528" y1="65" x2="540" y2="65" stroke="currentColor"/>
+            <polygon points="544,65 538,61 538,69" fill="currentColor"/>
+            <line x1="662" y1="65" x2="674" y2="65" stroke="currentColor"/>
+            <polygon points="678,65 672,61 672,69" fill="currentColor"/>
+          </svg>
+          <figcaption>Het universele script: zes fasen van voorbereiding tot cash-out.</figcaption>
+        </figure>
+
+        <h3>De zes fasen, toegepast op cybercrime</h3>
+        <ol>
+          <li><strong>Voorbereiding.</strong> De dader kiest een doelwit, verkent het, en regelt de middelen:
+          infrastructuur huren, een phishingkit of malware kopen, domeinen registreren, een team samenstellen.</li>
+          <li><strong>Binnenkomen (initiële toegang).</strong> De dader zet voet binnen: een slachtoffer klikt op een
+          link, een gestolen wachtwoord werkt, of een kwetsbaarheid in een server wordt uitgebuit.</li>
+          <li><strong>Uitvoeren (de daad).</strong> De kernhandeling: rechten uitbreiden, zich door het netwerk bewegen
+          en de eigenlijke misdaad plegen — gegevens stelen, geld overboeken of bestanden versleutelen.</li>
+          <li><strong>Buit veiligstellen.</strong> De dader haalt de opbrengst binnen: data wegsluizen (exfiltreren),
+          het losgeld laten overmaken, of de frauduleuze transacties laten uitvoeren.</li>
+          <li><strong>Vertrek en sporen wissen.</strong> De dader verlaat het toneel: logs opschonen, malware
+          verwijderen, infrastructuur afbreken en verbindingen verbergen (bijvoorbeeld via tussenstations).</li>
+          <li><strong>Cash-out en witwassen.</strong> De laatste, cruciale stap: de buit omzetten in besteedbaar,
+          "schoon" geld. Via geldezels (<em>moneymules</em>), crypto-wisselaars, mixers of nepwebwinkels.</li>
+        </ol>
+
+        <div class="callout info">
+          <strong>Waarom tot aan de cash-out?</strong> Veel onderzoekers stoppen hun script bij "de misdaad is
+          gepleegd". Maar juist de cash-out is vaak de zwakste schakel: daar moet de dader uit de anonieme digitale
+          wereld terug de echte wereld in, waar banken, exchanges en toezichthouders meekijken. Wie de hele keten tot
+          en met de cash-out in kaart brengt, vindt de beste plekken om in te grijpen.
+        </div>
+
+        <p>Let op: niet elke misdaad doorloopt alle fasen even nadrukkelijk, en soms lopen fasen door elkaar. Het
+        universele script is een <em>denkraam</em>, geen strak keurslijf — net als de kapstok die je uit andere rooms
+        kent.</p>
+      `,
+      questions: [
+        { q: 'Wat is de juiste volgorde van het universele script?', options: ['Binnenkomen, voorbereiding, uitvoeren, buit, vertrek, cash-out', 'Voorbereiding, binnenkomen, uitvoeren, buit veiligstellen, vertrek, cash-out', 'Voorbereiding, uitvoeren, binnenkomen, cash-out, buit, vertrek', 'Cash-out, voorbereiding, binnenkomen, uitvoeren, buit, vertrek'], answer: 1, explain: 'Het sjabloon loopt chronologisch van voorbereiding, via binnenkomen en uitvoeren, naar buit, vertrek en cash-out.' },
+        { q: 'Hoe heet de laatste fase, waarin de buit wordt omgezet in besteedbaar, "schoon" geld?', answer: ['cash-out', 'cash out', 'cashout'], hint: 'Engelse term, staat ook in de titel van de taak.', explain: 'De cash-out (en het witwassen) is de laatste fase en vaak de zwakste schakel in de keten.' },
+        { q: 'In welke fase zitten het uitbuiten van een kwetsbaarheid of een werkend gestolen wachtwoord — het voet aan de grond krijgen?', options: ['Voorbereiding', 'Binnenkomen', 'Vertrek', 'Cash-out'], answer: 1, explain: 'Binnenkomen (initiële toegang) is de fase waarin de dader voor het eerst voet binnen krijgt.' },
+      ],
+    },
+
+    {
+      title: 'Taak 3 — Abstractieniveaus: metascript, protoscript, script en track',
+      content: `
+        <p>Een crime script kun je grof of juist heel gedetailleerd schrijven. Cornish onderscheidde daarom
+        <strong>abstractieniveaus</strong>: van een zeer algemeen sjabloon tot een haarfijne beschrijving van één
+        specifieke uitvoering. Vier niveaus, van abstract naar concreet:</p>
+
+        <table>
+          <thead><tr><th>Niveau</th><th>Wat het is</th><th>Cybervoorbeeld</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Metascript</strong></td><td>Het meest abstracte niveau: een hele familie van misdaden met dezelfde grove logica.</td><td>"Online fraude" in het algemeen.</td></tr>
+            <tr><td><strong>Protoscript</strong></td><td>Een generiek script voor één type misdaad, los van de precieze uitvoering.</td><td>"Phishing-fraude" als categorie.</td></tr>
+            <tr><td><strong>Script</strong></td><td>De concrete manier waarop dat type wordt uitgevoerd.</td><td>"Bankphishing via een nagemaakte inlogpagina".</td></tr>
+            <tr><td><strong>Track</strong></td><td>Een specifieke variant binnen hetzelfde script.</td><td>Phishing per sms (smishing) versus per e-mail: twee tracks van hetzelfde script.</td></tr>
+          </tbody>
+        </table>
+
+        <h3>De analogie van het kookboek</h3>
+        <p>Denk aan koken. Het <strong>metascript</strong> is "een maaltijd bereiden" — veel te algemeen om direct mee
+        aan de slag te gaan, maar het geeft de grote lijn. Het <strong>protoscript</strong> is "pasta koken": al
+        specifieker. Het <strong>script</strong> is het recept voor "spaghetti carbonara". En een <strong>track</strong>
+        is een concrete variant van dat recept: carbonara met spek in plaats van pancetta. Zelfde recept, andere
+        uitvoering.</p>
+
+        <div class="callout tip">
+          <strong>Waarom dit handig is:</strong> op een hoog niveau (meta/proto) herken je patronen die over veel zaken
+          heen gelden — ideaal voor beleid en strategische interventies. Op een laag niveau (script/track) zie je de
+          concrete details waarmee je één specifieke zaak kunt verstoren. Kies het niveau dat bij je vraag past.
+        </div>
+
+        <p>Een valkuil: als je te abstract blijft, wordt je script een nietszeggend plaatje ("dader bereidt voor, dader
+        slaat toe"). Blijf je te concreet, dan geldt je script maar voor één enkele zaak en kun je er niets van
+        generaliseren. Goede analisten schuiven bewust heen en weer tussen de niveaus: inzoomen voor details,
+        uitzoomen voor patronen.</p>
+      `,
+      questions: [
+        { q: 'Welk abstractieniveau is het meest algemeen (het hoogste, over een hele familie van misdaden)?', options: ['Track', 'Script', 'Protoscript', 'Metascript'], answer: 3, explain: 'Het metascript is het meest abstracte niveau en omvat een hele familie van misdaadvormen.' },
+        { q: 'Smishing (phishing via sms) en phishing via e-mail zijn twee ... van hetzelfde script.', answer: ['tracks', 'track'], hint: 'Het meest concrete niveau: een specifieke variant.', explain: 'Een track is een specifieke uitvoeringsvariant binnen één script.' },
+        { q: 'Zet van abstract naar concreet: welke volgorde klopt?', options: ['Script, metascript, protoscript, track', 'Metascript, protoscript, script, track', 'Track, script, protoscript, metascript', 'Protoscript, metascript, track, script'], answer: 1, explain: 'Van abstract naar concreet: metascript, protoscript, script, track.' },
+      ],
+    },
+
+    {
+      title: 'Taak 4 — Subscripts en het herkennen van displacement',
+      content: `
+        <p>Sommige scènes uit een script zijn op zichzelf al een klein verhaal. Neem de scène "geldezels regelen" in de
+        cash-outfase: dat is niet één handeling, maar een heel proces van werven, instrueren, rekeningen laten openen
+        en uitbetalen. Zo'n op zichzelf uit te werken deelproces heet een <strong>subscript</strong>: je zoomt in op
+        één scène en schrijft daar een compleet eigen script voor.</p>
+
+        <p>Subscripts zijn krachtig omdat ze vaak <em>hergebruikt</em> worden. Het subscript "een phishingkit kopen op
+        een crimineel forum" komt in talloze verschillende scripts terug. Verstoor je zo'n veelgebruikt subscript, dan
+        raak je in één klap veel zaken tegelijk. Dat maakt subscripts interessante interventiepunten.</p>
+
+        <h3>Displacement: de waterbed-waarschuwing</h3>
+        <p>Grijp je ergens in, dan verdwijnt de misdaad lang niet altijd. Vaak <em>verplaatst</em> hij zich — als een
+        waterbed waar je op duwt: op de ene plek zakt het, op de andere komt het omhoog. Dat heet
+        <strong>displacement</strong> (verplaatsing). Er zijn vijf klassieke soorten (Reppetto; later aangevuld door
+        Cornish &amp; Clarke):</p>
+        <ul>
+          <li><strong>Geografische verplaatsing</strong> (spatial) — zelfde misdaad, andere plek. Het phishingdomein
+          wordt geblokkeerd, dus de dader zet een nieuwe server bij een andere hoster in een ander land neer.</li>
+          <li><strong>Temporele verplaatsing</strong> (temporal) — zelfde misdaad, ander tijdstip. Monitoring is
+          strak overdag, dus de aanval verschuift naar de nacht of het weekend.</li>
+          <li><strong>Doelverplaatsing</strong> (target) — ander slachtoffer. De grootbank beveiligt zich goed, dus de
+          dader richt zich op klanten van kleinere banken.</li>
+          <li><strong>Tactische verplaatsing</strong> (tactical) — andere methode of modus operandi. E-mailfilters
+          werken te goed, dus de dader stapt over op phishing via sms of QR-codes.</li>
+          <li><strong>Misdaadverplaatsing</strong> (functional) — ander type misdaad. Ransomware wordt te risicovol,
+          dus de groep schakelt over op gegevensdiefstal met afpersing.</li>
+        </ul>
+        <p>Cornish &amp; Clarke voegden daar nog een zesde aan toe: <strong>daderverplaatsing</strong> (perpetrator) —
+        pak je de ene dader op, dan neemt een ander zijn plek in, zeker in een crime-as-a-service-markt.</p>
+
+        <div class="callout info">
+          <strong>Het goede nieuws — diffusion of benefits:</strong> het tegenovergestelde van displacement bestaat ook.
+          Soms heeft een maatregel een <em>positieve uitstraling</em> naar plekken of doelen die je niet eens
+          aanpakte. Camera's op één parkeerterrein verminderen soms ook de diefstal op het terrein ernaast. Dat heet
+          <em>diffusion of benefits</em> (verspreiding van baten).
+        </div>
+
+        <p>De les voor een analist: ga er nooit automatisch van uit dat een interventie het probleem oplost. Vraag je
+        bij elke maatregel af: <em>waarheen zou deze misdaad kunnen verschuiven?</em> Juist door displacement te
+        voorspellen, kun je je interventies slim combineren zodat er geen makkelijke uitwijkroute overblijft.</p>
+      `,
+      questions: [
+        { q: 'Hoe heet een scène die je als een compleet eigen, op zichzelf uit te werken deelproces beschrijft (zoals "geldezels regelen")?', answer: ['subscript', 'een subscript'], hint: 'Een script binnen een script.', explain: 'Een subscript werkt één scène uit tot een eigen script; het wordt vaak over meerdere zaken hergebruikt.' },
+        { q: 'Een dader stapt na goede e-mailfilters over van phishing per e-mail naar phishing per sms. Welke soort displacement is dit?', options: ['Geografische verplaatsing', 'Temporele verplaatsing', 'Tactische verplaatsing', 'Doelverplaatsing'], answer: 2, explain: 'Een andere methode of modus operandi is tactische verplaatsing (tactical displacement).' },
+        { q: 'Hoe heet het positieve tegenovergestelde van displacement, waarbij een maatregel ook buiten het doelgebied effect heeft?', answer: ['diffusion of benefits', 'diffusion', 'verspreiding van baten'], hint: 'Engelse term; de baten "lekken" naar buiten.', explain: 'Diffusion of benefits is de positieve uitstraling van een maatregel naar niet-aangepakte plekken of doelen.' },
+        { q: 'Een ransomwaregroep vindt versleutelen te risicovol en gaat over op pure gegevensdiefstal met afpersing. Welke soort displacement?', options: ['Misdaadverplaatsing (functional)', 'Geografische verplaatsing (spatial)', 'Temporele verplaatsing (temporal)', 'Daderverplaatsing (perpetrator)'], answer: 0, explain: 'Overstappen naar een ander type misdaad is misdaadverplaatsing (functional displacement).' },
+      ],
+    },
+
+    {
+      title: 'Taak 5 — Situationele criminaliteitspreventie: de vijf strategieën',
+      content: `
+        <p>Crime scripting is pas echt nuttig als je er iets mee doet. Hier komt <strong>situationele
+        criminaliteitspreventie</strong> (SCP; Engels: <em>situational crime prevention</em>) om de hoek kijken. Het
+        idee: in plaats van daders proberen te "genezen", maak je de <em>situatie</em> zo onaantrekkelijk mogelijk om
+        de misdaad te plegen. Je verandert de omgeving, niet de mens. Omdat je crime script precies laat zien wélke
+        situaties er in elke scène zijn, sluiten crime scripting en SCP perfect op elkaar aan.</p>
+
+        <p><strong>Cornish &amp; Clarke</strong> (2003) brachten alle maatregelen onder in <strong>vijf
+        strategieën</strong> (met daaronder 25 concrete technieken). Dit zijn de vijf knoppen waaraan je kunt
+        draaien:</p>
+        <ol>
+          <li><strong>Inspanning verhogen</strong> (increase the effort) — maak de misdaad simpelweg moeilijker.
+          Cybervoorbeeld: multifactor-authenticatie (MFA), zodat een gestolen wachtwoord alleen niet genoeg is.</li>
+          <li><strong>Risico verhogen</strong> (increase the risks) — vergroot de pakkans en de kans dat de dader
+          wordt opgemerkt. Cybervoorbeeld: monitoring, loggen, en snelle detectie met een SOC.</li>
+          <li><strong>Opbrengst verlagen</strong> (reduce the rewards) — maak de buit minder waard of onbruikbaar.
+          Cybervoorbeeld: gegevens versleutelen of tokeniseren, zodat gestolen data waardeloos is; of goede offline
+          back-ups, zodat losgeld betalen zinloos wordt.</li>
+          <li><strong>Provocaties verminderen</strong> (reduce provocations) — neem prikkels en verleidingen weg die tot
+          de misdaad aanzetten. Cybervoorbeeld: geen onnodige druk of haast in processen, en geen openlijk gepronk met
+          waardevolle "trofeeën" die daders uitdagen.</li>
+          <li><strong>Excuses wegnemen</strong> (remove excuses) — maak duidelijk dat gedrag niet mag en haal de smoesjes
+          weg. Cybervoorbeeld: heldere gebruiksvoorwaarden, loginbanners ("ongeautoriseerd gebruik is strafbaar"),
+          en bewustwordingstraining.</li>
+        </ol>
+
+        <div class="callout tip">
+          <strong>Ezelsbruggetje:</strong> <em>inspanning, risico, opbrengst, provocaties, excuses</em>. De eerste drie
+          gaan over de rationele kosten-batenafweging van de dader (moeilijker, gevaarlijker, minder lonend). De laatste
+          twee gaan over de prikkels en rechtvaardigingen eromheen.
+        </div>
+
+        <h3>SCP en de rationele keuze</h3>
+        <p>Onder SCP ligt dezelfde aanname als onder crime scripting: de dader maakt (grofweg) <em>rationele keuzes</em>.
+        Als de inspanning te groot, het risico te hoog of de opbrengst te klein wordt, kiest een dader eerder voor een
+        ander doel — of ziet hij er helemaal van af. Dat is meteen de reden dat je displacement (vorige taak) steeds
+        moet meewegen: duw je op één knop, dan kan de dader de druk elders zoeken.</p>
+
+        <p>Onthoud deze vijf strategieën goed — ze vormen samen met de zes fasen straks de assen van je
+        interventiematrix. De vlag die je dit oplevert: <strong>JVT{vijf_knoppen_van_scp}</strong>.</p>
+      `,
+      questions: [
+        { q: 'Welke van deze hoort NIET bij de vijf SCP-strategieën van Cornish & Clarke?', options: ['Inspanning verhogen', 'Risico verhogen', 'Daders opsluiten zonder proces', 'Excuses wegnemen'], answer: 2, explain: 'De vijf strategieën zijn: inspanning verhogen, risico verhogen, opbrengst verlagen, provocaties verminderen en excuses wegnemen.' },
+        { q: 'Goede offline back-ups maken het betalen van losgeld zinloos. Welke SCP-strategie is dit vooral?', options: ['Inspanning verhogen', 'Opbrengst verlagen', 'Excuses wegnemen', 'Provocaties verminderen'], answer: 1, explain: 'Door de buit (afgedwongen losgeld) waardeloos te maken, verlaag je de opbrengst van de misdaad.' },
+        { q: 'Multifactor-authenticatie (MFA) invoeren is vooral een voorbeeld van welke strategie?', answer: ['inspanning verhogen', 'de inspanning verhogen', 'increase the effort'], hint: 'Een gestolen wachtwoord is dan niet meer genoeg; de misdaad wordt moeilijker.', explain: 'MFA maakt de aanval moeilijker uit te voeren: dat is "inspanning verhogen".' },
+        { q: 'Wat is de vlag die de vijf strategieën samenvat (einde van de taak)?', answer: ['JVT{vijf_knoppen_van_scp}'], hint: 'Staat vetgedrukt onderaan.', explain: 'De vijf strategieën zijn de vijf knoppen van situationele criminaliteitspreventie.' },
+      ],
+    },
+
+    {
+      title: 'Taak 6 — De interventiematrix en de labeling-conventie',
+      content: `
+        <p>Nu komt alles samen. Je hebt een misdaad opgeknipt in <strong>fasen</strong> (het universele script) en je
+        kent de vijf <strong>strategieën</strong> van SCP. Zet die tegen elkaar af in een tabel, en je krijgt de
+        <strong>interventiematrix</strong>: fase × strategie. In elke cel noteer je een concrete maatregel die in díé
+        fase via díé strategie ingrijpt — plus, cruciaal, <strong>wie de eigenaar is</strong>.</p>
+
+        <h3>Waarom een eigenaar per maatregel?</h3>
+        <p>Een maatregel zonder eigenaar is een vrome wens (dat zag je ook bij lessons learned in de defensief-rooms).
+        Cybercrime bestrijd je bovendien zelden alleen: een bank, een hostingprovider, het NCSC, een registrar, een
+        crypto-exchange en de politie hebben elk hun eigen knoppen. De matrix maakt zichtbaar wie wat moet doen — en
+        legt de verantwoordelijkheid ergens neer.</p>
+
+        <table>
+          <thead><tr><th>Fase</th><th>Strategie</th><th>Maatregel</th><th>Eigenaar</th></tr></thead>
+          <tbody>
+            <tr><td>Voorbereiding</td><td>Risico verhogen</td><td>Verdachte domeinregistraties monitoren en snel laten neerhalen (takedown)</td><td>Registrar / NCSC</td></tr>
+            <tr><td>Binnenkomen</td><td>Inspanning verhogen</td><td>MFA afdwingen op alle accounts</td><td>Werkgever / IT-beheer</td></tr>
+            <tr><td>Uitvoeren</td><td>Risico verhogen</td><td>Snelle detectie van afwijkend gedrag (SOC, EDR)</td><td>SOC / securityteam</td></tr>
+            <tr><td>Buit veiligstellen</td><td>Opbrengst verlagen</td><td>Gegevens versleutelen/tokeniseren en exfiltratie blokkeren</td><td>Werkgever / IT-beheer</td></tr>
+            <tr><td>Vertrek</td><td>Risico verhogen</td><td>Onveranderbare (append-only) logging, zodat sporen niet te wissen zijn</td><td>IT-beheer</td></tr>
+            <tr><td>Cash-out</td><td>Opbrengst verlagen</td><td>Verdachte geldstromen bevriezen; mule-rekeningen signaleren</td><td>Bank / crypto-exchange</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout tip">
+          <strong>Tip:</strong> je hoeft niet elke cel te vullen. Zoek de cellen met de grootste hefboom: vaak zijn dat
+          veelgebruikte subscripts (taak 4) en de cash-outfase, want daar komt de dader uit de anonimiteit tevoorschijn.
+        </div>
+
+        <h3>De labeling-conventie: bekend, afgeleid, aanname</h3>
+        <p>Bij het invullen van een script of matrix mix je al snel feiten met interpretatie. Houd die scherp uit
+        elkaar met drie labels — een gewoonte die je door het hele intelligence-leerpad heen gebruikt:</p>
+        <ul>
+          <li><strong>Bekend</strong> — een feit of directe waarneming (een log, een transactie, een e-mail die je zelf
+          zag). Hard, controleerbaar.</li>
+          <li><strong>Afgeleid</strong> — een analytische conclusie die je trekt uit het bekende ("de dader gebruikte
+          waarschijnlijk een geautomatiseerde tool, want de acties volgden elkaar in milliseconden op").</li>
+          <li><strong>Aanname</strong> — iets wat je (nog) niet hebt onderbouwd, maar wat je voorlopig aanneemt om
+          verder te kunnen ("we nemen aan dat de geldezels niet wisten dat ze meehielpen").</li>
+        </ul>
+
+        <div class="callout warn">
+          <strong>Waarom dit telt:</strong> wie bekend, afgeleid en aanname door elkaar haalt, bouwt een mooi verhaal op
+          drijfzand. Door elk veld te labelen zie je in één oogopslag hoe stevig je script is — en waar je nog bewijs
+          moet verzamelen voordat je een interventie op een <em>aanname</em> baseert.
+        </div>
+
+        <p>Tijd om het zelf te doen. In het lab hieronder werk je een phishing-fraude met geldezels uit in de zes fasen,
+        met per fase een interventie. Label je velden netjes. De beloning: <strong>JVT{fase_maal_strategie}</strong>.</p>
+      `,
+      lab: {
+        type: 'crimescript',
+        scenario: 'Phishing-fraude met moneymules (geldezels) — een bende stuurt bankphishing en sluist het buitgemaakte geld weg via geronselde geldezels.',
+        phases: ['1 · Voorbereiding', '2 · Binnenkomen', '3 · Uitvoeren', '4 · Buit veiligstellen', '5 · Vertrek & sporen wissen', '6 · Cash-out & witwassen'],
+        fields: ['Handeling', 'Actoren', 'Middelen', 'Locatie', 'Randvoorwaarden', 'Sporen'],
+        interventions: true,
+        model: `
+          <p><em>Voorbeelduitwerking. Beweringen gelabeld als (bekend) / (afgeleid) / (aanname).</em></p>
+          <table>
+            <thead><tr><th>Fase</th><th>Scène &amp; velden</th><th>Interventie — eigenaar — strategie</th></tr></thead>
+            <tbody>
+              <tr><td><strong>1 · Voorbereiding</strong></td>
+                <td><strong>Handeling:</strong> nepdomein registreren en inlogpagina klonen.
+                <strong>Actoren:</strong> dader, registrar (facilitator).
+                <strong>Middelen:</strong> phishingkit, lookalike-domein.
+                <strong>Locatie:</strong> hostingprovider.
+                <strong>Randvoorwaarden:</strong> domein lijkt op de echte bank (afgeleid).
+                <strong>Sporen:</strong> domeinregistratie in WHOIS en certificate transparency (bekend).</td>
+                <td>Lookalike-domeinen monitoren en snel laten neerhalen. <strong>Eigenaar:</strong> registrar/NCSC. <strong>Strategie:</strong> risico verhogen.</td></tr>
+              <tr><td><strong>2 · Binnenkomen</strong></td>
+                <td><strong>Handeling:</strong> slachtoffer klikt en vult inloggegevens in.
+                <strong>Actoren:</strong> slachtoffer, dader.
+                <strong>Middelen:</strong> phishingmail, nep-inlogpagina.
+                <strong>Locatie:</strong> mailbox en browser van het slachtoffer.
+                <strong>Randvoorwaarden:</strong> mail passeert het spamfilter (aanname).
+                <strong>Sporen:</strong> klik in webserverlog, tijdstip, IP (bekend).</td>
+                <td>MFA afdwingen zodat gestolen wachtwoord niet volstaat. <strong>Eigenaar:</strong> bank. <strong>Strategie:</strong> inspanning verhogen.</td></tr>
+              <tr><td><strong>3 · Uitvoeren</strong></td>
+                <td><strong>Handeling:</strong> dader logt in en zet een overboeking klaar.
+                <strong>Actoren:</strong> dader.
+                <strong>Middelen:</strong> gestolen inloggegevens.
+                <strong>Locatie:</strong> bankomgeving.
+                <strong>Randvoorwaarden:</strong> sessie blijft geldig (afgeleid).
+                <strong>Sporen:</strong> loginlog, afwijkend apparaat/locatie (bekend).</td>
+                <td>Afwijkende login en transactie realtime detecteren en tegenhouden. <strong>Eigenaar:</strong> bank (fraudeteam). <strong>Strategie:</strong> risico verhogen.</td></tr>
+              <tr><td><strong>4 · Buit veiligstellen</strong></td>
+                <td><strong>Handeling:</strong> geld wordt overgemaakt naar een mule-rekening.
+                <strong>Actoren:</strong> dader, geldezel (facilitator).
+                <strong>Middelen:</strong> mule-rekening.
+                <strong>Locatie:</strong> betaalsysteem.
+                <strong>Randvoorwaarden:</strong> mule-rekening staat klaar (bekend).
+                <strong>Sporen:</strong> transactiegegevens, tegenrekening (bekend).</td>
+                <td>Transactielimieten en vertraagde uitbetaling bij nieuwe tegenrekeningen. <strong>Eigenaar:</strong> bank. <strong>Strategie:</strong> opbrengst verlagen.</td></tr>
+              <tr><td><strong>5 · Vertrek &amp; sporen wissen</strong></td>
+                <td><strong>Handeling:</strong> dader logt uit en verbreekt verbindingen.
+                <strong>Actoren:</strong> dader.
+                <strong>Middelen:</strong> VPN/proxy.
+                <strong>Locatie:</strong> tussenstations.
+                <strong>Randvoorwaarden:</strong> herkomst verbergbaar (aanname).
+                <strong>Sporen:</strong> proxy-/VPN-exit-IP, sessieduur (bekend).</td>
+                <td>Onveranderbare (append-only) logging voor volledige reconstructie. <strong>Eigenaar:</strong> bank/IT. <strong>Strategie:</strong> risico verhogen.</td></tr>
+              <tr><td><strong>6 · Cash-out &amp; witwassen</strong></td>
+                <td><strong>Handeling:</strong> geldezel neemt geld op of boekt door.
+                <strong>Actoren:</strong> geldezel, ronselaar, (crypto-)wisselaar.
+                <strong>Middelen:</strong> pinautomaat, exchange.
+                <strong>Locatie:</strong> fysieke wereld / exchange.
+                <strong>Randvoorwaarden:</strong> ezel werkt mee (aanname).
+                <strong>Sporen:</strong> camerabeelden, opnametijdstip, exchange-KYC (bekend).</td>
+                <td>Verdachte geldstromen bevriezen en mule-rekeningen signaleren. <strong>Eigenaar:</strong> bank/exchange + politie. <strong>Strategie:</strong> opbrengst verlagen.</td></tr>
+            </tbody>
+          </table>
+        `,
+      },
+      questions: [
+        { q: 'Wat vormen de twee assen van de interventiematrix?', options: ['Dader × slachtoffer', 'Fase (universeel script) × strategie (SCP)', 'Metascript × track', 'Bekend × aanname'], answer: 1, explain: 'De interventiematrix zet de fasen van het universele script tegen de vijf SCP-strategieën af.' },
+        { q: 'Hoe label je een bewering die je (nog) niet hebt onderbouwd maar voorlopig voor waar aanneemt?', answer: ['aanname', 'een aanname'], hint: 'Niet bekend (feit) en niet afgeleid (conclusie), maar...', explain: 'Een aanname is onbewezen; label hem als zodanig zodat duidelijk is waar nog bewijs nodig is.' },
+        { q: 'Waarom hoort bij elke maatregel in de matrix een eigenaar?', options: ['Een maatregel zonder eigenaar wordt zelden uitgevoerd, en cybercrime bestrijd je met meerdere partijen', 'Omdat de wet dat eist', 'Om de tabel langer te maken', 'Dat hoeft niet, het is optioneel'], answer: 0, explain: 'Zonder eigenaar blijft een maatregel een vrome wens; de matrix legt de verantwoordelijkheid bij de juiste partij.' },
+        { q: 'Wat is de vlag die je in deze taak verdient?', answer: ['JVT{fase_maal_strategie}'], hint: 'Staat vetgedrukt vlak voor het lab.', explain: 'De interventiematrix is fase maal strategie: JVT{fase_maal_strategie}.' },
+      ],
+    },
+
+    {
+      title: 'Taak 7 — Oefening: een RaaS-affiliate-aanval scripten',
+      content: `
+        <p>Tot slot een pittigere casus. <strong>Ransomware-as-a-Service</strong> (RaaS) is een crimineel verdienmodel
+        waarbij een kerngroep de ransomware bouwt en onderhoudt, en <strong>affiliates</strong> (partners) de
+        daadwerkelijke aanvallen uitvoeren. De buit wordt gedeeld. Dit is crime-as-a-service ten voeten uit: de taken
+        zijn verdeeld over gespecialiseerde partijen, elk met hun eigen subscript.</p>
+
+        <h3>De keten in het kort</h3>
+        <ul>
+          <li>De <strong>kerngroep</strong> levert de ransomware, een leksite voor dubbele afpersing en de
+          onderhandelingsinfrastructuur. (Een facilitator voor de affiliate.)</li>
+          <li>De <strong>affiliate</strong> koopt of huurt initiële toegang (soms bij een <em>initial access broker</em>),
+          dringt het netwerk binnen, versleutelt en steelt data, en eist losgeld.</li>
+          <li>De <strong>cash-out</strong> loopt via crypto: betaling in een wallet, daarna mixers en exchanges om het
+          spoor te vertroebelen.</li>
+        </ul>
+
+        <div class="callout info">
+          <strong>Let op de abstractieniveaus:</strong> "ransomware-afpersing" is een protoscript. "RaaS-aanval via een
+          gekochte toegang" is het script. En of de affiliate nu via RDP of via een VPN-kwetsbaarheid binnenkomt — dat
+          zijn twee tracks. Zo hangt deze room aan elkaar.
+        </div>
+
+        <p>Werk nu in het lab de RaaS-affiliate-aanval uit in de zes fasen. Vul per fase de velden in (handeling,
+        actoren, middelen, locatie, randvoorwaarden, sporen), label je beweringen als bekend/afgeleid/aanname, en
+        bedenk per fase één interventie met een eigenaar en een SCP-strategie. Vergelijk daarna met de
+        voorbeelduitwerking.</p>
+
+        <h3>Samenvatting van de room</h3>
+        <ul>
+          <li>Een <strong>crime script</strong> (Cornish) ontleedt een misdaad scène voor scène, elk met handeling,
+          actoren, middelen, locatie, randvoorwaarden en sporen.</li>
+          <li>Het <strong>universele script</strong> telt zes fasen: voorbereiding, binnenkomen, uitvoeren, buit
+          veiligstellen, vertrek en cash-out.</li>
+          <li>Abstractieniveaus lopen van <strong>metascript</strong> via protoscript en script tot <strong>track</strong>;
+          <strong>subscripts</strong> werken één scène verder uit.</li>
+          <li><strong>Displacement</strong> waarschuwt dat misdaad kan verschuiven (geografisch, temporeel, doel,
+          tactisch, misdaadtype, dader); <strong>diffusion of benefits</strong> is de positieve tegenhanger.</li>
+          <li>Met de vijf <strong>SCP-strategieën</strong> (inspanning, risico, opbrengst, provocaties, excuses) en de
+          <strong>interventiematrix</strong> (fase × strategie, mét eigenaar) kies je gericht waar je ingrijpt.</li>
+        </ul>
+      `,
+      lab: {
+        type: 'crimescript',
+        scenario: 'RaaS-affiliate-aanval — een affiliate huurt ransomware van een kerngroep, koopt initiële toegang, versleutelt en steelt data (dubbele afpersing) en eist losgeld in crypto.',
+        phases: ['1 · Voorbereiding', '2 · Binnenkomen', '3 · Uitvoeren', '4 · Buit veiligstellen', '5 · Vertrek & sporen wissen', '6 · Cash-out & witwassen'],
+        fields: ['Handeling', 'Actoren', 'Middelen', 'Locatie', 'Randvoorwaarden', 'Sporen'],
+        interventions: true,
+        model: `
+          <p><em>Voorbeelduitwerking. Beweringen gelabeld als (bekend) / (afgeleid) / (aanname).</em></p>
+          <table>
+            <thead><tr><th>Fase</th><th>Scène &amp; velden</th><th>Interventie — eigenaar — strategie</th></tr></thead>
+            <tbody>
+              <tr><td><strong>1 · Voorbereiding</strong></td>
+                <td><strong>Handeling:</strong> affiliate huurt ransomware en koopt initiële toegang bij een broker.
+                <strong>Actoren:</strong> affiliate, RaaS-kerngroep, initial access broker (facilitators).
+                <strong>Middelen:</strong> ransomware-builder, gekochte toegang, leksite.
+                <strong>Locatie:</strong> crimineel forum / marktplaats.
+                <strong>Randvoorwaarden:</strong> toegang is nog geldig (aanname).
+                <strong>Sporen:</strong> advertenties/verkoopberichten op fora (bekend, mits waargenomen).</td>
+                <td>Toegangsmarkt verstoren en gelekte toegangen vroeg detecteren. <strong>Eigenaar:</strong> politie/NCSC + threat-intelteam. <strong>Strategie:</strong> risico verhogen.</td></tr>
+              <tr><td><strong>2 · Binnenkomen</strong></td>
+                <td><strong>Handeling:</strong> affiliate logt in met de gekochte toegang (bv. via RDP of VPN).
+                <strong>Actoren:</strong> affiliate.
+                <strong>Middelen:</strong> geldige inloggegevens.
+                <strong>Locatie:</strong> remote-toegangssysteem van het slachtoffer.
+                <strong>Randvoorwaarden:</strong> geen MFA actief (afgeleid uit geslaagde login).
+                <strong>Sporen:</strong> loginlog, bron-IP, ongebruikelijk tijdstip (bekend).</td>
+                <td>MFA en geofencing op alle externe toegang. <strong>Eigenaar:</strong> IT-beheer slachtoffer. <strong>Strategie:</strong> inspanning verhogen.</td></tr>
+              <tr><td><strong>3 · Uitvoeren</strong></td>
+                <td><strong>Handeling:</strong> rechten uitbreiden, lateraal bewegen, back-ups saboteren, versleutelen.
+                <strong>Actoren:</strong> affiliate.
+                <strong>Middelen:</strong> tooling, credential-dumping, ransomware.
+                <strong>Locatie:</strong> intern netwerk.
+                <strong>Randvoorwaarden:</strong> onvoldoende segmentatie (afgeleid).
+                <strong>Sporen:</strong> EDR-alerts, verwijderde schaduwkopieën, procesketen (bekend).</td>
+                <td>EDR met automatische isolatie + netwerksegmentatie. <strong>Eigenaar:</strong> SOC/IT-beheer. <strong>Strategie:</strong> risico verhogen.</td></tr>
+              <tr><td><strong>4 · Buit veiligstellen</strong></td>
+                <td><strong>Handeling:</strong> data exfiltreren vóór het versleutelen (dubbele afpersing).
+                <strong>Actoren:</strong> affiliate.
+                <strong>Middelen:</strong> exfiltratietool, C2-kanaal.
+                <strong>Locatie:</strong> uitgaand netwerkverkeer.
+                <strong>Randvoorwaarden:</strong> grote uploads vallen niet op (aanname).
+                <strong>Sporen:</strong> uitgaand volume, verbinding met onbekende host (bekend).</td>
+                <td>Exfiltratie detecteren/blokkeren (DLP, uitgaande filtering) en geteste offline back-ups. <strong>Eigenaar:</strong> IT-beheer. <strong>Strategie:</strong> opbrengst verlagen.</td></tr>
+              <tr><td><strong>5 · Vertrek &amp; sporen wissen</strong></td>
+                <td><strong>Handeling:</strong> logs opschonen, tooling verwijderen, losgeldbrief achterlaten.
+                <strong>Actoren:</strong> affiliate.
+                <strong>Middelen:</strong> wiper-/opschoonscripts.
+                <strong>Locatie:</strong> getroffen systemen.
+                <strong>Randvoorwaarden:</strong> lokale logs zijn wisbaar (afgeleid).
+                <strong>Sporen:</strong> gaten in logs, losgeldbrief, tijdstempels (bekend).</td>
+                <td>Logs centraal en onveranderbaar wegschrijven (SIEM, append-only). <strong>Eigenaar:</strong> SOC/IT-beheer. <strong>Strategie:</strong> risico verhogen.</td></tr>
+              <tr><td><strong>6 · Cash-out &amp; witwassen</strong></td>
+                <td><strong>Handeling:</strong> slachtoffer betaalt in crypto; buit wordt verdeeld en witgewassen.
+                <strong>Actoren:</strong> affiliate, kerngroep, mixer, exchange.
+                <strong>Middelen:</strong> wallet, mixer, exchange.
+                <strong>Locatie:</strong> blockchain / exchange.
+                <strong>Randvoorwaarden:</strong> exchange doet geen strenge controle (aanname).
+                <strong>Sporen:</strong> wallet-adres, transacties op de blockchain, KYC bij uitbetaling (bekend).</td>
+                <td>Wallets volgen en markeren; samenwerken met exchanges om uitbetaling te blokkeren; niet betalen. <strong>Eigenaar:</strong> politie + exchange. <strong>Strategie:</strong> opbrengst verlagen.</td></tr>
+            </tbody>
+          </table>
+        `,
+      },
+      questions: [
+        { q: 'Wat doet een affiliate in een RaaS-model?', options: ['Bouwt en onderhoudt de ransomware', 'Voert de daadwerkelijke aanvallen uit en deelt de buit met de kerngroep', 'Is een toezichthouder', 'Verzekert de slachtoffers'], answer: 1, explain: 'De affiliate (partner) voert de aanvallen uit; de kerngroep levert de ransomware en infrastructuur en krijgt een deel van de buit.' },
+        { q: 'Op welk abstractieniveau zit het verschil tussen binnenkomen via RDP en via een VPN-kwetsbaarheid?', answer: ['track', 'tracks', 'track-niveau'], hint: 'Het meest concrete niveau: een specifieke uitvoeringsvariant.', explain: 'Verschillende uitvoeringswijzen van hetzelfde script zijn verschillende tracks.' },
+        { q: 'Ik heb de RaaS-aanval in de zes fasen uitgewerkt, mijn beweringen gelabeld als bekend/afgeleid/aanname, en per fase een interventie met eigenaar en strategie bedacht.', noAnswer: true },
+      ],
+    },
+  ],
+  terms: [
+    { term: 'Crime script', def: 'Draaiboek van een misdaad: een stapsgewijze (scène-voor-scène) ontleding van het misdaadproces, volgens Cornish (1994).' },
+    { term: 'Scène', def: 'Eén stap in een crime script, beschreven op zes velden: handeling, actoren, middelen, locatie, randvoorwaarden en sporen.' },
+    { term: 'Universeel script', def: 'Vast sjabloon van fasen dat vrijwel elke misdaad volgt; hier in zes fasen van voorbereiding tot cash-out.' },
+    { term: 'Cash-out', def: 'De laatste fase: de buit omzetten in besteedbaar, witgewassen geld; vaak de zwakste schakel in de keten.' },
+    { term: 'Metascript', def: 'Het meest abstracte abstractieniveau: een hele familie van misdaadvormen met dezelfde grove logica.' },
+    { term: 'Protoscript', def: 'Een generiek script voor één type misdaad, los van de precieze uitvoering.' },
+    { term: 'Track', def: 'Een specifieke uitvoeringsvariant binnen hetzelfde script (bijvoorbeeld smishing versus e-mailphishing).' },
+    { term: 'Subscript', def: 'Een scène die als een compleet eigen script wordt uitgewerkt; vaak hergebruikt over meerdere zaken.' },
+    { term: 'Displacement', def: 'Verplaatsing: een misdaad verschuift na een interventie (geografisch, temporeel, doel, tactisch, misdaadtype of dader).' },
+    { term: 'Situationele criminaliteitspreventie (SCP)', def: 'Aanpak die de situatie onaantrekkelijk maakt voor de misdaad; vijf strategieën van Cornish & Clarke met 25 technieken.' },
+    { term: 'Interventiematrix', def: 'Tabel fase (universeel script) × strategie (SCP) met per cel een concrete maatregel en een eigenaar.' },
+    { term: 'RaaS / affiliate', def: 'Ransomware-as-a-Service: kerngroep levert de ransomware, affiliates voeren de aanvallen uit en delen de buit.' },
+  ],
+  resources: [
+    { title: 'ASU Center for Problem-Oriented Policing (POP Center) — crime scripts en situationele preventie', url: 'https://popcenter.asu.edu/' },
+    { title: 'College of Policing (VK) — Crime Reduction Toolkit', url: 'https://www.college.police.uk/' },
+    { title: 'Dehghanniri & Borrion — Crime scripting: a systematic review (European Journal of Criminology, 2021)', url: 'https://doi.org/10.1177/1477370819850943' },
+    { title: 'NCSC — Nationaal Cyber Security Centrum', url: 'https://www.ncsc.nl/' },
+  ],
+});
+
+</script>
+<script>
+/* Room: Intelligencecyclus, CSAE & gestructureerd analyseren */
+
+CS.registerRoom({
+  id: 'intelligencecyclus',
+  path: 'intelligence',
+  order: 3,
+  title: 'Intelligencecyclus, CSAE & gestructureerd analyseren',
+  icon: '🔄',
+  difficulty: 'Gemiddeld',
+  minutes: 75,
+  summary: 'Van ruwe data naar een onderbouwd oordeel: de intelligencecyclus en de "so what?"-test, CSAE, bronnen beoordelen met de Admiralty Code, waarschijnlijkheidstaal met een apart betrouwbaarheidsniveau, hypothesen afwegen met ACH en je eigen denkfouten bestrijden.',
+  objectives: [
+    'De stappen van de intelligencecyclus benoemen en op elk product de "so what?"-test toepassen',
+    'Ruwe data via CSAE omzetten naar entiteiten met herkomst en tijd, en de juiste partners betrekken',
+    'Kwantitatieve en kwalitatieve informatie combineren tot één onderbouwd oordeel',
+    'Een bron beoordelen met de Admiralty Code: betrouwbaarheid (A–F) en geloofwaardigheid (1–6) apart',
+    'Waarschijnlijkheidstaal (yardstick) correct gebruiken en het betrouwbaarheidsniveau apart aangeven',
+    'Hypothesen gestructureerd afwegen met ACH, inclusief een gevoeligheidscheck en indicatoren',
+    'Veelvoorkomende denkfouten herkennen en met tegenmaatregelen bestrijden',
+  ],
+  tasks: [
+    {
+      title: 'Taak 1 — De intelligencecyclus en de "so what?"-test',
+      content: `
+        <p>Een analist krijgt elke dag meer binnen dan hij kan verwerken: logs, rapporten, tips, tweets, meldingen.
+        Zonder structuur word je een doorgeefluik van losse feitjes. De <strong>intelligencecyclus</strong> is het
+        werkproces dat van ruwe data een <em>bruikbaar oordeel</em> maakt. Het is geen eenmalig recept maar een cyclus:
+        je komt steeds terug bij het begin.</p>
+
+        <h3>De analogie van de kok</h3>
+        <p>Een kok begint niet met koken, maar met de vraag "voor wie kook ik en wat willen ze eten?" (richten). Daarna
+        haalt hij boodschappen (verzamelen), wast en snijdt hij (verwerken), bereidt en proeft hij (analyseren) en zet
+        hij het gerecht op tafel (verspreiden). Komt het bord terug omdat het te zout was, dan past hij het de volgende
+        keer aan (feedback). Boodschappen zonder bestelling worden een dure, willekeurige maaltijd — net als
+        verzamelen zonder vraag.</p>
+
+        <h3>De vijf stappen (plus feedback)</h3>
+        <ol>
+          <li><strong>Richten</strong> (direction) — wat willen we weten? Je vertaalt de vraag van een opdrachtgever
+          naar een concrete <em>intelligence requirement</em>, bijvoorbeeld: "welke groepen vallen deze maand
+          Nederlandse gemeenten aan, en hoe komen ze binnen?"</li>
+          <li><strong>Verzamelen</strong> (collection) — gericht bronnen raadplegen die op die vraag antwoord geven:
+          eigen logs, partnerrapporten, open bronnen, het NCSC.</li>
+          <li><strong>Verwerken</strong> (processing) — ruwe data ordenen, ontdubbelen, vertalen en in een vast formaat
+          zetten, zodat je ermee kunt werken.</li>
+          <li><strong>Analyseren</strong> — duiden: wat betekent dit voor óns? Hier beoordeel je bronnen, weeg je
+          hypothesen af en formuleer je een oordeel met de juiste onzekerheid.</li>
+          <li><strong>Verspreiden</strong> (dissemination) — het juiste product naar de juiste mensen, op het juiste
+          moment en in de juiste taal: een IOC-lijst naar het SOC, een notitie van een halve pagina naar de directie.</li>
+        </ol>
+        <p>En dan de lijm die alles verbindt: <strong>feedback</strong>. Was het product bruikbaar? Wat miste de
+        ontvanger nog? Die terugkoppeling stuurt de volgende ronde en scherpt je requirements aan.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 320 320" role="img" aria-label="De intelligencecyclus als kringloop">
+            <circle cx="160" cy="160" r="110" fill="none" stroke="var(--muted)" stroke-dasharray="4 6"/>
+            <circle cx="160" cy="50" r="26" fill="var(--accent-soft)" stroke="currentColor"/>
+            <circle cx="255" cy="115" r="26" fill="var(--accent-soft)" stroke="currentColor"/>
+            <circle cx="218" cy="248" r="26" fill="var(--accent-soft)" stroke="currentColor"/>
+            <circle cx="102" cy="248" r="26" fill="var(--accent-soft)" stroke="currentColor"/>
+            <circle cx="65" cy="115" r="26" fill="var(--accent-soft)" stroke="currentColor"/>
+            <text x="160" y="54" text-anchor="middle" fill="currentColor" font-size="13">Richten</text>
+            <text x="255" y="119" text-anchor="middle" fill="currentColor" font-size="13">Verzamelen</text>
+            <text x="218" y="252" text-anchor="middle" fill="currentColor" font-size="13">Verwerken</text>
+            <text x="102" y="252" text-anchor="middle" fill="currentColor" font-size="13">Analyseren</text>
+            <text x="65" y="119" text-anchor="middle" fill="currentColor" font-size="13">Verspreiden</text>
+            <text x="160" y="165" text-anchor="middle" fill="currentColor" font-size="13">feedback</text>
+            <text x="160" y="183" text-anchor="middle" fill="var(--muted)" font-size="11">stuurt de ronde</text>
+          </svg>
+          <figcaption>De intelligencecyclus draait rond: feedback in het midden stuurt elke nieuwe ronde.</figcaption>
+        </figure>
+
+        <h3>De "so what?"-test</h3>
+        <p>Het grootste risico voor een analist is een mooi, uitgebreid product dat de ontvanger niets oplevert. Daarom
+        houd je elk oordeel tegen het licht met de <strong>"so what?"-test</strong>: <em>dus wat?</em> Als je een feit
+        of conclusie opschrijft, vraag je door: en dus? Wat moet de lezer hierdoor anders doen of beslissen? Kun je die
+        vraag niet beantwoorden, dan is het achtergrondruis en haal je het weg.</p>
+        <p>Voorbeeld. "We zagen 2.000 scanpogingen op onze firewall." So what? Scannen is er altijd; hier verandert
+        niemand zijn dag voor. Maar: "Een groep die deze week drie gemeenten raakte, scant nu ook onze gateway op
+        exact de kwetsbaarheid die wij nog niet gepatcht hebben." So what? Patch vanavond. Datzelfde feit, nu met
+        betekenis én een handeling. Goede intelligence eindigt niet bij "dit zagen we", maar bij "en daarom raden we
+        dit aan".</p>
+
+        <div class="callout tip">
+          <strong>Beloning:</strong> je eerste vlag voor deze room is <code>JVT{so_what_maakt_intel}</code>. Onthoud
+          waarom: data wordt pas intelligence als de "so what?" beantwoord is.
+        </div>
+      `,
+      questions: [
+        { q: 'In welke stap vertaal je de vraag van de opdrachtgever naar een concrete intelligence requirement?', options: ['Richten', 'Verzamelen', 'Verwerken', 'Verspreiden'], answer: 0, explain: 'Richten (direction) bepaalt wat je wilt weten; zonder die vraag verzamel je willekeurig.' },
+        { q: 'Welk element verbindt alle stappen en stuurt de volgende ronde van de cyclus?', answer: ['feedback', 'terugkoppeling'], hint: 'Was het product bruikbaar? Wat miste de ontvanger?', explain: 'Feedback scherpt je requirements aan en maakt van de cyclus een kringloop in plaats van een eenmalige lijn.' },
+        { q: 'Wat is de kern van de "so what?"-test?', options: ['Vragen welke handeling of beslissing dit feit oplevert voor de lezer', 'Zoveel mogelijk feiten toevoegen', 'Alleen technische details vermelden', 'De bron verzwijgen'], answer: 0, explain: 'Levert een feit geen handeling of beslissing op, dan is het ruis en haal je het weg.' },
+        { q: 'Wat is de vlag die als beloning in deze taak staat?', answer: ['JVT{so_what_maakt_intel}'], hint: 'Kijk in de groene tip onderaan de taak.' },
+      ],
+    },
+
+    {
+      title: 'Taak 2 — Van losse data naar entiteiten: CSAE',
+      content: `
+        <p>De intelligencecyclus zegt <em>wat</em> je doet; <strong>CSAE</strong> is een handig ezelsbruggetje voor
+        <em>hoe</em> je met de informatie zelf omgaat. CSAE staat voor <strong>Collect, Store, Analyse, Engage</strong>.</p>
+
+        <h3>Collect — gericht verzamelen</h3>
+        <p>Verzamel vanuit je requirement, niet "alles wat los en vast zit". Een berg data die niemand besteld heeft, is
+        een berg werk zonder opbrengst. Vraag je bij elke bron af: beantwoordt dit mijn vraag, en mag ik dit (privacy,
+        opsec, juridisch)?</p>
+
+        <h3>Store — bewaren als entiteiten met herkomst én tijd</h3>
+        <p>Dit is de belangrijkste stap en wordt het vaakst overgeslagen. Bewaar informatie niet als losse zinnen in een
+        document, maar als <strong>entiteiten</strong>: een IP-adres, een domein, een e-mailadres, een hash, een alias,
+        een wallet. Leg bij elke entiteit twee dingen vast:</p>
+        <ul>
+          <li><strong>Herkomst</strong> — waar komt dit vandaan? ("passive DNS", "crt.sh", "WHOIS", "rapport van
+          partner X"). Zo kun je later de betrouwbaarheid wegen en je bron teruglezen.</li>
+          <li><strong>Tijd</strong> — wanneer was dit waar? Een domein dat in januari naar een kwaadaardig IP wees, kan
+          in maart alweer van iemand anders zijn. Zonder tijd is een indicator niet te vertrouwen.</li>
+        </ul>
+        <p>Een relatie tussen entiteiten (domein <em>resolvet naar</em> IP) bewaar je net zo, met herkomst en tijd
+        erbij. Zo bouw je een graaf die je later kunt doorzoeken en combineren — precies wat je in de room over OSINT en
+        pivoting gaat doen.</p>
+
+        <h3>Analyse — duiden en labelen</h3>
+        <p>Nu geef je betekenis. Houd daarbij streng uit elkaar wat je wéét en wat je dénkt. Gebruik de
+        <strong>labeling-conventie</strong>:</p>
+        <table>
+          <thead><tr><th>Label</th><th>Betekenis</th><th>Voorbeeld</th></tr></thead>
+          <tbody>
+            <tr><td><strong>bekend</strong></td><td>Feit of directe waarneming</td><td>"Het domein presenteerde op 3 jan een TLS-certificaat met serienummer A1B2."</td></tr>
+            <tr><td><strong>afgeleid</strong></td><td>Analytische conclusie uit bewijs</td><td>"Omdat beide zaken hetzelfde certificaat delen, horen ze afgeleid bij dezelfde actor."</td></tr>
+            <tr><td><strong>aanname</strong></td><td>Onbewezen, nog in te vullen</td><td>"We nemen aan dat de actor Nederlandstalig is (nog niet onderbouwd)."</td></tr>
+          </tbody>
+        </table>
+        <p>Die drie woordjes maken je product eerlijk: de lezer ziet meteen waar het hard is en waar je gokt. Een
+        aanname die als feit wordt gepresenteerd, is de meest voorkomende oorzaak van een verkeerde conclusie.</p>
+
+        <h3>Engage — de juiste partners betrekken</h3>
+        <p>Je werkt niet alleen. De laatste E dwingt je na te denken: wie moet dit weten, en wie weet meer dan ik?
+        Betrek op tijd je SOC, een sectorpartner of ISAC, het NCSC, of (bij strafbare feiten) de politie. "Engage" is
+        tweerichtingsverkeer: je deelt wat je hebt én je vraagt om wat anderen zien. Een goede analist weet dat
+        samenwerken bijna altijd meer oplevert dan alleen puzzelen.</p>
+
+        <div class="callout info">
+          <strong>Koppeling:</strong> Store (entiteiten met herkomst en tijd) komt overeen met "verwerken" uit de
+          cyclus; Analyse met "analyseren"; Engage met "verspreiden". CSAE is dus geen concurrent van de cyclus, maar
+          een praktische checklist bij het omgaan met je data.
+        </div>
+      `,
+      questions: [
+        { q: 'Wat staat de E van CSAE voor?', answer: ['Engage', 'engage', 'betrekken'], hint: 'De juiste partners betrekken.', explain: 'Engage: betrek op tijd je SOC, partners, ISAC, NCSC of politie — en vraag ook om wat anderen zien.' },
+        { q: 'Welke twee dingen leg je volgens de Store-stap altijd bij een entiteit vast?', options: ['Herkomst en tijd', 'Kleur en grootte', 'Prijs en eigenaar', 'Taal en land'], answer: 0, explain: 'Zonder herkomst kun je betrouwbaarheid niet wegen; zonder tijd weet je niet of de indicator nog klopt.' },
+        { q: 'Je schrijft: "De actor is vermoedelijk Russisch", zonder enig bewijs. Welk label hoort hierbij?', options: ['bekend', 'afgeleid', 'aanname'], answer: 2, explain: 'Onbewezen en nog in te vullen: dat is een aanname. Presenteer het nooit als feit.' },
+        { q: 'Je ziet in je eigen, geverifieerde log dat host WS-07 om 02:14 verbinding maakte met een C2-domein. Welk label past?', options: ['bekend', 'afgeleid', 'aanname'], answer: 0, explain: 'Een directe, geverifieerde waarneming is bekend (een feit).' },
+      ],
+    },
+
+    {
+      title: 'Taak 3 — Kwantitatief én kwalitatief combineren',
+      content: `
+        <p>Informatie komt in twee smaken. <strong>Kwantitatieve</strong> informatie is te tellen of te meten: 2.000
+        scanpogingen, 14 besmette werkplekken, 300 GB uitgaand verkeer, een piek om 02:00 uur. <strong>Kwalitatieve</strong>
+        informatie gaat over betekenis en context: het <em>motief</em> van een groep, de <em>intentie</em> achter een
+        campagne, de inschatting van een ervaren analist, het verhaal achter de cijfers.</p>
+
+        <h3>De analogie van de dokter</h3>
+        <p>Een arts kijkt naar je bloedwaarden en temperatuur (kwantitatief), maar ook naar hoe je eruitziet, wat je
+        vertelt en wat zijn ervaring hem influistert (kwalitatief). Alleen de cijfers maken van een arts een
+        meetapparaat; alleen het gevoel maakt hem een waarzegger. De diagnose ontstaat als hij beide combineert.</p>
+
+        <h3>Waarom je ze nodig hebt — allebei</h3>
+        <ul>
+          <li><strong>Cijfers zonder context misleiden.</strong> "Het aantal aanvallen is verdubbeld" klinkt alarmerend,
+          maar misschien kwam dat doordat je een nieuwe sensor aanzette die nu méér ziet. De telling veranderde, de
+          dreiging niet.</li>
+          <li><strong>Context zonder cijfers is een mening.</strong> "Ik denk dat deze groep gevaarlijk is" overtuigt
+          niemand. "Deze groep raakte in twee weken drie vergelijkbare gemeenten, met gemiddeld vier dagen tussen
+          inbraak en versleuteling" geeft je mening een ruggengraat.</li>
+        </ul>
+
+        <h3>Combineren in de praktijk</h3>
+        <p>Een sterk oordeel vlecht de twee door elkaar: je noemt het meetbare patroon (<em>bekend</em>), trekt daar een
+        conclusie uit (<em>afgeleid</em>) en bent eerlijk over wat je nog invult (<em>aanname</em>). Bijvoorbeeld:</p>
+        <div class="callout info">
+          <strong>Voorbeeld-oordeel:</strong> "In drie weken zagen we 11 phishingmails met dezelfde nepfactuur
+          (<em>bekend</em>, kwantitatief). De mails gebruikten telkens hetzelfde verhaal en dezelfde infrastructuur,
+          wat afgeleid wijst op één actor (<em>afgeleid</em>, kwalitatief). We nemen aan dat de actor zich op de
+          logistiek richt omdat alle doelwitten in die sector zitten (<em>aanname</em>, te toetsen)."
+        </div>
+        <p>Let op een valkuil: een getal voelt objectiever dan het is. "73% van de aanvallen" suggereert precisie, maar
+        als het op 11 gevallen gebaseerd is, is het een grof percentage. Zeg dan liever "8 van de 11". En andersom:
+        geef je een kwalitatief oordeel ("waarschijnlijk"), gebruik dan vaste waarschijnlijkheidstaal — daarover gaat
+        taak 5.</p>
+      `,
+      questions: [
+        { q: 'Welk soort informatie is "het motief en de intentie van een aanvalsgroep"?', options: ['Kwantitatief', 'Kwalitatief'], answer: 1, explain: 'Motief en intentie zijn niet te tellen; het is kwalitatieve, betekenisgevende informatie.' },
+        { q: 'Waarom kan "het aantal aanvallen is verdubbeld" misleidend zijn zonder context?', options: ['Omdat de stijging door een nieuwe sensor kan komen die meer ziet, niet door meer dreiging', 'Omdat aanvallen nooit toenemen', 'Omdat cijfers altijd fout zijn', 'Omdat verdubbelen onmogelijk is'], answer: 0, explain: 'Een veranderde meting is niet hetzelfde als een veranderde werkelijkheid; context duidt het cijfer.' },
+        { q: 'Je baseert "73%" op 11 gevallen. Wat is een eerlijker formulering?', options: ['8 van de 11', 'Bijna driekwart gegarandeerd', '73,0%', 'Heel veel'], answer: 0, explain: 'Bij kleine aantallen suggereert een percentage een precisie die er niet is; noem het absolute aantal.' },
+      ],
+    },
+
+    {
+      title: 'Taak 4 — Bronbeoordeling met de Admiralty Code',
+      content: `
+        <p>Niet elke bron is even goed, en niet elke claim van een goede bron is waar. Beginners gooien die twee op één
+        hoop ("het komt van een betrouwbare partner, dus het klopt"). De <strong>Admiralty Code</strong> (ook wel het
+        NAVO-systeem) dwingt je ze <em>apart</em> te scoren:</p>
+        <ul>
+          <li><strong>Betrouwbaarheid van de bron</strong> met een letter <strong>A–F</strong>: hoe goed is het
+          trackrecord van deze bron?</li>
+          <li><strong>Geloofwaardigheid van de informatie</strong> met een cijfer <strong>1–6</strong>: hoe
+          waarschijnlijk is déze specifieke claim, los van wie hem doet?</li>
+        </ul>
+
+        <h3>De twee schalen</h3>
+        <table>
+          <thead><tr><th>Bron (A–F)</th><th>Betekenis</th></tr></thead>
+          <tbody>
+            <tr><td><strong>A</strong></td><td>Volledig betrouwbaar</td></tr>
+            <tr><td><strong>B</strong></td><td>Meestal betrouwbaar</td></tr>
+            <tr><td><strong>C</strong></td><td>Tamelijk betrouwbaar</td></tr>
+            <tr><td><strong>D</strong></td><td>Niet altijd betrouwbaar</td></tr>
+            <tr><td><strong>E</strong></td><td>Onbetrouwbaar</td></tr>
+            <tr><td><strong>F</strong></td><td>Betrouwbaarheid niet te beoordelen</td></tr>
+          </tbody>
+        </table>
+        <table>
+          <thead><tr><th>Info (1–6)</th><th>Betekenis</th></tr></thead>
+          <tbody>
+            <tr><td><strong>1</strong></td><td>Bevestigd (door onafhankelijke bronnen)</td></tr>
+            <tr><td><strong>2</strong></td><td>Waarschijnlijk waar</td></tr>
+            <tr><td><strong>3</strong></td><td>Mogelijk waar</td></tr>
+            <tr><td><strong>4</strong></td><td>Twijfelachtig</td></tr>
+            <tr><td><strong>5</strong></td><td>Onwaarschijnlijk</td></tr>
+            <tr><td><strong>6</strong></td><td>Niet te beoordelen</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Waarom apart?</h3>
+        <p>Omdat de combinaties je iets leren. Een <strong>A1</strong> (geverifieerde eigen waarneming, bevestigd) mag je
+        vertrouwen. Een <strong>E4</strong> (onbetrouwbare bron, twijfelachtige claim) niet. Maar let op de lastige
+        tussengevallen: een <strong>B2</strong> komt van een partner die je vertrouwt, maar de claim is nog niet
+        bevestigd — handel er voorzichtig naar en probeer te verifiëren. En een geweldige bron kan onzin vertellen
+        (A5), terwijl een twijfelachtige bron toevallig gelijk heeft (E2). Door bron en info los te scoren, blijf je
+        scherp.</p>
+        <div class="callout warn">
+          <strong>Veelgemaakte fout:</strong> een anonieme tip krijgt vaak automatisch een hoge geloofwaardigheid als
+          hij "eng genoeg" klinkt. Fout: een anonieme bron heeft geen trackrecord (lage letter) én een onbevestigde
+          claim blijft laag op de cijferschaal — tenzij een onafhankelijke bron hem bevestigt.
+        </div>
+
+        <h3>Oefening</h3>
+        <p>In het lab hieronder staan vijf situaties. Scoor telkens de bron (A–F) én de info (1–6) apart, en vergelijk
+        daarna met het expertoordeel. Denk hardop: wat weet ik over het trackrecord van deze bron, en hoe sterk is
+        juist deze claim?</p>
+
+        <div class="callout tip">
+          <strong>Beloning:</strong> de tweede vlag van deze room vat het kernidee samen —
+          <code>JVT{bron_en_info_apart}</code>. Beoordeel bron en informatie altijd los van elkaar.
+        </div>
+      `,
+      lab: {
+        type: 'admiralty',
+        items: [
+          { source: 'Een gebeurtenis in je eigen SIEM, bevestigd door een tweede, onafhankelijke logbron', info: 'Werkplek WS-07 maakte om 02:14 verbinding met een bekend C2-domein', reliability: 'A', credibility: '1', explain: 'Je eigen, geverifieerde telemetrie is een volledig betrouwbare bron (A). Een tweede onafhankelijke logbron bevestigt de waarneming, dus de info is bevestigd (1): A1.' },
+          { source: 'Een anonieme, onbevestigde tip via Meld Misdaad Anoniem', info: 'Bedrijf X wordt volgende week geraakt door ransomware', reliability: 'E', credibility: '4', explain: 'Een anonieme bron heeft geen trackrecord en is niet te verifiëren — in de praktijk scoor je die laag (E). De claim staat op zichzelf en is twijfelachtig (4): E4.' },
+          { source: 'Een sectorpartner (ISAC) die je al jaren kent en die een goed trackrecord heeft, nog niet door jou geverifieerd', info: 'Er circuleert een nieuwe phishinggolf tegen de logistiek', reliability: 'B', credibility: '2', explain: 'Een partner met een goed trackrecord is meestal betrouwbaar (B). De claim klinkt plausibel maar is door jou nog niet bevestigd: waarschijnlijk waar (2): B2.' },
+          { source: 'Een claim op de leksite van een ransomwaregroep zelf', info: 'Wij hebben gemeente Y versleuteld en 300 GB data buitgemaakt', reliability: 'D', credibility: '3', explain: 'Criminele groepen overdrijven, hergebruiken oude slachtoffers en liegen om druk te zetten: niet altijd betrouwbaar (D). De claim kan kloppen maar is onbevestigd: mogelijk waar (3): D3.' },
+          { source: 'Een technisch rapport van een gerenommeerde securityleverancier met IOC\'s en onderbouwing', info: 'Campagne Z gebruikt een kwetsbaarheid in een VPN-gateway voor initiële toegang', reliability: 'B', credibility: '2', explain: 'Een gerenommeerde leverancier is doorgaans betrouwbaar (B). Het rapport is onderbouwd maar nog niet in jouw omgeving bevestigd (2): B2. Verifieer in je eigen logs om naar 1 te komen.' },
+        ],
+      },
+      questions: [
+        { q: 'Wat meet de letterschaal A–F in de Admiralty Code?', options: ['De betrouwbaarheid (het trackrecord) van de bron', 'De geloofwaardigheid van de claim', 'De ernst van de aanval', 'De snelheid van de reactie'], answer: 0, explain: 'A–F gaat over de bron; het cijfer 1–6 gaat apart over de specifieke informatie.' },
+        { q: 'Welke score hoort bij een geverifieerde, door een tweede bron bevestigde waarneming uit je eigen SIEM?', answer: ['A1', 'a1'], hint: 'Volledig betrouwbare bron + bevestigde info.', explain: 'Eigen geverifieerde telemetrie = A; bevestigd door een onafhankelijke bron = 1. Samen A1.' },
+        { q: 'Een partner met een goed trackrecord meldt iets wat jij nog niet hebt kunnen bevestigen. Welke score past het best?', options: ['A1', 'B2', 'E4', 'F6'], answer: 1, explain: 'Betrouwbare bron (B), plausibele maar onbevestigde claim (2): B2. Verifieer voor je er zwaar op leunt.' },
+        { q: 'Wat is de vlag die hoort bij het kernidee van deze taak?', answer: ['JVT{bron_en_info_apart}'], hint: 'Staat in de groene tip onderaan.' },
+      ],
+    },
+
+    {
+      title: 'Taak 5 — Waarschijnlijkheidstaal: de yardstick (plus een apart betrouwbaarheidsniveau)',
+      content: `
+        <p>"Waarschijnlijk" betekent voor de ene lezer 60% en voor de andere 90%. Dat is een probleem: een directeur die
+        op jouw "waarschijnlijk" een dure beslissing neemt, moet weten wat je bedoelt. Daarom gebruiken
+        inlichtingendiensten een <strong>waarschijnlijkheidstaal</strong> (de <em>probability yardstick</em>): een vaste
+        set woorden die elk bij een percentagebereik horen.</p>
+
+        <h3>De standaardbanden</h3>
+        <table>
+          <thead><tr><th>Term</th><th>Ongeveer</th></tr></thead>
+          <tbody>
+            <tr><td>vrijwel uitgesloten</td><td>0–5%</td></tr>
+            <tr><td>zeer onwaarschijnlijk</td><td>10–20%</td></tr>
+            <tr><td>onwaarschijnlijk</td><td>25–35%</td></tr>
+            <tr><td>reële kans</td><td>40–50%</td></tr>
+            <tr><td>waarschijnlijk</td><td>55–75%</td></tr>
+            <tr><td>zeer waarschijnlijk</td><td>80–90%</td></tr>
+            <tr><td>vrijwel zeker</td><td>95–100%</td></tr>
+          </tbody>
+        </table>
+        <p>Let op de <strong>gaten</strong> tussen de banden (bijvoorbeeld tussen 75% en 80%). Die zijn er expres: ze
+        voorkomen dat je doet alsof je op de procent nauwkeurig bent. Een oordeel is geen weegschaal.</p>
+
+        <h3>Waarschijnlijkheid is NIET hetzelfde als betrouwbaarheid</h3>
+        <p>Dit is de valkuil waar bijna iedereen intrapt. Twee dingen die je <em>apart</em> moet aangeven:</p>
+        <ul>
+          <li><strong>Waarschijnlijkheid</strong> — hoe waarschijnlijk is het dat de bewering waar is? (de yardstick)</li>
+          <li><strong>Betrouwbaarheidsniveau</strong> (confidence) — hoe stevig is je oordeel? Dit hangt af van de
+          kwaliteit en hoeveelheid bronnen, hun onderlinge bevestiging en het ontbreken van grote aannames. Je drukt het
+          vaak uit als <em>laag / midden / hoog</em>.</li>
+        </ul>
+        <div class="callout info">
+          <strong>Voorbeeld:</strong> "Het is <strong>waarschijnlijk</strong> (55–75%) dat groep KOFFIEKAT achter de
+          aanval zit — <strong>betrouwbaarheidsniveau: midden</strong>, omdat we op twee bronnen leunen en één
+          sleutelaanname nog niet getoetst is." Je kunt dus heel <em>waarschijnlijk</em> iets vinden met een
+          <em>laag</em> betrouwbaarheidsniveau (één wankele bron), of iets een <em>reële kans</em> geven met een
+          <em>hoog</em> niveau (veel goede bronnen die naar een onzekere uitkomst wijzen).
+        </div>
+
+        <h3>Oefening</h3>
+        <p>In het lab zet je per term een percentage op de schuif. Probeer de band te raken. Oefen daarna hardop:
+        formuleer een oordeel over een fictieve zaak waarin je zowel een term van de yardstick als een apart
+        betrouwbaarheidsniveau noemt. Een goede analist geeft altijd beide.</p>
+      `,
+      lab: {
+        type: 'probability',
+        items: [
+          { term: 'vrijwel uitgesloten', low: 0, high: 5 },
+          { term: 'zeer onwaarschijnlijk', low: 10, high: 20 },
+          { term: 'onwaarschijnlijk', low: 25, high: 35 },
+          { term: 'reële kans', low: 40, high: 50 },
+          { term: 'waarschijnlijk', low: 55, high: 75 },
+          { term: 'zeer waarschijnlijk', low: 80, high: 90 },
+          { term: 'vrijwel zeker', low: 95, high: 100 },
+        ],
+      },
+      questions: [
+        { q: 'Welk percentagebereik hoort bij de term "waarschijnlijk" op de yardstick?', answer: ['55-75', '55–75', '55 tot 75', '55-75%'], hint: 'Kijk in de tabel met standaardbanden.', explain: 'In deze yardstick staat "waarschijnlijk" voor ongeveer 55–75%.' },
+        { q: 'Waarom zitten er gaten tussen de banden van de yardstick?', options: ['Om schijnprecisie te voorkomen — een oordeel is niet op de procent nauwkeurig', 'Omdat sommige percentages verboden zijn', 'Om ruimte te laten voor reclame', 'Dat is een drukfout'], answer: 0, explain: 'De gaten laten zien dat je een inschatting geeft, geen meting.' },
+        { q: 'Je leunt op één wankele bron, maar vindt de bewering toch heel waarschijnlijk. Wat geef je apart aan?', options: ['Een laag betrouwbaarheidsniveau', 'Een hoger percentage', 'Niets, dat hoeft niet', 'Een andere yardstick'], answer: 0, explain: 'Waarschijnlijkheid en betrouwbaarheid staan los: hoge waarschijnlijkheid kan samengaan met een laag betrouwbaarheidsniveau.' },
+        { q: 'Wat drukt het betrouwbaarheidsniveau (confidence) uit?', options: ['Hoe stevig je oordeel is, op basis van bron-kwaliteit, aantal en aannames', 'De kans dat de bewering waar is', 'De snelheid van de aanval', 'Het aantal slachtoffers'], answer: 0, explain: 'Confidence gaat over de stevigheid van je oordeel, niet over de kans zelf.' },
+      ],
+    },
+
+    {
+      title: 'Taak 6 — Hypothesen afwegen met ACH',
+      content: `
+        <p>Mensen pakken graag de eerste verklaring die past en zoeken daarna alleen nog bewijs dat die bevestigt. Dat is
+        precies hoe attributie (wie zit erachter?) misgaat. <strong>Analysis of Competing Hypotheses</strong> (ACH), een
+        methode van CIA-analist Richards Heuer, draait het om: je zet meerdere hypothesen náást elkaar en gaat actief op
+        zoek naar bewijs dat ze <em>weerlegt</em>.</p>
+
+        <h3>De kern: je weerlegt, je bevestigt niet</h3>
+        <p>In ACH maak je een matrix: de hypothesen bovenaan, de bewijsstukken links. Per cel beoordeel je of het bewijs
+        <strong>C</strong> (consistent — past bij deze hypothese), <strong>I</strong> (inconsistent — spreekt deze
+        hypothese tegen) of <strong>N</strong> (neutraal — zegt niets) is. Daarna tel je per hypothese de
+        <strong>I's</strong>. De winnaar is <em>niet</em> de hypothese met de meeste C's, maar die met de
+        <strong>minste inconsistenties</strong>: de verklaring die je op basis van het bewijs niet kunt wegstrepen.</p>
+        <div class="callout info">
+          <strong>Waarom tellen de I's en niet de C's?</strong> Eén tegenbewijs (I) kan een hele hypothese onderuithalen,
+          terwijl tien keer "dat past ook wel" (C) niets bewijst — bijna alles past bij meerdere verklaringen. Zoeken
+          naar wat een hypothese <em>kapot</em> maakt, is sterker dan zoeken naar wat haar steunt.
+        </div>
+
+        <h3>Niet-diagnostisch bewijs</h3>
+        <p>Een bewijsstuk dat bij álle hypothesen consistent is (overal C), helpt je niet kiezen: het is
+        <strong>niet-diagnostisch</strong>. "De aanval begon met phishing" past bij vrijwel elke dader. Zulk bewijs mag
+        in je rapport, maar laat het je oordeel niet sturen. ACH maakt dit zichtbaar.</p>
+
+        <h3>Gevoeligheidscheck en indicatoren</h3>
+        <ul>
+          <li><strong>Gevoeligheidscheck:</strong> kijk welke paar bewijsstukken je conclusie dragen. Vraag per stuk:
+          "als dit vals of misleidend blijkt (bijvoorbeeld een bewuste false flag), verandert mijn conclusie dan?" Is je
+          hele oordeel afhankelijk van één item, dan is het fragiel — zeg dat erbij.</li>
+          <li><strong>Indicatoren:</strong> benoem vooraf wat je in de toekomst zou moeten zien als een bepaalde
+          hypothese waar is. Zie je die signalen (bijvoorbeeld "de groep verschijnt op een crimineel forum"), dan wint
+          die hypothese terrein; blijven ze uit, dan verliest ze. Zo blijf je toetsen in plaats van vastklampen.</li>
+        </ul>
+
+        <h3>Oefening: wie zit achter de aanval?</h3>
+        <p>In het lab staat een fictieve attributievraag met drie hypothesen (een statelijke actor, een financieel
+        gemotiveerde ransomwaregroep en een hacktivistisch collectief) en vijf bewijsstukken. Vul de matrix zelf in met
+        C/I/N, tel de inconsistenties en vergelijk met het expertoordeel. Welke hypothese houdt de minste I's over?</p>
+
+        <div class="callout tip">
+          <strong>Beloning:</strong> de derde vlag vat de regel samen — <code>JVT{minste_i_wint}</code>. In ACH wint de
+          hypothese met de minste inconsistenties.
+        </div>
+      `,
+      lab: {
+        type: 'ach',
+        question: 'Wie zit achter de aanval op een reeks Nederlandse organisaties?',
+        hypotheses: ['Statelijke actor (spionage)', 'Financieel gemotiveerde ransomwaregroep', 'Hacktivistisch collectief'],
+        evidence: [
+          { text: 'Er is een losgeldbrief achtergelaten met een Tor-onderhandelingsportaal en een cryptowallet', expert: ['I', 'C', 'I'] },
+          { text: 'De gebruikte malware is een bekende Ransomware-as-a-Service (RaaS) die door wisselende affiliates wordt ingezet', expert: ['I', 'C', 'I'] },
+          { text: 'De slachtoffers zitten in heel verschillende sectoren (logistiek, zorg, productie), zonder gemeenschappelijke politieke lijn', expert: ['I', 'C', 'I'] },
+          { text: 'De groep past dubbele afpersing toe: gestolen data komt op een leksite als er niet wordt betaald', expert: ['N', 'C', 'N'] },
+          { text: 'De eerste toegang verliep via spearphishing met een kwaadaardige bijlage', expert: ['C', 'C', 'C'] },
+        ],
+      },
+      questions: [
+        { q: 'Welke letter tel je in ACH om de zwakste hypothesen weg te strepen?', answer: ['I', 'i', 'inconsistent', 'inconsistenties'], hint: 'Je weerlegt, je bevestigt niet.', explain: 'Je telt de inconsistenties (I). De hypothese met de minste I\'s blijft het sterkst overeind.' },
+        { q: 'Welke hypothese houdt in de oefening de minste inconsistenties over en wint dus?', options: ['Statelijke actor (spionage)', 'Financieel gemotiveerde ransomwaregroep', 'Hacktivistisch collectief', 'Ze eindigen gelijk'], answer: 1, explain: 'Losgeldportaal, RaaS, brede/opportunistische doelwitten en dubbele afpersing zijn allemaal consistent met een financieel gemotiveerde groep; die houdt nul I\'s over.' },
+        { q: '"De aanval begon met phishing" is consistent met alle drie de hypothesen. Hoe heet zulk bewijs?', options: ['Niet-diagnostisch', 'Doorslaggevend', 'Een false flag', 'Een indicator'], answer: 0, explain: 'Bewijs dat bij alle hypothesen past, helpt je niet kiezen: het is niet-diagnostisch.' },
+        { q: 'Wat controleer je met een gevoeligheidscheck?', options: ['Of je conclusie omvalt als één sleutelbewijs vals of misleidend blijkt', 'Hoeveel C\'s een hypothese heeft', 'Hoe snel je rapport af is', 'Welke kleur de matrix heeft'], answer: 0, explain: 'Je toetst hoe afhankelijk je oordeel is van een enkel bewijsstuk (bijvoorbeeld een bewuste false flag).' },
+      ],
+    },
+
+    {
+      title: 'Taak 7 — Denkfouten en hoe je ze bestrijdt',
+      content: `
+        <p>De gevaarlijkste fout in analyse zit niet in de data, maar in je eigen hoofd. Je brein neemt voortdurend
+        sluiproutes (biases). Ze maken je snel, maar ook vatbaar voor systematische vergissingen. Wie ze kent, kan
+        tegensturen.</p>
+
+        <h3>Zes denkfouten die je vaak tegenkomt</h3>
+        <table>
+          <thead><tr><th>Denkfout</th><th>Wat het is</th><th>Voorbeeld</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Confirmation bias</strong></td><td>Je ziet vooral bewijs dat je eerste idee bevestigt</td><td>Je denkt "het is groep X" en negeert alles wat daar niet bij past.</td></tr>
+            <tr><td><strong>Anchoring</strong></td><td>Het eerste getal of idee blijft hangen als ankerpunt</td><td>De eerste schatting ("50 slachtoffers") kleurt al je latere inschattingen, ook als die te hoog was.</td></tr>
+            <tr><td><strong>Mirror imaging</strong></td><td>Je gaat ervan uit dat de tegenstander denkt zoals jij</td><td>"Dat zou ik nooit zo doen, dus zij ook niet" — terwijl hun logica heel anders is.</td></tr>
+            <tr><td><strong>"Tool = actor"</strong></td><td>Je verwart het gebruikte gereedschap met de dader</td><td>Twee aanvallen gebruiken dezelfde RaaS of tool, dus "het is dezelfde groep" — terwijl die tool door tientallen affiliates wordt gehuurd.</td></tr>
+            <tr><td><strong>Availability bias</strong></td><td>Wat je makkelijk voor de geest komt, lijkt waarschijnlijker</td><td>Na een spraakmakende ransomware-zaak zie je overal ransomware, ook waar het iets anders is.</td></tr>
+            <tr><td><strong>Groupthink</strong></td><td>Het team zoekt harmonie en niemand spreekt twijfel uit</td><td>Iedereen knikt mee met de teamleider; afwijkende signalen blijven onbesproken.</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout warn">
+          <strong>Let op "tool = actor":</strong> dit is in cyber-attributie de sluipmoordenaar. Gedeelde malware,
+          gedeelde infrastructuur of een gedeelde taal (denk aan de ACH-oefening) zijn aanwijzingen, geen bewijs van
+          identiteit. Het hele crime-as-a-service-ecosysteem bestaat erbij dat dezelfde tools door verschillende daders
+          worden gebruikt.
+        </div>
+
+        <h3>Tegenmaatregelen</h3>
+        <ul>
+          <li><strong>Devil's advocate</strong> — wijs iemand aan die expres het tegendeel verdedigt. Het team móét de
+          sterkste tegenargumenten horen, ook als niemand ze gelooft.</li>
+          <li><strong>Key assumptions check</strong> — schrijf je sleutelaannames op en toets ze één voor één: waarop
+          berust dit, en wat als het niet klopt? (Gebruik de labels <em>bekend / afgeleid / aanname</em> uit taak 2.)</li>
+          <li><strong>Pre-mortem</strong> — stel je voor dat je conclusie over een half jaar compleet fout blijkt. Schrijf
+          het verhaal hoe dat kon gebeuren. Zo zie je zwakke plekken vóórdat ze je inhalen.</li>
+        </ul>
+        <p>Deze technieken horen bij de bredere familie van <em>gestructureerde analysetechnieken</em>. ACH uit de vorige
+        taak is er één van. Ze hebben allemaal hetzelfde doel: je trage, zorgvuldige denken inschakelen op het moment dat
+        je snelle brein een sluiproute wil nemen.</p>
+
+        <div class="callout tip">
+          <strong>Onthoud:</strong> je raakt je biases nooit helemaal kwijt — zelfs weten dat ze bestaan beschermt je
+          niet vanzelf. Wat wél werkt, is een vast proces: hypothesen náást elkaar (ACH), aannames expliciet labelen,
+          en iemand laten tegenspreken.
+        </div>
+      `,
+      questions: [
+        { q: 'Twee aanvallen gebruiken dezelfde gehuurde RaaS, en je concludeert meteen "zelfde dader". Welke denkfout is dit?', options: ['"Tool = actor"', 'Anchoring', 'Availability bias', 'Groupthink'], answer: 0, explain: 'Gedeeld gereedschap is geen gedeelde identiteit; RaaS wordt door veel verschillende affiliates gebruikt.' },
+        { q: 'Hoe heet de denkfout waarbij je aanneemt dat de tegenstander denkt en handelt zoals jij zou doen?', answer: ['mirror imaging', 'mirrorimaging', 'spiegelen'], hint: 'Je spiegelt je eigen logica op de ander.', explain: 'Mirror imaging: "dat zou ik nooit zo doen" is geen bewijs dat de tegenstander het ook niet doet.' },
+        { q: 'Welke tegenmaatregel laat je je voorstellen dat je conclusie over een half jaar fout blijkt, om vooraf de zwakke plekken te vinden?', options: ['Pre-mortem', 'Anchoring', 'Confirmation bias', 'Mirror imaging'], answer: 0, explain: 'Bij een pre-mortem reconstrueer je vooraf hoe het mis kon gaan, zodat je de risico\'s op tijd ziet.' },
+        { q: 'Je wijst expres iemand aan die het tegendeel van de teamconclusie moet verdedigen. Hoe heet die rol?', answer: ['devil\'s advocate', 'devils advocate', 'advocaat van de duivel'], hint: 'Advocaat van de duivel.', explain: 'De devil\'s advocate dwingt het team om de sterkste tegenargumenten serieus te horen en bestrijdt groupthink.' },
+      ],
+    },
+  ],
+  terms: [
+    { term: 'Intelligencecyclus', def: 'Het terugkerende werkproces richten, verzamelen, verwerken, analyseren en verspreiden, met feedback die elke nieuwe ronde stuurt.' },
+    { term: 'Intelligence requirement', def: 'De concreet geformuleerde vraag die bepaalt wat je gaat verzamelen en analyseren; het resultaat van de stap "richten".' },
+    { term: '"So what?"-test', def: 'Controle of een feit of conclusie een handeling of beslissing oplevert voor de lezer; zo niet, dan is het ruis.' },
+    { term: 'CSAE', def: 'Collect, Store, Analyse, Engage: praktische checklist om data gericht te verzamelen, als entiteiten met herkomst en tijd te bewaren, te duiden en partners te betrekken.' },
+    { term: 'Entiteit (met herkomst en tijd)', def: 'Een los te bewaren gegeven (IP, domein, hash, alias, wallet) met vermelding van de bron en het moment waarop het gold.' },
+    { term: 'Labeling-conventie', def: 'Het expliciet markeren van beweringen als bekend (feit), afgeleid (conclusie) of aanname (onbewezen).' },
+    { term: 'Admiralty Code', def: 'Systeem dat een bron op betrouwbaarheid (A–F) en de informatie op geloofwaardigheid (1–6) apart beoordeelt, bijvoorbeeld A1 of E4.' },
+    { term: 'Waarschijnlijkheidstaal (yardstick)', def: 'Vaste set termen die elk bij een percentagebereik horen, van "vrijwel uitgesloten" tot "vrijwel zeker", met gaten tegen schijnprecisie.' },
+    { term: 'Betrouwbaarheidsniveau (confidence)', def: 'Apart aangegeven maat voor hoe stevig een oordeel is, op basis van bronkwaliteit, aantal bronnen en openstaande aannames.' },
+    { term: 'Analysis of Competing Hypotheses (ACH)', def: 'Methode van Heuer waarbij je hypothesen naast elkaar zet en de inconsistenties (I) telt; de hypothese met de minste I\'s wint.' },
+    { term: 'Niet-diagnostisch bewijs', def: 'Bewijs dat bij alle hypothesen past en je daarom niet helpt kiezen.' },
+    { term: 'Gevoeligheidscheck', def: 'Toets hoe afhankelijk je conclusie is van een enkel bewijsstuk, bijvoorbeeld als dat een bewuste false flag blijkt.' },
+    { term: 'Mirror imaging', def: 'Denkfout waarbij je aanneemt dat de tegenstander denkt en handelt zoals jijzelf zou doen.' },
+    { term: '"Tool = actor"', def: 'Denkfout waarbij gedeeld gereedschap of infrastructuur wordt verward met een gedeelde dader, terwijl tools gehuurd en gedeeld worden.' },
+  ],
+  resources: [
+    { title: 'CIA — Psychology of Intelligence Analysis (Richards J. Heuer Jr.)', url: 'https://www.cia.gov/resources/csi/static/Pyschology-of-Intelligence-Analysis.pdf' },
+    { title: 'GOV.UK — Explaining uncertainty in UK intelligence assessment (Probability Yardstick & confidence)', url: 'https://www.gov.uk/government/publications/explaining-uncertainty-in-uk-intelligence-assessment/explaining-uncertainty-in-uk-intelligence-assessment' },
+    { title: 'GOV.UK — PHIA Common Analytical Standards', url: 'https://www.gov.uk/government/publications/phia-common-analytical-standards/phia-common-analytical-standards' },
+    { title: 'SC World — How to leverage structured analytic techniques in threat intelligence', url: 'https://www.scworld.com/news/how-to-leverage-structured-analytic-techniques-in-threat-intelligence' },
+  ],
+});
+
+</script>
+<script>
+/* Room: Threat intelligence-modellen (Cyber Kill Chain, MITRE ATT&CK, Diamond Model, Pyramid of Pain) */
+
+CS.registerRoom({
+  id: 'ti-modellen',
+  path: 'intelligence',
+  order: 4,
+  title: 'Threat intelligence-modellen',
+  icon: '🔗',
+  difficulty: 'Gemiddeld',
+  minutes: 70,
+  summary: 'Vier klassieke modellen om aanvallen te beschrijven, vergelijken en delen: de Cyber Kill Chain, MITRE ATT&CK, het Diamond Model en de Pyramid of Pain. Je leert ze naast elkaar gebruiken en plaatst één gebeurtenis in alle vier.',
+  objectives: [
+    'De zeven fasen van de Cyber Kill Chain benoemen en een aanval erin plaatsen',
+    'Uitleggen hoe MITRE ATT&CK tactieken, technieken en procedures (TTP\'s) ordent, hoe technieken gecodeerd worden en waar de Navigator voor dient',
+    'De vier hoekpunten en de meta-kenmerken van het Diamond Model beschrijven en langs de randen pivoten tussen incidenten',
+    'Met de Pyramid of Pain prioriteit geven aan detectie, van hashes onderaan tot TTP\'s bovenaan',
+    'De vier modellen naast elkaar gebruiken en uitleggen welk model welke vraag het beste beantwoordt',
+  ],
+  tasks: [
+    {
+      title: 'Taak 1 — Waarom modellen?',
+      content: `
+        <p>In de defensieve room <strong>"Threat intelligence &amp; MITRE ATT&amp;CK"</strong> heb je al geoefend met
+        indicatoren (IOC's), defangen, TLP en het koppelen van logregels aan ATT&amp;CK. Die room gaat over het
+        <em>handwerk</em> van een analist. Deze room gaat over de <strong>modellen</strong> zelf: de denkramen waarmee je
+        een aanval structuur geeft. We dupliceren dat werk niet, maar bouwen erop voort.</p>
+
+        <h3>Een model is een bril</h3>
+        <p>Vergelijk het met een stadsplattegrond. Een toeristenkaart laat de bezienswaardigheden zien, een fietskaart de
+        routes, een metrokaart de lijnen. Geen enkele kaart is "de echte stad", maar elke kaart maakt een bepaalde vraag
+        makkelijker te beantwoorden. Zo werken threat intelligence-modellen ook: elk belicht een ander <em>aspect</em> van
+        dezelfde aanval. Je kiest de bril die bij je vraag past, en vaak gebruik je er meerdere naast elkaar.</p>
+
+        <h3>Waar modellen je bij helpen</h3>
+        <ul>
+          <li><strong>Structuur</strong>: een chaotisch incident wordt een reeks herkenbare stappen.</li>
+          <li><strong>Gedeelde taal</strong>: als jij en een partner allebei "T1566" of "de Delivery-fase" zeggen,
+          bedoelen jullie precies hetzelfde. Dat maakt delen en vergelijken mogelijk.</li>
+          <li><strong>Blinde vlekken vinden</strong>: een model laat zien welke stappen je nog <em>niet</em> kunt zien of
+          stoppen.</li>
+          <li><strong>Prioriteren</strong>: niet alles is even belangrijk; een model helpt kiezen waar je je tijd in steekt.</li>
+        </ul>
+
+        <h3>De vier modellen in deze room</h3>
+        <table>
+          <thead><tr><th>Model</th><th>Hoofdvraag</th><th>Kort</th></tr></thead>
+          <tbody>
+            <tr><td>Cyber Kill Chain</td><td>In welke <em>fase</em> zit de aanval?</td><td>Zeven schakels, van verkenning tot het doel</td></tr>
+            <tr><td>MITRE ATT&amp;CK</td><td>Wélk gedrag (TTP) zie ik precies?</td><td>Gedetailleerde kennisbank met gecodeerde technieken</td></tr>
+            <tr><td>Diamond Model</td><td>Hoe hangen de <em>elementen</em> samen?</td><td>Tegenstander, vermogen, infrastructuur, slachtoffer</td></tr>
+            <tr><td>Pyramid of Pain</td><td>Wat raakt de aanvaller het <em>hardst</em>?</td><td>Van hashes (makkelijk) tot TTP's (moeilijk)</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout info">
+          <strong>Let op:</strong> modellen zijn hulpmiddelen, geen wetten. Een echte aanval past zelden netjes in één
+          vakje, en analisten delen dingen soms net iets anders in. Gebruik een model om helder te denken en te
+          communiceren, niet om een discussie te winnen over "het juiste vakje".
+        </div>
+      `,
+      questions: [
+        { q: 'Wat is de belangrijkste meerwaarde van een threat intelligence-model?', options: ['Het geeft structuur en een gedeelde taal om aanvallen te beschrijven, vergelijken en delen', 'Het blokkeert automatisch elke aanval', 'Het vervangt je firewall en antivirus', 'Het versleutelt je logbestanden'], answer: 0, explain: 'Een model is een denkraam: het ordent de aanval en geeft iedereen dezelfde woorden.' },
+        { q: 'Welke uitspraak over de vier modellen klopt?', options: ['Je gebruikt ze vaak naast elkaar; elk model belicht een ander aspect van dezelfde aanval', 'Je mag er maar één tegelijk gebruiken', 'Het nieuwste model maakt de oudere overbodig', 'Ze beschrijven allemaal exact hetzelfde'], answer: 0, explain: 'Net als verschillende stadskaarten: elk model beantwoordt een andere vraag over dezelfde werkelijkheid.' },
+        { q: 'In welke bestaande room staat het handwerk rond IOC\'s, defangen en TLP uitgebreid uitgelegd?', answer: ['Threat intelligence & MITRE ATT&CK', 'threat intelligence en mitre att&ck', 'Threat intelligence en MITRE ATT&CK', 'threat-intel-attack'], hint: 'Een defensieve room met het kompas-icoon.', explain: 'Deze room bouwt daarop voort met de modellen zelf, zonder dat werk te herhalen.' },
+      ],
+    },
+
+    {
+      title: 'Taak 2 — De Cyber Kill Chain',
+      content: `
+        <p>Het oudste en eenvoudigste model is de <strong>Cyber Kill Chain</strong>, in 2011 bedacht door Lockheed Martin.
+        De term komt uit het leger: een "kill chain" is de keten van stappen die nodig is om een doel uit te schakelen.
+        Het idee is krachtig: <em>verbreek je één schakel, dan mislukt de hele aanval</em>. Je hoeft een aanvaller dus niet
+        pas aan het einde te stoppen; hoe eerder in de keten je ingrijpt, hoe beter.</p>
+
+        <h3>De zeven schakels</h3>
+        <figure class="diagram">
+          <svg viewBox="0 0 700 120" role="img" aria-label="De zeven fasen van de Cyber Kill Chain">
+            <rect x="8" y="24" width="86" height="40" rx="8" fill="var(--accent-soft)" stroke="currentColor"/>
+            <rect x="102" y="24" width="86" height="40" rx="8" fill="var(--surface-2)" stroke="currentColor"/>
+            <rect x="196" y="24" width="86" height="40" rx="8" fill="var(--surface-2)" stroke="currentColor"/>
+            <rect x="290" y="24" width="86" height="40" rx="8" fill="var(--surface-2)" stroke="currentColor"/>
+            <rect x="384" y="24" width="86" height="40" rx="8" fill="var(--surface-2)" stroke="currentColor"/>
+            <rect x="478" y="24" width="86" height="40" rx="8" fill="var(--surface-2)" stroke="currentColor"/>
+            <rect x="572" y="24" width="120" height="40" rx="8" fill="var(--surface-2)" stroke="currentColor"/>
+            <text x="51" y="49" text-anchor="middle" fill="currentColor" font-size="13">1</text>
+            <text x="145" y="49" text-anchor="middle" fill="currentColor" font-size="13">2</text>
+            <text x="239" y="49" text-anchor="middle" fill="currentColor" font-size="13">3</text>
+            <text x="333" y="49" text-anchor="middle" fill="currentColor" font-size="13">4</text>
+            <text x="427" y="49" text-anchor="middle" fill="currentColor" font-size="13">5</text>
+            <text x="521" y="49" text-anchor="middle" fill="currentColor" font-size="13">6</text>
+            <text x="632" y="49" text-anchor="middle" fill="currentColor" font-size="13">7</text>
+            <text x="51" y="84" text-anchor="middle" fill="currentColor" font-size="11">verkenning</text>
+            <text x="145" y="84" text-anchor="middle" fill="currentColor" font-size="11">bewapening</text>
+            <text x="239" y="84" text-anchor="middle" fill="currentColor" font-size="11">bezorging</text>
+            <text x="333" y="84" text-anchor="middle" fill="currentColor" font-size="11">uitbuiting</text>
+            <text x="427" y="84" text-anchor="middle" fill="currentColor" font-size="11">installatie</text>
+            <text x="521" y="84" text-anchor="middle" fill="currentColor" font-size="11">C2</text>
+            <text x="632" y="84" text-anchor="middle" fill="currentColor" font-size="11">acties op doel</text>
+            <line x1="94" y1="44" x2="102" y2="44" stroke="currentColor"/>
+            <line x1="188" y1="44" x2="196" y2="44" stroke="currentColor"/>
+            <line x1="282" y1="44" x2="290" y2="44" stroke="currentColor"/>
+            <line x1="376" y1="44" x2="384" y2="44" stroke="currentColor"/>
+            <line x1="470" y1="44" x2="478" y2="44" stroke="currentColor"/>
+            <line x1="564" y1="44" x2="572" y2="44" stroke="currentColor"/>
+          </svg>
+          <figcaption>De zeven fasen van de Cyber Kill Chain. Verbreek één schakel en de aanval valt stil.</figcaption>
+        </figure>
+        <ol>
+          <li><strong>Reconnaissance</strong> (verkenning) — de aanvaller verzamelt informatie: wie werkt er, welke
+          e-mailadressen, welke software draait er, waar zitten de zwakke plekken?</li>
+          <li><strong>Weaponization</strong> (bewapening) — hij maakt zijn wapen klaar, bijvoorbeeld een kwaadaardig
+          Word-document met een macro, gekoppeld aan een exploit. Dit gebeurt nog bij de aanvaller thuis; je ziet er als
+          verdediger niets van.</li>
+          <li><strong>Delivery</strong> (bezorging) — het wapen wordt afgeleverd: een phishingmail met bijlage, een
+          kwaadaardige link, een besmette USB-stick.</li>
+          <li><strong>Exploitation</strong> (uitbuiting) — het slachtoffer opent de bijlage of klikt; de kwetsbaarheid
+          wordt misbruikt en de code wordt voor het eerst uitgevoerd.</li>
+          <li><strong>Installation</strong> (installatie) — de aanvaller nestelt zich: hij installeert malware of een
+          achterdeurtje zodat hij ook na een herstart binnen blijft.</li>
+          <li><strong>Command and Control</strong> (C2) — de besmette machine neemt contact op met de server van de
+          aanvaller, die zo op afstand commando's kan geven.</li>
+          <li><strong>Actions on Objectives</strong> (acties op het doel) — nu pas voert de aanvaller zijn eigenlijke
+          plan uit: data stelen, bestanden versleutelen, zich verspreiden naar andere systemen.</li>
+        </ol>
+
+        <h3>Sterk en zwak</h3>
+        <p>De Kill Chain is fijn om een aanval in grote lijnen uit te leggen aan iemand die geen specialist is, en om te
+        laten zien dat je vroeg kunt ingrijpen. Haal de phishingmail eruit (fase 3) en de rest gebeurt nooit. De zwakte:
+        het model is sterk gericht op <em>binnenkomen</em> en behandelt alles ná de inbraak als één grote laatste fase.
+        Juist dat latere deel — rondkijken, rechten verhogen, zijdelings bewegen — is in de praktijk heel belangrijk.
+        Daar is MITRE ATT&amp;CK veel beter in, zoals je in de volgende taak ziet.</p>
+
+        <div class="callout tip">
+          <strong>Goed bezig:</strong> je kent nu de zeven schakels. Beloning: <code>JVT{zeven_schakels_een_keten}</code>.
+        </div>
+      `,
+      questions: [
+        { q: 'Hoeveel fasen (schakels) telt de Cyber Kill Chain?', answer: ['7', 'zeven'], hint: 'Van verkenning tot acties op het doel.', explain: 'Zeven: Reconnaissance, Weaponization, Delivery, Exploitation, Installation, Command and Control, Actions on Objectives.' },
+        { q: 'In welke fase maakt de aanvaller zijn wapen klaar, bijvoorbeeld een kwaadaardig document met een exploit?', options: ['Reconnaissance', 'Weaponization', 'Delivery', 'Installation'], answer: 1, explain: 'Weaponization (bewapening) gebeurt bij de aanvaller zelf; als verdediger zie je er nog niets van.' },
+        { q: 'Hoe heet de laatste fase, waarin de aanvaller zijn eigenlijke doel bereikt (zoals data stelen of versleutelen)?', answer: ['Actions on Objectives', 'actions on objectives', 'acties op het doel', 'acties op doel'], hint: 'De zevende schakel; in het Engels drie woorden.', explain: 'Actions on Objectives is de fase waarin de aanval zijn doel bereikt. De Kill Chain vat dit samen in één fase.' },
+        { q: 'Wat is de vlag die als beloning in deze taak staat?', answer: ['JVT{zeven_schakels_een_keten}'], hint: 'Kijk in de groene tip onderaan de taak.' },
+      ],
+    },
+
+    {
+      title: 'Taak 3 — MITRE ATT&CK: tactieken, technieken en procedures',
+      content: `
+        <p>Waar de Kill Chain grof is, is <strong>MITRE ATT&amp;CK</strong> fijnmazig. Het is een openbare, gratis
+        kennisbank van aanvalsgedrag, gebaseerd op echt waargenomen aanvallen. De 14 Enterprise-tactieken en een reeks
+        veelgebruikte technieken komen uitgebreid aan bod in de room "Threat intelligence &amp; MITRE ATT&amp;CK"; hier
+        kijken we naar de <em>logica</em> van het model: hoe het TTP's ordent en codeert.</p>
+
+        <h3>Tactiek, techniek, procedure (TTP)</h3>
+        <ul>
+          <li>Een <strong>tactiek</strong> is het <em>waarom</em>: het doel van de aanvaller in een stap, bijvoorbeeld
+          "inloggegevens stelen" (Credential Access). ATT&amp;CK kent 14 van deze tactieken, van Reconnaissance tot Impact.</li>
+          <li>Een <strong>techniek</strong> is het <em>hoe</em>: de manier waarop hij dat doel bereikt, bijvoorbeeld
+          "het geheugen van processen uitlezen". Sommige technieken zijn verder opgesplitst in <strong>sub-technieken</strong>.</li>
+          <li>Een <strong>procedure</strong> is de <em>precieze uitvoering</em> door een bepaalde groep: welk tool, welke
+          commando's, welke opties. Dezelfde techniek, maar groep A doet het net anders dan groep B.</li>
+        </ul>
+
+        <h3>De codering</h3>
+        <p>Elke techniek heeft een vast ID in de vorm <code>T</code> plus vier cijfers. Een sub-techniek krijgt er een
+        punt en drie cijfers bij:</p>
+        <table>
+          <thead><tr><th>Code</th><th>Betekenis</th></tr></thead>
+          <tbody>
+            <tr><td><code>T1566</code></td><td>Phishing (de techniek)</td></tr>
+            <tr><td><code>T1566.001</code></td><td>Spearphishing Attachment (een sub-techniek van Phishing)</td></tr>
+            <tr><td><code>T1059</code></td><td>Command and Scripting Interpreter</td></tr>
+            <tr><td><code>T1059.001</code></td><td>PowerShell (sub-techniek)</td></tr>
+            <tr><td><code>T1003.001</code></td><td>OS Credential Dumping: LSASS Memory (LSASS-geheugen uitlezen)</td></tr>
+            <tr><td><code>T1021.001</code></td><td>Remote Services: Remote Desktop Protocol (RDP)</td></tr>
+          </tbody>
+        </table>
+        <p>Door dit nummer kun je wereldwijd precies hetzelfde gedrag aanwijzen. "We zagen T1566.001 gevolgd door
+        T1059.001" is ondubbelzinnig, in elke taal.</p>
+
+        <h3>De Navigator en de heatmap</h3>
+        <p>De <strong>ATT&amp;CK Navigator</strong> is een gratis webtool waarin je de hele matrix als een raster ziet.
+        Je kunt technieken inkleuren om een <strong>heatmap</strong> te maken, bijvoorbeeld: groen = "detecteren we",
+        rood = "blinde vlek", of je kleurt de technieken van een aanvalsgroep die jouw sector bedreigt. Zo zie je in één
+        oogopslag waar je sterk staat en waar je gaten zitten. Begin altijd bij de technieken die voor <em>jouw</em>
+        organisatie het belangrijkst zijn, niet bij de hele matrix.</p>
+
+        <h3>Oefening: waarnemingen koppelen</h3>
+        <p>Hieronder zie je waarnemingen uit een (fictieve) inbraak bij een bedrijf. Koppel elke waarneming aan de juiste
+        ATT&amp;CK-techniek. Kies de <em>techniek</em>, niet alleen de tactiek. Het lab toont bij controle de naam en de
+        tactiek. Tip voor de laatste twee: data inpakken in een beveiligd archief is "Archive Collected Data", en
+        bestanden versleutelen met een losgeldeis is "Data Encrypted for Impact".</p>
+
+        <div class="callout info">
+          <strong>Ethiek:</strong> ATT&amp;CK beschrijft aanvalstechnieken om je te verdedigen. Technieken naspelen doe
+          je alleen in je eigen lab of met schriftelijke toestemming; zonder toestemming is het computervredebreuk
+          (art. 138ab Sr).
+        </div>
+      `,
+      lab: {
+        type: 'attackmap',
+        items: [
+          { desc: 'Een medewerker opent de bijlage factuur_sep.zip uit een mail van een nep-leverancier; in het archief zit een kwaadaardige snelkoppeling.', code: 'T1566.001', explain: 'Een gerichte phishingmail met een kwaadaardige bijlage is Spearphishing Attachment, tactiek Initial Access.' },
+          { desc: 'Vanuit het Word-document start een verborgen powershell.exe met een gecodeerd (-enc) commando.', code: 'T1059.001', explain: 'PowerShell als uitvoerder van kwaadaardige code valt onder Command and Scripting Interpreter, tactiek Execution.' },
+          { desc: 'De loader leest het geheugen van het proces lsass.exe uit om wachtwoorden en hashes te bemachtigen.', code: 'T1003.001', explain: 'LSASS Memory is een sub-techniek van OS Credential Dumping, tactiek Credential Access.' },
+          { desc: 'Met een gestolen, geldig beheerdersaccount logt de aanvaller via RDP in op een fileserver.', code: 'T1021.001', explain: 'Inloggen via Remote Desktop Protocol is een sub-techniek van Remote Services, tactiek Lateral Movement.' },
+          { desc: 'De aanvaller stopt de buitgemaakte bestanden in een met wachtwoord beveiligd 7z-archief voordat ze naar buiten gaan.', code: 'T1560', explain: 'Data inpakken voor exfiltratie is Archive Collected Data, tactiek Collection.' },
+          { desc: 'Tot slot worden alle bestanden op de fileshares versleuteld en verschijnt er een losgeldbrief.', code: 'T1486', explain: 'Bestanden onbruikbaar maken voor losgeld is Data Encrypted for Impact, tactiek Impact.' },
+        ],
+      },
+      questions: [
+        { q: 'Welk techniek-ID hoort bij Phishing?', answer: ['T1566'], hint: 'Vier cijfers, geen punt.', explain: 'T1566 Phishing; de gerichte variant met bijlage is T1566.001.' },
+        { q: 'Wat betekent de .001 in een ID als T1059.001?', options: ['Een sub-techniek: een specifiekere variant, hier PowerShell', 'De versie van ATT&CK', 'Het aantal slachtoffers', 'De naam van de aanvalsgroep'], answer: 0, explain: 'Na de punt staat de sub-techniek. T1059.001 is PowerShell binnen Command and Scripting Interpreter.' },
+        { q: 'Waarvoor gebruik je de ATT&CK Navigator?', options: ['Technieken in de matrix inkleuren als heatmap, bijvoorbeeld je detectiedekking of blinde vlekken', 'Malware schrijven', 'Wachtwoorden kraken', 'Netwerkverkeer opnemen'], answer: 0, explain: 'De Navigator maakt een heatmap over de matrix: waar sta je sterk, waar zitten gaten?' },
+        { q: 'Welke techniek hoort bij het uitlezen van het LSASS-geheugen (zie het lab en de tabel)?', answer: ['T1003.001'], hint: 'OS Credential Dumping, sub-techniek LSASS Memory.', explain: 'T1003.001 LSASS Memory valt onder de tactiek Credential Access.' },
+      ],
+    },
+
+    {
+      title: 'Taak 4 — Het Diamond Model',
+      content: `
+        <p>De Kill Chain en ATT&amp;CK beschrijven de <em>stappen</em> van een aanval. Het <strong>Diamond Model</strong>
+        (Caltagirone, Pendergast en Betz, 2013) kijkt anders: het beschrijft de <em>elementen</em> van één gebeurtenis en
+        hoe ze samenhangen. Het is vooral sterk om losse incidenten te verbinden tot een groter geheel, iets waar
+        opsporing en attributie veel aan hebben.</p>
+
+        <h3>De vier hoekpunten</h3>
+        <figure class="diagram">
+          <svg viewBox="0 0 480 330" role="img" aria-label="Het Diamond Model met vier hoekpunten">
+            <polygon points="240,45 420,170 240,295 60,170" fill="var(--accent-soft)" stroke="currentColor"/>
+            <line x1="240" y1="45" x2="240" y2="295" stroke="currentColor" stroke-dasharray="4 4"/>
+            <line x1="60" y1="170" x2="420" y2="170" stroke="currentColor" stroke-dasharray="4 4"/>
+            <text x="240" y="32" text-anchor="middle" fill="currentColor" font-size="13">Adversary</text>
+            <text x="240" y="318" text-anchor="middle" fill="currentColor" font-size="13">Victim</text>
+            <text x="60" y="192" text-anchor="middle" fill="currentColor" font-size="13">Infrastructure</text>
+            <text x="420" y="192" text-anchor="middle" fill="currentColor" font-size="13">Capability</text>
+          </svg>
+          <figcaption>Het Diamond Model. De verticale as (Adversary &lt;-&gt; Victim) is de socio-politieke relatie; de
+          horizontale as (Infrastructure &lt;-&gt; Capability) is de technische relatie.</figcaption>
+        </figure>
+        <ul>
+          <li><strong>Adversary</strong> (tegenstander) — wie zit erachter: de persoon of groep.</li>
+          <li><strong>Capability</strong> (vermogen) — wat hij kan: de malware, exploits, tools en technieken (de TTP's).</li>
+          <li><strong>Infrastructure</strong> (infrastructuur) — wat hij gebruikt: C2-servers, domeinen, IP-adressen,
+          mailaccounts.</li>
+          <li><strong>Victim</strong> (slachtoffer) — wie geraakt wordt: de organisatie, persoon, of een specifiek systeem.</li>
+        </ul>
+        <p>De kern: in elke gebeurtenis gebruikt een <em>tegenstander</em> een <em>vermogen</em> via een
+        <em>infrastructuur</em> tegen een <em>slachtoffer</em>. De twee diagonalen zijn de assen van het model: de
+        <strong>socio-politieke as</strong> (de relatie en motieven tussen aanvaller en slachtoffer) en de
+        <strong>technische as</strong> (de relatie tussen de infrastructuur en de capability).</p>
+
+        <h3>Meta-kenmerken</h3>
+        <p>Rond de vier hoekpunten noteer je <strong>meta-kenmerken</strong>: tijdstip, fase, resultaat, richting van de
+        actie, methode, en vooral de <em>herkomst en betrouwbaarheid</em> van elk gegeven. Zo blijft zichtbaar wat je
+        zeker weet (bekend) en wat je afleidt of aanneemt.</p>
+
+        <h3>Threads, groups en pivoten</h3>
+        <ul>
+          <li>Een reeks samenhangende gebeurtenissen van begin tot eind heet een <strong>activity thread</strong>
+          (activiteitsdraad) — je kunt die naast de Kill Chain-fasen leggen.</li>
+          <li>Diamanten die kenmerken delen, bundel je tot een <strong>activity group</strong> (activiteitengroep): het
+          begin van een campagne of dadergroep.</li>
+          <li><strong>Pivoten</strong> is de superkracht van het model: je springt van het ene hoekpunt naar het andere
+          langs de <em>randen</em>. Vind je een C2-domein (Infrastructure), dan zoek je welke andere slachtoffers ermee
+          verbonden zijn (Victim), of welke malware erop draaide (Capability). Zo groeit één losse waarneming uit tot een
+          compleet beeld.</li>
+        </ul>
+        <p><strong>Voorbeeld:</strong> twee ogenschijnlijk losse phishingzaken blijken hetzelfde TLS-certificaat te
+        gebruiken. Via dat gedeelde kenmerk (Infrastructure) pivoteer je van Zaak A naar Zaak B en bundel je ze tot één
+        activity group. In de room over OSINT &amp; pivoting oefen je dit met een echte dataset.</p>
+
+        <div class="callout tip">
+          <strong>Onthoud:</strong> het Diamond Model draait om verbinden. Je pivoteert langs de randen van de ene
+          waarneming naar de volgende. Beloning: <code>JVT{pivot_langs_de_randen}</code>.
+        </div>
+      `,
+      questions: [
+        { q: 'Hoeveel hoekpunten heeft het Diamond Model?', answer: ['4', 'vier'], hint: 'Het is een ruit.', explain: 'Vier: Adversary, Capability, Infrastructure en Victim.' },
+        { q: 'Welke vier hoekpunten zijn het?', options: ['Adversary, Capability, Infrastructure, Victim', 'Reconnaissance, Delivery, Exploitation, Impact', 'Hashes, IP-adressen, Domeinen, TTP\'s', 'Tactiek, Techniek, Procedure, Tool'], answer: 0, explain: 'In elke gebeurtenis gebruikt een tegenstander een vermogen via infrastructuur tegen een slachtoffer.' },
+        { q: 'Je ontdekt dat twee aparte incidenten hetzelfde C2-domein gebruiken. Wat doe je volgens het Diamond Model?', options: ['Pivoten langs de rand: via de gedeelde infrastructuur verbind je de zaken en kom je bij nieuwe slachtoffers of capabilities', 'De incidenten negeren omdat domeinen makkelijk te wisselen zijn', 'Alleen het domein blokkeren en stoppen', 'De twee zaken apart houden, want ze mogen nooit verbonden worden'], answer: 0, explain: 'Een gedeeld hoekpunt (hier Infrastructure) is een brug: je pivoteert langs de randen en bouwt een activity group.' },
+        { q: 'Welke vlag hoort bij deze taak over pivoten?', answer: ['JVT{pivot_langs_de_randen}'], hint: 'Kijk in de tip onderaan.' },
+      ],
+    },
+
+    {
+      title: 'Taak 5 — De Pyramid of Pain: prioriteit geven',
+      content: `
+        <p>Je hebt nu modellen om een aanval te beschrijven (Kill Chain, ATT&amp;CK) en te verbinden (Diamond). De
+        <strong>Pyramid of Pain</strong> van David Bianco (2013) beantwoordt een andere vraag: <em>waar steek ik mijn
+        energie in?</em> Het rangschikt de indicatoren die je kunt detecteren naar hoeveel <strong>pijn</strong> het de
+        aanvaller kost om eromheen te werken. De piramide zelf komt ook in de room "Threat intelligence &amp; MITRE
+        ATT&amp;CK" voorbij; hier gebruiken we hem om te <em>prioriteren</em>.</p>
+
+        <h3>Van onder naar boven</h3>
+        <ol>
+          <li><strong>Hashwaarden</strong> — triviaal: één bit in een bestand wijzigen geeft een totaal nieuwe hash.</li>
+          <li><strong>IP-adressen</strong> — makkelijk: een nieuwe server is zo gehuurd.</li>
+          <li><strong>Domeinnamen</strong> — simpel: een nieuw domein is zo geregistreerd.</li>
+          <li><strong>Netwerk- en hostartefacten</strong> — vervelend: de aanvaller moet zijn tooling aanpassen.</li>
+          <li><strong>Tools</strong> — uitdagend: nieuwe tools bouwen of kopen kost tijd en geld.</li>
+          <li><strong>TTP's</strong> — zwaar: zijn hele werkwijze omgooien raakt hem het hardst.</li>
+        </ol>
+
+        <h3>Hoe je er prioriteit mee geeft</h3>
+        <p>Onderaan de piramide zijn indicatoren <em>goedkoop en snel</em> in te zetten, maar ze <em>verlopen</em> ook
+        snel: een IP van vorige maand is misschien allang van een onschuldige website. Bovenaan is detectie <em>duur om te
+        bouwen</em>, maar <em>duurzaam</em>: een regel op gedrag vangt de aanvaller ook met een nieuwe server en een nieuw
+        bestand. Een slimme aanpak combineert beide:</p>
+        <table>
+          <thead><tr><th>Niveau</th><th>Actie</th><th>Karakter</th></tr></thead>
+          <tbody>
+            <tr><td>Hashes, IP's, domeinen</td><td>Blokkeren en terugzoeken in logs</td><td>Snel, goedkoop, kort houdbaar</td></tr>
+            <tr><td>Artefacten en tools</td><td>Gerichte detectieregels (Sigma, YARA)</td><td>Middelmatig, langer houdbaar</td></tr>
+            <tr><td>TTP's</td><td>Gedragsdetectie, gekoppeld aan ATT&amp;CK</td><td>Duur om te bouwen, blijvend effect</td></tr>
+          </tbody>
+        </table>
+        <p>Zo zie je ook meteen de link met de andere modellen: de TTP's bovenaan de piramide zijn precies de technieken
+        die ATT&amp;CK codeert, en het vermogen (Capability) uit het Diamond Model. De Pyramid of Pain vertelt je waar in
+        die modellen je investering het meeste rendement oplevert.</p>
+
+        <div class="callout warn">
+          <strong>Let op:</strong> "hoog in de piramide" betekent niet "laat de onderkant vallen". IOC's vangen de luie
+          aanvaller snel en goedkoop. Het punt is balans: snelle blokkades onderaan, plus duurzame gedragsdetectie
+          bovenaan.
+        </div>
+      `,
+      questions: [
+        { q: 'Welk niveau onderaan de Pyramid of Pain kan een aanvaller het makkelijkst veranderen?', options: ['Hashwaarden', 'Tools', 'TTP\'s', 'Netwerkartefacten'], answer: 0, explain: 'Eén bit wijzigen geeft al een nieuwe hash: voor de aanvaller bijna gratis.' },
+        { q: 'Welk niveau verander je het moeilijkst, en kost de aanvaller dus de meeste pijn?', answer: ['TTP\'s', 'TTPs', 'ttp\'s', 'ttps', 'TTP', 'de TTP\'s'], hint: 'Het staat bovenaan de piramide; het is zijn hele werkwijze.', explain: 'Een nieuw IP of bestand is zo geregeld; een nieuwe werkwijze bedenken en oefenen niet.' },
+        { q: 'Waarom combineer je de onderkant en de bovenkant van de piramide?', options: ['Onderaan is snel maar kort houdbaar; bovenaan is duur maar duurzaam — samen dek je beide af', 'Omdat je verplicht bent alles te blokkeren', 'Omdat hashes nooit verlopen', 'Omdat gedragsdetectie altijd goedkoper is dan een blocklist'], answer: 0, explain: 'Snelle IOC-blokkades vangen de luie aanvaller; gedragsdetectie op TTP\'s houdt stand als hij zijn infrastructuur wisselt.' },
+      ],
+    },
+
+    {
+      title: 'Taak 6 — De modellen naast elkaar',
+      content: `
+        <p>Je hebt vier modellen gezien. De kunst is niet om er één te kiezen, maar om te weten <em>welk model welke vraag
+        het beste beantwoordt</em> — en ze te combineren. Elk model is een stukje van dezelfde puzzel.</p>
+
+        <h3>Welk model voor welke vraag?</h3>
+        <table>
+          <thead><tr><th>Model</th><th>Beantwoordt vooral</th><th>Sterk punt</th><th>Zwak punt</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Cyber Kill Chain</strong></td><td>"In welke fase zit de aanval, en waar kan ik ingrijpen?"</td><td>Simpel, goed uit te leggen, nadruk op vroeg stoppen</td><td>Grof na de inbraak; alles erna is één fase</td></tr>
+            <tr><td><strong>MITRE ATT&amp;CK</strong></td><td>"Welk gedrag zie ik precies, en dek ik dat af?"</td><td>Zeer gedetailleerd, gedeelde codes, sterk ná binnenkomst</td><td>Zo gedetailleerd dat je door de bomen het bos kunt verliezen</td></tr>
+            <tr><td><strong>Diamond Model</strong></td><td>"Hoe hangen de elementen samen, en welke zaken horen bij elkaar?"</td><td>Verbinden en pivoten; basis voor attributie</td><td>Zegt weinig over volgorde of tijd van de stappen</td></tr>
+            <tr><td><strong>Pyramid of Pain</strong></td><td>"Waar levert mijn detectie het meeste op?"</td><td>Helder prioriteren van investeringen</td><td>Is geen beschrijving van de aanval zelf</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Hoe ze samenwerken</h3>
+        <ul>
+          <li>De <strong>Kill Chain-fasen</strong> geven de grote lijn; onder elke fase hang je de concrete
+          <strong>ATT&amp;CK-technieken</strong> die je zag.</li>
+          <li>Elke gebeurtenis plaats je als een <strong>diamant</strong>, en de reeks diamanten (de activity thread) legt
+          je naast de Kill Chain. Gedeelde hoekpunten verbinden losse zaken.</li>
+          <li>De <strong>Pyramid of Pain</strong> vertelt je vervolgens welke van al die kenmerken het blokkeren of
+          detecteren waard zijn, en in welke volgorde.</li>
+        </ul>
+        <p>Een threat-intelrapport gebruikt daarom zelden maar één model. Een goed rapport zegt bijvoorbeeld: "In de
+        Delivery-fase (Kill Chain) zagen we T1566.001 (ATT&amp;CK); het sturende mailaccount en C2-domein (Infrastructure,
+        Diamond) delen we als IOC's om snel te blokkeren (onderkant Pyramid), en we schrijven een gedragsregel op het
+        PowerShell-patroon (bovenkant Pyramid)."</p>
+
+        <div class="callout info">
+          <strong>Kerngedachte:</strong> modellen zijn complementair. De Kill Chain vertelt <em>wanneer</em>, ATT&amp;CK
+          <em>wat</em>, het Diamond Model <em>hoe het samenhangt</em>, en de Pyramid of Pain <em>waar je op inzet</em>.
+        </div>
+      `,
+      questions: [
+        { q: 'Welk model is het meest gedetailleerd over wat er NÁ het binnenkomen gebeurt?', options: ['MITRE ATT&CK', 'Cyber Kill Chain', 'Pyramid of Pain', 'Geen van alle'], answer: 0, explain: 'De Kill Chain vat alles na de inbraak samen in één fase; ATT&CK beschrijft juist dat deel heel gedetailleerd.' },
+        { q: 'Welk model is het sterkst in het verbinden van losse incidenten tot één campagne?', options: ['Het Diamond Model', 'De Cyber Kill Chain', 'De Pyramid of Pain', 'CVSS'], answer: 0, explain: 'Door te pivoten langs gedeelde hoekpunten bundel je diamanten tot een activity group.' },
+        { q: 'Welk model gebruik je vooral om te beslissen waar je detectie-investering het meeste oplevert?', options: ['De Pyramid of Pain', 'Het Diamond Model', 'De Cyber Kill Chain', 'MITRE ATT&CK'], answer: 0, explain: 'De Pyramid of Pain rangschikt indicatoren naar impact, en helpt zo prioriteren.' },
+      ],
+    },
+
+    {
+      title: 'Taak 7 — Slotopdracht: één gebeurtenis in alle modellen',
+      content: `
+        <p>Tijd om alles samen te brengen. Je krijgt één concrete, fictieve gebeurtenis en plaatst die door elke bril
+        tegelijk: welke Kill Chain-fase, welke ATT&amp;CK-techniek, welk Diamond-hoekpunt en welk Pyramid-niveau? Zo voel
+        je dat elk model een ander stukje van dezelfde gebeurtenis beschrijft.</p>
+
+        <h3>De gebeurtenis</h3>
+        <div class="callout info">
+          <strong>Waarneming (bekend):</strong> De aanvaller stuurt een nepfactuur met een kwaadaardige ZIP-bijlage
+          (MD5 <code>3abad12a9579508025468c528c47a68c</code>) naar een medewerker. De mail komt binnen vanaf het account
+          <code>facturen[at]boos[.]jvt[.]lab</code> en wordt in de inbox afgeleverd.
+        </div>
+
+        <h3>Dezelfde gebeurtenis, vier lenzen</h3>
+        <table>
+          <thead><tr><th>Model</th><th>Vraag</th><th>Plaatsing</th></tr></thead>
+          <tbody>
+            <tr><td>Cyber Kill Chain</td><td>Welke fase?</td><td>De bijlage wordt afgeleverd, dus fase ...</td></tr>
+            <tr><td>MITRE ATT&amp;CK</td><td>Welke techniek?</td><td>Een gerichte mail met bijlage: ...</td></tr>
+            <tr><td>Diamond Model</td><td>Welk hoekpunt is de bijlage/malware zelf?</td><td>Het middel waarmee hij zijn doel bereikt: ...</td></tr>
+            <tr><td>Pyramid of Pain</td><td>Op welk niveau staat de MD5 van de bijlage?</td><td>Een bestandshash: ...</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Let op het verschil</h3>
+        <p>De vier antwoorden gaan over dezelfde mail, maar belichten iets anders. De Kill Chain zegt <em>wanneer</em> in
+        de aanval dit gebeurt. ATT&amp;CK zegt <em>welk</em> gedrag het precies is. Het Diamond Model plaatst de bijlage
+        als onderdeel van een groter geheel (de capability van de tegenstander). En de Pyramid of Pain waarschuwt: de
+        <strong>hash</strong> staat onderaan, dus die blokkeer je wel snel, maar de aanvaller wisselt hem morgen. Wil je
+        hem echt pijn doen, dan schrijf je een regel op de <strong>werkwijze</strong> (de TTP), bovenaan de piramide.</p>
+
+        <p>Dit is de kern van threat intelligence-modellen: niet "welk model is het beste?", maar "welke bril geeft mij nu
+        het antwoord dat ik nodig heb?". Noteer de laatste vlag als bewijs dat je de gebeurtenis door alle vier de modellen
+        kunt bekijken: <code>JVT{een_gebeurtenis_vier_lenzen}</code>.</p>
+
+        <div class="callout tip">
+          <strong>Wat je meeneemt:</strong> de Kill Chain geeft de fase, ATT&amp;CK het precieze gedrag, het Diamond
+          Model de samenhang en de Pyramid of Pain de prioriteit. Samen zijn ze veel sterker dan elk afzonderlijk.
+        </div>
+      `,
+      questions: [
+        { q: 'In welke fase van de Cyber Kill Chain hoort "de kwaadaardige bijlage wordt in de inbox afgeleverd"?', options: ['Reconnaissance', 'Weaponization', 'Delivery', 'Exploitation'], answer: 2, explain: 'De bezorging van het wapen aan het slachtoffer is de Delivery-fase. Pas als de medewerker de bijlage opent, begint Exploitation.' },
+        { q: 'Welke ATT&CK-techniek-ID hoort bij deze gerichte phishingmail met bijlage?', answer: ['T1566.001', 'T1566'], hint: 'Spearphishing Attachment (of de overkoepelende techniek Phishing).', explain: 'T1566.001 Spearphishing Attachment; de overkoepelende techniek is T1566 Phishing. Beide goed.' },
+        { q: 'In welk hoekpunt van het Diamond Model plaats je de kwaadaardige bijlage zelf (het middel waarmee de aanvaller zijn doel bereikt)?', options: ['Adversary', 'Capability', 'Infrastructure', 'Victim'], answer: 1, explain: 'De malware/bijlage is de Capability (het vermogen). Het mailaccount waarmee hij verstuurt, is Infrastructure.' },
+        { q: 'In de Pyramid of Pain: op welk niveau staat de MD5-hash van de bijlage?', answer: ['Hashwaarden', 'hashwaarden', 'hashes', 'hash', 'hashwaarde'], hint: 'Het allerlaagste niveau, het makkelijkst voor de aanvaller om te wisselen.', explain: 'Een bestandshash staat onderaan: snel te blokkeren, maar de aanvaller verandert hem zo. De vlag JVT{een_gebeurtenis_vier_lenzen} staat in de taaktekst.' },
+      ],
+    },
+  ],
+  terms: [
+    { term: 'Cyber Kill Chain', def: 'Zevenstappenmodel van Lockheed Martin (2011) dat een aanval beschrijft van verkenning tot het bereiken van het doel; verbreek je één schakel, dan mislukt de aanval.' },
+    { term: 'Weaponization', def: 'De tweede Kill Chain-fase: de aanvaller maakt zijn wapen klaar, bijvoorbeeld een kwaadaardig document met een exploit, nog bij zichzelf.' },
+    { term: 'MITRE ATT&CK', def: 'Openbare kennisbank van aanvalsgedrag, geordend in tactieken (waarom) en technieken (hoe) met vaste ID\'s zoals T1566.' },
+    { term: 'Tactiek (ATT&CK)', def: 'Het doel van de aanvaller in een stap, bijvoorbeeld Credential Access. ATT&CK Enterprise kent er 14.' },
+    { term: 'Techniek en sub-techniek', def: 'De manier waarop een aanvaller een tactiek bereikt, met een ID als T1059; een sub-techniek krijgt er een punt bij, zoals T1059.001 (PowerShell).' },
+    { term: 'Procedure', def: 'De precieze, concrete uitvoering van een techniek door een bepaalde groep: welk tool, welke commando\'s en opties.' },
+    { term: 'ATT&CK Navigator', def: 'Gratis webtool om de ATT&CK-matrix in te kleuren als heatmap, bijvoorbeeld om detectiedekking of blinde vlekken te tonen.' },
+    { term: 'Diamond Model', def: 'Model dat één gebeurtenis beschrijft met vier hoekpunten: Adversary, Capability, Infrastructure en Victim, plus meta-kenmerken.' },
+    { term: 'Meta-kenmerken', def: 'Extra gegevens rond een diamant, zoals tijd, fase, resultaat, methode en de herkomst en betrouwbaarheid van elk gegeven.' },
+    { term: 'Activity thread', def: 'Een reeks samenhangende gebeurtenissen (diamanten) van begin tot eind, die je naast de Kill Chain-fasen kunt leggen.' },
+    { term: 'Activity group', def: 'Een bundel diamanten die kenmerken delen; het begin van een campagne- of dadergroep. Je bouwt hem op door te pivoten langs gedeelde hoekpunten.' },
+    { term: 'Pyramid of Pain', def: 'Model van David Bianco: hoe hoger (van hashes tot TTP\'s) je een aanvaller detecteert, hoe meer moeite het hem kost om eromheen te werken.' },
+  ],
+  resources: [
+    { title: 'MITRE ATT&CK', url: 'https://attack.mitre.org/' },
+    { title: 'Lockheed Martin — The Cyber Kill Chain', url: 'https://www.lockheedmartin.com/en-us/capabilities/cyber/cyber-kill-chain.html' },
+    { title: 'The Diamond Model of Intrusion Analysis (Caltagirone, Pendergast, Betz)', url: 'https://www.activeresponse.org/wp-content/uploads/2013/07/diamond.pdf' },
+    { title: 'David Bianco — The Pyramid of Pain', url: 'https://detect-respond.blogspot.com/2013/03/the-pyramid-of-pain.html' },
+  ],
+});
+
+</script>
+<script>
 /* Room: Eindopdracht — Mini-CTF "Operatie KoffieKlap" */
 CS.registerRoom({
   id: 'mini-ctf',
