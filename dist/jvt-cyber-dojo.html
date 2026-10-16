@@ -20885,6 +20885,1039 @@ CS.registerRoom({
 
 </script>
 <script>
+/* Room: Follow the money — cryptostromen volgen */
+
+// --- De fictieve witwasketen (alle adressen/partijen zijn verzonnen) ---
+const KETEN_NODES = [
+  { id: 'v', type: 'victim', label: 'VrachtVlot BV (slachtoffer)' },
+  { id: 'w1', type: 'wallet', label: 'Ransom-wallet (aanvaller)' },
+  { id: 'm1', type: 'mule', label: "Mule 'KoeriersKoen'" },
+  { id: 'm2', type: 'mule', label: "Mule 'SnelleSaar'" },
+  { id: 'h1', type: 'wallet', label: 'Tussenwallet (hop)' },
+  { id: 'mix', type: 'mixer', label: "Mixer 'WasStraat'" },
+  { id: 'ex', type: 'exchange', label: "Exchange 'MuntMarkt' (cash-out)" },
+];
+
+const KETEN_EDGES = [
+  { from: 'v', to: 'w1', amount: 4.0, time: '09:02', note: 'losgeldbetaling na ransomware (placement)' },
+  { from: 'w1', to: 'm1', amount: 2.4, time: '10:10', note: 'splitsing 1 naar money mule (layering)' },
+  { from: 'w1', to: 'm2', amount: 1.6, time: '10:12', note: 'splitsing 2 naar money mule (layering)' },
+  { from: 'm1', to: 'h1', amount: 2.35, time: '11:30', note: 'mule houdt 0.05 commissie; hopt door (chain-hop)' },
+  { from: 'm2', to: 'mix', amount: 1.55, time: '11:45', note: 'mule houdt 0.05 commissie; recht naar de mixer' },
+  { from: 'h1', to: 'mix', amount: 2.30, time: '12:20', note: 'tussenwallet houdt 0.05; rest naar de mixer' },
+  { from: 'mix', to: 'ex', amount: 3.75, time: '14:05', note: 'mixer houdt 0.10; uitbetaling op exchange-account (cash-out)' },
+];
+
+CS.registerRoom({
+  id: 'follow-the-money',
+  path: 'puzzels',
+  order: 1,
+  title: 'Follow the money: cryptostromen volgen',
+  icon: '💸',
+  difficulty: 'Gemiddeld',
+  minutes: 60,
+  summary: 'Crypto is geen anoniem zakgeld maar een doorzichtig kasboek. Je leert hoe transacties werken, hoe criminelen in drie stappen witwassen, welke truucs (mixers, peel chains, chain-hopping) de keten vertroebelen, en hoe een rechercheur met heuristieken en het exchange-knelpunt de buit toch terugvolgt.',
+  objectives: [
+    'Uitleggen hoe een cryptotransactie werkt: adressen, inputs/outputs (UTXO) en het publieke grootboek',
+    'De drie witwasfasen (placement, layering, integration) herkennen en toepassen op crypto',
+    'Mixers/tumblers, peel chains en chain-hopping herkennen als verhullingstechnieken',
+    'De common-input- en de change-heuristiek gebruiken om adressen aan één eigenaar te koppelen',
+    'Uitleggen waarom de exchange (KYC/Wwft) het knelpunt is waar de opsporing aangrijpt',
+    'Een geldstroom door de keten narekenen en de buit tot het cash-out-punt volgen',
+  ],
+  tasks: [
+    {
+      title: 'Taak 1 — Het doorzichtige kasboek: hoe cryptotransacties werken',
+      content: `
+        <p>Veel mensen denken dat cryptovaluta zoals Bitcoin "anoniem" is. Dat klopt maar half, en juist dat halve maakt
+        het zo leuk voor een rechercheur. Bitcoin heeft namelijk één groot, <strong>openbaar kasboek</strong> dat
+        <em>iedereen</em> mag inzien: de <strong>blockchain</strong> (het publieke grootboek). Elke betaling die ooit is
+        gedaan, staat erin — voor altijd.</p>
+
+        <h3>De analogie van de glazen spaarpot</h3>
+        <p>Stel je een stad voor waarin iedereen zijn geld bewaart in een <strong>glazen spaarpot met een nummer erop</strong>
+        (geen naam). Iedereen kan zien hoeveel er in elke pot zit en welke pot naar welke pot geld schuift. Je ziet alleen
+        de <em>nummers</em>, niet meteen de namen. Dat nummer is een <strong>wallet-adres</strong>: een lange reeks
+        tekens zoals <code>1Fh7…k9Qd</code> (fictief). Zolang niemand weet van wie een adres is, lijkt het anoniem. Maar
+        zodra je één adres aan een echte persoon kunt koppelen, kun je al zijn glazen potten volgen. Dat heet
+        <strong>pseudonimiteit</strong>: niet anoniem, maar onder een schuilnaam.</p>
+
+        <h3>Een transactie: inputs en outputs</h3>
+        <p>Een cryptotransactie werkt niet zoals je bankrekening (een lopend saldo dat op- en afgaat). In Bitcoin werkt het
+        met <strong>UTXO's</strong> (Unspent Transaction Outputs): losse "briefjes" van ontvangen bedragen. Als je iets
+        betaalt, pak je een of meer hele briefjes (de <strong>inputs</strong>), en de transactie maakt er nieuwe briefjes
+        van (de <strong>outputs</strong>): één naar de ontvanger, en meestal één terug naar jezelf als
+        <strong>wisselgeld</strong> (change).</p>
+
+        <div class="callout info">
+          <strong>Voorbeeld:</strong> je hebt een briefje van 1,0 BTC en wilt iemand 0,6 BTC betalen. Je kunt een briefje
+          niet "scheuren", dus je gebruikt het hele briefje (input 1,0) en de transactie maakt twee outputs: 0,6 naar de
+          ontvanger en 0,4 terug naar een eigen (wissel)adres. Dat wisselgeld-briefje van 0,4 is later een belangrijk spoor.
+        </div>
+
+        <p>Omdat álles in het grootboek staat, kan een onderzoeker de briefjes van transactie naar transactie volgen, net
+        als een boekhouder die elke euro door de administratie traceert. Dat is de kern van "follow the money".</p>
+      `,
+      questions: [
+        { q: 'Hoe heet het openbare kasboek waarin alle Bitcoin-transacties voor altijd staan?', answer: ['blockchain', 'de blockchain', 'publiek grootboek', 'het publieke grootboek'], hint: 'Een keten van blokken; ook wel "publiek grootboek" genoemd.', explain: 'De blockchain is het publieke grootboek: iedereen kan elke transactie inzien.' },
+        { q: 'Waarom is Bitcoin pseudoniem en niet echt anoniem?', options: ['Omdat de politie alle wachtwoorden heeft', 'Omdat adressen nummers zonder naam zijn, maar één koppeling adres-persoon maakt alle transacties volgbaar', 'Omdat transacties na een dag verdwijnen', 'Omdat je geen adres nodig hebt'], answer: 1, explain: 'Adressen zijn schuilnamen. Koppel je één adres aan een persoon, dan liggen al zijn stromen open.' },
+        { q: 'Hoe heten de losse "briefjes" van ontvangen bedragen die je als input in een nieuwe transactie gebruikt?', answer: ['UTXO', 'utxo', "UTXO's", 'unspent transaction output'], hint: 'Afkorting van Unspent Transaction Output.', explain: 'Een UTXO is een nog niet uitgegeven output; die gebruik je als input in een volgende transactie.' },
+        { q: 'Wat is de change-output van een transactie?', options: ['Een boete', 'Het wisselgeld dat terugkomt naar een eigen adres van de betaler', 'Het bedrag naar de ontvanger', 'Een mislukte transactie'], answer: 1, explain: 'Wie een te groot briefje gebruikt, krijgt het restant als change terug op een eigen adres — een belangrijk spoor.' },
+      ],
+    },
+
+    {
+      title: 'Taak 2 — Witwassen in drie stappen',
+      content: `
+        <p>Crimineel geld is "heet": je kunt er niet zomaar een huis mee kopen zonder vragen. <strong>Witwassen</strong>
+        (money laundering) is het proces om misdaadgeld er schoon en legaal uit te laten zien. Klassiek gebeurt dat in
+        <strong>drie fasen</strong>. Ze gelden voor een koffer vol contant geld én voor een wallet vol crypto.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 560 120" role="img" aria-label="De drie fasen van witwassen">
+            <rect x="8" y="42" width="150" height="40" rx="6" stroke="var(--accent)" fill="none" />
+            <text x="83" y="66" fill="currentColor" font-size="13" text-anchor="middle">1 · Placement</text>
+            <rect x="205" y="42" width="150" height="40" rx="6" stroke="currentColor" fill="none" />
+            <text x="280" y="66" fill="currentColor" font-size="13" text-anchor="middle">2 · Layering</text>
+            <rect x="402" y="42" width="150" height="40" rx="6" stroke="var(--good)" fill="none" />
+            <text x="477" y="66" fill="currentColor" font-size="13" text-anchor="middle">3 · Integration</text>
+            <line x1="158" y1="62" x2="205" y2="62" stroke="currentColor" />
+            <line x1="355" y1="62" x2="402" y2="62" stroke="currentColor" />
+          </svg>
+          <figcaption>Placement = erin, layering = door elkaar husselen, integration = er schoon weer uit.</figcaption>
+        </figure>
+
+        <h3>1. Placement — het geld het systeem in</h3>
+        <p>De misdaadopbrengst komt het financiële systeem binnen. Bij crypto is dit vaak het moment dat een slachtoffer
+        losgeld in Bitcoin naar de wallet van de aanvaller stuurt, of dat contant drugsgeld bij een (katvanger-)handelaar
+        wordt omgezet in crypto.</p>
+
+        <h3>2. Layering — het spoor vertroebelen</h3>
+        <p>Dit is de kern. Het geld wordt in vele laagjes (layers) rondgepompt om het spoor te verbergen: opsplitsen over
+        tientallen wallets, door <strong>mixers</strong> halen, van de ene munt naar de andere springen. Hoe meer hops,
+        hoe moeilijker te volgen — denkt de crimineel. Jij leert dat het grootboek elke hop onthoudt.</p>
+
+        <h3>3. Integration — er schoon weer uit</h3>
+        <p>Het "gewassen" geld komt terug in de echte economie met een schijnbaar legale herkomst: het wordt bij een
+        <strong>exchange</strong> omgezet naar euro's, er wordt een auto of vastgoed mee gekocht, of het wordt als
+        "winst" van een nepbedrijf geboekt.</p>
+
+        <div class="callout tip">
+          <strong>Ezelsbruggetje:</strong> denk aan een echte wasmachine. <em>Placement</em> = vuile was in de trommel,
+          <em>layering</em> = het rondtollen zodat je niet meer ziet welk sokje van wie was, <em>integration</em> = schone
+          was keurig in de kast.
+        </div>
+      `,
+      questions: [
+        { q: 'In welke witwasfase wordt het geld opgesplitst en door mixers gehaald om het spoor te vertroebelen?', answer: ['layering', 'de layering', 'layering-fase'], hint: 'De middelste fase; "laagjes" aanbrengen.', explain: 'Layering is het rondpompen in vele laagjes om de herkomst te verbergen.' },
+        { q: 'Een slachtoffer stuurt losgeld in Bitcoin naar de wallet van de aanvaller. Welke fase is dat?', options: ['Integration', 'Placement', 'Layering', 'Geen van de fasen'], answer: 1, explain: 'Placement: de misdaadopbrengst komt het (financiële) systeem binnen.' },
+        { q: 'In welke fase komt het "schone" geld terug in de echte economie, bijvoorbeeld als auto of als omzetting naar euro\'s?', answer: ['integration', 'de integration', 'integratie'], hint: 'De laatste fase; het geld wordt weer "geïntegreerd".', explain: 'Integration: het gewassen geld krijgt een schijnbaar legale herkomst en keert terug in de economie.' },
+      ],
+    },
+
+    {
+      title: 'Taak 3 — De trucendoos: mixers, peel chains en chain-hopping',
+      content: `
+        <p>In de layering-fase gebruiken criminelen een vaste trucendoos om de keten te vertroebelen. Je moet ze op naam
+        kennen, want straks herken je ze in een echt grootboek.</p>
+
+        <h3>Mixers en tumblers</h3>
+        <p>Een <strong>mixer</strong> (of <strong>tumbler</strong>) is een dienst die de crypto van heel veel mensen op één
+        grote hoop gooit en daarna weer uitbetaalt. Het idee: je stopt er 1 BTC in, en je krijgt 1 BTC terug — maar andere
+        "munten" dan je erin deed, zodat de directe link tussen in en uit doorgeknipt lijkt. Een variant die zónder centrale
+        dienst werkt is <strong>CoinJoin</strong>: veel mensen ondertekenen samen één grote transactie, zodat niet duidelijk
+        is welke input bij welke output hoort.</p>
+
+        <div class="callout info">
+          <strong>Toch niet waterdicht:</strong> mixers kosten geld (een fee), hebben vaak herkenbare bedragen en timing, en
+          analysebedrijven zoals Chainalysis en Elliptic hebben veel mixer-adressen in kaart. Een "gewassen" bedrag dat
+          verdacht dicht bij het ingelegde bedrag uitkomt, verraadt alsnog de link.
+        </div>
+
+        <h3>Peel chains</h3>
+        <p>Een <strong>peel chain</strong> (afpelketen) is een lange rij transacties waarbij je telkens een klein stukje
+        "afpelt" naar een cash-out en de grote rest doorschuift naar een volgend adres. Zoals je een ui pelt: laagje voor
+        laagje. In het grootboek zie je dan een lange keten waarbij steeds een beetje afsplitst en een grote "change" verder
+        reist. Het patroon is juist herkenbaar.</p>
+
+        <h3>Chain-hopping</h3>
+        <p><strong>Chain-hopping</strong> is overspringen van de ene cryptomunt of blockchain naar de andere (bijvoorbeeld
+        Bitcoin → een privacymunt → weer terug), vaak via een beurs of een swap-dienst. Elke "hop" naar een andere keten
+        maakt het volgen lastiger, omdat je het spoor op een ándere blockchain moet oppikken.</p>
+
+        <p>Onthoud: elk van deze trucs kost tijd, geld en laat een <em>patroon</em> na. De crimineel wil onzichtbaar worden,
+        maar juist de moeite die hij doet, tekent zich af in het grootboek.</p>
+      `,
+      questions: [
+        { q: 'Hoe heet een dienst die crypto van veel gebruikers op één hoop gooit en door elkaar uitbetaalt om de link tussen in en uit te verbergen?', answer: ['mixer', 'tumbler', 'een mixer', 'mixer of tumbler'], hint: 'Ook wel "tumbler" genoemd.', explain: 'Een mixer/tumbler vermengt de munten van veel gebruikers om de directe in-uit-link door te knippen.' },
+        { q: 'Wat is een peel chain?', options: ['Een lijst wachtwoorden', 'Een lange keten waarbij telkens een klein deel wordt afgesplitst en de grote rest doorschuift', 'Een versleutelde chatgroep', 'Een type wallet'], answer: 1, explain: 'Bij een peel chain "pel" je steeds een stukje af naar cash-out terwijl de grote rest doorreist.' },
+        { q: 'Wat betekent chain-hopping?', answer: ['overspringen naar een andere blockchain', 'van de ene munt naar de andere springen', 'chain-hopping'], hint: 'Je "hopt" van de ene keten/munt naar de andere.', explain: 'Chain-hopping is overspringen naar een andere cryptomunt/blockchain om het spoor te breken.' },
+        { q: 'Waarom zijn mixers in de praktijk niet zo onzichtbaar als ze lijken?', options: ['Ze zijn gratis en snel', 'Fees, herkenbare bedragen/timing en in kaart gebrachte mixer-adressen verraden alsnog de link', 'Ze bestaan niet', 'Ze wissen de hele blockchain'], answer: 1, explain: 'Kosten, timing, bedragen en bekende adressen laten een patroon na dat analisten kunnen oppikken.' },
+      ],
+    },
+
+    {
+      title: 'Taak 4 — Follow the money: volg de keten',
+      content: `
+        <p>Tijd om rechercheur te spelen. Hieronder staat de <strong>geldstroom</strong> van een fictieve zaak. Logistiek
+        bedrijf <strong>VrachtVlot BV</strong> werd getroffen door ransomware en betaalde losgeld in BTC. De aanvaller
+        probeerde het geld te wassen via twee <strong>money mules</strong>, een <strong>tussenwallet</strong> en een
+        <strong>mixer</strong>, om ten slotte uit te betalen op een <strong>exchange</strong>.</p>
+
+        <div class="callout warn">
+          <strong>Alles fictief:</strong> de wallets, mules, de mixer "WasStraat" en de exchange "MuntMarkt" zijn verzonnen
+          voor de oefening. Je oefent de denkwijze, je volgt geen echte mensen.
+        </div>
+
+        <h3>Zo lees je het lab</h3>
+        <ul>
+          <li><strong>Klik een knoop</strong> (bijvoorbeeld de mixer) om te zien wat er in- en uitgaat en wat het saldo is.</li>
+          <li><strong>Lees de transactietabel</strong> onderaan: elke regel is één transactie met bedrag, tijd en een notitie.</li>
+          <li><strong>Reken na.</strong> Een knoop die van meerdere kanten geld ontvangt, tel je op. Een "commissie" die een
+          mule achterhoudt, is het verschil tussen wat er binnenkomt en wat er weer uitgaat.</li>
+        </ul>
+
+        <p>De beste manier om de stroom te snappen: tel per knoop op wat erin komt en wat eruit gaat. Het verschil is wat die
+        knoop voor zichzelf houdt. Volg zo het geld tot het cash-out-punt — de <strong>exchange</strong>.</p>
+      `,
+      lab: {
+        type: 'flow',
+        title: 'Operatie Spookvracht — de witwasketen',
+        unit: 'BTC',
+        scenario: 'VrachtVlot BV betaalde 4.0 BTC losgeld. Volg de stroom door de mules, de tussenwallet en de mixer tot het cash-out-punt. Reken de bedragen per knoop na.',
+        nodes: KETEN_NODES,
+        edges: KETEN_EDGES,
+        ask: [
+          { q: 'Hoeveel BTC betaalde VrachtVlot BV in totaal als losgeld?', answer: ['4', '4.0', '4,0'], hint: 'Kijk naar de eerste transactie (van het slachtoffer naar de ransom-wallet).' },
+          { q: 'Hoeveel BTC komt er in totaal binnen bij de mixer "WasStraat"? (tel beide inkomende stromen op)', answer: ['3.85', '3,85'], hint: 'De mixer ontvangt van mule 2 (1.55) én van de tussenwallet (2.30). Klik de mixer-knoop voor het totaal.' },
+          { q: 'Hoeveel BTC bereikt uiteindelijk de exchange "MuntMarkt" (het cash-out-punt)?', answer: ['3.75', '3,75'], hint: 'De laatste transactie: van de mixer naar de exchange.' },
+          { q: 'Welke knoop is het knelpunt waar de opsporing kan aangrijpen (KYC)?', answer: ['exchange', 'de exchange', 'muntmarkt', 'exchange muntmarkt'], hint: 'De plek waar crypto naar euro\'s gaat en identiteitscontrole plaatsvindt.' },
+        ],
+      },
+      questions: [
+        { q: 'Hoeveel BTC betaalde VrachtVlot BV in totaal als losgeld?', answer: ['4', '4.0', '4,0'], hint: 'De eerste regel in de transactietabel.', explain: 'Het slachtoffer stuurde 4.0 BTC naar de ransom-wallet.' },
+        { q: 'Hoeveel BTC komt er in totaal binnen bij de mixer "WasStraat"?', answer: ['3.85', '3,85'], hint: 'Mule 2 brengt 1.55, de tussenwallet brengt 2.30. Tel op: 1.55 + 2.30.', explain: '1.55 (van mule 2) + 2.30 (van de tussenwallet) = 3.85 BTC komt de mixer binnen.' },
+        { q: 'Hoeveel BTC bereikt uiteindelijk de exchange "MuntMarkt"?', answer: ['3.75', '3,75'], hint: 'De mixer houdt 0.10 in en betaalt de rest uit.', explain: 'De mixer kreeg 3.85 binnen, hield 0.10 en betaalde 3.75 BTC uit op de exchange — dat is het cash-out-punt.' },
+        { q: 'Hoeveel "commissie" hield mule "KoeriersKoen" (m1) voor zichzelf achter?', answer: ['0.05', '0,05'], hint: 'Het verschil tussen wat de mule binnenkreeg (2.4) en weer doorstuurde (2.35).', explain: 'KoeriersKoen kreeg 2.4 binnen en stuurde 2.35 door: 2.4 − 2.35 = 0.05 BTC bleef als commissie hangen (het saldo van die knoop).' },
+      ],
+    },
+
+    {
+      title: 'Taak 5 — De heuristieken: adressen aan één eigenaar koppelen',
+      content: `
+        <p>Een rechercheur ziet in het grootboek alleen nummers. Toch kan hij vaak bewijzen dat verschillende adressen van
+        <em>dezelfde</em> eigenaar zijn. Daarvoor gebruikt hij <strong>heuristieken</strong>: slimme vuistregels die bijna
+        altijd kloppen. Twee zijn beroemd.</p>
+
+        <h3>1. De common-input-heuristiek (co-spend)</h3>
+        <p>Als één transactie <strong>meerdere inputs</strong> tegelijk uitgeeft, dan moet iemand al die briefjes hebben
+        kunnen ondertekenen — dus ze horen hoogstwaarschijnlijk bij <strong>dezelfde eigenaar</strong>. Immers: om een
+        briefje uit te geven heb je de bijbehorende private sleutel nodig. Worden briefje A én briefje B in één transactie
+        uitgegeven, dan beheert dezelfde partij waarschijnlijk beide. Zo kun je losse adressen samentrekken tot één
+        <strong>cluster</strong> (één "portemonnee").</p>
+
+        <div class="callout info">
+          <strong>Voorbeeld:</strong> adres X (0,3 BTC) en adres Y (0,7 BTC) worden sámen uitgegeven in één transactie van
+          1,0 BTC. Conclusie: X en Y horen vrijwel zeker bij dezelfde eigenaar. De uitzondering is CoinJoin, waar
+          vreemden juist bewust samen tekenen — daarom checkt een analist of de transactie op een mixer lijkt.
+        </div>
+
+        <h3>2. De change-heuristiek</h3>
+        <p>Weet je nog, het wisselgeld (change) uit taak 1? Als een transactie één betaling doet en één restbedrag
+        terugstuurt, dan is dat restbedrag meestal de change — en die gaat terug naar een <strong>eigen (nieuw) adres</strong>
+        van de betaler. Door de change-output te herkennen, volg je de eigenaar naar zijn <em>volgende</em> adres, zelfs als
+        hij steeds een vers adres gebruikt. Zo rijg je een hele peel chain aan elkaar.</p>
+
+        <p>Met deze twee heuristieken plus het publieke grootboek bouwt een analist een kaart: welke adressen bij elkaar
+        horen, waar het geld heen stroomt, en bij welke bekende dienst (mixer, exchange) het uitkomt. Precies dat doen
+        bedrijven als Chainalysis en de FIOD in het echt.</p>
+      `,
+      questions: [
+        { q: 'Wat zegt de common-input-heuristiek?', options: ['Alle transacties zijn anoniem', 'Als meerdere inputs in één transactie samen worden uitgegeven, horen ze waarschijnlijk bij dezelfde eigenaar', 'Elke input hoort bij een andere persoon', 'Inputs bestaan niet in Bitcoin'], answer: 1, explain: 'Samen uitgeven vereist alle bijbehorende sleutels, dus de inputs horen vrijwel zeker bij één eigenaar (één cluster).' },
+        { q: 'Welke heuristiek gebruik je om de eigenaar naar zijn volgende adres te volgen via het wisselgeld van een transactie?', answer: ['change-heuristiek', 'de change-heuristiek', 'change heuristiek'], hint: 'Ze is vernoemd naar het wisselgeld (change).', explain: 'De change-heuristiek herkent de wisselgeld-output, die teruggaat naar een eigen adres van de betaler.' },
+        { q: 'Het samentrekken van losse adressen tot één "portemonnee" van dezelfde eigenaar heet...', answer: ['clustering', 'clusteren', 'cluster'], hint: 'Je vormt een "cluster" van adressen.', explain: 'Clustering: adressen die bij elkaar horen bundel je tot één entiteit/eigenaar.' },
+        { q: 'Bij welke techniek faalt de common-input-heuristiek juist, omdat vreemden expres samen één transactie tekenen?', options: ['Bij CoinJoin', 'Bij een gewone betaling', 'Bij een change-output', 'Bij een losgeldbetaling'], answer: 0, explain: 'CoinJoin laat vreemden samen tekenen, precies om de common-input-aanname te breken; daarom checkt een analist of het op een mixer lijkt.' },
+      ],
+    },
+
+    {
+      title: 'Taak 6 — Het knelpunt: de exchange en KYC',
+      content: `
+        <p>Al die mixers en hops zijn uiteindelijk zinloos als de crimineel zijn crypto niet kan <strong>uitgeven</strong>.
+        En om crypto om te zetten in gewone euro's die je op je bankrekening krijgt, moet het bijna altijd langs een
+        <strong>exchange</strong> (cryptobeurs). Dat is de zwakke plek in het hele plan — het <strong>knelpunt</strong>
+        waar de opsporing aangrijpt.</p>
+
+        <h3>Waarom de exchange het knelpunt is</h3>
+        <p>Een nette exchange is in Nederland en de EU verplicht om te weten wie zijn klanten zijn. Dat heet <strong>KYC</strong>
+        (Know Your Customer): je moet je identiteit bewijzen met een paspoort of ID voordat je kunt handelen en uitbetalen.
+        Daarnaast geldt de <strong>Wwft</strong> (Wet ter voorkoming van witwassen en financieren van terrorisme): de
+        exchange moet <strong>ongebruikelijke transacties melden</strong>. Zodra "gewassen" crypto binnenkomt op een
+        KYC-account, hangt er dus opeens een <em>echte naam</em> aan het spoor.</p>
+
+        <div class="callout tip">
+          <strong>Het hele punt van follow-the-money:</strong> de blockchain is openbaar, dus een analist volgt het geld tot
+          aan de exchange. Dáár wordt de pseudonieme keten gekoppeld aan een KYC-identiteit. Met een <strong>vordering</strong>
+          aan de exchange krijgt de politie de naam, de inloggegevens en de uitbetaalrekening. De on-ramp/off-ramp is waar
+          crypto en de echte wereld elkaar raken — en dus waar je grip krijgt.
+        </div>
+
+        <p>Criminelen proberen dit knelpunt te omzeilen met beurzen zonder KYC, met OTC-handelaren (over-the-counter) of met
+        katvangers die hun account uitlenen. Maar elke legale off-ramp vergroot de pakkans. Daarom concentreert de opsporing
+        zich op het cash-out-moment.</p>
+
+        <div class="callout info">
+          <strong>Beloning — tussenvlag:</strong> je hebt het knelpunt doorzien. Noteer <code>JVT{kyc_is_het_knelpunt}</code>.
+        </div>
+      `,
+      lab: {
+        type: 'connections',
+        title: 'Cryptowitwas-begrippen',
+        prompt: 'Sleep 16 begrippen in vier groepen van vier. Elk begrip hoort bij precies één categorie.',
+        flag: 'JVT{grootboek_liegt_niet}',
+        groups: [
+          { name: 'Bouwstenen van een transactie', items: ['UTXO', 'Wallet-adres', 'Publiek grootboek', 'Private sleutel'] },
+          { name: 'Verhullingstechnieken (layering)', items: ['Mixer/tumbler', 'CoinJoin', 'Peel chain', 'Chain-hopping'] },
+          { name: 'Heuristieken van de analist', items: ['Common-input-heuristiek', 'Change-heuristiek', 'Clustering', 'Taint-analyse'] },
+          { name: 'Exchange & compliance (het knelpunt)', items: ['Centrale exchange (CEX)', 'KYC-identiteitscheck', 'Fiat-offramp', 'Wwft-meldplicht'] },
+        ],
+      },
+      questions: [
+        { q: 'Hoe heet de verplichting van een exchange om te weten wie zijn klant is (identiteit bewijzen)?', answer: ['KYC', 'kyc', 'know your customer'], hint: 'Drie letters; "Know Your ..."', explain: 'KYC (Know Your Customer): de klant moet zijn identiteit bewijzen, waardoor er een echte naam aan het spoor komt.' },
+        { q: 'Welke Nederlandse wet verplicht een exchange om ongebruikelijke transacties te melden?', answer: ['Wwft', 'wwft', 'de wwft'], hint: 'Wet ter voorkoming van witwassen en financieren van terrorisme.', explain: 'De Wwft verplicht melden van ongebruikelijke transacties; samen met KYC maakt dat de exchange het knelpunt.' },
+        { q: 'Waarom is de exchange het knelpunt waar de opsporing aangrijpt?', options: ['Omdat exchanges gratis zijn', 'Omdat crypto daar naar euro\'s gaat én er KYC/Wwft geldt, zodat de pseudonieme keten aan een echte identiteit wordt gekoppeld', 'Omdat de blockchain daar wordt gewist', 'Omdat mixers daar verboden zijn'], answer: 1, explain: 'De off-ramp koppelt het openbare spoor aan een KYC-identiteit; met een vordering krijgt de politie de naam.' },
+        { q: 'Welke vlag staat in de callout als beloning voor deze taak?', answer: ['JVT{kyc_is_het_knelpunt}'], hint: 'Lees de groene info-callout onderaan de uitleg.', explain: 'De beloningsvlag is JVT{kyc_is_het_knelpunt}.' },
+        { q: 'Los de verbanden-puzzel op. Welke vlag verschijnt als alle vier de groepen goed zijn?', answer: ['JVT{grootboek_liegt_niet}'], hint: 'Groepeer de 16 begrippen in vier groepen van vier; bij succes toont het lab de vlag.', explain: 'De connections-puzzel beloont je met JVT{grootboek_liegt_niet}.' },
+      ],
+    },
+
+    {
+      title: 'Taak 7 — Reconstrueer de operatie en sluit de zaak',
+      content: `
+        <p>Je hebt alle stukken: transacties, de drie witwasfasen, de trucendoos, de heuristieken en het exchange-knelpunt.
+        Laat nu zien dat je de héle operatie "Spookvracht" kunt reconstrueren als een tijdlijn — van de losgeldbetaling tot
+        het moment waarop de opsporing toeslaat.</p>
+
+        <h3>Van grootboek naar rapport</h3>
+        <p>Een goede rechercheur scheidt <strong>feit</strong> van <strong>interpretatie</strong>. Feit: "om 09:02 ging 4.0
+        BTC van VrachtVlot BV naar de ransom-wallet". Interpretatie: "dit is de losgeldbetaling (placement)". Je werk is
+        <strong>reproduceerbaar</strong>: iedere transactie-ID staat in het openbare grootboek, dus een collega kan jouw
+        keten exact nalopen. Dat maakt blockchain-bewijs zo sterk.</p>
+
+        <div class="callout tip">
+          <strong>Tip voor de puzzel:</strong> gebruik de tijdstempels uit de transactietabel van taak 4. De operatie loopt
+          van placement (het geld erin) via layering (splitsen, hoppen, mixen) naar de cash-out en de integration bij de
+          exchange, waar KYC/Wwft de opsporing een naam geeft.
+        </div>
+
+        <p>Zet hieronder de zes stappen van de operatie in de juiste volgorde. Lukt dat, dan heb je de zaak rond.</p>
+
+        <div class="callout info">
+          <strong>Eindbeloning:</strong> wie de hele keten doorgrondt, verdient de hoofdvlag: <code>JVT{follow_the_money}</code>.
+        </div>
+
+        <h3>Ethiek en samenwerking</h3>
+        <p>Dit soort onderzoek doe je niet op eigen houtje op echte mensen. Blockchain-analyse voor opsporing gebeurt door de
+        <strong>Politie</strong>, de <strong>FIOD</strong> en met gespecialiseerde bedrijven, onder juridische waarborgen
+        (zoals een vordering aan een exchange). Jij oefent hier de denkwijze op een fictieve zaak — netjes binnen de regels.</p>
+      `,
+      lab: {
+        type: 'ordering',
+        title: 'Operatie Spookvracht — de tijdlijn',
+        prompt: 'Zet de zes stappen van de witwasoperatie in de juiste volgorde (gebruik de tijdstempels uit taak 4).',
+        flag: 'JVT{volg_de_keten}',
+        explain: 'De keten loopt: placement (09:02) → splitsen over mules (10:10) → chain-hop naar de tussenwallet (11:30) → alles samen in de mixer (12:20) → uitbetaling op de exchange (14:05) → KYC/Wwft koppelt een naam (integration).',
+        items: [
+          { id: 'a', label: '09:02 — VrachtVlot BV betaalt 4.0 BTC losgeld naar de ransom-wallet (placement)' },
+          { id: 'b', label: '10:10 — De aanvaller splitst de buit over twee money mules (layering begint)' },
+          { id: 'c', label: '11:30 — Mule "KoeriersKoen" hopt door naar een tussenwallet (chain-hop)' },
+          { id: 'd', label: '12:20 — Alle deelstromen landen in de mixer "WasStraat" en worden vermengd' },
+          { id: 'e', label: '14:05 — De mixer betaalt 3.75 BTC uit op een exchange-account (cash-out)' },
+          { id: 'f', label: '16:40 — De exchange vraagt KYC-gegevens; hier grijpt de opsporing aan (integration)' },
+        ],
+        correct: ['a', 'b', 'c', 'd', 'e', 'f'],
+      },
+      questions: [
+        { q: 'Met welke gebeurtenis begint de tijdlijn van de operatie?', options: ['Met de uitbetaling op de exchange', 'Met de losgeldbetaling naar de ransom-wallet (placement)', 'Met de KYC-controle', 'Met de mixer'], answer: 1, explain: 'De operatie begint om 09:02 met de losgeldbetaling: de placement-fase.' },
+        { q: 'Wat hoort in een forensisch rapport gescheiden te blijven?', options: ['Feit en interpretatie', 'Bedrag en tijd', 'Input en output', 'Euro en bitcoin'], answer: 0, explain: 'Feit (wat je in het grootboek ziet) en interpretatie (wat het betekent) hou je uit elkaar, zodat je conclusie controleerbaar blijft.' },
+        { q: 'Los de volgorde-puzzel op. Welke vlag verschijnt bij de juiste tijdlijn?', answer: ['JVT{volg_de_keten}'], hint: 'Zet de zes stappen op tijd; bij succes toont het lab de vlag.', explain: 'De ordening-puzzel beloont de juiste tijdlijn met JVT{volg_de_keten}.' },
+        { q: 'Welke hoofdvlag staat als eindbeloning in deze taak genoemd?', answer: ['JVT{follow_the_money}'], hint: 'Lees de info-callout "Eindbeloning".', explain: 'De hoofdvlag van de room is JVT{follow_the_money}.' },
+      ],
+    },
+  ],
+  terms: [
+    { term: 'Blockchain (publiek grootboek)', def: 'Het openbare, onveranderlijke kasboek waarin alle transacties staan; iedereen kan het inzien.' },
+    { term: 'Wallet-adres', def: 'Een pseudoniem "rekeningnummer" (lange reeks tekens) waar crypto naartoe gaat; zonder naam, maar wel volgbaar.' },
+    { term: 'Private sleutel', def: 'De geheime sleutel waarmee je een transactie ondertekent; wie hem heeft, kan de bijbehorende munten uitgeven.' },
+    { term: 'UTXO', def: 'Unspent Transaction Output: een nog niet uitgegeven "briefje" dat je als input in een volgende transactie gebruikt.' },
+    { term: 'Change (wisselgeld)', def: 'De restoutput die terugkomt naar een eigen adres van de betaler; een belangrijk spoor voor onderzoekers.' },
+    { term: 'Placement', def: 'Fase 1 van witwassen: het misdaadgeld komt het (financiële) systeem binnen, bijv. een losgeldbetaling in BTC.' },
+    { term: 'Layering', def: 'Fase 2: het geld in vele laagjes rondpompen (splitsen, mixen, hoppen) om de herkomst te verbergen.' },
+    { term: 'Integration', def: 'Fase 3: het "gewassen" geld keert met schijnbaar legale herkomst terug in de economie.' },
+    { term: 'Mixer/tumbler', def: 'Dienst die crypto van veel gebruikers vermengt en door elkaar uitbetaalt om de in-uit-link te verbergen.' },
+    { term: 'Peel chain', def: 'Lange transactieketen die telkens een klein deel afsplitst naar cash-out en de grote rest doorschuift.' },
+    { term: 'Chain-hopping', def: 'Overspringen naar een andere cryptomunt of blockchain om het spoor moeilijker te volgen te maken.' },
+    { term: 'Common-input-heuristiek', def: 'Vuistregel: inputs die samen in één transactie worden uitgegeven, horen waarschijnlijk bij dezelfde eigenaar.' },
+    { term: 'Change-heuristiek', def: 'Vuistregel die de wisselgeld-output herkent om de eigenaar naar zijn volgende adres te volgen.' },
+    { term: 'KYC', def: 'Know Your Customer: verplichte identiteitscontrole bij een exchange, waardoor er een echte naam aan het spoor komt.' },
+    { term: 'Wwft', def: 'Nederlandse anti-witwaswet die o.a. exchanges verplicht ongebruikelijke transacties te melden.' },
+  ],
+  resources: [
+    { title: 'Chainalysis — blockchain-analyse en crypto-onderzoek', url: 'https://www.chainalysis.com/' },
+    { title: 'Elliptic — crypto-forensics en risicobronnen', url: 'https://www.elliptic.co/' },
+    { title: 'Bitcoin-whitepaper (Nakamoto) — transacties en het publieke grootboek', url: 'https://bitcoin.org/bitcoin.pdf' },
+    { title: 'FIOD — opsporing van financiële criminaliteit (o.a. crypto)', url: 'https://www.fiod.nl/' },
+  ],
+});
+
+</script>
+<script>
+/* Room: OSINT-jacht — ontmasker de operator (puzzels) */
+
+const KOERIER_POST = `GELEKTE OPERATOR-POST — bron: fraudeforum DropZone (gearchiveerd kopie)
+Zaakcode: JVT{koerier_ontmaskerd}
+
+[v0idkoerier] KOERIER-kit v3 — "uitbetalingen netjes geregeld"
+Contact alleen via v0idkoerier[at]mail[.]jvt[.]lab (PGP verplicht, geen DM's).
+Panel: hxxps://panel[.]koerier-track[.]jvt[.]lab/login
+Backup-panel: hxxps://koerier-track[.]jvt[.]lab/panel
+C2 / check-in draait op 198.51.100[.]77 en 203.0.113[.]60
+Exfil-drop: 192.0.2[.]23
+Let op: 198.51.100[.]77 verzorgt óók de phishing-redirect, dus dat adres zie je dubbel.
+Kit-bestand: koerier_kit_v3.zip   MD5 41d6d195835fa4c5e4f57a207419d4c9
+Panel-loader: SHA-256 9f2fa7c1d9b2db5df756672d044f0fe1f7d95be0ce2543127196235c00b75835
+Werkt tegen ongepatchte gateways (CVE-2024-3400). Snelle uitbetaling, vaste fee.
+`;
+
+CS.registerRoom({
+  id: 'osint-jacht',
+  path: 'puzzels',
+  order: 3,
+  title: 'OSINT-jacht: ontmasker de operator',
+  icon: '🔎',
+  difficulty: 'Gemiddeld',
+  minutes: 60,
+  summary: 'Eén fictieve cybercrime-operator laat overal kleine sporen na. Correleer forumposts, certificaten, een wallet-tag en metadata tot één identiteit, ontleed zijn phishinglink, trek de indicatoren uit een gelekte post — en blijf netjes binnen de regels.',
+  objectives: [
+    'Uitleggen wat een pivot is en hoe een hergebruikte alias of e-mail losse bronnen aan elkaar knoopt',
+    'Fictieve fragmenten (forum, crt.sh/WHOIS, wallet-tag, social, metadata) correleren tot één operator',
+    'Een phishing-URL ontleden en de @-truc, een merknaam als subdomein en punycode herkennen',
+    'Indicatoren (IOC\'s) uit een gedefangde operator-post halen en ze uit elkaar houden',
+    'De zeldzaamheid en betrouwbaarheid van een spoor inschatten en nooit op één pivot vertrouwen',
+    'De grenzen benoemen: passief observeren, geen echte personen, en art. 126j Sv kort',
+  ],
+
+  tasks: [
+    {
+      title: 'Taak 1 — De jacht begint: pivots en de rode draad',
+      content: `
+        <p>Een cybercrime-operator werkt zelden op één plek. Hij adverteert op een forum, registreert een domein, int betalingen in een wallet, roept wat op sociale media en lekt per ongeluk een bestand met metadata. Elk spoor op zich zegt weinig. De kunst van OSINT is om die losse stukjes aan elkaar te <strong>knopen</strong> tot één identiteit — precies zoals een rechercheur losse getuigenverklaringen tot één verhaal maakt.</p>
+
+        <p>De techniek daarvoor heet <strong>pivoten</strong> (pivoting): je vindt één kenmerk en gebruikt dat als draaipunt om naar een volgende bron te springen. Vind je op een forum de gebruikersnaam <code>v0idkoerier</code>, dan zoek je of diezelfde naam elders opduikt. Staat er een e-mailadres bij, dan zoek je welke domeinen op dat adres geregistreerd zijn. Mensen zijn namelijk <strong>gewoontedieren</strong>: ze hergebruiken dezelfde alias op tien platforms en koppelen alles aan hetzelfde mailadres. Die luiheid is jouw rode draad.</p>
+
+        <div class="callout info"><strong>De zaak in deze room (fictief):</strong> achter een phishing- en cash-out-dienst met de naam <strong>KOERIER</strong> zit één operator. Hij laat op vijf plekken sporen na. Jouw opdracht: correleer die tot één alias, ontleed zijn phishinglink, haal de indicatoren uit een gelekte post en beoordeel hoe hard je bewijs is. Alle personen, accounts, domeinen en adressen hier zijn <strong>verzonnen</strong>.</div>
+
+        <h3>Wat maakt een spoor bruikbaar?</h3>
+        <ul>
+          <li><strong>Een alias</strong> die zeldzaam genoeg is. <code>v0idkoerier</code> komt niet toevallig bij twee mensen voor; <code>gamer123</code> wel.</li>
+          <li><strong>Een e-mailadres.</strong> Hetzelfde adres op een forum én in een domeinregistratie is een sterke koppeling.</li>
+          <li><strong>Infrastructuur.</strong> Een domein, een certificaat of een IP-adres dat terugkomt, verbindt losse campagnes.</li>
+          <li><strong>Metadata.</strong> De auteur, software of een pad als <code>C:\\Users\\v0idkoerier</code> in een bestand verraadt vaak de maker.</li>
+        </ul>
+
+        <p>In de volgende taak krijg je de vijf fragmenten voorgeschoteld. Houd steeds één vraag in je hoofd: <em>welk kenmerk komt in meer dan één bron terug?</em> Dát is je pivot.</p>
+      `,
+      questions: [
+        { q: 'Hoe heet de techniek waarbij je één gevonden kenmerk gebruikt als draaipunt om naar een volgende bron te springen?', answer: ['pivoten', 'pivoting', 'pivot', 'pivoteren'], hint: 'Een Engels woord voor "om een draaipunt draaien".', explain: 'Pivoten: je draait van het ene kenmerk (alias, e-mail, domein) naar het volgende en bouwt zo een profiel op.' },
+        { q: 'Waarom is een hergebruikte, zeldzame gebruikersnaam waardevol voor een OSINT-onderzoek?', options: ['Het is altijd ook het wachtwoord', 'Dezelfde zeldzame naam op meerdere platforms laat je accounts van één persoon aan elkaar koppelen', 'Het verraadt direct het IP-adres', 'Dat is het niet'], answer: 1, explain: 'Mensen hergebruiken namen en mailadressen; een zeldzame naam die terugkeert, koppelt losse bronnen aan dezelfde persoon.' },
+        { q: 'Ik begrijp dat deze hele zaak fictief is en alleen bedoeld om de methode te oefenen.', noAnswer: true },
+      ],
+    },
+
+    {
+      title: 'Taak 2 — De fragmenten correleren',
+      content: `
+        <p>Hieronder liggen vijf fragmenten uit de zaak KOERIER, plus een gelekte configregel. Ze komen van verschillende plekken: een fraudeforum, <strong>Certificate Transparency</strong> (de openbare logboeken van uitgegeven TLS-certificaten, doorzoekbaar via <code>crt.sh</code>) gecombineerd met <strong>WHOIS</strong>, een blockchain-explorer met een publiek wallet-label, een Mastodon-profiel en de metadata van een gelekte schermafbeelding.</p>
+
+        <p>Bekijk de kaarten in het lab en zoek het kenmerk dat telkens terugkeert. Beantwoord daarna eerst de zelf-checkende vragen ín het lab (dat is je correlatie), en dan de vragen hieronder.</p>
+
+        <div class="callout tip"><strong>Tip:</strong> leg naast elke kaart welk kenmerk je eruit haalt: alias, e-mail, domein, wallet. Het kenmerk dat op de meeste kaarten staat, is je rode draad. Twee kaarten noemen zelfs exact hetzelfde e-mailadres — dat is de hardste koppeling.</div>
+
+        <h3>Let op de metadata en de memo</h3>
+        <p>De schermafbeelding draagt een <code>UserComment</code>-veld; daar liet de maker per ongeluk een tekst achter. En in de Mastodon-post staat een <strong>memo</strong> die in Base64 is gecodeerd. Base64 herken je aan de mix van letters, cijfers en soms een <code>=</code> aan het eind. Decodeer die memo (bijvoorbeeld met het CyberChef-lab uit een eerdere room, of in je hoofd met een Base64-tabel) — er komt een vlag uit.</p>
+      `,
+      lab: {
+        type: 'osintpuzzle',
+        scenario: 'Zaak KOERIER — vijf fictieve fragmenten over één operator. Zoek het kenmerk dat telkens terugkeert.',
+        records: [
+          {
+            title: 'Forumpost — fraudeforum "DropZone"', icon: '💬',
+            lines: [
+              'gebruiker: v0idkoerier',
+              'handtekening: "koeriersdienst voor je uitbetalingen"',
+              'contact: v0idkoerier@mail.jvt.lab',
+              'PGP-fingerprint: 9F2A C1D9 4B77 0E65 7AB3',
+            ],
+          },
+          {
+            title: 'crt.sh + WHOIS — domeinregistratie', icon: '🔎',
+            lines: [
+              'crt.sh zoekopdracht: koerier-track.jvt.lab',
+              'certificaat-subject: CN=panel.koerier-track.jvt.lab',
+              'WHOIS registrant-handle: v0idkoerier',
+              'WHOIS e-mail: v0idkoerier@mail.jvt.lab',
+            ],
+          },
+          {
+            title: 'Blockchain-explorer — wallet-tag', icon: '🪙',
+            lines: [
+              'adres: bc1qk0erierv0idtipjar000xmpl',
+              'publiek label (door gebruikers toegevoegd): "v0idkoerier tipjar"',
+              'eerste transactie: 2026-03-02',
+            ],
+          },
+          {
+            title: 'Social post — Mastodon', icon: '📣',
+            lines: [
+              'account: @v0idkoerier@sociaal.jvt.lab',
+              'bio: "pakketjes & betalingen — dm voor tarief"',
+              'post 03:14 UTC: "nieuwe panel-build is live"',
+              'memo (base64): SlZUe3Bpdm90X3ZpYV9oZXJnZWJydWlrfQ==',
+            ],
+          },
+          {
+            title: 'Metadata — gelekte schermafbeelding panel.png', icon: '🖼️',
+            lines: [
+              'Software: KoerierKit 3.0',
+              'Author: v0idkoerier',
+              'pad: C:\\Users\\v0idkoerier\\build\\panel',
+              'UserComment: JVT{alias_is_de_rode_draad}',
+            ],
+          },
+          {
+            title: 'Paste — gelekte configsnipper (paste.jvt.lab)', icon: '📨',
+            lines: [
+              'smtp_user = v0idkoerier@mail.jvt.lab',
+              'c2 = koerier-track.jvt.lab',
+              'note = zie forum DropZone voor tarief',
+            ],
+          },
+        ],
+        ask: [
+          { q: 'Welke alias komt op (vrijwel) elke bron terug?', answer: ['v0idkoerier'], hint: 'Lees de gebruikersnaam, de registrant-handle, het wallet-label en de Author.' },
+          { q: 'Welk e-mailadres koppelt de forumpost aan de WHOIS-registratie?', answer: ['v0idkoerier@mail.jvt.lab'], hint: 'Hetzelfde adres staat op de forumkaart én de crt.sh/WHOIS-kaart.' },
+          { q: 'Welk domein registreerde de operator (uit crt.sh/WHOIS)?', answer: ['koerier-track.jvt.lab'], hint: 'Kijk naar de crt.sh-zoekopdracht en de config-paste.' },
+          { q: 'Welk wallet-adres is publiek aan de operator gelabeld?', answer: ['bc1qk0erierv0idtipjar000xmpl'], hint: 'Staat op de blockchain-explorer-kaart.' },
+        ],
+      },
+      questions: [
+        { q: 'Welke alias is in dit onderzoek de rode draad?', options: ['gamer123', 'v0idkoerier', 'DropZone', 'KoerierKit'], answer: 1, explain: 'v0idkoerier komt terug op het forum, in de WHOIS-registratie, op het wallet-label, in de social bio en in de metadata — dat is dezelfde persoon.' },
+        { q: 'Welk e-mailadres koppelt de forumpost hard aan de domeinregistratie?', answer: ['v0idkoerier@mail.jvt.lab'], hint: 'Hetzelfde adres staat op twee onafhankelijke kaarten.', explain: 'Een identiek, zeldzaam mailadres op twee losse bronnen is een van de sterkste koppelingen die je kunt vinden.' },
+        { q: 'Welke vlag staat in het UserComment-veld van de metadata van panel.png?', answer: ['JVT{alias_is_de_rode_draad}'], hint: 'Lees de metadata-kaart; de maker liet de tekst per ongeluk staan.', explain: 'In de metadata staat UserComment: JVT{alias_is_de_rode_draad} — metadata verraadt vaak de maker én meer.' },
+        { q: 'Decodeer de Base64-memo uit de Mastodon-post. Welke vlag komt eruit?', answer: ['JVT{pivot_via_hergebruik}'], encoded: true, hint: 'SlZUe3Bpdm90X3ZpYV9oZXJnZWJydWlrfQ== is Base64. Decodeer het.', explain: 'De Base64-string decodeert naar JVT{pivot_via_hergebruik}: precies wat je net deed — pivoten op een hergebruikt kenmerk.' },
+      ],
+    },
+
+    {
+      title: 'Taak 3 — De phishinglink ontleden',
+      content: `
+        <p>De operator stuurt zijn slachtoffers met phishingmails naar nep-pagina's. Uit de mailgateway heb je vijf URL's verzameld. Jouw taak: bepaal waar ze écht naartoe gaan, zodat je de juiste hosts kunt blokkeren. Je klikt nergens op — je leest de URL als tekst.</p>
+
+        <h3>Zo lees je een URL</h3>
+        <pre><code>https://gebruiker@host.voorbeeld.jvt.lab:8443/pad?id=12
+
+schema          https
+gebruikersdeel  gebruiker
+host            host.voorbeeld.jvt.lab
+poort           8443
+pad             /pad
+query           id=12</code></pre>
+        <ul>
+          <li>De <strong>host</strong> is waar je browser echt verbinding mee maakt. Alles vóór een <code>@</code> is een gebruikersdeel en wordt genegeerd. Bij <code>https://www.nederbank.nl@203.0.113.60/</code> ga je dus naar <code>203.0.113.60</code>, niet naar de bank. Dat heet de <strong>@-truc</strong>.</li>
+          <li>Een hostnaam lees je <strong>van rechts naar links</strong>. Bij <code>pakketpost.nl.koerier-track.jvt.lab</code> bepaalt het laatste stuk de eigenaar: het domein is <code>koerier-track.jvt.lab</code> (van de operator!). De merknaam vooraan is maar een verzonnen subdomein.</li>
+          <li><strong>Punycode</strong> (<code>xn--</code>) codeert internationale tekens in een domeinnaam. Aanvallers gebruiken het voor lookalike-domeinen die bijna niet van echt te onderscheiden zijn (een homograafaanval).</li>
+          <li>Een kaal <strong>IP-adres</strong> als host, <code>http</code> zonder <code>s</code>, of een vreemde <strong>poort</strong> zijn extra rode vlaggen.</li>
+        </ul>
+
+        <p>Het lab ontleedt elke URL en toont de rode vlaggen. Let op: het eerste domein hoort bij <code>koerier-track.jvt.lab</code> — hetzelfde domein dat je in taak 2 in de WHOIS-registratie vond. De phishing en de operator hangen aan elkaar.</p>
+
+        <div class="callout warn"><strong>Let op:</strong> klik nooit op een verdachte link "om even te kijken". Analyseer hem als tekst, zoals hier. Blokkeer meestal de hele <em>host</em>, want paden en parameters wisselt een aanvaller zo.</div>
+      `,
+      lab: {
+        type: 'url',
+        urls: [
+          'http://pakketpost.nl.koerier-track.jvt.lab/status?id=NL44',
+          'https://www.nederbank.nl@203.0.113.60/herstel',
+          'https://xn--pakketpst-l2a.jvt.lab/track',
+          'http://192.0.2.23:8088/koerier/afhalen',
+          'https://portaal.jvt.lab/klant',
+        ],
+      },
+      questions: [
+        { q: 'Met welke host maakt de browser écht verbinding bij https://www.nederbank.nl@203.0.113.60/herstel?', answer: ['203.0.113.60'], hint: 'Alles vóór de @ is het gebruikersdeel en wordt genegeerd.', explain: 'Door de @-truc lijkt het een link naar de bank, maar de echte host is het IP-adres 203.0.113.60.' },
+        { q: 'Welke URL gebruikt punycode om op een bekend domein te lijken?', options: ['https://portaal.jvt.lab/klant', 'https://xn--pakketpst-l2a.jvt.lab/track', 'http://192.0.2.23:8088/koerier/afhalen', 'https://www.nederbank.nl@203.0.113.60/herstel'], answer: 1, explain: 'xn-- verraadt punycode: achter de schermen staat een teken dat op een gewone letter lijkt (homograafaanval).' },
+        { q: 'Onder welk geregistreerd domein valt http://pakketpost.nl.koerier-track.jvt.lab/status (lees van rechts naar links)?', answer: ['koerier-track.jvt.lab'], hint: 'Het laatste stuk vóór de map bepaalt de eigenaar; de merknaam vooraan is een subdomein.', explain: 'De host valt onder koerier-track.jvt.lab — het domein van de operator uit taak 2. "pakketpost.nl" is misleiding.' },
+        { q: 'Welke poort gebruikt de URL met het kale IP-adres 192.0.2.23?', answer: ['8088'], hint: 'Kijk naar het getal na de dubbele punt.', explain: 'Een ongebruikelijke poort op een kaal IP-adres via http is een sterke rode vlag.' },
+      ],
+    },
+
+    {
+      title: 'Taak 4 — Indicatoren uit de gelekte post',
+      content: `
+        <p>Een rivaal heeft een oude verkooppost van de operator gelekt en gearchiveerd. De tekst staat vol <strong>indicatoren</strong> (IOC's): adressen, domeinen, een e-mailadres, bestandshashes en een CVE-nummer. Ze zijn <strong>gedefangd</strong> — onklikbaar gemaakt met trucjes als <code>hxxps</code>, <code>[.]</code> en <code>[at]</code> — zodat niemand per ongeluk contact maakt met de infrastructuur van de operator.</p>
+
+        <h3>Wat is wat?</h3>
+        <ul>
+          <li><strong>IPv4-adres</strong> — bijv. <code>198.51.100[.]77</code> (een documentatie-adres).</li>
+          <li><strong>Domein / URL</strong> — <code>koerier-track[.]jvt[.]lab</code>, <code>hxxps://panel[.]koerier-track[.]jvt[.]lab/login</code>.</li>
+          <li><strong>E-mailadres</strong> — <code>v0idkoerier[at]mail[.]jvt[.]lab</code> (ken je die nog uit taak 2?).</li>
+          <li><strong>Hashes</strong> — MD5 (32 hextekens) en SHA-256 (64 hextekens) van bestanden.</li>
+          <li><strong>CVE</strong> — een kwetsbaarheid die de kit misbruikt.</li>
+        </ul>
+
+        <p>Het lab haalt de indicatoren automatisch uit de tekst en telt ze per soort. Loop de tellingen na en vergelijk ze met wat je zelf in de tekst ziet. Let op één valkuil: <strong>één IP-adres komt twee keer voor</strong> (het doet zowel C2 als de phishing-redirect). Bij <em>unieke</em> indicatoren telt dat als één.</p>
+
+        <div class="callout info"><strong>Rode draad:</strong> het e-mailadres en het domein in deze post zijn exact dezelfde als in taak 2. Dat bevestigt onafhankelijk dat deze post bij jouw operator hoort — een tweede pivot naar dezelfde identiteit.</div>
+
+        <p>Bovenin de post staat een <strong>zaakcode</strong> die je als vlag invult.</p>
+      `,
+      lab: { type: 'ioc', text: KOERIER_POST },
+      questions: [
+        { q: 'Hoeveel unieke IPv4-adressen staan er in de post?', answer: ['3', 'drie'], hint: 'Tel de adressen, maar reken een dubbel adres één keer.', explain: '198.51.100.77, 203.0.113.60 en 192.0.2.23. Het adres 198.51.100.77 staat er twee keer in (C2 én redirect), maar telt als één uniek adres.' },
+        { q: 'Welk CVE-nummer noemt de post?', answer: ['CVE-2024-3400'], hint: 'Zoek naar CVE- in de tekst of de CVE-telling in het lab.', explain: 'De kit richt zich op ongepatchte gateways via CVE-2024-3400; patchen heeft dus hoge prioriteit.' },
+        { q: 'Welk e-mailadres in de post koppelt terug naar de operator uit taak 2?', answer: ['v0idkoerier@mail.jvt.lab'], hint: 'Refang het gedefangde adres ([at] en [.] terugzetten).', explain: 'Gerefangd is dat v0idkoerier@mail.jvt.lab — precies het adres uit de forumpost en de WHOIS-registratie.' },
+        { q: 'Wat is de zaakcode (vlag) bovenin de post?', answer: ['JVT{koerier_ontmaskerd}'], hint: 'Kijk in de eerste regels van de tekst in het lab.', explain: 'De zaakcode JVT{koerier_ontmaskerd} markeert dat je de operator aan zijn eigen infrastructuur hebt gekoppeld.' },
+      ],
+    },
+
+    {
+      title: 'Taak 5 — Sorteer de zestien sporen',
+      content: `
+        <p>Tijdens de jacht ben je van alles tegengekomen: zoekbronnen, soorten entiteiten, vingerafdrukken van infrastructuur en platforms waar handles leven. Om overzicht te houden, sorteer je ze. In het lab staan <strong>zestien begrippen</strong> door elkaar; verdeel ze in <strong>vier groepen van vier</strong>.</p>
+
+        <h3>De vier categorieën</h3>
+        <ul>
+          <li><strong>OSINT-bronnen</strong> — plekken die je bevráágt om te pivoten (zoekdiensten, logboeken, archieven).</li>
+          <li><strong>Entiteitstypes</strong> — de abstracte soorten "ding" waarover je pivoteert (geen merk, maar het type).</li>
+          <li><strong>Infrastructuur-vingerafdrukken</strong> — herhaalbare kenmerken die servers of personen clusteren.</li>
+          <li><strong>Social-/communicatieplatforms</strong> — concrete plekken waar aliassen en accounts opduiken.</li>
+        </ul>
+
+        <p>Elk begrip past in precies één groep. Twijfel je? Vraag je af <em>wat</em> het is: een bron die je raadpleegt, een abstract type, een technische vingerafdruk, of een platform met een naam. <code>crt.sh</code> is bijvoorbeeld een bron; <code>certificaat</code> is het abstracte entiteitstype — die horen dus níét bij elkaar.</p>
+
+        <div class="callout tip"><strong>Tip:</strong> het lab geeft "drie goed" als hint wanneer je er één fout hebt. Begin met de groep waar je het zekerst van bent, dan houd je minder opties over voor de rest. Los je alles op, dan verschijnt de vlag.</div>
+      `,
+      lab: {
+        type: 'connections',
+        prompt: 'Verdeel de zestien sporen in vier groepen van vier: OSINT-bronnen, entiteitstypes, infrastructuur-vingerafdrukken en social-/communicatieplatforms.',
+        flag: 'JVT{zestien_sporen_gesorteerd}',
+        groups: [
+          { name: 'OSINT-bronnen', items: ['crt.sh', 'WHOIS', 'Wayback Machine', 'Shodan'] },
+          { name: 'Entiteitstypes', items: ['domein', 'wallet', 'alias', 'certificaat'] },
+          { name: 'Infrastructuur-vingerafdrukken', items: ['favicon-hash', 'Google Analytics-ID', 'PGP-fingerprint', 'TLS-JA3'] },
+          { name: 'Social-/communicatieplatforms', items: ['Mastodon', 'Telegram', 'Discord', 'Keybase'] },
+        ],
+      },
+      questions: [
+        { q: 'In welke groep hoort crt.sh?', options: ['Entiteitstypes', 'OSINT-bronnen', 'Infrastructuur-vingerafdrukken', 'Social-/communicatieplatforms'], answer: 1, explain: 'crt.sh is een doorzoekbare bron (de Certificate Transparency-logs). Het abstracte type "certificaat" hoort bij de entiteitstypes.' },
+        { q: 'Een favicon-hash en een gedeeld Google Analytics-ID gebruik je vooral om wat te doen?', options: ['Een wachtwoord kraken', 'Verschillende servers of sites aan dezelfde eigenaar clusteren', 'Een foto geolokaliseren', 'Een e-mail versturen'], answer: 1, explain: 'Het zijn infrastructuur-vingerafdrukken: duikt dezelfde favicon-hash of tracking-ID op meerdere sites op, dan horen die waarschijnlijk bij dezelfde beheerder.' },
+        { q: 'Welke vlag verschijnt als je alle vier de groepen goed hebt?', answer: ['JVT{zestien_sporen_gesorteerd}'], hint: 'Los de puzzel in het lab op.', explain: 'Bij een volledige oplossing toont het lab JVT{zestien_sporen_gesorteerd}.' },
+      ],
+    },
+
+    {
+      title: 'Taak 6 — Zeldzaamheid, betrouwbaarheid en bronkritiek',
+      content: `
+        <p>Je hebt de operator gevonden. Maar hoe <strong>hard</strong> is je bewijs? Een goede onderzoeker scheidt een sterke aanwijzing van een zwakke, en leunt nooit op één spoor. Twee begrippen helpen daarbij: <strong>zeldzaamheid</strong> en <strong>betrouwbaarheid</strong>.</p>
+
+        <h3>Zeldzaamheid bepaalt de bewijskracht</h3>
+        <p>Hoe zeldzamer een kenmerk, hoe sterker de koppeling. De alias <code>v0idkoerier</code> is uniek genoeg dat twee bronnen met die naam vrijwel zeker dezelfde persoon zijn. Zou de naam <code>admin</code> of <code>info</code> zijn, dan bewijst het niets — dat gebruikt half internet. Hetzelfde geldt voor een <strong>e-mailadres</strong> (zeer zeldzaam, sterke koppeling) versus een <strong>profielfoto</strong> die iemand van een stocksite plukte (kan toevallig gedeeld zijn).</p>
+
+        <h3>Betrouwbaarheid: waar komt het spoor vandaan?</h3>
+        <ul>
+          <li><strong>Hard, geverifieerd.</strong> Een <code>crt.sh</code>-certificaat is door een certificaatautoriteit uitgegeven en in een openbaar logboek vastgelegd — moeilijk te vervalsen.</li>
+          <li><strong>Matig.</strong> Een WHOIS-registratie kan met neppe gegevens zijn gedaan, maar het e-mailadres moest ergens kloppen om het domein te beheren.</li>
+          <li><strong>Zwak.</strong> Een <em>wallet-label</em> op een explorer is vaak door willekeurige gebruikers toegevoegd. Het is een hint, geen bewijs, tot je het bevestigt.</li>
+        </ul>
+
+        <p>Dit is precies de gedachte achter beoordelingsmodellen zoals de <strong>Admiralty Code</strong>: je scoort de betrouwbaarheid van de <em>bron</em> apart van de geloofwaardigheid van de <em>informatie</em>.</p>
+
+        <div class="callout warn"><strong>Eén pivot is een hypothese, geen conclusie.</strong> Pas als meerdere <em>onafhankelijke</em> sporen dezelfde kant op wijzen — de alias én het mailadres én het domein — wordt het een onderbouwde conclusie. Dat heet verificatie. En let op <strong>valse positieven</strong>: twee sites met dezelfde favicon-hash kunnen ook gewoon hetzelfde kant-en-klare thema gebruiken.</div>
+      `,
+      questions: [
+        { q: 'Welke gebruikersnaam levert de sterkste koppeling tussen twee bronnen?', options: ['admin', 'info', 'v0idkoerier', 'user'], answer: 2, explain: 'Hoe zeldzamer de naam, hoe onwaarschijnlijker het toeval. v0idkoerier is uniek genoeg; admin/info/user zeggen niets.' },
+        { q: 'Welke bron uit deze zaak is het hardste, moeilijkst te vervalsen bewijs?', options: ['Een wallet-label op een explorer', 'Een door gebruikers toegevoegde profielfoto', 'Een crt.sh-certificaat uit de Certificate Transparency-logs', 'Een anonieme forumreactie'], answer: 2, explain: 'Certificaten worden door een CA uitgegeven en openbaar gelogd; een wallet-label of foto kan iedereen toevoegen of hergebruiken.' },
+        { q: 'Waarom vertrouw je nooit op één enkele pivot?', options: ['Omdat pivoten verboden is', 'Omdat één spoor pas een hypothese is; meerdere onafhankelijke sporen samen maken er een conclusie van', 'Omdat het te snel gaat', 'Dat hoeft ook niet, één is genoeg'], answer: 1, explain: 'Verificatie betekent bevestigen via meerdere onafhankelijke aanwijzingen; één spoor kan een valse positief zijn.' },
+      ],
+    },
+
+    {
+      title: 'Taak 7 — Passief, fictief en netjes: OPSEC en ethiek',
+      content: `
+        <p>Je kunt nu een operator ontmaskeren met open bronnen. De laatste — en belangrijkste — vaardigheid is weten <strong>waar de grens ligt</strong>. OSINT is krachtig, maar niet grenzeloos.</p>
+
+        <h3>Blijf passief</h3>
+        <p>Alles wat je in deze room deed, is <strong>passief observeren</strong>: je las openbare posts, certificaten en metadata. Je logde nergens in, je nam geen contact op, je lokte niemand uit. Dat onderscheid is cruciaal:</p>
+        <ul>
+          <li><strong>Mag wel:</strong> openbare bronnen lezen en combineren.</li>
+          <li><strong>Mag niet (op eigen houtje):</strong> inloggen op het panel van de operator, een besloten groep binnendringen, of met een nep-account contact leggen om hem uit te lokken. Een wachtwoord raden of inbreken is <strong>computervredebreuk</strong> (art. 138ab Sr), geen OSINT meer.</li>
+        </ul>
+
+        <h3>OPSEC: scherm je eigen sporen af</h3>
+        <p>Terwijl jij de operator onderzoekt, laat jíj ook sporen na: je IP-adres is zichtbaar voor een server, en een profielbezoek kan een melding geven. <strong>OPSEC</strong> (Operational Security) betekent een aparte onderzoeksomgeving gebruiken, niet je persoonlijke account, en vastleggen wat je doet zonder jezelf te verraden.</p>
+
+        <h3>De juridische lijn (kort)</h3>
+        <p>Als een <strong>opsporingsambtenaar</strong> stelselmatig informatie over iemand gaat inwinnen — structureel volgen, een profiel opbouwen — valt dat onder een bijzondere opsporingsbevoegdheid: <strong>art. 126j Sv</strong> (stelselmatige inwinning van informatie). Dat vereist toestemming en waarborgen. Een burger of leerling heeft die bevoegdheid <em>niet</em>. En de <strong>AVG</strong> geldt altijd: verzamel niet meer persoonsgegevens dan je voor je vraag nodig hebt (dataminimalisatie).</p>
+
+        <div class="callout danger"><strong>Oefen alleen fictief.</strong> Alle aliassen, domeinen en adressen in deze room zijn verzonnen (<code>.jvt.lab</code>, documentatie-IP's). Richt deze technieken nooit op een echt persoon zonder grondslag en bevoegdheid. De vaardigheid die telt is niet "zoveel mogelijk vinden", maar "het juiste vinden, kunnen bewijzen, en binnen de regels blijven".</div>
+      `,
+      questions: [
+        { q: 'Wat is het verschil tussen toegestaan (passief) en niet-toegestaan optreden in dit onderzoek?', options: ['Er is geen verschil', 'Passief = openbare bronnen lezen en combineren; niet toegestaan = inloggen, infiltreren of met een nep-account uitlokken', 'Passief mag alleen \'s nachts', 'Alleen de politie mag googelen'], answer: 1, explain: 'Observeren wat openbaar is, mag. Zodra je inlogt, een slot forceert of iemand actief misleidt, is het geen OSINT meer.' },
+        { q: 'Onder welk wetsartikel valt het stelselmatig inwinnen van informatie door een opsporingsambtenaar?', answer: ['art. 126j Sv', '126j Sv', '126j', 'artikel 126j sv'], hint: 'Een artikel uit het Wetboek van Strafvordering (Sv), nummer 126j.', explain: 'Art. 126j Sv regelt de stelselmatige inwinning van informatie; het is een bevoegdheid voor opsporing, met waarborgen — niet voor burgers.' },
+        { q: 'Wat betekent OPSEC voor jou als onderzoeker?', answer: ['operational security', 'operationele veiligheid'], hint: 'Het gaat om het afschermen van je éígen sporen tijdens het onderzoek.', explain: 'OPSEC (Operational Security): maatregelen om je eigen identiteit en onderzoek af te schermen, bijv. een aparte onderzoeksomgeving.' },
+        { q: 'Ik begrijp dat ik passief openbaar materiaal mag observeren, maar niet op eigen houtje mag inloggen, infiltreren of uitlokken — en dat ik dit alleen op fictieve zaken oefen.', noAnswer: true },
+      ],
+    },
+  ],
+
+  terms: [
+    { term: 'Pivoten', def: 'Van één gevonden kenmerk (alias, e-mail, domein) naar een volgende bron springen om een profiel op te bouwen.' },
+    { term: 'Alias', def: 'Een zelfgekozen gebruikersnaam; een zeldzame, hergebruikte alias koppelt accounts van dezelfde persoon.' },
+    { term: 'Certificate Transparency (crt.sh)', def: 'Openbare logboeken van uitgegeven TLS-certificaten, doorzoekbaar via crt.sh — hard, moeilijk te vervalsen bewijs over domeinen.' },
+    { term: 'WHOIS', def: 'Openbare registratiegegevens van een domein (handle, e-mail, data); kan nep zijn, maar koppelt soms een mailadres aan infrastructuur.' },
+    { term: 'IOC', def: 'Indicator of Compromise: een adres, domein, URL, e-mail, hash of CVE die een aanval of actor markeert.' },
+    { term: 'Defangen', def: 'Een indicator onklikbaar maar leesbaar maken (hxxps, [.], [at]) om per ongeluk contact te voorkomen; refangen draait dat terug.' },
+    { term: 'Punycode', def: 'Codering (xn--) van internationale tekens in domeinnamen, misbruikt voor lookalike-domeinen (homograafaanval).' },
+    { term: '@-truc', def: 'Alles vóór een @ in een URL is een gebruikersdeel en wordt genegeerd; de echte host staat erna.' },
+    { term: 'Infrastructuur-vingerafdruk', def: 'Een herhaalbaar kenmerk (favicon-hash, TLS-JA3, tracking-ID) waarmee je servers of sites aan dezelfde eigenaar clustert.' },
+    { term: 'Zeldzaamheid', def: 'Hoe uniek een kenmerk is; hoe zeldzamer, hoe sterker de koppeling en hoe kleiner de kans op toeval (valse positief).' },
+    { term: 'OPSEC', def: 'Operational Security: maatregelen om je eigen sporen en identiteit tijdens een onderzoek af te schermen.' },
+    { term: 'Art. 126j Sv', def: 'Bijzondere opsporingsbevoegdheid voor stelselmatige inwinning van informatie; met waarborgen, en niet voor burgers.' },
+  ],
+
+  resources: [
+    { title: 'crt.sh — Certificate Transparency doorzoeken', url: 'https://crt.sh/' },
+    { title: 'OSINT Framework — overzicht van open-bronnen-tools', url: 'https://osintframework.com/' },
+    { title: 'Nationaal Cyber Security Centrum (NCSC)', url: 'https://www.ncsc.nl/' },
+    { title: 'Wetboek van Strafvordering (o.a. art. 126j) op wetten.overheid.nl', url: 'https://wetten.overheid.nl/BWBR0001903/' },
+  ],
+});
+
+</script>
+<script>
+/* Room: Cybercrime-arcade — gemengde puzzels (puzzels-leerpad, speelse mix) */
+CS.registerRoom({
+  id: 'cybercrime-arcade',
+  path: 'puzzels',
+  order: 4,
+  title: 'Cybercrime-arcade: gemengde puzzels',
+  icon: '🕹️',
+  difficulty: 'Gemiddeld',
+  minutes: 55,
+  summary: 'Een speelse mix van mini-puzzels: sorteer begrippen, zet een aanval op volgorde, schrijf een regex, kraak een cijfer en een crackme. Elke ronde die je wint levert een vlag op — haal ze allemaal en word arcade-kampioen.',
+  objectives: [
+    'Hash-algoritmen, cybercrime-rollen, ATT&CK-tactieken en OSINT-bronnen uit elkaar houden',
+    'De zeven fasen van de Cyber Kill Chain op volgorde zetten',
+    'Een reguliere expressie schrijven die kwaadaardige domeinen matcht en legitieme mijdt',
+    'Een klassiek cijfer (Caesar) en een eenvoudige crackme terugrekenen',
+    'Een ransomware-crime-script reconstrueren van toegang tot cash-out',
+  ],
+  terms: [
+    { term: 'Cyber Kill Chain', def: 'Model van Lockheed Martin dat een gerichte aanval in zeven fasen beschrijft, van verkenning tot acties op het doel.' },
+    { term: 'ATT&CK-tactiek', def: 'Het "waarom" van een aanvalsstap in MITRE ATT&CK (bijv. Verkenning, Persistentie, Exfiltratie, Impact). Een tactiek bundelt concrete technieken.' },
+    { term: 'Command & Control (C2)', def: 'Het kanaal waarmee malware na installatie contact maakt met de aanvaller om opdrachten te ontvangen.' },
+    { term: 'Money mule (geldezel)', def: 'Iemand die zijn rekening of wallet beschikbaar stelt om crimineel geld door te sluizen, vaak geronseld onder valse voorwendselen.' },
+    { term: 'Access broker (toegangsmakelaar)', def: 'Een crimineel die toegang tot gehackte netwerken koopt en doorverkoopt aan bijvoorbeeld ransomware-groepen.' },
+    { term: 'Typosquatting', def: 'Een domeinnaam registreren die sterk lijkt op een echte (met koppelteken, verwisselde letters of een extra woord) om slachtoffers te misleiden.' },
+    { term: 'IOC (Indicator of Compromise)', def: 'Een waarneembaar spoor van een aanval: een verdacht domein, IP-adres, hash of e-mailadres.' },
+    { term: 'Caesarcijfer (ROT)', def: 'Een klassiek cijfer dat elke letter een vast aantal plaatsen in het alfabet opschuift. Met 26 mogelijke verschuivingen zo gekraakt.' },
+    { term: 'Crackme', def: 'Een klein oefenprogramma met een sleutelcontrole die je mag reverse-engineeren. Je leest de controle en leidt de juiste sleutel af.' },
+    { term: 'Reguliere expressie (regex)', def: 'Een patroontaal om tekst te matchen. In cybersecurity handig om IOC\'s en verdachte patronen uit logs en lijsten te vissen.' },
+    { term: 'NTLM', def: 'Windows-wachtwoordhash (MD4 van het wachtwoord in UTF-16LE), 32 hex-tekens — aan de hash niet van MD5 te onderscheiden.' },
+    { term: 'Crime script', def: 'Een stap-voor-stapbeschrijving van hoe een misdaad wordt uitgevoerd (Cornish), handig om interventiemomenten te vinden.' },
+  ],
+  resources: [
+    { title: 'MITRE ATT&CK — tactieken en technieken', url: 'https://attack.mitre.org/' },
+    { title: 'Lockheed Martin — Cyber Kill Chain', url: 'https://www.lockheedmartin.com/en-us/capabilities/cyber/cyber-kill-chain.html' },
+    { title: 'regex101 — regex bouwen en testen met uitleg', url: 'https://regex101.com/' },
+    { title: 'OverTheWire — wargames om puzzelend te oefenen', url: 'https://overthewire.org/wargames/' },
+  ],
+  tasks: [
+    {
+      title: 'Ronde 1 — Sorteer de begrippen (Connections)',
+      content: `
+        <p>Welkom in de <strong>Cybercrime-arcade</strong>! Geen lange theorie, wel zes rondes mini-puzzels. Elke ronde die
+        je wint levert een <strong>vlag</strong> op (<code>JVT{...}</code>). Haal ze allemaal en pak de bonusvlag.</p>
+
+        <p>We openen met een klassieker: <strong>Connections</strong>. Je ziet zestien door elkaar gegooide begrippen. Ze
+        horen bij <strong>vier groepen van vier</strong>. Jouw taak: selecteer telkens vier die bij elkaar horen en controleer.
+        Het lab geeft "drie goed" als hint wanneer je er net naast zit.</p>
+
+        <p>De vier categorieën van deze ronde zijn:</p>
+        <ul>
+          <li><strong>Hash-algoritmen</strong> — manieren om een vingerafdruk van data te maken.</li>
+          <li><strong>Cybercrime-rollen</strong> — wie doet wat in een criminele operatie.</li>
+          <li><strong>ATT&amp;CK-tactieken</strong> — het "waarom" van een aanvalsstap in MITRE ATT&amp;CK.</li>
+          <li><strong>OSINT-bronnen</strong> — plekken waar je open bronnen-informatie opzoekt.</li>
+        </ul>
+
+        <div class="callout tip">
+          <strong>Tip:</strong> twijfel je? Begin met de groep waar je het zekerst van bent (meestal de hashes: MD5, SHA-1,
+          SHA-256 en NTLM zijn alle vier algoritmen). Zodra vier items weg zijn, wordt de rest overzichtelijker.
+        </div>
+
+        <p>Los alle vier de groepen op; bij de laatste groep verschijnt de vlag van ronde 1.</p>
+      `,
+      lab: {
+        type: 'connections',
+        prompt: 'Sleep de zestien begrippen in de juiste vier categorieën van elk vier.',
+        flag: 'JVT{alles_gesorteerd}',
+        groups: [
+          { name: 'Hash-algoritmen', items: ['MD5', 'SHA-1', 'SHA-256', 'NTLM'] },
+          { name: 'Cybercrime-rollen', items: ['Money mule', 'Access broker', 'Botnetbeheerder', 'Witwasser'] },
+          { name: 'ATT&CK-tactieken', items: ['Verkenning', 'Persistentie', 'Exfiltratie', 'Impact'] },
+          { name: 'OSINT-bronnen', items: ['Shodan', 'WHOIS', 'Wayback Machine', 'Have I Been Pwned'] },
+        ],
+      },
+      questions: [
+        { q: 'In welke groep hoort "NTLM" thuis?', options: ['Hash-algoritmen', 'Cybercrime-rollen', 'ATT&CK-tactieken', 'OSINT-bronnen'], answer: 0, explain: 'NTLM is een Windows-wachtwoordhash (MD4 van UTF-16LE) en hoort dus bij de hash-algoritmen.' },
+        { q: 'Welk begrip is een cybercrime-rol en geen OSINT-bron?', options: ['Shodan', 'Access broker', 'WHOIS', 'Wayback Machine'], answer: 1, explain: 'Een access broker (toegangsmakelaar) verkoopt toegang tot gehackte netwerken — een rol, geen zoekbron.' },
+        { q: 'Welke vlag verschijnt als je alle vier de groepen goed hebt? (JVT{alles_gesorteerd})', answer: ['JVT{alles_gesorteerd}'], hint: 'De vlag staat in het lab en letterlijk in deze vraag.', explain: 'Ronde 1 gehaald: JVT{alles_gesorteerd}.' },
+      ],
+    },
+
+    {
+      title: 'Ronde 2 — Zet de Cyber Kill Chain op volgorde (Ordering)',
+      content: `
+        <p>Ronde 2: een <strong>volgorde-puzzel</strong>. De <strong>Cyber Kill Chain</strong> van Lockheed Martin beschrijft
+        een gerichte aanval in <strong>zeven fasen</strong>. Ze volgen een logische ketting: eerst leer je het doelwit kennen,
+        helemaal aan het eind haal je je slag binnen. Haal je één schakel eruit, dan stopt de aanval — vandaar de naam.</p>
+
+        <p>De zeven fasen, in het kort:</p>
+        <ol>
+          <li><strong>Verkenning</strong> (Reconnaissance): doelwit en e-mailadressen verzamelen.</li>
+          <li><strong>Bewapening</strong> (Weaponization): een exploit in een kwaadaardig bestand stoppen.</li>
+          <li><strong>Aflevering</strong> (Delivery): het via bijvoorbeeld een phishingmail bezorgen.</li>
+          <li><strong>Exploitatie</strong> (Exploitation): de kwetsbaarheid wordt misbruikt bij het openen.</li>
+          <li><strong>Installatie</strong> (Installation): een achterdeur (implant) nestelt zich.</li>
+          <li><strong>Command &amp; Control</strong> (C2): het implant belt naar de aanvaller.</li>
+          <li><strong>Acties op het doel</strong> (Actions on Objectives): data stelen of versleutelen.</li>
+        </ol>
+
+        <p>In het lab staan de fasen <strong>geschud</strong>. Schuif ze met de pijltjes in de juiste volgorde en controleer.
+        Bij de juiste volgorde krijg je de vlag van ronde 2.</p>
+
+        <div class="callout info">
+          <strong>Waarom handig?</strong> Als je weet in welke fase een aanval zit, weet je ook wat er nog komt — en waar je
+          hem het goedkoopst kunt stoppen (liefst vroeg, bij aflevering).
+        </div>
+      `,
+      lab: {
+        type: 'ordering',
+        prompt: 'Zet de zeven fasen van de Cyber Kill Chain in de juiste volgorde.',
+        items: [
+          { id: 'recon', label: 'Verkenning — doelwit en e-mailadressen verzamelen' },
+          { id: 'weapon', label: 'Bewapening — exploit in een kwaadaardig document stoppen' },
+          { id: 'delivery', label: 'Aflevering — de phishingmail versturen' },
+          { id: 'exploit', label: 'Exploitatie — de kwetsbaarheid wordt misbruikt bij openen' },
+          { id: 'install', label: 'Installatie — een achterdeur (implant) nestelt zich' },
+          { id: 'c2', label: 'Command & Control — het implant belt naar de aanvaller' },
+          { id: 'actions', label: 'Acties op het doel — data stelen of versleutelen' },
+        ],
+        correct: ['recon', 'weapon', 'delivery', 'exploit', 'install', 'c2', 'actions'],
+        flag: 'JVT{kill_chain_compleet}',
+        explain: 'De volgorde is Verkenning → Bewapening → Aflevering → Exploitatie → Installatie → C2 → Acties op het doel.',
+      },
+      questions: [
+        { q: 'Welke fase komt direct NA "Aflevering"?', options: ['Verkenning', 'Exploitatie', 'Command & Control', 'Installatie'], answer: 1, explain: 'Na aflevering volgt exploitatie: de kwetsbaarheid wordt misbruikt zodra het slachtoffer het bestand opent.' },
+        { q: 'Hoeveel fasen telt de Cyber Kill Chain?', answer: ['7', 'zeven'], hint: 'Tel de fasen in de opsomming.', explain: 'De Cyber Kill Chain heeft zeven fasen, van verkenning tot acties op het doel.' },
+        { q: 'Welke vlag hoort bij de juiste volgorde? (JVT{kill_chain_compleet})', answer: ['JVT{kill_chain_compleet}'], hint: 'De vlag verschijnt in het lab en staat letterlijk in de vraag.', explain: 'Ronde 2 gehaald: JVT{kill_chain_compleet}.' },
+      ],
+    },
+
+    {
+      title: 'Ronde 3 — Regex golf: match de nep, mijd de echte',
+      content: `
+        <p>Ronde 3 is <strong>regex golf</strong>: schrijf één <strong>reguliere expressie</strong> (regex) die <em>alle</em>
+        regels in de <strong>match</strong>-lijst raakt en <em>geen enkele</em> regel in de <strong>avoid</strong>-lijst.
+        Hoe korter je patroon, hoe mooier (vandaar "golf": lage score = goed).</p>
+
+        <p>De opdracht: de match-lijst bevat vier <strong>kwaadaardige, nep-domeinen</strong> die een merknaam nabootsen. De
+        avoid-lijst bevat de vier <strong>echte</strong> domeinen. Kijk goed naar het verschil:</p>
+        <table>
+          <thead><tr><th>Match (nep)</th><th>Avoid (echt)</th></tr></thead>
+          <tbody>
+            <tr><td>nederbank-beveiliging.jvt.lab</td><td>nederbank.nl</td></tr>
+            <tr><td>pakketpost-track.jvt.lab</td><td>pakketpost.nl</td></tr>
+            <tr><td>mijnoverheid-check.jvt.lab</td><td>mijnoverheid.nl</td></tr>
+            <tr><td>rijksbelastingen-terugbetaling.jvt.lab</td><td>rijksbelastingen.nl</td></tr>
+          </tbody>
+        </table>
+
+        <p>Zie je het patroon? De nep-domeinen <strong>plakken met een koppelteken een extra woord</strong> achter de merknaam
+        (en wonen op <code>.jvt.lab</code> in plaats van <code>.nl</code>). De echte domeinen zijn kaal: <code>merk.nl</code>.
+        Een piepklein patroon als <code>-</code> matcht al <strong>alle</strong> nep-regels en <strong>geen enkele</strong>
+        echte. Ook <code>\\.lab</code> of <code>lab</code> werkt. Typ je patroon en kijk live per regel het vinkje ✓/✗.</p>
+
+        <div class="callout warn">
+          <strong>Let op:</strong> in het echt zijn phishing-domeinen zo herkenbaar: een koppelteken tussen merk en woord, een
+          vreemd verlengstuk, of een ander topniveaudomein. Deze oefendomeinen zijn fictief (<code>.jvt.lab</code>).
+        </div>
+      `,
+      lab: {
+        type: 'regexgolf',
+        prompt: 'Schrijf één patroon dat alle nep-domeinen matcht en geen enkel echt domein.',
+        match: ['nederbank-beveiliging.jvt.lab', 'pakketpost-track.jvt.lab', 'mijnoverheid-check.jvt.lab', 'rijksbelastingen-terugbetaling.jvt.lab'],
+        avoid: ['nederbank.nl', 'pakketpost.nl', 'mijnoverheid.nl', 'rijksbelastingen.nl'],
+        flags: '',
+        flag: 'JVT{patroon_gevonden}',
+      },
+      questions: [
+        { q: 'Welk kenmerk onderscheidt de nep-domeinen van de echte?', options: ['Ze zijn langer dan 10 tekens', 'Ze plakken met een koppelteken een extra woord achter de merknaam', 'Ze beginnen met een hoofdletter', 'Ze bevatten een cijfer'], answer: 1, explain: 'De nep-domeinen gebruiken een koppelteken plus extra woord (en .jvt.lab); een patroon op "-" is al genoeg.' },
+        { q: 'Welk kort patroon matcht alle nep-domeinen en geen enkel echt domein? (één teken volstaat)', answer: ['-'], hint: 'Kijk naar het teken dat álle nep-domeinen hebben en geen enkel echt domein.', explain: 'Het koppelteken "-" komt alleen in de nep-domeinen voor. Ook \\.lab of lab is een geldige oplossing.' },
+        { q: 'Welke vlag hoort bij een opgelost patroon? (JVT{patroon_gevonden})', answer: ['JVT{patroon_gevonden}'], hint: 'De vlag staat in het lab en letterlijk in deze vraag.', explain: 'Ronde 3 gehaald: JVT{patroon_gevonden}.' },
+      ],
+    },
+
+    {
+      title: 'Ronde 4 — Kraak het cijfer (Caesar)',
+      content: `
+        <p>Ronde 4: een <strong>versleuteld bericht</strong>. Ergens in de arcade knippert dit op het scherm:</p>
+        <pre><code>Kl nlolptl cshn pz QCA{jhlzhy_pz_thrrlspqr}</code></pre>
+
+        <p>Het ziet er als wartaal uit, maar de structuur verraadt een <strong>Caesarcijfer</strong> (ook wel ROT genoemd):
+        elke letter is een vast aantal plaatsen in het alfabet <strong>opgeschoven</strong>. Zie je dat <code>QCA{...}</code>-blok?
+        Dat is bijna zeker een vlag die eigenlijk <code>JVT{...}</code> moet zijn. Tel het verschil: <code>Q</code> → <code>J</code>
+        is zeven letters terug. De hele tekst is dus met <strong>7 opgeschoven</strong>; schuif alles 7 terug en je leest het.</p>
+
+        <p>Gebruik het <strong>cipher-lab</strong> hieronder. Zet het op <strong>Caesar/ROT</strong>: de tool toont alle 26
+        verschuivingen én een automatische "beste gok". Die beste gok landt precies op de leesbare zin. Daar staat de vlag van
+        ronde 4 in — let op: de vlag verschijnt pas <em>na</em> het ontsleutelen, dus hij staat niet letterlijk in deze tekst.</p>
+
+        <div class="callout tip">
+          <strong>Tip:</strong> een Caesarcijfer heeft maar 26 mogelijkheden. Zelfs zonder hint kun je ze allemaal proberen
+          ("brute-force") tot er leesbare Nederlandse tekst verschijnt. Dat heet het aftellen van de sleutelruimte.
+        </div>
+      `,
+      lab: { type: 'cipher', text: 'Kl nlolptl cshn pz QCA{jhlzhy_pz_thrrlspqr}' },
+      questions: [
+        { q: 'Met hoeveel plaatsen is de tekst opgeschoven (dus hoeveel moet je terugschuiven)?', answer: ['7'], hint: 'Vergelijk de cijfer-letter Q met de verwachte J: hoeveel plaatsen zit daartussen?', explain: 'Q → J is 7 plaatsen; de hele tekst is met ROT7 versleuteld.' },
+        { q: 'Wat is de vlag uit het ontsleutelde bericht?', answer: ['JVT{caesar_is_makkelijk}'], encoded: true, hint: 'Ontsleutel met het cipher-lab (Caesar, 7 terug); de "beste gok" toont de hele zin met de vlag.', explain: 'De tekst luidt "De geheime vlag is JVT{caesar_is_makkelijk}". Ronde 4 gehaald.' },
+        { q: 'Waarom is een Caesarcijfer makkelijk te kraken?', options: ['Omdat het razendsnel te berekenen is', 'Omdat er maar 26 mogelijke verschuivingen zijn om te proberen', 'Omdat het alleen op Windows werkt', 'Omdat de sleutel altijd 7 is'], answer: 1, explain: 'Met slechts 26 sleutels probeer je ze simpelweg allemaal tot er leesbare tekst verschijnt.' },
+      ],
+    },
+
+    {
+      title: 'Ronde 5 — Insert coin: kraak de crackme',
+      content: `
+        <p>Ronde 5: een <strong>crackme</strong>. Een nep-arcadeautomaat vraagt om een <strong>muntcode</strong> voordat je
+        mag spelen. In het lab lees je de controlefunctie <code>check(sleutel)</code>. Jij moet de sleutel afleiden die de
+        controle <code>true</code> maakt — niet door te gokken, maar door de bewerkingen <strong>terug te rekenen</strong>.</p>
+
+        <p>De controle doet twee dingen met jouw sleutel:</p>
+        <ol>
+          <li>het verhoogt elke <strong>tekencode met 1</strong> (de letter erna: <code>a</code>→<code>b</code>,
+          <code>c</code>→<code>d</code>, <code>1</code>→<code>2</code>);</li>
+          <li>daarna <strong>keert het de hele string om</strong> (achterstevoren);</li>
+          <li>het resultaat moet exact gelijk zijn aan de doelstring <code>6313ojpd</code>.</li>
+        </ol>
+
+        <h3>Zo reken je het terug</h3>
+        <p>Draai de stappen in <strong>omgekeerde volgorde</strong> om. Keer eerst de doelstring om: <code>6313ojpd</code>
+        achterstevoren is <code>dpjo3136</code>. Trek daarna van elke tekencode er <strong>1 af</strong> (de letter ervoor):
+        <code>d</code>→<code>c</code>, <code>p</code>→<code>o</code>, <code>j</code>→<code>i</code>, <code>o</code>→<code>n</code>,
+        <code>3</code>→<code>2</code>, <code>1</code>→<code>0</code>, <code>3</code>→<code>2</code>, <code>6</code>→<code>5</code>.
+        Lees het resultaat: dat is je muntcode. Typ hem in het lab; bij succes verschijnt de vlag van ronde 5.</p>
+
+        <div class="callout tip">
+          <strong>Tip:</strong> het terugdraaien van een crackme is altijd dezelfde truc: lees wát de controle met je invoer
+          doet en draai elke bewerking in omgekeerde volgorde om. Een checksom of "+1" is nooit echte beveiliging.
+        </div>
+      `,
+      lab: {
+        type: 'crackme',
+        title: 'Muntcode-automaat',
+        intro: 'De automaat verhoogt elke tekencode met 1, keert de string om en vergelijkt met 6313ojpd. Welke muntcode geeft toegang?',
+        source: `function check(sleutel) {
+  // 1) elke tekencode +1 (de letter/cijfer erna)
+  var verhoogd = [...sleutel].map(function (c) {
+    return String.fromCharCode(c.charCodeAt(0) + 1);
+  }).join('');
+  // 2) de hele string omkeren
+  var omgekeerd = verhoogd.split('').reverse().join('');
+  // 3) moet exact gelijk zijn aan de doelstring
+  return omgekeerd === '6313ojpd';
+}`,
+        check: (sleutel) => {
+          const verhoogd = [...sleutel].map((c) => String.fromCharCode(c.charCodeAt(0) + 1)).join('');
+          const omgekeerd = verhoogd.split('').reverse().join('');
+          return omgekeerd === '6313ojpd';
+        },
+        flag: 'JVT{insert_coin}',
+        reveal: 'Toegang verleend! Je keerde de doelstring om (dpjo3136) en trok overal 1 af. Insert coin om te spelen.',
+        hint: 'Keer 6313ojpd om tot dpjo3136 en trek van elke tekencode 1 af: d→c, p→o, j→i, o→n, 3→2, 1→0, 3→2, 6→5.',
+      },
+      questions: [
+        { q: 'Welke muntcode (sleutel) geeft toegang tot de automaat?', answer: ['coin2025'], hint: '6313ojpd omgekeerd is dpjo3136; trek van elk teken 1 af.', explain: 'dpjo3136 met elke tekencode -1 wordt coin2025 — dat is de sleutel.' },
+        { q: 'Wat is de algemene truc om een crackme te kraken?', options: ['Heel snel typen', 'De bewerkingen van de controle in omgekeerde volgorde terugdraaien', 'Het programma verwijderen', 'De automaat resetten'], answer: 1, explain: 'Je leest wat de controle doet en draait elke stap in omgekeerde volgorde om naar de juiste invoer.' },
+        { q: 'Welke vlag verschijnt bij de juiste muntcode? (JVT{insert_coin})', answer: ['JVT{insert_coin}'], hint: 'De vlag verschijnt in het lab en staat letterlijk in de vraag.', explain: 'Ronde 5 gehaald: JVT{insert_coin}.' },
+      ],
+    },
+
+    {
+      title: 'Ronde 6 — Reconstrueer het crime script (Ordering)',
+      content: `
+        <p>Laatste ronde! Opnieuw een <strong>volgorde-puzzel</strong>, maar nu vanuit het oogpunt van de crimineel: een
+        <strong>crime script</strong> van een <strong>ransomware-afpersing met cash-out</strong>. Een crime script beschrijft
+        stap voor stap hoe een misdaad wordt uitgevoerd — handig om te zien wáár je kunt ingrijpen.</p>
+
+        <p>De bende werkt met "double extortion": ze stelen eerst data én versleutelen daarna de bestanden, zodat het
+        slachtoffer dubbel onder druk staat. De zeven stappen, van begin tot geld:</p>
+        <ul>
+          <li>Toegang <strong>kopen</strong> bij een access broker of binnenkomen via phishing.</li>
+          <li><strong>Inloggen</strong> met de gestolen gegevens (initiële toegang).</li>
+          <li>Rechten <strong>verhogen</strong> en lateraal door het netwerk bewegen.</li>
+          <li>Gevoelige data <strong>kopiëren en wegsluizen</strong> (exfiltratie) — dit is het chantagemateriaal.</li>
+          <li>De <strong>ransomware uitrollen</strong> en bestanden versleutelen.</li>
+          <li>Een <strong>losgeldbrief</strong> plaatsen en onderhandelen.</li>
+          <li>Het losgeld in crypto <strong>door een mixer naar een exchange</strong> sluizen (cash-out).</li>
+        </ul>
+
+        <p>In het lab staan de stappen geschud. Zet ze in de logische volgorde — je kunt immers pas afpersen nadat je
+        versleuteld hebt, en pas uitbetalen nadat er betaald is. Bij de juiste volgorde krijg je de laatste rondevlag.</p>
+
+        <div class="callout danger">
+          <strong>Arcade-kampioen:</strong> heb je alle zes de rondes gewonnen, dan verdien je de bonusvlag
+          <code>JVT{arcade_kampioen}</code>. Goed gespeeld!
+        </div>
+      `,
+      lab: {
+        type: 'ordering',
+        prompt: 'Zet de zeven stappen van het ransomware-crime-script op volgorde, van toegang tot cash-out.',
+        items: [
+          { id: 'koop', label: 'Toegang kopen bij een access broker of via phishing' },
+          { id: 'login', label: 'Inloggen met gestolen gegevens (initiële toegang)' },
+          { id: 'lateraal', label: 'Rechten verhogen en lateraal door het netwerk bewegen' },
+          { id: 'exfil', label: 'Gevoelige data kopiëren en wegsluizen (exfiltratie)' },
+          { id: 'encrypt', label: 'Ransomware uitrollen en bestanden versleutelen' },
+          { id: 'afpers', label: 'Losgeldbrief plaatsen en onderhandelen' },
+          { id: 'cashout', label: 'Losgeld door een mixer naar een exchange sluizen (cash-out)' },
+        ],
+        correct: ['koop', 'login', 'lateraal', 'exfil', 'encrypt', 'afpers', 'cashout'],
+        flag: 'JVT{crime_script_af}',
+        explain: 'Toegang kopen → inloggen → lateraal bewegen → data exfiltreren → versleutelen → afpersen → cash-out.',
+      },
+      questions: [
+        { q: 'Waarom stelen de criminelen de data (exfiltratie) vóór ze versleutelen?', options: ['Omdat versleutelde data niet meer te kopiëren is en de gestolen data extra chantagemiddel oplevert', 'Omdat het sneller is', 'Omdat de politie dat voorschrijft', 'Dat maakt geen verschil'], answer: 0, explain: 'Bij double extortion is de gestolen data het tweede drukmiddel; na versleuteling kun je niets bruikbaars meer kopiëren.' },
+        { q: 'Wat is de laatste stap van het crime script?', answer: ['cash-out', 'cashout'], hint: 'Het gaat om wat er met het losgeld gebeurt.', explain: 'De cash-out: het losgeld via een mixer naar een exchange sluizen om het te verzilveren.' },
+        { q: 'Welke bonusvlag verdien je als je alle zes de rondes hebt gewonnen? (JVT{arcade_kampioen})', answer: ['JVT{arcade_kampioen}'], hint: 'De bonusvlag staat in de laatste callout en letterlijk in deze vraag.', explain: 'Alle rondes gehaald: JVT{arcade_kampioen}. Jij bent de arcade-kampioen!' },
+      ],
+    },
+  ],
+});
+
+</script>
+<script>
 /* Room: Eindopdracht — Mini-CTF "Operatie KoffieKlap" */
 CS.registerRoom({
   id: 'mini-ctf',
