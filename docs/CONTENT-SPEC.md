@@ -10,7 +10,7 @@ laadt de bestanden als gewone `<script>`-tags, zodat het ook werkt door `index.h
 /* Room: Netwerken — de basis */
 CS.registerRoom({
   id: 'netwerken-basis',            // gelijk aan de bestandsnaam, kebab-case
-  path: 'fundamenten',              // 'fundamenten' | 'security-kern' | 'offensief' | 'defensief' | 'eindopdracht'
+  path: 'fundamenten',              // 'fundamenten' | 'security-kern' | 'offensief' | 'defensief' | 'forensie' | 'intelligence' | 'eindopdracht'
   order: 2,                         // volgorde binnen het leerpad
   title: 'Netwerken: de basis',
   icon: '🌐',                       // één emoji
@@ -398,6 +398,86 @@ met ruis én een duidelijk aanvalsverhaal.
 lab: { type: 'chmod', mode: '755' }   // Linux-rechten: vinkjes ↔ octaal ↔ rwxr-xr-x (incl. setuid/setgid/sticky)
 lab: { type: 'numconv', value: '0x4D5A' }  // getal omzetten: decimaal, hex, binair, octaal, ASCII-tekens
 ```
+
+### `ach`: Analysis of Competing Hypotheses
+
+```js
+lab: {
+  type: 'ach',
+  question: 'Wie zit achter de aanval?',
+  hypotheses: ['Insider', 'Georganiseerde crimineel', 'Statelijke actor'],
+  evidence: [
+    { text: 'Er is losgeld geëist', expert: ['I', 'C', 'I'] },   // expert optioneel: C/I/N per hypothese
+    { text: 'Zeer gerichte spear-phishing' },
+  ],
+}
+```
+Een matrix bewijs × hypothese; de leerling kiest per cel C (consistent), I (inconsistent) of N (neutraal). Het lab telt
+live de inconsistenties per hypothese en markeert die met de MINSTE I's (ACH: je weerlegt, je bevestigt niet). Het wijst
+ook niet-diagnostisch bewijs aan. Geef je `expert`-oordelen mee, dan komt er een "vergelijk met expert"-knop.
+
+### `crimescript`: crime script bouwen (Cornish)
+
+```js
+lab: { type: 'crimescript', scenario: 'Phishing-fraude met moneymules',
+  phases: ['1 · Voorbereiding', ...6 fasen],   // optioneel (standaard 6 fasen tot cash-out)
+  fields: ['Handeling','Actoren','Middelen','Locatie','Randvoorwaarden','Sporen'], // optioneel
+  interventions: true,                          // vraag per fase een interventie (standaard true)
+  model: '<html voorbeelduitwerking>' }         // optioneel
+```
+Per fase invulvelden + een interventie; "Controleer volledigheid" meldt lege velden. Didactisch: dwingt de zes fasen en
+de velden af, en koppelt een interventie aan elke fase (basis voor de interventiematrix).
+
+### `admiralty`: bronbeoordeling (Admiralty Code)
+
+```js
+lab: { type: 'admiralty', items: [
+  { source: 'Anonieme tip via Meld Misdaad Anoniem', info: 'X plant een ransomware-aanval', reliability: 'E', credibility: '4', explain: 'Onbekende bron, niet te verifiëren.' },
+] }
+```
+De leerling kiest betrouwbaarheid van de bron (A–F) én geloofwaardigheid van de info (1–6), apart; het lab vergelijkt met
+het expertoordeel en toont uitleg. Bevat de Admiralty-spiekbrief.
+
+### `probability`: waarschijnlijkheidstaal (yardstick)
+
+```js
+lab: { type: 'probability', items: [ { term: 'waarschijnlijk', low: 55, high: 75 }, ... ] }  // items optioneel
+```
+Toont de yardstick (met gaten tussen de banden) en laat de leerling per term een percentage op een schuif zetten; het lab
+checkt of het binnen de band valt. Standaard-banden: vrijwel uitgesloten 0–5, zeer onwaarschijnlijk 10–20, onwaarschijnlijk
+25–35, reële kans 40–50, waarschijnlijk 55–75, zeer waarschijnlijk 80–90, vrijwel zeker 95–100.
+
+### `attackmap`: gebeurtenis → ATT&CK-techniek
+
+```js
+lab: { type: 'attackmap', items: [ { desc: 'Aanvaller dumpt LSASS-geheugen', code: 'T1003.001', explain: '...' } ] }
+```
+Per waarneming kiest de leerling de juiste techniek uit een ingebouwde bank (~24 veelgebruikte technieken met naam en
+tactiek). Het lab toont naam + tactiek bij controle. `bank` is optioneel te overschrijven. **Gebruik echte, bestaande
+ATT&CK-ID's.**
+
+### `pivot`: infrastructuur-pivot sandbox
+
+```js
+lab: {
+  type: 'pivot', title: 'Zaak A vs Zaak B', scenario: '<intro>',
+  entities: [ { id: 'd1', type: 'domain', label: 'boos.jvt.lab' }, { id: 'ip1', type: 'ip', label: '203.0.113.9' }, ... ],
+  edges: [ { from: 'd1', to: 'ip1', rel: 'resolvet naar', time: '2026-01', source: 'passive DNS' }, ... ],
+  goal: 'Welke entiteit verbindt beide zaken?', bridge: ['203.0.113.9'],   // antwoord(en)
+}
+```
+Een klikbare entiteit/relatie-verkenner (types: ip, domain, cert, hash, wallet, alias, email, asn, file). De leerling
+pivoteert langs relaties (met tijd + herkomst) en zoekt het bruggende kenmerk. **Alles fictief** (gebruik
+documentatie-IP's en `.jvt.lab`/`.example`), nooit live bronnen — opsec.
+
+### `bluf`: herschrijven naar "conclusie eerst"
+
+```js
+lab: { type: 'bluf', source: '<chronologische tekst>', model: '<voorbeeld-BLUF>' }  // model optioneel
+```
+Toont de bron en een invulveld; "Toets tegen de rubric" draait een HEURISTISCHE checklist (conclusie bovenaan,
+waarschijnlijkheidstaal, eigenaar per advies, beknopter dan de bron, onzekerheid apart). Geen AI-beoordeling — dat staat
+er ook bij. Geef eventueel een `model`-antwoord mee.
 
 ## Schrijfstijl
 

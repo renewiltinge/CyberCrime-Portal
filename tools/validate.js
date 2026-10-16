@@ -10,11 +10,12 @@ const vm = require('vm');
 const crypto = require('crypto');
 
 const ROOT = path.join(__dirname, '..');
-const PATHS = ['fundamenten', 'security-kern', 'offensief', 'defensief', 'forensie', 'eindopdracht'];
+const PATHS = ['fundamenten', 'security-kern', 'offensief', 'defensief', 'forensie', 'intelligence', 'eindopdracht'];
 const DIFFS = ['Makkelijk', 'Gemiddeld', 'Moeilijk'];
 const LABS = ['terminal', 'cyberchef', 'hashcrack', 'password', 'phishing', 'logs', 'http', 'sqli', 'subnet', 'hexviewer', 'pcap',
   'jwt', 'regex', 'cvss', 'timestamp', 'ioc', 'url', 'yara', 'timeline', 'chmod', 'numconv',
-  'hashid', 'cipher', 'crackme', 'multidecode', 'rainbow'];
+  'hashid', 'cipher', 'crackme', 'multidecode', 'rainbow',
+  'ach', 'crimescript', 'admiralty', 'probability', 'attackmap', 'pivot', 'bluf'];
 
 const args = process.argv.slice(2);
 const files = args.length

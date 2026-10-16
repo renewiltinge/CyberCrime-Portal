@@ -2063,6 +2063,358 @@
     container.append(shell('<b>Rainbow table</b> — opzoeken vs. salt', wrap, false));
   });
 
+
+  // =====================================================================
+  //  ACH — Analysis of Competing Hypotheses
+  // =====================================================================
+  CS.registerLab('ach', function (container, cfg) {
+    const hyps = cfg.hypotheses || ['Hypothese A', 'Hypothese B', 'Hypothese C'];
+    const evid = cfg.evidence || [];
+    const RATINGS = ['', 'C', 'I', 'N'];
+    const RATLABEL = { '': '·', C: 'C', I: 'I', N: 'N' };
+    const state = evid.map(() => hyps.map(() => ''));
+    const wrap = el('div', { class: 'lab-pad' });
+    if (cfg.question) wrap.append(el('div', { class: 'callout info', html: '<strong>Vraag:</strong> ' + esc(cfg.question) }));
+    wrap.append(el('div', { class: 'found-note', text: 'Beoordeel per bewijsstuk hoe het zich tot elke hypothese verhoudt: C = consistent, I = inconsistent, N = neutraal/niet van toepassing. ACH werkt met weerlegging: de hypothese met de MINSTE inconsistenties (I) blijft het langst overeind — je zoekt niet naar bevestiging.' }));
+    const tableWrap = el('div', { style: 'overflow-x:auto' });
+    const table = el('table', { style: 'width:100%;font-size:.86rem;border-collapse:collapse' });
+    const scoreRow = el('div', { class: 'stat-row', style: 'margin:12px 0' });
+    const diag = el('div', { class: 'found-note' });
+
+    function build() {
+      table.innerHTML = '';
+      const thead = el('tr', {}, [el('th', { style: 'text-align:left;min-width:220px', text: 'Bewijs / indicator' })].concat(hyps.map((h) => el('th', { style: 'padding:6px', text: h }))));
+      table.append(el('thead', {}, thead));
+      const tb = el('tbody', {});
+      evid.forEach((e, ei) => {
+        const tr = el('tr', {});
+        tr.append(el('td', { style: 'text-align:left;border-top:1px solid var(--border);padding:6px', text: (typeof e === 'string' ? e : e.text) }));
+        hyps.forEach((h, hi) => {
+          const sel = el('select', { style: 'width:100%', onchange: (ev) => { state[ei][hi] = ev.target.value; recalc(); } },
+            RATINGS.map((r) => el('option', { value: r, text: RATLABEL[r] })));
+          sel.value = state[ei][hi];
+          tr.append(el('td', { style: 'border-top:1px solid var(--border);padding:4px' }, sel));
+        });
+        tb.append(tr);
+      });
+      table.append(tb);
+    }
+    function recalc() {
+      // inconsistenties per hypothese (ACH: minste I = voorlopig meest houdbaar)
+      const inc = hyps.map((_, hi) => state.reduce((n, row) => n + (row[hi] === 'I' ? 1 : 0), 0));
+      const filledCols = hyps.map((_, hi) => state.reduce((n, row) => n + (row[hi] ? 1 : 0), 0));
+      const anyFilled = filledCols.some((n) => n > 0);
+      const min = anyFilled ? Math.min.apply(null, inc.filter((_, hi) => filledCols[hi] > 0)) : null;
+      scoreRow.innerHTML = '';
+      hyps.forEach((h, hi) => {
+        const isBest = anyFilled && filledCols[hi] > 0 && inc[hi] === min;
+        const box = el('div', { class: 'stat', style: isBest ? 'border-color:var(--accent)' : '' }, [
+          el('div', { class: 'n', text: String(inc[hi]), style: isBest ? 'color:var(--accent)' : '' }),
+          el('div', { class: 'l', html: esc(h) + (isBest ? ' — <strong>minste I</strong>' : '') }),
+        ]);
+        scoreRow.append(box);
+      });
+      // diagnosticiteit: bewijs waar alle (ingevulde) oordelen gelijk zijn, is niet onderscheidend
+      const nonDiag = [];
+      evid.forEach((e, ei) => { const vals = state[ei].filter(Boolean); if (vals.length >= 2 && vals.every((v) => v === vals[0])) nonDiag.push(ei + 1); });
+      diag.textContent = nonDiag.length ? ('Weinig onderscheidend bewijs (rij ' + nonDiag.join(', ') + '): dezelfde waarde bij elke hypothese zegt weinig — richt je op bewijs dat hypothesen uit elkaar trekt.') : 'Tip: bewijs dat bij elke hypothese hetzelfde scoort is niet diagnostisch.';
+    }
+    build();
+    const btnRow = el('div', { class: 'chip-row' });
+    if (evid.some((e) => e && e.expert)) {
+      btnRow.append(el('span', { class: 'chip', text: '👓 Vergelijk met expert', onclick: () => {
+        evid.forEach((e, ei) => { if (e.expert) e.expert.forEach((v, hi) => { state[ei][hi] = v; }); });
+        build(); recalc();
+      } }));
+    }
+    btnRow.append(el('span', { class: 'chip', text: '↺ Leegmaken', onclick: () => { state.forEach((r) => r.fill('')); build(); recalc(); } }));
+    tableWrap.append(table);
+    wrap.append(tableWrap, el('label', { text: 'Inconsistentie-score per hypothese (lager = houdbaarder)' }), scoreRow, diag, btnRow);
+    recalc();
+    container.append(shell('<b>ACH</b> — concurrerende hypothesen afwegen', wrap, false));
+  });
+
+  // =====================================================================
+  //  CRIMESCRIPT — crime script bouwen (Cornish)
+  // =====================================================================
+  CS.registerLab('crimescript', function (container, cfg) {
+    const phases = cfg.phases || ['1 · Voorbereiding', '2 · Toegang / entree', '3 · Voorbereidende handeling', '4 · Uitvoering', '5 · Na afloop', '6 · Cash-out / witwassen'];
+    const fields = cfg.fields || ['Handeling', 'Actoren', 'Middelen', 'Locatie', 'Randvoorwaarden', 'Sporen'];
+    const askInterv = cfg.interventions !== false;
+    const state = phases.map(() => ({ fields: fields.map(() => ''), interv: '' }));
+    const wrap = el('div', { class: 'lab-pad' });
+    if (cfg.scenario) wrap.append(el('div', { class: 'callout info', html: '<strong>Scenario:</strong> ' + esc(cfg.scenario) }));
+    wrap.append(el('div', { class: 'found-note', text: 'Beschrijf het delict als een script: per fase wie wat doet, met welke middelen, waar, onder welke randvoorwaarden en welke sporen het nalaat. Bedenk per fase ook een interventie die de keten breekt.' }));
+    phases.forEach((ph, pi) => {
+      const box = el('div', { style: 'background:var(--bg-2);border:1px solid var(--border);border-radius:9px;padding:10px 12px;margin:10px 0' });
+      box.append(el('div', { style: 'font-weight:700;margin-bottom:6px', text: ph }));
+      fields.forEach((f, fi) => {
+        box.append(el('label', { text: f, style: 'margin:6px 0 2px' }));
+        const inp = el('input', { type: 'text', placeholder: f + '…', oninput: (e) => { state[pi].fields[fi] = e.target.value; } });
+        box.append(inp);
+      });
+      if (askInterv) {
+        box.append(el('label', { text: '🛡️ Interventie in deze fase', style: 'margin:6px 0 2px;color:var(--accent)' }));
+        const iv = el('input', { type: 'text', placeholder: 'maatregel die de keten hier breekt…', oninput: (e) => { state[pi].interv = e.target.value; } });
+        box.append(iv);
+      }
+      wrap.append(box);
+    });
+    const btn = el('button', { class: 'btn primary', text: '✓ Controleer volledigheid' });
+    const out = el('div', { class: 'lab-out', style: 'margin-top:8px' });
+    wrap.append(btn, out);
+    btn.addEventListener('click', () => {
+      const missing = [];
+      state.forEach((s, pi) => {
+        s.fields.forEach((v, fi) => { if (!v.trim()) missing.push(phases[pi].split('·').pop().trim() + ' → ' + fields[fi]); });
+        if (askInterv && !s.interv.trim()) missing.push(phases[pi].split('·').pop().trim() + ' → interventie');
+      });
+      out.innerHTML = '';
+      if (!missing.length) {
+        out.append(el('div', { html: '<strong style="color:var(--good)">✓ Compleet script.</strong> Elke fase heeft een handeling, actoren, middelen, locatie, randvoorwaarden en sporen — én een interventie. Nu kun je de zwakste schakel kiezen.' }));
+      } else {
+        out.append(el('div', { html: '<strong style="color:var(--warn)">Nog ' + missing.length + ' veld(en) leeg:</strong>' }));
+        out.append(el('div', { class: 'found-note', text: missing.slice(0, 12).join('  ·  ') + (missing.length > 12 ? ' …' : '') }));
+      }
+      if (cfg.model) out.append(el('details', { style: 'margin-top:8px', html: '<summary>Toon een voorbeelduitwerking</summary><div style="margin-top:6px">' + cfg.model + '</div>' }));
+    });
+    container.append(shell('<b>Crime script</b> — ontleed het delict in fasen', wrap, false));
+  });
+
+  // =====================================================================
+  //  ADMIRALTY — bronbeoordeling (betrouwbaarheid A–F × geloofwaardigheid 1–6)
+  // =====================================================================
+  CS.registerLab('admiralty', function (container, cfg) {
+    const REL = { A: 'Volledig betrouwbaar', B: 'Meestal betrouwbaar', C: 'Tamelijk betrouwbaar', D: 'Niet altijd betrouwbaar', E: 'Onbetrouwbaar', F: 'Niet te beoordelen' };
+    const CRED = { 1: 'Bevestigd door andere bronnen', 2: 'Waarschijnlijk waar', 3: 'Mogelijk waar', 4: 'Twijfelachtig', 5: 'Onwaarschijnlijk', 6: 'Niet te beoordelen' };
+    const items = cfg.items || [];
+    const wrap = el('div', { class: 'lab-pad' });
+    wrap.append(el('details', { html: '<summary>📑 Admiralty Code — spiekbrief</summary>' +
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px">' +
+      '<div><strong>Betrouwbaarheid van de bron (A–F)</strong><ul style="margin:4px 0;padding-left:18px;font-size:.84rem">' + Object.entries(REL).map(([k, v]) => '<li><code>' + k + '</code> ' + v + '</li>').join('') + '</ul></div>' +
+      '<div><strong>Geloofwaardigheid van de informatie (1–6)</strong><ul style="margin:4px 0;padding-left:18px;font-size:.84rem">' + Object.entries(CRED).map(([k, v]) => '<li><code>' + k + '</code> ' + v + '</li>').join('') + '</ul></div></div>' +
+      '<div class="found-note" style="margin-top:6px">Beoordeel bron en informatie <strong>apart</strong>: een betrouwbare bron kan onbevestigde info geven (bijv. B2), een onbetrouwbare bron kan toevallig iets bevestigds zeggen (bijv. E1).</div>' }));
+    const score = el('div', { class: 'found-note' });
+    let done = 0, correct = 0;
+    items.forEach((it, i) => {
+      const box = el('div', { style: 'background:var(--bg-2);border:1px solid var(--border);border-radius:9px;padding:10px 12px;margin:10px 0' });
+      box.append(el('div', { html: '<strong>Bron:</strong> ' + esc(it.source || '') }));
+      box.append(el('div', { style: 'margin:3px 0', html: '<strong>Informatie:</strong> ' + esc(it.info || '') }));
+      let selRel = '', selCred = '';
+      const relRow = el('div', { class: 'chip-row' });
+      ['A', 'B', 'C', 'D', 'E', 'F'].forEach((r) => { const c = el('span', { class: 'chip', text: r, onclick: () => { selRel = r; Array.from(relRow.children).forEach((x) => x.classList.toggle('on', x.textContent === r)); } }); relRow.append(c); });
+      const credRow = el('div', { class: 'chip-row' });
+      ['1', '2', '3', '4', '5', '6'].forEach((r) => { const c = el('span', { class: 'chip', text: r, onclick: () => { selCred = r; Array.from(credRow.children).forEach((x) => x.classList.toggle('on', x.textContent === r)); } }); credRow.append(c); });
+      box.append(el('label', { text: 'Betrouwbaarheid bron' }), relRow, el('label', { text: 'Geloofwaardigheid informatie' }), credRow);
+      const fb = el('div', { class: 'feedback', style: 'margin-top:6px' });
+      const btn = el('button', { class: 'btn small primary', text: 'Controleer' });
+      let scored = false;
+      btn.addEventListener('click', () => {
+        if (!selRel || !selCred) { fb.className = 'feedback show no'; fb.textContent = 'Kies een letter én een cijfer.'; return; }
+        const ok = selRel === it.reliability && selCred === String(it.credibility);
+        fb.className = 'feedback show ' + (ok ? 'ok' : 'no');
+        fb.innerHTML = (ok ? '✓ Juist: ' : '✗ Expert: ') + '<code>' + esc(it.reliability) + esc(String(it.credibility)) + '</code> — ' + esc(it.explain || '');
+        if (!scored) { scored = true; done++; if (ok) correct++; score.textContent = done + ' beoordeeld · ' + correct + ' exact goed'; }
+      });
+      box.append(btn, fb);
+      wrap.append(box);
+    });
+    wrap.append(score);
+    container.append(shell('<b>Bronbeoordeling</b> — Admiralty Code', wrap, false));
+  });
+
+  // =====================================================================
+  //  PROBABILITY — waarschijnlijkheidstaal (yardstick)
+  // =====================================================================
+  CS.registerLab('probability', function (container, cfg) {
+    // PHIA/NCSC-achtige yardstick (bewust met gaten tussen de banden)
+    const BANDS = cfg.bands || [
+      ['vrijwel uitgesloten', 0, 5], ['zeer onwaarschijnlijk', 10, 20], ['onwaarschijnlijk', 25, 35],
+      ['reële kans', 40, 50], ['waarschijnlijk', 55, 75], ['zeer waarschijnlijk', 80, 90], ['vrijwel zeker', 95, 100],
+    ];
+    const items = cfg.items || BANDS.map((b) => ({ term: b[0], low: b[1], high: b[2] }));
+    const wrap = el('div', { class: 'lab-pad' });
+    wrap.append(el('details', { html: '<summary>📑 Waarschijnlijkheidstaal — de yardstick</summary><table style="width:100%;font-size:.84rem;margin-top:8px"><tbody>' +
+      BANDS.map((b) => '<tr><td><strong>' + b[0] + '</strong></td><td>' + b[1] + '–' + b[2] + '%</td></tr>').join('') +
+      '</tbody></table><div class="found-note" style="margin-top:6px">De banden hebben bewust gaten: zo dwing je jezelf tot één term en voorkom je schijnprecisie. Geef het betrouwbaarheidsniveau (van je bron/analyse) <strong>apart</strong> aan.</div>' }));
+    wrap.append(el('div', { class: 'found-note', text: 'Zet de schuif op een percentage dat bij de term past (binnen de band).' }));
+    let done = 0, ok = 0;
+    const score = el('div', { class: 'found-note' });
+    items.forEach((it) => {
+      const box = el('div', { style: 'margin:10px 0' });
+      box.append(el('div', { html: '<strong>' + esc(it.term) + '</strong>' }));
+      const row = el('div', { class: 'ans-row' });
+      const slider = el('input', { type: 'range', min: '0', max: '100', value: '50', style: 'flex:1' });
+      const val = el('span', { style: 'width:46px;text-align:right;font-family:var(--mono)', text: '50%' });
+      slider.addEventListener('input', () => { val.textContent = slider.value + '%'; });
+      const btn = el('button', { class: 'btn small primary', text: 'Check' });
+      const fb = el('span', { class: 'found-note' });
+      let scored = false;
+      btn.addEventListener('click', () => {
+        const v = +slider.value; const good = v >= it.low && v <= it.high;
+        fb.textContent = good ? '✓ binnen de band (' + it.low + '–' + it.high + '%)' : '✗ hoort bij ' + it.low + '–' + it.high + '%';
+        fb.style.color = good ? 'var(--good)' : 'var(--bad)';
+        if (!scored) { scored = true; done++; if (good) ok++; score.textContent = done + ' gecheckt · ' + ok + ' goed'; }
+      });
+      row.append(slider, val, btn);
+      box.append(row, fb);
+      wrap.append(box);
+    });
+    wrap.append(score);
+    container.append(shell('<b>Waarschijnlijkheidstaal</b> — term ↔ percentage', wrap, false));
+  });
+
+  // =====================================================================
+  //  ATTACKMAP — gebeurtenis koppelen aan ATT&CK-techniek
+  // =====================================================================
+  CS.registerLab('attackmap', function (container, cfg) {
+    const BANK = cfg.bank || [
+      { code: 'T1566', name: 'Phishing', tactic: 'Initial Access' },
+      { code: 'T1566.001', name: 'Spearphishing Attachment', tactic: 'Initial Access' },
+      { code: 'T1190', name: 'Exploit Public-Facing Application', tactic: 'Initial Access' },
+      { code: 'T1078', name: 'Valid Accounts', tactic: 'Initial Access / Persistence' },
+      { code: 'T1059', name: 'Command and Scripting Interpreter', tactic: 'Execution' },
+      { code: 'T1059.001', name: 'PowerShell', tactic: 'Execution' },
+      { code: 'T1053', name: 'Scheduled Task/Job', tactic: 'Execution / Persistence' },
+      { code: 'T1547', name: 'Boot or Logon Autostart Execution', tactic: 'Persistence' },
+      { code: 'T1055', name: 'Process Injection', tactic: 'Defense Evasion' },
+      { code: 'T1027', name: 'Obfuscated Files or Information', tactic: 'Defense Evasion' },
+      { code: 'T1003', name: 'OS Credential Dumping', tactic: 'Credential Access' },
+      { code: 'T1003.001', name: 'LSASS Memory', tactic: 'Credential Access' },
+      { code: 'T1110', name: 'Brute Force', tactic: 'Credential Access' },
+      { code: 'T1087', name: 'Account Discovery', tactic: 'Discovery' },
+      { code: 'T1083', name: 'File and Directory Discovery', tactic: 'Discovery' },
+      { code: 'T1021', name: 'Remote Services', tactic: 'Lateral Movement' },
+      { code: 'T1021.001', name: 'Remote Desktop Protocol', tactic: 'Lateral Movement' },
+      { code: 'T1560', name: 'Archive Collected Data', tactic: 'Collection' },
+      { code: 'T1041', name: 'Exfiltration Over C2 Channel', tactic: 'Exfiltration' },
+      { code: 'T1567', name: 'Exfiltration Over Web Service', tactic: 'Exfiltration' },
+      { code: 'T1071', name: 'Application Layer Protocol', tactic: 'Command and Control' },
+      { code: 'T1105', name: 'Ingress Tool Transfer', tactic: 'Command and Control' },
+      { code: 'T1486', name: 'Data Encrypted for Impact', tactic: 'Impact' },
+      { code: 'T1490', name: 'Inhibit System Recovery', tactic: 'Impact' },
+    ];
+    const byCode = {}; BANK.forEach((b) => (byCode[b.code] = b));
+    const items = cfg.items || [];
+    const wrap = el('div', { class: 'lab-pad' });
+    wrap.append(el('div', { class: 'found-note', text: 'Koppel elke waarneming aan de juiste ATT&CK-techniek. Kies de techniek, niet alleen de tactiek.' }));
+    let done = 0, ok = 0; const score = el('div', { class: 'found-note' });
+    items.forEach((it) => {
+      const box = el('div', { style: 'background:var(--bg-2);border:1px solid var(--border);border-radius:9px;padding:10px 12px;margin:10px 0' });
+      box.append(el('div', { text: it.desc }));
+      const sel = el('select', {}, [el('option', { value: '', text: '— kies techniek —' })].concat(
+        BANK.slice().sort((a, b) => a.code.localeCompare(b.code)).map((b) => el('option', { value: b.code, text: b.code + ' — ' + b.name }))));
+      const btn = el('button', { class: 'btn small primary', text: 'Controleer' });
+      const fb = el('div', { class: 'feedback', style: 'margin-top:4px' });
+      let scored = false;
+      btn.addEventListener('click', () => {
+        if (!sel.value) return;
+        const good = sel.value === it.code;
+        const exp = byCode[it.code];
+        fb.className = 'feedback show ' + (good ? 'ok' : 'no');
+        fb.innerHTML = (good ? '✓ Juist. ' : '✗ Juiste techniek: ') + '<code>' + esc(it.code) + '</code> ' + esc(exp ? exp.name : '') + (exp ? ' <span style="color:var(--muted)">(' + esc(exp.tactic) + ')</span>' : '') + (it.explain ? '<br>' + esc(it.explain) : '');
+        if (!scored) { scored = true; done++; if (good) ok++; score.textContent = done + ' gekoppeld · ' + ok + ' goed'; }
+      });
+      box.append(el('div', { class: 'ans-row', style: 'margin-top:6px' }, [sel, btn]), fb);
+      wrap.append(box);
+    });
+    wrap.append(score);
+    container.append(shell('<b>ATT&CK-mapping</b> — waarneming → techniek', wrap, false));
+  });
+
+  // =====================================================================
+  //  PIVOT — infrastructuur-pivot sandbox (entiteiten & relaties)
+  // =====================================================================
+  CS.registerLab('pivot', function (container, cfg) {
+    const ents = cfg.entities || [];
+    const edges = cfg.edges || [];
+    const byId = {}; ents.forEach((e) => (byId[e.id] = e));
+    const ICON = { ip: '🌐', domain: '🔗', cert: '📜', hash: '#️⃣', wallet: '💰', alias: '🎭', email: '✉️', asn: '🏢', file: '📄' };
+    const wrap = el('div', { class: 'lab-pad' });
+    if (cfg.scenario) wrap.append(el('div', { class: 'callout info', html: esc(cfg.scenario) }));
+    wrap.append(el('div', { class: 'found-note', text: 'Klik een entiteit om zijn relaties te zien, en pivoteer verder naar buren. Zoek het kenmerk dat twee zaken verbindt. Let op herkomst en tijd — en of een kenmerk zeldzaam genoeg is om een echte link te zijn.' }));
+    const cols = el('div', { class: 'lab-grid2' });
+    const left = el('div', {}), right = el('div', {});
+    cols.append(left, right);
+    left.append(el('label', { text: 'Entiteiten' }));
+    const groups = {};
+    ents.forEach((e) => { (groups[e.type] = groups[e.type] || []).push(e); });
+    Object.keys(groups).forEach((t) => {
+      left.append(el('div', { class: 'found-note', style: 'margin-top:6px', text: (ICON[t] || '•') + ' ' + t }));
+      const row = el('div', { class: 'chip-row', style: 'margin:2px 0' });
+      groups[t].forEach((e) => row.append(el('span', { class: 'chip', text: e.label, onclick: () => show(e.id) })));
+      left.append(row);
+    });
+    const detail = el('div', { class: 'lab-out', style: 'min-height:120px' });
+    right.append(el('label', { text: 'Relaties' }), detail);
+    function show(id) {
+      const e = byId[id]; if (!e) return;
+      detail.innerHTML = '';
+      detail.append(el('div', { html: '<strong>' + (ICON[e.type] || '•') + ' ' + esc(e.label) + '</strong> <span style="color:var(--muted)">(' + esc(e.type) + ')</span>' }));
+      const nb = edges.filter((x) => x.from === id || x.to === id);
+      if (!nb.length) { detail.append(el('div', { class: 'found-note', text: 'geen relaties' })); return; }
+      nb.forEach((x) => {
+        const otherId = x.from === id ? x.to : x.from;
+        const other = byId[otherId]; if (!other) return;
+        const line = el('div', { style: 'margin-top:6px;cursor:pointer', onclick: () => show(otherId) });
+        line.innerHTML = '→ <strong>' + (ICON[other.type] || '•') + ' ' + esc(other.label) + '</strong> <span style="color:var(--muted)">' + esc(x.rel || 'gelinkt') + (x.time ? ' · ' + esc(x.time) : '') + (x.source ? ' · bron: ' + esc(x.source) : '') + '</span>';
+        detail.append(line);
+      });
+    }
+    wrap.append(cols);
+    if (cfg.bridge) {
+      wrap.append(el('label', { text: cfg.goal || 'Welke entiteit verbindt de twee zaken? (typ het label)' }));
+      const row = el('div', { class: 'ans-row' });
+      const inp = el('input', { type: 'text', placeholder: 'bv. een domein, hash of wallet…', style: 'flex:1' });
+      const btn = el('button', { class: 'btn small primary', text: 'Controleer' });
+      const fb = el('span', { class: 'found-note' });
+      const accept = (Array.isArray(cfg.bridge) ? cfg.bridge : [cfg.bridge]).map((s) => String(s).toLowerCase());
+      const check = () => { const v = inp.value.trim().toLowerCase(); const good = accept.some((a) => a === v); fb.textContent = good ? '✓ Juist — dit kenmerk bruggt de twee zaken.' : '✗ Nog niet. Pivoteer verder en let op een kenmerk dat in beide zaken terugkomt.'; fb.style.color = good ? 'var(--good)' : 'var(--bad)'; };
+      btn.addEventListener('click', check);
+      inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') check(); });
+      row.append(inp, btn);
+      wrap.append(row, fb);
+    }
+    container.append(shell('<b>Pivot-sandbox</b> — ' + esc(cfg.title || 'vind het dwarsverband'), wrap, false));
+  });
+
+  // =====================================================================
+  //  BLUF — herschrijf naar "conclusie eerst" (zelf-check tegen rubric)
+  // =====================================================================
+  CS.registerLab('bluf', function (container, cfg) {
+    const PROB = ['vrijwel zeker', 'zeer waarschijnlijk', 'waarschijnlijk', 'reële kans', 'onwaarschijnlijk', 'zeer onwaarschijnlijk', 'vrijwel uitgesloten'];
+    const wrap = el('div', { class: 'lab-pad' });
+    wrap.append(el('label', { text: 'Bronmateriaal (chronologisch) — herschrijf dit naar een BLUF-product' }));
+    wrap.append(el('div', { class: 'lab-out', style: 'white-space:pre-wrap', text: cfg.source || '' }));
+    wrap.append(el('label', { text: 'Jouw herschrijving (conclusie eerst, dan onderbouwing, met waarschijnlijkheidstaal en een eigenaar per advies)' }));
+    const ta = el('textarea', { rows: '7', spellcheck: 'false' });
+    wrap.append(ta);
+    const btn = el('button', { class: 'btn primary', text: '✓ Toets tegen de rubric' });
+    const out = el('div', { style: 'margin-top:8px' });
+    wrap.append(btn, out);
+    wrap.append(el('div', { class: 'found-note', text: 'Let op: dit is een heuristische checklist (geen AI-beoordeling). Hij kijkt naar structuur en signaalwoorden; de inhoudelijke kwaliteit beoordeel je zelf of met een peer.' }));
+    btn.addEventListener('click', () => {
+      const txt = ta.value.trim();
+      const low = txt.toLowerCase();
+      const firstChunk = low.split(/[.\n]/).slice(0, 2).join(' ');
+      const checks = [];
+      const concludeWords = PROB.concat(['beoordeling', 'conclusie', 'advies', 'wij schatten', 'inschatting', 'aanbeveling']);
+      checks.push(['Conclusie/kernboodschap bovenaan', concludeWords.some((w) => firstChunk.includes(w)) || (txt.split(/\n/)[0] || '').length > 0 && /[.!]/.test((txt.split(/\n/)[0] || '')) && (txt.split(/\n/)[0].length < 220)]);
+      checks.push(['Waarschijnlijkheidstaal gebruikt', PROB.some((w) => low.includes(w))]);
+      const ownerRe = /(eigenaar|verantwoordelijk|belegd bij|actiehouder)\s*[:\-]/i;
+      const roleRe = /\b(politie|openbaar ministerie|om|ncsc|provider|hostingpartij|registrar|exchange|ciso|soc|csirt|team\s+\w+)\b/i;
+      checks.push(['Eigenaar per advies benoemd', ownerRe.test(txt) || (roleRe.test(txt) && /(advies|aanbeveling|interventie|maatregel)/i.test(txt))]);
+      checks.push(['Beknopter dan de bron', cfg.source ? txt.length > 0 && txt.length < cfg.source.length * 0.95 : txt.length > 0]);
+      checks.push(['Betrouwbaarheid/onzekerheid apart benoemd', /(betrouwbaar|onzeker|aanname|afgeleid|bron|low confidence|high confidence|betrouwbaarheid)/i.test(txt)]);
+      out.innerHTML = '';
+      const passed = checks.filter((c) => c[1]).length;
+      checks.forEach((c) => out.append(el('div', { style: 'margin:3px 0', html: (c[1] ? '✅' : '⬜') + ' ' + esc(c[0]) })));
+      out.append(el('div', { class: 'found-note', style: 'margin-top:6px', text: passed + ' / ' + checks.length + ' punten geraakt.' }));
+      if (cfg.model) out.append(el('details', { style: 'margin-top:6px', html: '<summary>Toon een modelantwoord</summary><div class="lab-out" style="white-space:pre-wrap;margin-top:6px">' + esc(cfg.model) + '</div>' }));
+    });
+    container.append(shell('<b>BLUF-herschrijven</b> — conclusie eerst', wrap, false));
+  });
+
   // =====================================================================
   //  Encoding & hash helpers
   // =====================================================================
