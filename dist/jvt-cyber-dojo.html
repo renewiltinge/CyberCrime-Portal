@@ -21272,6 +21272,494 @@ CS.registerRoom({
 
 </script>
 <script>
+/* Room: Datastromen & exfiltratie herkennen — puzzelpad "Puzzels & uitdagingen" */
+
+// --- Egress/proxy-log voor het logs-lab (taak 5) ---
+// Een web-/egress-proxy ziet alleen uitgaand verkeer naar het internet. Erin verstopt:
+//  * C2-beaconing: elke ~60s (met jitter) een piepklein POST'je naar cdn-telemetry.c2relay.jvt.lab
+//  * één gigantische PUT van exfil.7z (±450 MB) naar de zeldzame bestemming opslag-x9f3.jvt.lab
+//  * twee vlaggen: in een gedecodeerd C2-antwoord en in de soc_note bij de upload.
+// Normaal surfverkeer (nos.nl, mail.google.com, o365, gemeente.nl, jsdelivr) zit ertussen als ruis.
+const EXFIL_PROXY_LOG = `# egress-proxy  jvt.lab  2026-10-11   kolommen: tijd | client | verdict | methode | bestemming | up=bytes_omhoog down=bytes_omlaag [note]
+2026-10-11 02:00:11  WS-MKT-04  allow  GET   nos.nl                               up=612        down=48310
+2026-10-11 02:00:52  WS-FIN-03  allow  GET   intranet.jvt.lab                     up=410        down=12044
+2026-10-11 02:01:40  WS-HR-02   allow  GET   mail.google.com                      up=1820       down=23110
+2026-10-11 02:02:39  WS-MKT-04  allow  GET   cdn.jsdelivr.net                     up=180        down=88214
+2026-10-11 02:03:05  WS-MKT-04  ALERT  POST  cdn-telemetry.c2relay.jvt.lab        up=228        down=96     note=klein_vast_pakketje
+2026-10-11 02:03:51  WS-FIN-03  allow  GET   o365.portal.jvt.lab                  up=940        down=15502
+2026-10-11 02:04:01  WS-MKT-04  ALERT  POST  cdn-telemetry.c2relay.jvt.lab        up=231        down=96     note=klein_vast_pakketje
+2026-10-11 02:04:48  WS-HR-02   allow  GET   portaal.gemeente.nl                  up=330        down=9900
+2026-10-11 02:05:12  WS-MKT-04  ALERT  POST  cdn-telemetry.c2relay.jvt.lab        up=226        down=140    note=C2-antwoord_gedecodeerd:"sleep=60;jitter=10" tag=JVT{baken_ritme}
+2026-10-11 02:05:59  WS-MKT-04  allow  GET   weerdienst.nl                        up=210        down=7404
+2026-10-11 02:06:03  WS-MKT-04  ALERT  POST  cdn-telemetry.c2relay.jvt.lab        up=233        down=96     note=klein_vast_pakketje
+2026-10-11 02:07:09  WS-MKT-04  ALERT  POST  cdn-telemetry.c2relay.jvt.lab        up=227        down=96     note=klein_vast_pakketje
+2026-10-11 02:08:02  WS-MKT-04  ALERT  POST  cdn-telemetry.c2relay.jvt.lab        up=229        down=96     note=klein_vast_pakketje
+2026-10-11 02:21:17  WS-FIN-03  allow  GET   nos.nl                               up=560        down=51220
+2026-10-11 02:40:33  WS-HR-02   allow  GET   mail.google.com                      up=2110       down=19877
+2026-10-11 02:55:46  WS-MKT-04  allow  GET   cdn.jsdelivr.net                     up=175        down=64012
+2026-10-11 03:01:58  WS-FIN-03  allow  GET   o365.portal.jvt.lab                  up=880        down=14003
+2026-10-11 03:05:02  WS-FIN-03  ALERT  PUT   opslag-x9f3.jvt.lab                  up=471859200  down=512    note=exfil.7z_zeldzame_bestemming_nooit_eerder_gezien  soc_note=JVT{egress_betrapt}
+2026-10-11 03:05:49  WS-FIN-03  allow  GET   intranet.jvt.lab                     up=402        down=11890
+2026-10-11 03:09:12  WS-MKT-04  ALERT  POST  cdn-telemetry.c2relay.jvt.lab        up=230        down=96     note=klein_vast_pakketje`;
+
+CS.registerRoom({
+  id: 'datastromen-exfil',
+  path: 'puzzels',
+  order: 2,
+  title: 'Datastromen & exfiltratie herkennen',
+  icon: '📤',
+  difficulty: 'Moeilijk',
+  minutes: 70,
+  summary: 'Data gedraagt zich als een stroom: met een richting, een volume en een poort. Je leert hoe gestolen data naar buiten lekt — via beaconing/C2, DNS-tunneling en de klassieke keten staging → compressie → encryptie → upload — en hoe je dat spoor opspoort met volume-, timing- en bestemmingsanalyse.',
+  objectives: [
+    'Uitleggen hoe data door een netwerk "stroomt": richting (ingress/egress), volume en poorten',
+    'C2-beaconing herkennen aan een regelmatig ritme, en begrijpen wat jitter doet',
+    'DNS-tunneling herkennen aan veel lange, ongewone subdomeinen naar één domein',
+    'De exfil-keten beschrijven: collectie → staging → compressie → encryptie → upload',
+    'Exfiltratie opsporen met volume-, timing- en bestemmingsanalyse (baseline + zeldzame bestemmingen)',
+    'Een exfil-tijdlijn reconstrueren en de bevindingen reproduceerbaar rapporteren',
+  ],
+  tasks: [
+    {
+      title: 'Taak 1 — Data als stroom: richting, volume, poort',
+      content: `
+        <p>Een netwerk lijkt op een waterleidingstelsel. Door de buizen stroomt geen water maar <strong>data</strong>, en
+        net als water heeft die stroom drie eigenschappen die je kunt meten: een <strong>richting</strong> (waarheen gaat
+        het?), een <strong>volume</strong> (hoeveel bytes?) en een <strong>poort</strong> (via welk "kanaal"?). Wie
+        datadiefstal wil betrappen, leert eerst deze drie te lezen.</p>
+
+        <h3>Richting: ingress en egress</h3>
+        <p>Verkeer dat jouw netwerk <em>binnenkomt</em> heet <strong>ingress</strong>; verkeer dat naar buiten gaat heet
+        <strong>egress</strong>. Bij normaal surfen is de download (ingress) veel groter dan de upload (egress): je haalt
+        pagina's en video's op, je stuurt maar een paar toetsaanslagen terug. <strong>Exfiltratie draait dat om</strong>:
+        plotseling gaat er veel data de deur <em>uit</em>. Een opvallend grote egress-stroom is daarom een klassiek alarm.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 640 170" role="img" aria-label="Datastroom: werkstation, staging-host en cloudopslag">
+            <rect x="12" y="60" width="120" height="48" rx="8" fill="var(--surface-2)" stroke="currentColor"/>
+            <text x="72" y="80" text-anchor="middle" fill="currentColor" font-size="13">Werkstation</text>
+            <text x="72" y="97" text-anchor="middle" fill="currentColor" font-size="13">(bron)</text>
+            <rect x="250" y="60" width="130" height="48" rx="8" fill="var(--accent-soft)" stroke="currentColor"/>
+            <text x="315" y="80" text-anchor="middle" fill="currentColor" font-size="13">Staging-host</text>
+            <text x="315" y="97" text-anchor="middle" fill="currentColor" font-size="13">(verzamelplaats)</text>
+            <rect x="500" y="60" width="128" height="48" rx="8" fill="var(--surface-2)" stroke="currentColor"/>
+            <text x="564" y="80" text-anchor="middle" fill="currentColor" font-size="13">Cloudopslag</text>
+            <text x="564" y="97" text-anchor="middle" fill="currentColor" font-size="13">(buiten · egress)</text>
+            <line x1="132" y1="84" x2="248" y2="84" stroke="var(--accent)" stroke-width="2"/>
+            <polygon points="248,84 238,79 238,89" fill="var(--accent)"/>
+            <line x1="380" y1="84" x2="498" y2="84" stroke="var(--bad)" stroke-width="2"/>
+            <polygon points="498,84 488,79 488,89" fill="var(--bad)"/>
+            <text x="190" y="50" text-anchor="middle" fill="currentColor" font-size="13">kopiëren</text>
+            <text x="439" y="50" text-anchor="middle" fill="currentColor" font-size="13">upload (egress)</text>
+            <line x1="315" y1="130" x2="315" y2="150" stroke="currentColor"/>
+            <text x="315" y="165" text-anchor="middle" fill="currentColor" font-size="13">hier wordt gebundeld, gecomprimeerd en versleuteld</text>
+          </svg>
+          <figcaption>De data stroomt van veel bronnen naar één verzamelplaats, en verlaat daar in één keer het netwerk.</figcaption>
+        </figure>
+
+        <h3>Volume: bytes tellen</h3>
+        <p>Een netwerkmonitor telt per verbinding het aantal verstuurde bytes. Dat maak je leesbaar met eenheden:
+        1 <strong>KB</strong> ≈ duizend bytes, 1 <strong>MB</strong> ≈ miljoen bytes, 1 <strong>GB</strong> ≈ miljard
+        bytes. Een enkele e-mail is kilobytes; een gestolen klantenbestand of een map vol documenten is al snel honderden
+        megabytes. Omdat exacte bytes lastig lezen, reken je ze om: 471.859.200 bytes zijn ongeveer 450 MB
+        (deel door 1.048.576).</p>
+
+        <h3>Poort: via welk kanaal?</h3>
+        <p>Elke stroom kiest een <strong>poort</strong>, een genummerd kanaal. Een paar die je vaak tegenkomt:</p>
+        <table>
+          <thead><tr><th>Poort</th><th>Protocol</th><th>Normaal gebruik</th></tr></thead>
+          <tbody>
+            <tr><td>53</td><td>DNS</td><td>Namen opzoeken — bijna nooit geblokkeerd (let op: tunneling)</td></tr>
+            <tr><td>80</td><td>HTTP</td><td>Onversleuteld web — data leesbaar in de stroom</td></tr>
+            <tr><td>443</td><td>HTTPS/TLS</td><td>Versleuteld web — inhoud verborgen, metadata zichtbaar</td></tr>
+            <tr><td>22</td><td>SSH/SCP</td><td>Beheer en bestandsoverdracht</td></tr>
+          </tbody>
+        </table>
+        <p>Aanvallers kiezen graag poort 443: versleuteld verkeer valt niet op en mag overal naar buiten. Maar ook door
+        zo'n dichte buis verraadt de stroom zich — via zijn <em>richting</em>, <em>volume</em> en <em>ritme</em>, zoals je
+        in deze room gaat zien.</p>
+
+        <div class="callout info">
+          <strong>Baseline eerst:</strong> "veel egress" betekent alleen iets als je weet wat normaal is. Daarom meet een
+          SOC eerst een <strong>baseline</strong> (het gewone patroon per host en per tijdstip). Pas tegen die achtergrond
+          springt een afwijking eruit. Alles in deze room is fictief: documentatie-domeinen (<code>*.jvt.lab</code>) en een
+          afgeschermd oefenlab.
+        </div>
+      `,
+      questions: [
+        { q: 'Hoe heet verkeer dat jouw netwerk verlaat (naar buiten gaat)?', answer: ['egress'], hint: 'Het tegenovergestelde van ingress.', explain: 'Egress = uitgaand verkeer. Bij exfiltratie is juist de egress-stroom ongewoon groot.' },
+        { q: 'Waarom is een plotseling grote uitgaande stroom verdacht?', options: ['Bij normaal surfen download je veel meer dan je upload; veel egress kan datadiefstal zijn', 'Omdat upload altijd verboden is', 'Omdat DNS dan niet meer werkt', 'Omdat poort 443 kapot is'], answer: 0, explain: 'Normaal is ingress >> egress. Een grote egress-piek draait dat om en wijst mogelijk op exfiltratie.' },
+        { q: 'Ongeveer hoeveel MB is 471.859.200 bytes (deel door 1.048.576)?', answer: ['450', '450 MB', '450 mb'], hint: '471.859.200 ÷ 1.048.576.', explain: '471.859.200 ÷ 1.048.576 = precies 450 MB. Bytes omrekenen maakt volumes leesbaar.' },
+        { q: 'Welke poort gebruiken aanvallers graag omdat het verkeer versleuteld is en overal naar buiten mag?', answer: ['443'], hint: 'De standaardpoort voor HTTPS/TLS.', explain: 'Poort 443 (HTTPS/TLS): de inhoud is verborgen, dus C2 en exfil vallen minder op — maar de metadata verraadt ze alsnog.' },
+      ],
+    },
+
+    {
+      title: 'Taak 2 — Beaconing & C2: het ritme verraadt de malware',
+      content: `
+        <p>Nadat malware een computer heeft besmet, wil hij opdrachten ontvangen. Daarvoor belt hij regelmatig "naar huis",
+        naar een <strong>command-and-control</strong>-server (<strong>C2</strong>). Dat regelmatige inchecken heet
+        <strong>beaconing</strong>: als een vuurtoren die met vaste tussenpozen knippert. Elk baken is klein — "ik leef
+        nog, heb je werk voor me?" — en het antwoord is meestal ook klein: "nee, slaap 60 seconden" of een opdracht.</p>
+
+        <h3>Mensen surfen grillig, malware tikt als een klok</h3>
+        <p>Een mens die browst, maakt onregelmatige, verschillend grote verbindingen: nu een artikel, dan drie minuten
+        niets, dan een video. Een baken daarentegen is <strong>regelmatig</strong> en <strong>bijna even groot</strong>.
+        Juist die saaie regelmaat is het signaal. In een egress-log zie je dan steeds hetzelfde interne werkstation op
+        vaste intervallen een piepklein pakketje naar hetzelfde externe adres sturen.</p>
+
+        <div class="callout tip">
+          <strong>Voorbeeld:</strong> elke ~60 seconden een POST van ~230 bytes naar <code>cdn-telemetry.c2relay.jvt.lab</code>.
+          De naam klinkt als een onschuldige "telemetrie-CDN", maar het strakke ritme hoort bij geen enkele normale
+          webdienst. Dat is een baken.
+        </div>
+
+        <h3>Jitter: het ritme expres rommelig maken</h3>
+        <p>Slimme aanvallers weten dat een té perfect ritme opvalt. Daarom voegen ze <strong>jitter</strong> toe: een
+        willekeurige variatie op het interval. In plaats van exact elke 60 seconden checkt het baken dan bijvoorbeeld na 54,
+        67, 58 of 71 seconden in. Het blijft "ongeveer elke minuut", maar nét onregelmatig genoeg om een simpele "exact elke
+        60s"-regel te misleiden. Een goede detectie kijkt daarom niet naar een exact interval, maar naar de
+        <em>regelmaat van een smalle bandbreedte</em> rond een gemiddelde — en naar het feit dat het altijd hetzelfde,
+        zelden-bezochte doel is.</p>
+
+        <h3>Waarom metadata genoeg is</h3>
+        <p>Ook als het beaconverkeer via poort 443 versleuteld is en je de inhoud niet kunt lezen, verraadt de
+        <strong>metadata</strong> het baken: vast doel, vast (ongeveer) interval, vaste kleine grootte. Precies daarom werkt
+        netwerkdetectie ook bij versleuteld verkeer.</p>
+
+        <div class="callout warn">
+          <strong>Let op de naam:</strong> aanvallers kiezen expres domeinen die op legitieme infrastructuur lijken
+          (<code>cdn-</code>, <code>telemetry</code>, <code>update-</code>, <code>sync-</code>). Laat je niet geruststellen
+          door een onschuldig ogende naam; kijk naar het gedrag en of het domein ooit eerder is gezien.
+        </div>
+      `,
+      questions: [
+        { q: 'Hoe heet het regelmatig "inchecken" van malware bij zijn C2-server?', answer: ['beaconing', 'beacon'], hint: 'Als een vuurtoren die steeds knippert.', explain: 'Beaconing: het besmette systeem checkt op (ongeveer) vaste intervallen in bij de command-and-control-server.' },
+        { q: 'Waarvoor staat C2?', answer: ['command-and-control', 'command and control', 'command-control'], hint: 'De server die de besmette machines aanstuurt.', explain: 'C2 = command-and-control: de server waarmee besmette systemen contact houden om opdrachten te krijgen.' },
+        { q: 'Wat doet jitter?', options: ['Het voegt willekeurige variatie aan het beacon-interval toe om detectie te bemoeilijken', 'Het versleutelt de inhoud van het baken', 'Het vergroot elk pakket tot 1 MB', 'Het blokkeert DNS'], answer: 0, explain: 'Jitter maakt het ritme expres rommelig (bijv. 54–71s i.p.v. exact 60s), zodat een "exact 60s"-regel het mist.' },
+        { q: 'Waardoor valt een baken op, ook al is het verkeer via poort 443 versleuteld?', options: ['De metadata: vast doel, ongeveer vast interval, vaste kleine grootte', 'De leesbare inhoud van het pakket', 'Een foutmelding in de browser', 'Het wachtwoord in het pakket'], answer: 0, explain: 'Je hoeft de inhoud niet te zien: het gedrag (regelmaat, grootte, vast doel) verraadt het baken.' },
+      ],
+    },
+
+    {
+      title: 'Taak 3 — DNS-tunneling: data verstopt in subdomeinen',
+      content: `
+        <p>Soms lekt data niet via een dikke upload naar buiten, maar sijpelt ze weg door een kanaal dat bijna nooit
+        geblokkeerd wordt: <strong>DNS</strong> (poort 53). Elk netwerk moet namen kunnen opzoeken, dus DNS mag meestal
+        gewoon naar buiten. Aanvallers misbruiken dat met <strong>DNS-tunneling</strong>: ze stoppen de gestolen data in de
+        <em>naam</em> die ze opvragen.</p>
+
+        <h3>Het trucje</h3>
+        <p>Normaal vraagt een computer af en toe een adres op: "welk IP hoort bij <code>nos.nl</code>?" Bij DNS-tunneling
+        codeert de malware een stukje gestolen data en zet dat als <strong>subdomein</strong> vóór een domein dat hij zelf
+        beheert. Dan vraagt hij dat op. De opvraging reist door elke firewall heen naar de kwaadaardige nameserver, die de
+        data uit de naam pelt. Het ziet er zo uit:</p>
+        <pre><code>mz2wk3-chunk00-aegh5t7q.exfil.jvt.lab
+nf4xq1-chunk01-k9plm2wd.exfil.jvt.lab
+pq7za9-chunk02-r3nxc8vb.exfil.jvt.lab</code></pre>
+
+        <h3>Waaraan je het herkent</h3>
+        <ul>
+          <li><strong>Veel, lange, willekeurig ogende subdomeinen</strong> — elk "stukje" (chunk) is een brok gecodeerde data.</li>
+          <li><strong>Alles naar hetzelfde "domein"</strong> (hier <code>exfil.jvt.lab</code>) en dezelfde nameserver.</li>
+          <li><strong>Veel TXT-queries</strong>. Het TXT-record mag willekeurige tekst bevatten en is daarom geliefd voor
+          tunneling, maar ook A- en CNAME-queries worden misbruikt.</li>
+          <li><strong>Hoge frequentie en volume</strong> voor DNS: een gewone client vraagt niet tientallen lange namen per
+          minuut naar één domein op.</li>
+        </ul>
+
+        <div class="callout info">
+          <strong>Waarom dit werkt:</strong> firewalls laten DNS bijna altijd door. Door data in subdomeinen te verpakken,
+          "tunnelt" de aanvaller zijn verkeer dwars door de firewall. Maar het patroon — veel lange namen naar één zelden
+          gebruikt domein — is juist de manier om het te betrappen. Verdedigers kijken naar de hoeveelheid DNS per host, de
+          lengte en entropie (willekeurigheid) van de namen, en naar nieuwe, onbekende domeinen.
+        </div>
+
+        <div class="callout tip">
+          <strong>Tunnelen vs. beaconen:</strong> DNS-tunneling smokkelt <em>data</em> naar buiten via naamopvragingen;
+          beaconing houdt vooral <em>contact</em> (kleine check-ins). Een aanvaller gebruikt soms beide tegelijk. In beide
+          gevallen is de kern hetzelfde: een stroom met een ongewone richting, frequentie en bestemming.
+        </div>
+      `,
+      questions: [
+        { q: 'Welke techniek verstopt gestolen data in de naam die via DNS wordt opgevraagd?', answer: ['DNS-tunneling', 'dns-tunneling', 'dns tunneling', 'dns-tunnel'], hint: 'Data wordt door DNS heen "getunneld".', explain: 'DNS-tunneling verpakt data in (sub)domeinnamen die door de firewall mogen.' },
+        { q: 'Welk DNS-recordtype kan willekeurige tekst bevatten en is daarom geliefd voor tunneling?', answer: ['TXT', 'txt'], hint: 'Niet A of MX; het type voor vrije tekst.', explain: 'Het TXT-record mag vrije tekst bevatten, ideaal om gecodeerde data in te vervoeren.' },
+        { q: 'Welk "domein" wordt in het voorbeeld misbruikt als datakanaal (het deel achter de willekeurige subdomeinen)?', answer: ['exfil.jvt.lab'], hint: 'Kijk wat er steeds achter de chunk-namen staat.', explain: 'Alle namen eindigen op exfil.jvt.lab: dat is het kanaal naar de kwaadaardige nameserver.' },
+        { q: 'Waarom is DNS een aantrekkelijk sluipkanaal voor aanvallers?', options: ['Firewalls laten DNS bijna altijd door, dus het verkeer mag ongehinderd naar buiten', 'DNS is altijd versleuteld', 'DNS kan geen data vervoeren', 'DNS werkt alleen binnen het LAN'], answer: 0, explain: 'Omdat naamopvragingen bijna overal mogen, tunnelt data via DNS dwars door de firewall.' },
+      ],
+    },
+
+    {
+      title: 'Taak 4 — De exfil-keten: staging → compressie → encryptie → upload',
+      content: `
+        <p>Grote datadiefstal gebeurt zelden in één klap. Aanvallers volgen meestal een vaste <strong>keten</strong>, en
+        elke schakel laat sporen na. Wie de keten kent, weet waar hij moet kijken.</p>
+        <ol>
+          <li><strong>Collectie</strong> — de aanvaller zoekt waardevolle bestanden (klantgegevens, HR-dossiers, broncode)
+          op meerdere machines en servers.</li>
+          <li><strong>Staging</strong> — hij kopieert alles naar één <strong>verzamelplaats</strong> (een "staging-host"),
+          vaak een interne server die toch al veel verkeer krijgt, zodat het kopiëren niet opvalt.</li>
+          <li><strong>Compressie</strong> — hij bundelt en comprimeert de buit tot één archief (bijv. een
+          <code>.7z</code> of <code>.zip</code>). Dat maakt het kleiner en handzamer: de upload is korter en valt minder op.</li>
+          <li><strong>Encryptie</strong> — hij versleutelt het archief met een wachtwoord. Nu kun jij als verdediger niet
+          meer zien wát er in zit, zelfs als je het archief onderschept.</li>
+          <li><strong>Upload (exfiltratie)</strong> — hij stuurt het archief naar buiten, naar een cloudbucket, een
+          bestandsdienst of zijn C2.</li>
+        </ol>
+
+        <h3>Datastromen optellen</h3>
+        <p>Het lab hieronder toont de datastromen in <strong>MB</strong> als een stroomdiagram. Twee werkstations kopiëren
+        hun buit naar de staging-host <code>SRV-ARCHIEF</code>; daar wordt alles gecomprimeerd en versleuteld tot
+        <code>exfil.7z</code> en in één keer naar de cloudbucket <code>opslag-x9f3.jvt.lab</code> geüpload. Let op: er loopt
+        óók een legitieme nachtelijke back-up naar <code>SRV-BACKUP-01</code> — die hoort <em>niet</em> bij de aanval. Klik
+        op een knoop om in- en uitgaand verkeer te zien, of lees de transactietabel.</p>
+
+        <div class="callout tip">
+          <strong>Reken na:</strong> de inkomende stromen op de staging-host tel je op. De uitgaande stroom (het
+          gecomprimeerde archief) is kleiner dan de som van de bronnen — dat verschil is de
+          <strong>compressie</strong>. Deel de inkomende data door de uitgaande en je kent de compressiefactor. Wat op de
+          host achterblijft, is het <em>saldo</em> (in min uit).
+        </div>
+
+        <h3>Waarom dit voor jou goed nieuws is</h3>
+        <p>Elke schakel is een kans om de aanval te zien of te stoppen: een werkstation dat ineens honderden MB naar een
+        interne server kopieert (collectie/staging), een archiveringsprogramma dat op een rare plek draait (compressie), of
+        een grote upload naar een nooit eerder geziene bestemming (exfiltratie). Eén gemiste schakel hoeft dus niet fataal
+        te zijn; detectie werkt in lagen.</p>
+      `,
+      lab: {
+        type: 'flow',
+        title: 'Operatie Lekkende Kraan — datavolumes (MB)',
+        unit: 'MB',
+        scenario: 'Reconstructie van een exfiltratie bij het fictieve bedrijf JVT. Volg de data (in MB) van de werkstations, via de staging-host SRV-ARCHIEF, naar de cloudbucket. Eén stroom is een legitieme back-up — trap daar niet in.',
+        nodes: [
+          { id: 'ws1', type: 'victim', label: 'WS-FIN-03 (financiën)' },
+          { id: 'ws2', type: 'victim', label: 'WS-HR-02 (HR)' },
+          { id: 'stage', type: 'service', label: 'SRV-ARCHIEF (staging-host)' },
+          { id: 'backup', type: 'service', label: 'SRV-BACKUP-01 (legitieme back-up)' },
+          { id: 'cloud', type: 'cashout', label: 'opslag-x9f3.jvt.lab (cloudbucket)' },
+        ],
+        edges: [
+          { from: 'ws1', to: 'backup', amount: 300, time: '2026-10-11 01:00', note: 'nachtelijke back-up (legitiem)' },
+          { from: 'ws1', to: 'stage', amount: 1200, time: '2026-10-11 02:34', note: 'klant-export .csv' },
+          { from: 'ws2', to: 'stage', amount: 600, time: '2026-10-11 02:40', note: 'HR-dossiers .zip' },
+          { from: 'stage', to: 'cloud', amount: 450, time: '2026-10-11 03:05', note: 'exfil.7z (gecomprimeerd + versleuteld)' },
+        ],
+        ask: [
+          { q: 'Hoeveel MB komt er in totaal binnen op de staging-host SRV-ARCHIEF? (tel de inkomende stromen op)', answer: ['1800', '1800 MB', '1800 mb'], hint: 'Klik op SRV-ARCHIEF en lees "in", of tel de twee kwaadaardige inkomende pijlen: 1200 + 600.' },
+          { q: 'Hoeveel MB verlaat het netwerk naar de cloudbucket opslag-x9f3.jvt.lab?', answer: ['450', '450 MB', '450 mb'], hint: 'De enige stroom die écht de deur uit gaat, naar buiten.' },
+          { q: 'Met welke factor kromp de buit door compressie op de staging-host? (inkomend ÷ uitgaand)', answer: ['4', '4x', 'factor 4', '4.0'], hint: '1800 ÷ 450.' },
+          { q: 'Hoeveel MB bleef als ruwe kopie op SRV-ARCHIEF achter (het saldo: inkomend − uitgaand)?', answer: ['1350', '1350 MB', '1350 mb'], hint: '1800 − 450.' },
+        ],
+      },
+      questions: [
+        { q: 'Hoe heet de stap waarin de aanvaller de buit op één verzamelplaats samenbrengt vóór de upload?', answer: ['staging', 'stagen'], hint: 'Engels woord; de "verzamelplaats"-stap in de keten.', explain: 'Staging: de buit wordt op één host (de staging-host) samengebracht voordat hij naar buiten gaat.' },
+        { q: 'Waarom comprimeert de aanvaller de data vóór de upload?', options: ['Kleiner archief = kortere, minder opvallende upload', 'Compressie versleutelt de data', 'Compressie maakt de data groter', 'Zonder compressie werkt DNS niet'], answer: 0, explain: 'Comprimeren maakt de buit handzamer en de upload korter en minder opvallend. Encryptie is een aparte, volgende stap.' },
+        { q: 'Hoeveel MB kwam er volgens het lab binnen op de staging-host SRV-ARCHIEF?', answer: ['1800', '1800 MB', '1800 mb'], hint: '1200 (financiën) + 600 (HR). De back-up van 300 MB telt niet mee.', explain: 'In: 1200 + 600 = 1800 MB. De 300 MB naar SRV-BACKUP-01 is een legitieme back-up en hoort niet bij de keten.' },
+        { q: 'Met welke factor kromp de buit door compressie (1800 MB in, 450 MB uit)?', answer: ['4', '4x', 'factor 4', '4.0'], hint: '1800 ÷ 450.', explain: '1800 ÷ 450 = 4: het archief was vier keer kleiner dan de ruwe buit.' },
+      ],
+    },
+
+    {
+      title: 'Taak 5 — Exfil opsporen in het egressverkeer',
+      content: `
+        <p>Tijd om zelf te speuren. In het lab staat een <strong>egress-proxy-log</strong>: een regel per uitgaande
+        verbinding, met de tijd, het werkstation, de bestemming en hoeveel bytes omhoog (<code>up</code>) en omlaag
+        (<code>down</code>) gingen. Verstopt in het normale surfverkeer zitten twee verhalen: een <strong>C2-baken</strong>
+        en een <strong>grote upload</strong>. Je zoekt ze met de drie detectiehoeken: <strong>timing</strong>,
+        <strong>volume</strong> en <strong>bestemming</strong>.</p>
+
+        <h3>1. Timing — het baken vinden</h3>
+        <p>Filter op <code>c2relay</code> of op <code>ALERT</code>. Je ziet steeds hetzelfde werkstation
+        (<code>WS-MKT-04</code>) ongeveer elke minuut een piepklein POST'je (~230 bytes) naar
+        <code>cdn-telemetry.c2relay.jvt.lab</code> sturen. Kijk naar de seconden: 02:03:05, 02:04:01, 02:05:12, 02:06:03…
+        geen exact interval, maar een strakke band rond de 60 seconden — dat is jitter. Eén van die bakenregels bevat een
+        gedecodeerd C2-antwoord met een <code>tag=</code>: daar staat een vlag.</p>
+
+        <h3>2. Volume — de upload vinden</h3>
+        <p>Filter op <code>PUT</code> of zoek met een regex naar het grootste getal, bijvoorbeeld
+        <code>/up=\\d{7,}/</code> (zeven cijfers of meer). Eén regel springt eruit: <code>up=471859200</code>, een upload van
+        ongeveer 450 MB — duizenden keren groter dan al het andere egressverkeer. Dat is de exfiltratie van
+        <code>exfil.7z</code>.</p>
+
+        <h3>3. Bestemming — zeldzaam en nooit eerder gezien</h3>
+        <p>Waar ging die upload heen? Naar <code>opslag-x9f3.jvt.lab</code> — een domein dat verder nergens in de log
+        voorkomt en dat de organisatie nog nooit had bezocht. Zo'n <strong>zeldzame bestemming</strong> (rare / newly-seen
+        destination) is op zichzelf al een rode vlag; gecombineerd met een enorme upload is het een incident. De
+        soc-analist heeft die regel al gemarkeerd met een <code>soc_note=</code>: daar staat de tweede vlag.</p>
+
+        <div class="callout tip">
+          <strong>Filtertips (tekst of /regex/):</strong> <code>c2relay</code> (het baken), <code>PUT</code> (de upload),
+          <code>opslag-x9f3</code> (de rare bestemming), <code>/up=\\d{7,}/</code> (grote uploads),
+          <code>ALERT</code> (alles wat de proxy al opmerkelijk vond).
+        </div>
+        <div class="callout warn">
+          <strong>Precisie telt:</strong> de proxy zette <code>ALERT</code> op elk klein baken én op de upload. Een echte
+          analist zou het baken-alarm willen aggregeren (één melding per host per uur) zodat de ene belangrijke
+          upload-melding niet verdrinkt. Veel losse, loze alarmen leiden tot alertmoeheid.
+        </div>
+      `,
+      lab: {
+        type: 'logs',
+        title: 'egress-proxy.log — JVT, 11 okt 2026',
+        lines: EXFIL_PROXY_LOG,
+      },
+      questions: [
+        { q: 'Naar welk domein stuurt WS-MKT-04 ongeveer elke 60 seconden een klein, bijna even groot pakketje (beaconing)?', answer: ['cdn-telemetry.c2relay.jvt.lab'], hint: 'Filter op c2relay of op ALERT en kijk naar het herhaalde kleine POST-verkeer.', explain: 'De regelmatige kleine POSTs van ~230 bytes gaan naar cdn-telemetry.c2relay.jvt.lab: een C2-baken met jitter.' },
+        { q: 'Wat is de vlag in het gedecodeerde C2-antwoord (de baken-regel met tag=)?', answer: ['JVT{baken_ritme}'], encoded: true, hint: 'Filter op c2relay en zoek de regel met down=140 en een tag=.', explain: 'In het gedecodeerde antwoord "sleep=60;jitter=10" staat tag=JVT{baken_ritme}.' },
+        { q: 'Ongeveer hoeveel MB was de grote upload (up=471859200 bytes ÷ 1.048.576)?', answer: ['450', '450 MB', '450 mb'], hint: 'Filter op PUT of op /up=\\d{7,}/ en reken de bytes om.', explain: '471.859.200 ÷ 1.048.576 = 450 MB — exact het gecomprimeerde exfil.7z uit het flow-lab.' },
+        { q: 'Wat is de vlag in de soc_note bij de exfil-regel (de grote PUT)?', answer: ['JVT{egress_betrapt}'], encoded: true, hint: 'Filter op PUT of op opslag-x9f3 en lees het einde van die regel.', explain: 'De analist markeerde de upload naar de zeldzame bestemming met soc_note=JVT{egress_betrapt}.' },
+        { q: 'Waardoor is opslag-x9f3.jvt.lab op zichzelf al verdacht?', options: ['Het is een zeldzame bestemming die verder nergens in de log voorkomt en nooit eerder is bezocht', 'Het staat op de witte lijst', 'Het is een bekende zoekmachine', 'Het gebruikt poort 53'], answer: 0, explain: 'Een nooit eerder geziene bestemming (rare/newly-seen destination) is een rode vlag, zeker samen met een enorme upload.' },
+      ],
+    },
+
+    {
+      title: 'Taak 6 — Match de boze domeinen, mijd de legitieme',
+      content: `
+        <p>Een krachtige detectie-aanpak is <strong>bestemmingsanalyse</strong>: alarmeer of blokkeer op basis van wáár het
+        verkeer heen gaat. Maar je wilt alleen de kwaadaardige infrastructuur raken en de echte bedrijfsdomeinen met rust
+        laten. Eén te brede regel blokkeert per ongeluk <code>mail.google.com</code> en legt het halve kantoor plat; één te
+        smalle regel mist de aanvaller. Daarom oefen je het schrijven van een <strong>precies patroon</strong>.</p>
+
+        <h3>Het signalement</h3>
+        <p>Kijk eerst goed naar de twee lijsten in het lab. De kwaadaardige C2-/exfil-domeinen delen een kenmerk dat de
+        legitieme domeinen níet hebben. Let op: je kunt niet simpelweg op <code>.jvt.lab</code> matchen, want
+        <code>intranet.jvt.lab</code> is een gewoon, legitiem bedrijfsdomein. En een patroon dat alleen op "bevat een
+        cijfer" let, faalt ook: het legitieme <code>o365.portal.jvt.lab</code> (Office 365) bevat cijfers, en sommige boze
+        domeinen juist niet. Zoek het <em>gemeenschappelijke woord</em> in de parentdomeinen van de aanvaller.</p>
+
+        <div class="callout tip">
+          <strong>Hint:</strong> alle kwaadaardige domeinen dragen in hun naam een verwijzing naar hun functie —
+          <code>exfil</code>, <code>c2</code>, <code>beacon</code> of <code>datasink</code>. Eén regex met een
+          <em>alternatie</em> (<code>a|b|c</code>) die precies die woorden matcht, raakt alle boze en geen enkel legitiem
+          domein. Korter = mooier (dat is de "golf").
+        </div>
+
+        <h3>Zo werkt het lab</h3>
+        <p>Typ je patroon in het veld. Links zie je live per regel een ✓ of ✗ bij "moet matchen", rechts bij "mag niet
+        matchen". Zodra álle groene regels matchen en géén enkele rode, verschijnt "Opgelost" met de vlag. Je hebt geen
+        vlaggen (<code>flags</code>) nodig; alle domeinen zijn al kleine letters.</p>
+
+        <div class="callout info">
+          <strong>In het echt:</strong> zo'n lijst met "known-bad" domeinen komt uit threat intelligence. Nog sterker is
+          detecteren op <em>newly-seen domains</em> (domeinen die je organisatie nooit eerder bezocht) en op de
+          <em>entropie</em> van namen (veel willekeurige tekens = mogelijk een DGA, een domeingenerende algoritme). Een
+          patroon op vaste woorden is een begin, geen eindstation: aanvallers wisselen domeinen snel.
+        </div>
+      `,
+      lab: {
+        type: 'regexgolf',
+        title: 'Match de C2-/exfil-domeinen',
+        prompt: 'Schrijf één regex die álle kwaadaardige domeinen (links) matcht en géén enkel legitiem domein (rechts).',
+        flags: '',
+        match: [
+          'kd3.exfil.jvt.lab',
+          'node7.c2relay.jvt.lab',
+          'sync.datasink.jvt.lab',
+          'out.beacon.jvt.lab',
+          'a1f.exfil.jvt.lab',
+        ],
+        avoid: [
+          'www.nederbank.nl',
+          'intranet.jvt.lab',
+          'o365.portal.jvt.lab',
+          'mail.google.com',
+          'cdn.jsdelivr.net',
+          'portaal.gemeente.nl',
+        ],
+        flag: 'JVT{boze_domeinen_gevangen}',
+      },
+      questions: [
+        { q: 'Welk patroon lost het regexgolf-lab op (match alle boze, mijd alle legitieme)?', answer: ['exfil|c2|beacon|datasink'], hint: 'Een alternatie van de vier functiewoorden in de boze parentdomeinen.', explain: 'Het patroon exfil|c2|beacon|datasink raakt alle vijf kwaadaardige domeinen en geen enkel legitiem domein.' },
+        { q: 'Waarom werkt een patroon dat alleen op "bevat een cijfer" (\\d) let hier niet?', options: ['Het legitieme o365.portal.jvt.lab bevat cijfers, en sommige boze domeinen juist niet', 'Cijfers mogen niet in een regex', 'DNS staat geen cijfers toe', 'Omdat de flag i ontbreekt'], answer: 0, explain: 'o365.portal.jvt.lab (legitiem) heeft cijfers en zou ten onrechte matchen; out.beacon.jvt.lab (boos) heeft geen cijfer en zou gemist worden.' },
+        { q: 'Waarom kun je niet simpelweg op .jvt.lab matchen om de boze domeinen te vinden?', options: ['Omdat intranet.jvt.lab een legitiem bedrijfsdomein is dat je niet wilt raken', 'Omdat .jvt.lab niet bestaat', 'Omdat regex geen punten kent', 'Omdat alle boze domeinen op .nl eindigen'], answer: 0, explain: 'Legitiem en kwaadaardig verkeer delen hier hetzelfde .jvt.lab; je moet op het onderscheidende kenmerk matchen, niet op het gedeelde domein.' },
+        { q: 'Welke vlag verschijnt als je het regexgolf-lab oplost?', answer: ['JVT{boze_domeinen_gevangen}'], encoded: true, hint: 'Los het lab op; de vlag staat bij "Opgelost".', explain: 'Bij een correcte oplossing toont het lab JVT{boze_domeinen_gevangen}.' },
+      ],
+    },
+
+    {
+      title: 'Taak 7 — Reconstrueer de tijdlijn & rapporteer',
+      content: `
+        <p>Je hebt alle sporen verzameld: een baken, een staging-keten, datavolumes en een upload naar een rare bestemming.
+        Nu zet je ze in de <strong>juiste volgorde</strong>. Een heldere tijdlijn is de ruggengraat van elk forensisch
+        rapport: ze laat zien hoe de aanval zich ontvouwde en helpt de volgende keer eerder ingrijpen.</p>
+
+        <h3>De exfil-tijdlijn</h3>
+        <p>In het lab staan acht gebeurtenissen met hun tijdstip, geschud door elkaar. Zet ze chronologisch (▲/▼) en
+        controleer. De keten die je herkent, is: initiale toegang → beaconing → verkenning → staging/collectie →
+        compressie → encryptie → upload → opschonen. Bij een perfecte volgorde verschijnt de slotvlag.</p>
+
+        <h3>Van sporen naar rapport</h3>
+        <p>Scheid in je verslag <strong>feiten</strong> van <strong>interpretatie</strong>. Feit: "om 03:05 verstuurde
+        WS-FIN-03 een PUT van 471.859.200 bytes (±450 MB) naar het nooit eerder geziene domein opslag-x9f3.jvt.lab."
+        Interpretatie: "dit is vermoedelijk de exfiltratie van een gecomprimeerd, versleuteld archief met klant- en
+        HR-gegevens." Maak je werk <strong>reproduceerbaar</strong>: noem de bron (de pcap of het log), de hash ervan en de
+        exacte filters die je gebruikte, zodat een collega bij dezelfde data tot dezelfde conclusie komt.</p>
+
+        <div class="callout info">
+          <strong>Melden en samenwerken:</strong> gaat het om een echt datalek met persoonsgegevens (zoals die klant- en
+          HR-export), dan geldt mogelijk een meldplicht bij de <strong>Autoriteit Persoonsgegevens</strong>, en bij een
+          strafbaar feit kun je aangifte doen bij de <strong>Politie</strong>. Het <strong>NCSC</strong> deelt indicatoren
+          (zoals een C2-domein of een exfil-IP) zodat andere organisaties zich kunnen wapenen.
+        </div>
+        <div class="callout tip">
+          <strong>Wat je meeneemt:</strong> data is een stroom met een richting, een volume en een ritme. Exfiltratie
+          verraadt zich bijna altijd via minstens één daarvan — een ongewone egress-piek, een te regelmatig baken, een
+          vloed aan DNS-namen, of een upload naar een onbekende bestemming. Oefen deze analyse alleen op je eigen data of
+          met toestemming; afluisteren van netwerkverkeer raakt het telecommunicatiegeheim.
+        </div>
+      `,
+      lab: {
+        type: 'ordering',
+        title: 'Reconstrueer de exfil-tijdlijn',
+        prompt: 'Zet de acht gebeurtenissen in de juiste chronologische volgorde (van vroeg naar laat).',
+        items: [
+          { id: 'a', label: '01:58 — kwaadaardige macro in Factuur.docm start een verborgen PowerShell (initiale toegang)' },
+          { id: 'b', label: '02:03 — PowerShell checkt in bij C2 cdn-telemetry.c2relay.jvt.lab (beaconing begint)' },
+          { id: 'c', label: '02:12 — gedeelde mappen en bestanden in kaart gebracht (verkenning)' },
+          { id: 'd', label: '02:34 — klant-export en HR-dossiers gekopieerd naar SRV-ARCHIEF (staging/collectie)' },
+          { id: 'e', label: '03:01 — 7-Zip bundelt en comprimeert de buit tot exfil.7z (compressie)' },
+          { id: 'f', label: '03:03 — exfil.7z versleuteld met een wachtwoord (encryptie)' },
+          { id: 'g', label: '03:05 — exfil.7z (±450 MB) geüpload naar opslag-x9f3.jvt.lab (exfiltratie)' },
+          { id: 'h', label: '03:12 — logboeken gewist en tijdelijke bestanden verwijderd (opschonen)' },
+        ],
+        correct: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'],
+        flag: 'JVT{exfil_keten_compleet}',
+        explain: 'De keten: initiale toegang (01:58) → beaconing (02:03) → verkenning (02:12) → staging (02:34) → compressie (03:01) → encryptie (03:03) → upload (03:05) → opschonen (03:12).',
+      },
+      questions: [
+        { q: 'Welke stap komt in de exfil-keten direct ná de compressie?', options: ['Encryptie van het archief', 'De verkenning', 'De initiale toegang', 'Het beaconing'], answer: 0, explain: 'Volgorde: collectie/staging → compressie → encryptie → upload. Na comprimeren wordt het archief versleuteld.' },
+        { q: 'Welke vlag verschijnt als je de tijdlijn perfect reconstrueert?', answer: ['JVT{exfil_keten_compleet}'], encoded: true, hint: 'Los het ordering-lab op; de vlag staat bij een perfecte volgorde.', explain: 'Bij de juiste volgorde toont het lab JVT{exfil_keten_compleet}.' },
+        { q: 'Wat hoort in een forensisch rapport strikt gescheiden te blijven?', options: ['Feiten en interpretatie', 'Datum en tijd', 'Bytes en bits', 'Bron-IP en bestemmings-IP'], answer: 0, explain: 'Feiten (wat je zag) en interpretatie (wat het betekent) hou je uit elkaar, zodat je verslag controleerbaar blijft.' },
+        { q: 'Ik kan exfiltratie herkennen aan een ongewone richting, een groot volume, een te regelmatig ritme of een zeldzame bestemming.', noAnswer: true },
+      ],
+    },
+  ],
+  terms: [
+    { term: 'Datastroom (data flow)', def: 'Verkeer met een richting, een volume en een poort; te lezen als een stroom door het netwerk.' },
+    { term: 'Egress / ingress', def: 'Uitgaand (egress) tegenover inkomend (ingress) verkeer. Bij exfiltratie is de egress ongewoon groot.' },
+    { term: 'Data-egress', def: 'Het uitgaande datavolume van een organisatie; de hoek waarin exfiltratie zich het eerst verraadt.' },
+    { term: 'Exfiltratie', def: 'Het ongeoorloofd naar buiten brengen van data, vaak als één grote upload of druppelsgewijs.' },
+    { term: 'Beaconing', def: 'Het regelmatig "inchecken" van malware bij zijn C2-server; vaste intervallen en vaste kleine pakketgrootte.' },
+    { term: 'C2 (command-and-control)', def: 'De server waarmee besmette systemen contact houden om opdrachten te ontvangen.' },
+    { term: 'Jitter', def: 'Willekeurige variatie op het beacon-interval (bijv. 54–71s i.p.v. exact 60s) om detectie te bemoeilijken.' },
+    { term: 'DNS-tunneling', def: 'Data wegsmokkelen door het in DNS-queries te verpakken (lange, willekeurige subdomeinen naar één domein).' },
+    { term: 'Staging', def: 'De buit op één verzamelplaats (staging-host) samenbrengen vóór de upload.' },
+    { term: 'Baseline', def: 'Het gemeten "normale" patroon per host en tijdstip, waartegen een afwijking opvalt.' },
+    { term: 'Zeldzame bestemming (newly-seen domain)', def: 'Een nieuw of nooit eerder bezocht extern domein; op zichzelf al een rode vlag bij een grote upload.' },
+    { term: 'Egress-filtering', def: 'Het beperken en controleren van uitgaand verkeer, zodat exfiltratie en C2 moeilijker naar buiten komen.' },
+  ],
+  resources: [
+    { title: 'MITRE ATT&CK — T1041: Exfiltration Over C2 Channel', url: 'https://attack.mitre.org/techniques/T1041/' },
+    { title: 'MITRE ATT&CK — T1567: Exfiltration Over Web Service', url: 'https://attack.mitre.org/techniques/T1567/' },
+    { title: 'MITRE ATT&CK — T1071: Application Layer Protocol (C2)', url: 'https://attack.mitre.org/techniques/T1071/' },
+    { title: 'MITRE ATT&CK — T1071.004: DNS (DNS-tunneling als kanaal)', url: 'https://attack.mitre.org/techniques/T1071/004/' },
+    { title: 'NCSC — Nationaal Cyber Security Centrum', url: 'https://www.ncsc.nl/' },
+  ],
+});
+
+</script>
+<script>
 /* Room: OSINT-jacht — ontmasker de operator (puzzels) */
 
 const KOERIER_POST = `GELEKTE OPERATOR-POST — bron: fraudeforum DropZone (gearchiveerd kopie)
@@ -21911,6 +22399,486 @@ CS.registerRoom({
         { q: 'Waarom stelen de criminelen de data (exfiltratie) vóór ze versleutelen?', options: ['Omdat versleutelde data niet meer te kopiëren is en de gestolen data extra chantagemiddel oplevert', 'Omdat het sneller is', 'Omdat de politie dat voorschrijft', 'Dat maakt geen verschil'], answer: 0, explain: 'Bij double extortion is de gestolen data het tweede drukmiddel; na versleuteling kun je niets bruikbaars meer kopiëren.' },
         { q: 'Wat is de laatste stap van het crime script?', answer: ['cash-out', 'cashout'], hint: 'Het gaat om wat er met het losgeld gebeurt.', explain: 'De cash-out: het losgeld via een mixer naar een exchange sluizen om het te verzilveren.' },
         { q: 'Welke bonusvlag verdien je als je alle zes de rondes hebt gewonnen? (JVT{arcade_kampioen})', answer: ['JVT{arcade_kampioen}'], hint: 'De bonusvlag staat in de laatste callout en letterlijk in deze vraag.', explain: 'Alle rondes gehaald: JVT{arcade_kampioen}. Jij bent de arcade-kampioen!' },
+      ],
+    },
+  ],
+});
+
+</script>
+<script>
+/* Room: Puzzels & uitdagingen — Cybercrime-CTF "Operatie Spookgeld" (afsluitend) */
+
+// --- Onderschept bericht (station 2): Vigenère met sleutel "dojo" ---
+// Ontsleuteld: "De sleutel is dojo en de vlag luidt JVT{vigenere_gekraakt}"
+// (geverifieerd met de cipher-lab-functie; zie CRACK-REF).
+//
+// --- Campagne-tag (intro): Base64 ---
+// Y2FtcGFnbmUtdGFnOiBKVlR7c3RpbGxlX3Zlbm5vb3R9  ->  "campagne-tag: JVT{stille_vennoot}"
+
+CS.registerRoom({
+  id: 'cybercrime-ctf',
+  path: 'puzzels',
+  order: 5,
+  title: 'Cybercrime-CTF: Operatie Spookgeld',
+  icon: '🏴',
+  difficulty: 'Moeilijk',
+  minutes: 90,
+  summary: 'De afsluitende cybercrime-CTF. Als geautoriseerd onderzoeker ontrafel je in acht stations het volledig fictieve ransomware- en witwasnetwerk "De Spookgeld-bende": je kraakt een inlog-hash, ontcijfert een onderschept bericht, mapt de aanval op MITRE ATT&CK, volgt de buit in BTC naar de exchange, koppelt twee zaken via één certificaat, weegt de attributie met ACH en levert een BLUF-eindproduct. Onderweg verzamel je tien vlaggen.',
+  objectives: [
+    'Een hashtype herkennen en de inlog-hash met een woordenlijst kraken',
+    'Een onderschept, versleuteld bericht (Vigenère) ontcijferen',
+    'Waarnemingen koppelen aan de juiste MITRE ATT&CK-techniek',
+    'Een cryptostroom door katvangers en een mixer volgen naar de exchange',
+    'Twee zaken verbinden via een hergebruikt certificaat en de attributie afwegen met ACH',
+    'Een BLUF-intelligenceproduct schrijven en de operatie ethisch en reproduceerbaar afronden',
+  ],
+  terms: [
+    { term: 'CTF', def: 'Capture The Flag: een oefening waarin je uitdagingen oplost en geheime codes (vlaggen) verzamelt.' },
+    { term: 'Vlag (flag)', def: 'Een unieke code die bewijst dat je een uitdaging oploste, hier in het formaat JVT{...}.' },
+    { term: 'Ransomware', def: 'Afpersingssoftware die bestanden versleutelt; de dader eist losgeld voor de sleutel, vaak gecombineerd met diefstal van data (dubbele afpersing).' },
+    { term: 'Witwassen', def: 'Crimineel geld een legale schijn geven. Klassiek in drie stappen: placement (erin brengen), layering (verhullen via vele stappen) en integration (terug de echte economie in).' },
+    { term: 'Money mule (katvanger)', def: 'Iemand die zijn rekening of wallet beschikbaar stelt om crimineel geld door te sluizen, zodat het spoor naar de dader vertroebelt.' },
+    { term: 'Mixer (tumbler)', def: 'Een dienst die cryptomunten van veel gebruikers samenvoegt en weer uitkeert, om de herkomst van een bedrag te verhullen (layering).' },
+    { term: 'Exchange & KYC', def: 'Een wisseldienst waar crypto naar euro wordt omgezet. Omdat exchanges klanten moeten identificeren (Know Your Customer), zijn ze het knelpunt waar het spoor weer zichtbaar kan worden.' },
+    { term: 'Pivoten', def: 'Van het ene kenmerk naar het andere springen (domein -> IP -> certificaat -> wallet) om verborgen verbanden tussen zaken te vinden.' },
+    { term: 'Certificate transparency', def: 'Openbare logs van uitgegeven TLS-certificaten (zoals crt.sh), waarmee je een hergebruikt certificaat over meerdere domeinen kunt terugvinden.' },
+    { term: 'Attributie', def: 'De vraag wie achter een aanval zit. Lastig en foutgevoelig: gedeelde tooling (zoals dezelfde RaaS) is een aanwijzing, geen identiteitsbewijs.' },
+    { term: 'ACH', def: 'Analysis of Competing Hypotheses: je legt hypothesen naast elkaar en weerlegt ze; de hypothese met de minste inconsistenties blijft het langst overeind.' },
+    { term: 'BLUF', def: 'Bottom Line Up Front: de conclusie en het advies staan bovenaan, de onderbouwing eronder.' },
+  ],
+  resources: [
+    { title: 'MITRE ATT&CK — kennisbank van aanvalsgedrag', url: 'https://attack.mitre.org/' },
+    { title: 'crt.sh — zoeken in certificate transparency-logs', url: 'https://crt.sh/' },
+    { title: 'No More Ransom — gratis decryptietools en preventie', url: 'https://www.nomoreransom.org/' },
+    { title: 'NCSC — Nationaal Cyber Security Centrum', url: 'https://www.ncsc.nl/' },
+  ],
+  tasks: [
+    {
+      title: 'Taak 1 — De opdracht: Operatie Spookgeld',
+      content: `
+        <p>Welkom bij de afsluitende puzzel van dit leerpad, onderzoeker. In <strong>Operatie Spookgeld</strong> werk je
+        in een (fictief) gezamenlijk cybercrimeteam aan een netwerk dat wij "De Spookgeld-bende" noemen: ze breken binnen,
+        gijzelen bestanden met <strong>ransomware</strong> en <strong>wassen</strong> het losgeld wit via cryptomunten.
+        Alles in deze room is <strong>verzonnen</strong>: de IP-adressen zijn documentatie-adressen (RFC&nbsp;5737), de
+        domeinen eindigen op <code>.jvt.lab</code> en je werkt met bewijs dat rechtmatig is veiliggesteld.</p>
+
+        <p>Je bent <strong>geautoriseerd</strong>: er ligt een bevel en je blijft binnen de wettelijke kaders (zoals
+        art.&nbsp;126j&nbsp;Sv en de Wet politiegegevens). Dat is cruciaal, want precies dezelfde handelingen zonder
+        toestemming zijn strafbaar: inbreken op een computer is <strong>computervredebreuk</strong>
+        (art.&nbsp;138ab&nbsp;Sr). Jij valt niets aan en betaalt nooit blind losgeld; je <em>analyseert</em> en
+        <em>volgt het spoor</em>.</p>
+
+        <p>Je doorloopt acht stations die samen de hele keten vormen: <strong>toegang &rarr; uitvoering &rarr; buit
+        &rarr; witwassen &rarr; attributie &rarr; product</strong>. Per station verdien je minstens één vlag
+        (<code>JVT{...}</code>); in totaal zijn het er tien. Houd, net als in het echt, een korte <strong>write-up</strong>
+        bij: noteer per station wat je deed en wat je vond.</p>
+
+        <p>In een onderschept chatlog liet de bende een gecodeerde <em>campagne-tag</em> achter:</p>
+        <pre><code>Y2FtcGFnbmUtdGFnOiBKVlR7c3RpbGxlX3Zlbm5vb3R9</code></pre>
+        <p>Het is geen hash maar <strong>Base64</strong> (letters, cijfers, eindigt op <code>=</code>). Decodeer de string
+        met een decoder uit een eerdere room en je leest de eerste verborgen vlag.</p>
+
+        <div class="callout tip"><strong>Startschot:</strong> als bewijs dat je de operatie bent gestart, krijg je de
+        eerste vlag cadeau: <code>JVT{spookgeld_gestart}</code>. De rest verdien je onderweg.</div>
+
+        <div class="callout danger"><strong>Ethiek, eerst:</strong> deze technieken oefen je uitsluitend in dit lab of
+        met een rechtmatige grondslag. Buiten je opdracht ben je geen onderzoeker maar een verdachte (art.&nbsp;138ab&nbsp;Sr).</div>
+      `,
+      questions: [
+        { q: 'Wat maakt jouw onderzoek rechtmatig in plaats van strafbaar?', options: ['Dat de bende fictief is', 'Een rechtmatige grondslag/bevel binnen de wettelijke kaders (art. 126j Sv, Wpg)', 'Dat je tien vlaggen zoekt', 'Dat je het snel doet'], answer: 1, explain: 'Een wettelijke grondslag is de grens tussen rechtmatig onderzoek en computervredebreuk (art. 138ab Sr). Zonder bevel zou je zelf strafbaar zijn.' },
+        { q: 'Decodeer de Base64-campagne-tag. Welke vlag staat erin?', answer: ['JVT{stille_vennoot}'], encoded: true, hint: 'Haal de string door een Base64-decoder; er staat "campagne-tag: ..." voor.', explain: 'De Base64 decodeert naar "campagne-tag: JVT{stille_vennoot}".' },
+        { q: 'Wat is de startvlag van deze operatie?', answer: ['JVT{spookgeld_gestart}'], hint: 'Staat in de tip-callout als startschot.', explain: 'De startvlag is JVT{spookgeld_gestart}.' },
+        { q: 'Ik heb een rechtmatige grondslag en werk de dump station voor station uit, zonder blind te betalen.', noAnswer: true },
+      ],
+    },
+
+    {
+      title: 'Station 1 — Toegang (deel A): herken de inlog-hash',
+      content: `
+        <p>Het eerste bestand in de dump is <code>portaal-users.txt</code>: een wachtwoord-hash van het beheeraccount van
+        het onderhandelingsportaal van de bende. Een goede onderzoeker begint nooit met kraken, maar met één vraag:
+        <strong>wat voor hash is dit eigenlijk?</strong> Kies je het verkeerde algoritme, dan kan geen enkele gok ooit
+        kloppen.</p>
+
+        <p>De hash luidt:</p>
+        <pre><code>48df3bc2a17177090cdb63ca2b7e5807beaabcd7</code></pre>
+
+        <p>Gebruik de hash-herkenner hieronder (de hash staat er al in). Een tool als <em>hash-id</em> kijkt naar twee
+        dingen: de <strong>lengte</strong> en de <strong>vorm</strong>. Tel de tekens: het zijn er precies
+        <strong>40</strong>. Dat is het kenmerk van <strong>SHA-1</strong> (160 bits = 20 bytes = 40 hex-tekens). Ter
+        vergelijking: 32 hex-tekens wijzen op MD5 of NTLM, 64 op SHA-256.</p>
+
+        <p>SHA-1 is bovendien <strong>verouderd</strong> (er zijn botsingen bekend) en hier wordt het <strong>zonder
+        salt</strong> gebruikt. Daardoor blijft elke losse gok razendsnel te berekenen en werkt een woordenlijstaanval
+        nog prima. Dat buit je in deel B uit.</p>
+
+        <div class="callout tip"><strong>Tip:</strong> eerst herkennen, dan de aanval kiezen. Zou je deze 40-teken-hash
+        als MD5 (32 tekens) proberen te kraken, dan vergelijk je per definitie hashes van de verkeerde lengte — dat matcht
+        nooit.</div>
+      `,
+      lab: { type: 'hashid', value: '48df3bc2a17177090cdb63ca2b7e5807beaabcd7' },
+      questions: [
+        { q: 'Welk hashtype is dit, gezien de 40 hex-tekens?', options: ['MD5', 'SHA-1', 'SHA-256', 'NTLM'], answer: 1, explain: '40 hex-tekens = 160 bits = SHA-1.' },
+        { q: 'Waarom is deze (ongesalte) SHA-1-hash kwetsbaar voor een woordenlijstaanval?', options: ['Omdat SHA-1 geheim is', 'Omdat elke losse gok razendsnel te berekenen is en er geen salt per wachtwoord is', 'Omdat de hash te kort is om te kraken', 'Dat is hij niet'], answer: 1, explain: 'Zonder salt en met een snel algoritme kan een aanvaller enorme aantallen gokken per seconde proberen.' },
+      ],
+    },
+
+    {
+      title: 'Station 1 — Toegang (deel B): kraak de inlog-hash',
+      content: `
+        <p>Je weet nu dat het om <strong>SHA-1</strong> gaat. Tijd om te kraken. De hash-kraker hieronder staat al op het
+        juiste algoritme (je ziet "Doel-hash (SHA1)" bovenaan) en bevat dezelfde hash als in deel A.</p>
+
+        <pre><code>48df3bc2a17177090cdb63ca2b7e5807beaabcd7</code></pre>
+
+        <p>Start de <strong>woordenlijstaanval</strong>: de tool hasht elk woord uit de lijst en vergelijkt het met de
+        doel-hash. Het wachtwoord staat in de lijst. Het ziet er sterk uit — hoofdletters én cijfers — maar het is een
+        bedrijfsthema-wachtwoord dat allang in een gelekte woordenlijst staat. Dat is precies de les: <strong>lengte en
+        hoofdletters maken een wachtwoord niet veilig als het voorspelbaar is</strong>. Lukt het niet meteen? Je mag eigen
+        gokken toevoegen en de <strong>regels (mangling)</strong> aanzetten (hoofdletter vooraan, een jaartal erachter),
+        net zoals Hashcat en John the Ripper dat doen.</p>
+
+        <p>Zodra je de hash kraakt, log je met dat wachtwoord in op het beheerportaal van de bende. Het dashboard
+        verwelkomt je en toont de vlag <strong>JVT{eerste_toegang}</strong>. Noteer zowel het gekraakte wachtwoord als de
+        vlag in je write-up.</p>
+
+        <div class="callout warn"><strong>Les voor later:</strong> SHA-1, MD5 én SHA-256 zijn razendsnel te berekenen.
+        Wachtwoorden hoor je op te slaan met een traag, gesalt algoritme zoals <strong>bcrypt</strong>,
+        <strong>scrypt</strong> of <strong>Argon2</strong>.</div>
+      `,
+      lab: {
+        type: 'hashcrack',
+        algo: 'sha1',
+        hash: '48df3bc2a17177090cdb63ca2b7e5807beaabcd7',
+        wordlist: ['welkom', 'zomer2024', 'admin', 'voetbal', 'qwerty', 'computer', 'amsterdam', 'KoffieKlap2026'],
+      },
+      questions: [
+        { q: 'Wat is het gekraakte wachtwoord van het beheeraccount?', answer: ['KoffieKlap2026'], hint: 'Start de woordenlijstaanval op SHA-1; het is een bedrijfsthema-wachtwoord met een jaartal.', explain: 'De SHA-1-hash 48df3bc2... hoort bij het wachtwoord "KoffieKlap2026".' },
+        { q: 'Welke vlag toont het beheerportaal nadat je bent ingelogd?', answer: ['JVT{eerste_toegang}'], hint: 'Staat in de uitleg van deze taak, als beloning voor het kraken.', explain: 'Met het gekraakte wachtwoord krijg je toegang: JVT{eerste_toegang}.' },
+      ],
+    },
+
+    {
+      title: 'Station 2 — Het onderschepte bericht',
+      content: `
+        <p>In het portaal vind je een interne chat tussen twee bendeleden. Eén regel is "beveiligd": geen hash, maar een
+        <strong>versleuteld</strong> bericht. In tegenstelling tot codering (Base64, hex) heeft echte versleuteling een
+        <strong>sleutel</strong> nodig. Dit is een <strong>Vigenère-cijfer</strong>: elke letter is verschoven volgens een
+        herhalend sleutelwoord. Zonder de sleutel is het lastig; mét de sleutel valt het in één keer open.</p>
+
+        <p>Het onderschepte bericht luidt:</p>
+        <pre><code>Gs bzhicso wb rrxx sq rn joop zxwmh MJC{jlunbhfn_uhyaodyc}</code></pre>
+
+        <p>Uit een eerder bericht wisten we al dat deze bende voor interne berichten steevast het sleutelwoord
+        <strong>dojo</strong> gebruikt. Gebruik het cijfer-lab hieronder, kies de methode <strong>Vigenère</strong> en vul
+        de sleutel <code>dojo</code> in. Het bericht wordt dan leesbaar Nederlands, met daarin de vlag.</p>
+
+        <p>Omdat de vlag pas <em>ná</em> ontsleutelen verschijnt (in de ciphertext staat <code>MJC{...}</code>, niet de
+        echte vlag), is dit precies een geval waarin je de vraag met <code>encoded</code> markeert: je leidt de vlag zelf
+        af.</p>
+
+        <div class="callout info"><strong>Onthoud:</strong> een Vigenère met een kort, voorspelbaar sleutelwoord is nog
+        steeds zwak. Ken je de sleutel niet, dan helpen herhalingen in de tekst (Kasiski) of korte veelvoorkomende woorden
+        je op weg. Codering en klassieke cijfers zijn geen vervanging voor moderne encryptie.</div>
+      `,
+      lab: { type: 'cipher', text: 'Gs bzhicso wb rrxx sq rn joop zxwmh MJC{jlunbhfn_uhyaodyc}' },
+      questions: [
+        { q: 'Welk sleutelwoord maakt het Vigenère-bericht leesbaar?', answer: ['dojo'], hint: 'Staat in de taaktekst: de bende gebruikt steeds hetzelfde korte woord.', explain: 'Met de sleutel "dojo" ontsleutelt het bericht naar leesbaar Nederlands.' },
+        { q: 'Wat is de vlag na het ontcijferen van het Vigenère-bericht?', answer: ['JVT{vigenere_gekraakt}'], encoded: true, hint: 'Kies Vigenère, vul sleutel "dojo" in; de zin eindigt op de vlag.', explain: 'Ontsleuteld staat er: "De sleutel is dojo en de vlag luidt JVT{vigenere_gekraakt}".' },
+      ],
+    },
+
+    {
+      title: 'Station 3 — De aanval op MITRE ATT&CK',
+      content: `
+        <p>Nu je binnen bent, reconstrueer je <em>hoe</em> de bende te werk ging bij het slachtoffer. Voor detectie en om
+        te delen met andere teams heb je een <strong>gemeenschappelijke taal</strong> nodig: MITRE ATT&amp;CK. Je koppelt
+        elke concrete waarneming uit de logs aan een <strong>techniek</strong> met een vast ID. Let op het verschil: een
+        <em>tactiek</em> is het doel (waarom), een <em>techniek</em> is de manier (hoe). Kies in het lab steeds de techniek,
+        niet alleen de tactiek.</p>
+
+        <p>Een paar waarnemingen vooraf, zodat je het patroon ziet:</p>
+        <ul>
+          <li>Inloggen met <strong>geldige, gekochte</strong> inloggegevens is technisch een "correcte" login en dus lastig
+          te detecteren.</li>
+          <li><code>rundll32.exe</code> dat <code>lsass.exe</code> opent (GrantedAccess 0x1010) is het uitlezen van
+          wachtwoorden uit het <strong>LSASS-geheugen</strong>.</li>
+          <li>Data <strong>inpakken</strong> met 7-Zip en daarna <strong>uploaden</strong> naar een clouddienst vlak vóór
+          de versleuteling is het draaiboek van <em>dubbele afpersing</em>.</li>
+        </ul>
+
+        <p>In het lab staan zes waarnemingen uit de tijdlijn. Kies bij elke waarneming de juiste ATT&amp;CK-techniek uit de
+        bank; bij <em>Controleer</em> zie je naam en tactiek. Heb je alle zes goed, dan heb je de keten in kaart en verdien
+        je de vlag <strong>JVT{keten_gemapt}</strong>.</p>
+
+        <div class="callout warn"><strong>Let op de context:</strong> dezelfde techniek kan bij meerdere tactieken horen.
+        Het doel in de situatie bepaalt de tactiek, niet de tool op zichzelf.</div>
+      `,
+      lab: {
+        type: 'attackmap',
+        items: [
+          { desc: 'Het serviceaccount svc-herstel logt in op de VPN met geldige, eerder bij een IAB gekochte inloggegevens.', code: 'T1078', explain: 'Valid Accounts: een geldige login is technisch "correct" en moeilijk te detecteren; je herkent hem aan afwijkend gedrag (tijdstip, bron).' },
+          { desc: 'powershell.exe -w hidden -enc <base64> start een verborgen, gecodeerde opdracht om de volgende fase te laden.', code: 'T1059.001', explain: 'PowerShell (Execution): met -enc wordt de opdracht in Base64 verhuld.' },
+          { desc: 'rundll32.exe opent lsass.exe (GrantedAccess 0x1010) om wachtwoorden uit het geheugen te lezen.', code: 'T1003.001', explain: 'LSASS Memory (Credential Access): inloggegevens uit het LSASS-proces dumpen.' },
+          { desc: 'Met het gestolen account wordt via RDP doorgesprongen naar fileserver SRV-FS02.', code: 'T1021.001', explain: 'Remote Desktop Protocol (Lateral Movement): zijdelings bewegen met geldige toegang.' },
+          { desc: '7z.exe pakt de map met klantcontracten in één wachtwoordbeveiligd archief.', code: 'T1560', explain: 'Archive Collected Data (Collection): data inpakken vóór exfiltratie.' },
+          { desc: 'Vlak vóór de versleuteling wordt 6 GB naar een externe cloud-opslagdienst geüpload.', code: 'T1567', explain: 'Exfiltration Over Web Service (Exfiltration): wegsluizen via een legitiem ogende clouddienst — de basis van dubbele afpersing.' },
+        ],
+      },
+      questions: [
+        { q: 'Welk techniek-ID hoort bij het uitlezen van LSASS-geheugen?', answer: ['T1003.001'], hint: 'Credential Access, sub-techniek van OS Credential Dumping.', explain: 'T1003.001 (LSASS Memory) valt onder Credential Access.' },
+        { q: 'Welk techniek-ID past bij het uploaden van data naar een externe clouddienst vóór de versleuteling?', answer: ['T1567'], hint: 'Exfiltration Over Web Service.', explain: 'T1567 (Exfiltration Over Web Service): hét kenmerk van dubbele afpersing.' },
+        { q: 'Het inloggen met een geldig maar gestolen serviceaccount is in ATT&CK vooral welke techniek?', options: ['T1078 Valid Accounts', 'T1486 Data Encrypted for Impact', 'T1110 Brute Force', 'T1083 File and Directory Discovery'], answer: 0, explain: 'T1078 Valid Accounts: geen bruteforce, maar misbruik van echte inloggegevens.' },
+        { q: 'Welke vlag verdien je als je de hele keten correct mapt?', answer: ['JVT{keten_gemapt}'], hint: 'Staat in de uitleg van deze taak, als beloning.', explain: 'Alle zes waarnemingen juist gekoppeld levert JVT{keten_gemapt} op.' },
+      ],
+    },
+
+    {
+      title: 'Station 4 — Follow the money: de buit in BTC',
+      content: `
+        <p>De bende perste <strong>Spoedbouw Nederland</strong> af en kreeg het losgeld in <strong>bitcoin</strong>. Nu
+        volg je de buit: <strong>follow the money</strong>. Crimineel geld wordt <em>witgewassen</em> door het in veel
+        stappen te verhullen (layering). Je ziet hier het klassieke patroon: het losgeld wordt <strong>gesplitst</strong>
+        over twee <strong>katvangers</strong> (money mules), samengevoegd in een <strong>mixer</strong> die de herkomst
+        vertroebelt, en ten slotte uitbetaald bij een <strong>exchange</strong>.</p>
+
+        <p>Gebruik het stroom-lab hieronder. Klik op een knoop om in- en uitgaand verkeer te zien, of lees de
+        transactieledger. <strong>Reken na</strong>: tel op wat een knoop binnenkomt en uitgaat. Twee dingen vallen op.
+        Ten eerste houden de katvangers en de mixer een <strong>fee</strong> in, dus er "verdampt" onderweg wat. Ten
+        tweede komt alles uiteindelijk samen bij de <strong>exchange</strong> — en dat is het <strong>knelpunt</strong>:
+        om crypto naar euro te wisselen moet iemand zich identificeren (KYC). Precies dáár kan het spoor weer zichtbaar
+        worden.</p>
+
+        <p>Beantwoord de vragen in het lab (reken ze uit de ledger) én hieronder. Doorzie je dat de exchange het
+        cash-out-knelpunt is, dan verdien je de vlag <strong>JVT{spoor_naar_de_exchange}</strong>.</p>
+
+        <div class="callout danger"><strong>Nooit blind betalen:</strong> losgeld betalen financiert de volgende aanval en
+        geeft geen garantie. Het spoor volgen tot aan een exchange (met KYC-plicht) is juist het aangrijpingspunt voor
+        opsporing en bevriezing.</div>
+      `,
+      lab: {
+        type: 'flow',
+        title: 'Operatie Spookgeld — de losgeldstroom',
+        unit: 'BTC',
+        scenario: 'Spoedbouw Nederland betaalt het losgeld in BTC. Volg het geld: splitsing over twee katvangers, samenvoegen in een mixer, cash-out bij een exchange. Reken de bedragen na.',
+        nodes: [
+          { id: 'v', type: 'victim', label: 'Spoedbouw Nederland' },
+          { id: 'm1', type: 'mule', label: 'Katvanger 1' },
+          { id: 'm2', type: 'mule', label: 'Katvanger 2' },
+          { id: 'mix', type: 'mixer', label: 'Mixer Nevelsluis' },
+          { id: 'ex', type: 'exchange', label: 'Wisselhuis Delta' },
+        ],
+        edges: [
+          { from: 'v', to: 'm1', amount: 2.5, time: '2026-03-02 09:10', note: 'eerste deel losgeld' },
+          { from: 'v', to: 'm2', amount: 1.5, time: '2026-03-02 09:12', note: 'tweede deel losgeld' },
+          { from: 'm1', to: 'mix', amount: 2.45, time: '2026-03-02 11:40', note: 'katvanger houdt 0,05 commissie' },
+          { from: 'm2', to: 'mix', amount: 1.45, time: '2026-03-02 11:55', note: 'katvanger houdt 0,05 commissie' },
+          { from: 'mix', to: 'ex', amount: 3.80, time: '2026-03-03 02:30', note: 'mixer houdt 0,10 fee; cash-out bij exchange' },
+        ],
+        ask: [
+          { q: 'Hoeveel BTC betaalt Spoedbouw in totaal als losgeld (de som die de slachtofferknoop uitstuurt)?', answer: ['4', '4.0', '4,0', '4 btc'], hint: 'Tel de twee uitgaande transacties van het slachtoffer op.', explain: '2,5 + 1,5 = 4,0 BTC gaat de deur uit naar de twee katvangers.' },
+          { q: 'Hoeveel BTC komt uiteindelijk bij de exchange (Wisselhuis Delta) aan?', answer: ['3.8', '3.80', '3,8', '3,80', '3.8 btc'], hint: 'Kijk naar de inkomende transactie bij de exchange.', explain: 'De mixer stuurt 3,80 BTC door naar de exchange.' },
+          { q: 'Hoeveel BTC blijft onderweg achter als kosten (commissies + mixer-fee)?', answer: ['0.2', '0.20', '0,2', '0,20', '0.2 btc'], hint: 'Verschil tussen wat erin gaat (4,0) en wat de exchange ontvangt (3,8).', explain: '4,0 − 3,8 = 0,2 BTC aan fees (2×0,05 katvangers + 0,10 mixer).' },
+        ],
+      },
+      questions: [
+        { q: 'Hoeveel BTC komt uiteindelijk bij de exchange aan?', answer: ['3.8', '3.80', '3,8', '3,80'], hint: 'Lees de inkomende transactie bij Wisselhuis Delta in de ledger.', explain: 'De mixer stuurt 3,80 BTC naar de exchange; dat is wat er aankomt.' },
+        { q: 'Bij welk type knoop is KYC het grote knelpunt waar het spoor weer zichtbaar kan worden?', options: ['De mixer', 'De exchange', 'De katvanger', 'Het slachtoffer'], answer: 1, explain: 'De exchange moet klanten identificeren (KYC); daar komt de stroom samen en kan het spoor weer oppikbaar worden.' },
+        { q: 'Welke vlag hoort bij het volgen van de buit naar de cash-out?', answer: ['JVT{spoor_naar_de_exchange}'], hint: 'Staat in de uitleg van deze taak, als beloning.', explain: 'Het geld volgen tot aan de exchange levert JVT{spoor_naar_de_exchange} op.' },
+      ],
+    },
+
+    {
+      title: 'Station 5 — Pivoten: koppel twee zaken',
+      content: `
+        <p>De bende phishte om toegang te stelen, en die phishinginfrastructuur laat sporen na. <strong>Pivoten</strong> is
+        van het ene kenmerk naar het andere springen — domein &rarr; IP &rarr; certificaat &rarr; e-mail &rarr; wallet —
+        om verborgen verbanden tussen zaken te vinden. Je doet dit <strong>passief</strong>: open bronnen (WHOIS/RIPEstat,
+        passive DNS, certificate transparency via crt.sh). Je benadert de infrastructuur van de verdachte nooit zelf
+        (opsec).</p>
+
+        <p>In het lab staan twee fictieve zaken. <strong>Zaak Alpha</strong> (<code>betaal-controle.jvt.lab</code>) is de
+        phishing waarmee de bende de toegang bij Spoedbouw stal. <strong>Zaak Bravo</strong>
+        (<code>inlog-verificatie.jvt.lab</code>) is een losse zaak van een ander team. Op het eerste gezicht lijken ze niet
+        verbonden: ze draaien op <em>verschillende</em> IP-adressen. Jouw taak: vind het kenmerk dat ze tóch verbindt.</p>
+
+        <p>Pas de <strong>zeldzaamheidstoets</strong> toe: niet elk gedeeld kenmerk is bewijs. Je ziet dat beide IP's bij
+        <strong>dezelfde hostingprovider (ASN)</strong> horen — verleidelijk, maar zwak, want duizenden onschuldige sites
+        delen die hoster. Een <strong>hergebruikt TLS-certificaat</strong> is daarentegen <em>zeldzaam</em>: dezelfde
+        certificaat-fingerprint op twee los lijkende domeinen is een sterke aanwijzing dat dezelfde hand erachter zit.
+        <strong>Hoe zeldzamer het gedeelde kenmerk, hoe sterker de link.</strong></p>
+
+        <p>Pivoteer door de entiteiten aan te klikken, let op <strong>tijd</strong> en <strong>herkomst</strong> bij elke
+        relatie, en typ het bruggende kenmerk in. Herken je dat het certificaat (en niet het ASN) de echte brug is, dan
+        verdien je de vlag <strong>JVT{cert_is_de_brug}</strong>.</p>
+
+        <div class="callout warn"><strong>Blijf kritisch:</strong> "beide domeinen presenteren certificaat A1B2C3D4" is
+        <em>bekend</em>. "Dezelfde actor beheert beide" is <em>afgeleid</em>. "Het is dezelfde persoon als in zaak X vorig
+        jaar" zou een <em>aanname</em> zijn tot je meer zeldzame overlap vindt.</div>
+      `,
+      lab: {
+        type: 'pivot',
+        title: 'Zaak Alpha (bende-phishing) vs. Zaak Bravo',
+        scenario: 'Zaak Alpha stal de toegang bij Spoedbouw. Zaak Bravo is een losse phishingzaak. Wat verbindt ze? Toets de zeldzaamheid van elk gedeeld kenmerk.',
+        entities: [
+          { id: 'dA', type: 'domain', label: 'betaal-controle.jvt.lab' },
+          { id: 'ipA', type: 'ip', label: '203.0.113.10' },
+          { id: 'dB', type: 'domain', label: 'inlog-verificatie.jvt.lab' },
+          { id: 'ipB', type: 'ip', label: '198.51.100.20' },
+          { id: 'cert', type: 'cert', label: 'A1B2C3D4' },
+          { id: 'wal', type: 'wallet', label: 'bc1qfictief0alpha' },
+          { id: 'mail', type: 'email', label: 'beheer@betaal-controle.jvt.lab' },
+          { id: 'asn', type: 'asn', label: 'AS64500 FictiefHost' },
+        ],
+        edges: [
+          { from: 'dA', to: 'ipA', rel: 'resolvet naar', time: '2026-01', source: 'passive DNS' },
+          { from: 'dA', to: 'cert', rel: 'presenteert cert', time: '2026-01', source: 'crt.sh' },
+          { from: 'dA', to: 'mail', rel: 'WHOIS-contact', time: '2026-01', source: 'WHOIS' },
+          { from: 'dA', to: 'wal', rel: 'losgeld-adres', time: '2026-01', source: 'rapport' },
+          { from: 'dB', to: 'ipB', rel: 'resolvet naar', time: '2026-02', source: 'passive DNS' },
+          { from: 'dB', to: 'cert', rel: 'presenteert cert', time: '2026-02', source: 'crt.sh' },
+          { from: 'ipA', to: 'asn', rel: 'hoort bij (hosting)', time: '2026-01', source: 'RIPEstat' },
+          { from: 'ipB', to: 'asn', rel: 'hoort bij (hosting)', time: '2026-02', source: 'RIPEstat' },
+        ],
+        goal: 'Welk kenmerk verbindt Zaak Alpha en Zaak Bravo? (typ het label of het type)',
+        bridge: ['A1B2C3D4', 'cert', 'certificaat'],
+      },
+      questions: [
+        { q: 'Welk zeldzaam kenmerk bruggt Zaak Alpha en Zaak Bravo?', answer: ['certificaat', 'cert', 'A1B2C3D4', 'het certificaat', 'tls-certificaat'], hint: 'Hetzelfde kenmerk staat in crt.sh bij beide domeinen; de IP-adressen verschillen juist.', explain: 'Beide domeinen presenteren hetzelfde TLS-certificaat A1B2C3D4 (bekend). Een hergebruikt certificaat is zeldzaam, dus een sterke brug.' },
+        { q: 'Beide IP-adressen horen bij dezelfde hostingprovider (AS64500). Waarom is dat geen sterke brug?', options: ['Omdat heel veel onschuldige sites dezelfde hostingprovider delen — het kenmerk is niet zeldzaam', 'Omdat ASN-nummers altijd nep zijn', 'Omdat hosting niets met IP-adressen te maken heeft', 'Dat is wél een sterke brug'], answer: 0, explain: 'Een gedeelde hoster is te algemeen: de zeldzaamheidstoets bepaalt of een gedeeld kenmerk echt bewijs is.' },
+        { q: 'Welke vlag verdien je door de zeldzaamheidstoets juist toe te passen?', answer: ['JVT{cert_is_de_brug}'], hint: 'Staat in de uitleg van deze taak.', explain: 'Kies het zeldzame dwarsverband (het certificaat), niet het toevallige (de hoster): JVT{cert_is_de_brug}.' },
+      ],
+    },
+
+    {
+      title: 'Station 6 — Attributie met ACH',
+      content: `
+        <p>Nu de lastigste stap: <strong>wie</strong> zit erachter? Attributie is gevaarlijk terrein, want hier worden de
+        meeste denkfouten gemaakt. Je gebruikt <strong>Analysis of Competing Hypotheses (ACH)</strong>: je zet de
+        hypothesen naast elkaar en je <em>weerlegt</em> ze. De hypothese met de <strong>minste inconsistenties (I)</strong>
+        blijft het langst overeind. Je zoekt dus niet naar bevestiging, maar naar tegenspraak.</p>
+
+        <p>De grootste valkuil is <strong>"tool = actor"</strong>. Deze aanval gebruikte een bekende RaaS. Verleidelijk om
+        te zeggen: "dus het is de groep achter die RaaS." Maar een RaaS wordt door <em>tientallen</em> affiliates gehuurd.
+        In de matrix zie je dit terug: de waarneming "bekende RaaS" is bij álle hypothesen consistent en dus
+        <strong>niet-diagnostisch</strong> — die helpt je niet kiezen. Het lab markeert zulk bewijs.</p>
+
+        <p>In het lab staat de vraag "wie zit achter de aanval?" met drie hypothesen: een <strong>statelijke actor</strong>,
+        een <strong>financieel gemotiveerde cybercrimebende</strong> die toegang kocht bij een IAB, en een
+        <strong>ontevreden insider</strong>. Vul de matrix in met C (consistent), I (inconsistent) of N (neutraal), tel de
+        I's en vergelijk met het expertoordeel.</p>
+
+        <p>Reken mee: in het expertoordeel houdt de <strong>cybercrimebende 0</strong> inconsistenties over, de
+        <strong>statelijke actor 3</strong> en de <strong>insider 4</strong>. Er is dus één duidelijke, <strong>unieke</strong>
+        winnaar met de laagste I-score. Herken je dat de bende het scherpst overeind blijft, dan verdien je de vlag
+        <strong>JVT{dader_het_scherpst}</strong>.</p>
+
+        <div class="callout danger"><strong>Verantwoord attribueren:</strong> schrijf nooit "het is groep X" als je dat
+        niet kunt onderbouwen. Schrijf: "de waarnemingen passen het best bij een financieel gemotiveerde cybercrimebende
+        (afgeleid); een specifieke groep kunnen we nu niet met zekerheid aanwijzen (aanname)."</div>
+      `,
+      lab: {
+        type: 'ach',
+        question: 'Wie zit achter de aanval op Spoedbouw Nederland?',
+        hypotheses: ['Statelijke actor (spionage/sabotage)', 'Financieel gemotiveerde cybercrimebende (kocht toegang bij een IAB)', 'Ontevreden insider bij Spoedbouw'],
+        evidence: [
+          { text: 'Er is losgeld in BTC geëist via een Tor-portaal, met dreiging om gestolen data op een leksite te publiceren (dubbele afpersing).', expert: ['I', 'C', 'I'] },
+          { text: 'De eerste toegang is aantoonbaar gekocht: de VPN-gegevens van svc-herstel circuleerden eerder bij een Initial Access Broker op een crimineel forum.', expert: ['I', 'C', 'I'] },
+          { text: 'De gebruikte ransomware is een bekende Ransomware-as-a-Service die door tientallen affiliates wordt gehuurd.', expert: ['C', 'C', 'C'] },
+          { text: 'De slachtoffers over meerdere zaken zitten in uiteenlopende sectoren zonder politieke of strategische rode draad; de keuze oogt opportunistisch.', expert: ['I', 'C', 'I'] },
+          { text: 'Vlak vóór de versleuteling is data in bulk naar een externe clouddienst weggesluisd.', expert: ['N', 'C', 'N'] },
+          { text: 'De aanvaller moest de interne naamgeving van de servers eerst uitgebreid verkennen (net group, nltest) en kende die dus niet.', expert: ['C', 'C', 'I'] },
+        ],
+      },
+      questions: [
+        { q: 'Welke hypothese houdt in het expertoordeel de minste inconsistenties over en wint dus (uniek)?', options: ['Statelijke actor (spionage/sabotage)', 'Financieel gemotiveerde cybercrimebende (kocht toegang bij een IAB)', 'Ontevreden insider bij Spoedbouw', 'Ze eindigen gelijk'], answer: 1, explain: 'De bende houdt 0 I\'s over, de statelijke actor 3 en de insider 4. De cybercrimebende wint duidelijk en uniek.' },
+        { q: 'De waarneming "bekende RaaS wordt gebruikt" is consistent met alle drie de hypothesen. Hoe heet zulk bewijs?', options: ['Niet-diagnostisch', 'Doorslaggevend', 'Een false flag', 'Een aanname'], answer: 0, explain: 'Bewijs dat overal past, helpt je niet kiezen: het is niet-diagnostisch. Het lab markeert deze rij.' },
+        { q: 'Mag je de aanval aan een specifieke groep toeschrijven puur omdat ze die bekende RaaS gebruikten?', options: ['Nee, dezelfde RaaS wordt door veel affiliates gehuurd — tool is niet gelijk aan actor', 'Ja, de RaaS bepaalt de dader', 'Ja, maar alleen bij hoog losgeld', 'Alleen als de insider het ontkent'], answer: 0, explain: 'De "tool = actor"-valkuil: gedeelde tooling is een aanwijzing, geen identiteitsbewijs.' },
+        { q: 'Welke vlag hoort bij een correct afgewogen attributie?', answer: ['JVT{dader_het_scherpst}'], hint: 'Staat in de uitleg van deze taak.', explain: 'De hypothese met de unieke laagste I-score (de bende) blijft het scherpst overeind: JVT{dader_het_scherpst}.' },
+      ],
+    },
+
+    {
+      title: 'Station 7 — Het BLUF-eindproduct',
+      content: `
+        <p>Je hebt alles: toegang, de ATT&amp;CK-mapping, de geldstroom, de pivot en de attributie. Nu lever je het
+        <strong>intelligenceproduct</strong>. De ontvanger (de officier van justitie, de teamleider, de getroffen
+        directie) heeft geen tijd voor een chronologisch verhaal. Daarom schrijf je <strong>BLUF</strong>: <em>Bottom Line
+        Up Front</em> — de conclusie en het advies staan <strong>bovenaan</strong>, de onderbouwing eronder.</p>
+
+        <h3>Wat een goed BLUF-product bevat</h3>
+        <ul>
+          <li>De <strong>kernboodschap eerst</strong>: wat is er gebeurd en wat moet er nu gebeuren.</li>
+          <li><strong>Waarschijnlijkheidstaal</strong> ("waarschijnlijk", "zeer waarschijnlijk") in plaats van vage woorden.</li>
+          <li>Een <strong>eigenaar per advies</strong>: wie doet wat, en wanneer.</li>
+          <li><strong>Onzekerheid apart</strong>, met de labels bekend/afgeleid/aanname.</li>
+          <li><strong>Beknopter</strong> dan de bron: schrappen is een vak.</li>
+        </ul>
+
+        <p>Let op de attributie. Juist: "De aanval past zeer waarschijnlijk bij een financieel gemotiveerde cybercrimebende
+        die toegang kocht bij een IAB (afgeleid uit de ACH). Een specifieke groep kunnen we niet met zekerheid aanwijzen;
+        dezelfde RaaS wordt door veel affiliates gebruikt." Fout: "Het is groep X." Dat is de tool=actor-valkuil.</p>
+
+        <p>In het lab staat het chronologische bronmateriaal. Herschrijf het naar een BLUF-product, toets tegen de rubric
+        (een heuristische checklist, geen AI-oordeel) en vergelijk met het modelantwoord. Lever je een echt
+        BLUF-product, dan verdien je de vlag <strong>JVT{product_geleverd}</strong>.</p>
+
+        <div class="callout danger"><strong>Nooit blind betalen:</strong> zet in je advies expliciet dat losgeld betalen
+        de volgende aanval financiert en geen garantie geeft. Adviseer herstel uit offline back-ups en het volgen van de
+        wallet tot aan de exchange.</div>
+      `,
+      lab: {
+        type: 'bluf',
+        source: 'Op svc-herstel na kwam de bende binnen met gekochte VPN-toegang (zonder MFA). Via RDP werd doorgesprongen; met een Base64-gecodeerd PowerShell-commando werd een volgende fase geladen en LSASS uitgelezen. Data uit de map klantcontracten werd met 7-Zip ingepakt en 6 GB werd naar een clouddienst geüpload. Daarna werden de bestanden versleuteld en volgde een losgeldeis in BTC via een Tor-portaal. Het losgeld (4,0 BTC) is gesplitst over twee katvangers, door een mixer gehaald en voor 3,80 BTC uitbetaald bij een exchange. Een hergebruikt TLS-certificaat (A1B2C3D4) verbindt de phishinginfrastructuur met een tweede zaak. Uit de ACH blijkt dat de waarnemingen het best passen bij een financieel gemotiveerde cybercrimebende die toegang kocht bij een IAB; de gebruikte RaaS wordt door veel affiliates gehuurd, dus een specifieke groep is niet aan te wijzen.',
+        model: 'BEOORDELING (BLUF): Spoedbouw Nederland is zeer waarschijnlijk getroffen door een financieel gemotiveerde cybercrimebende die gekochte VPN-toegang (IAB) gebruikte; er is sprake van dubbele afpersing (data geëxfiltreerd vóór versleuteling). Een specifieke groep is niet met zekerheid aan te wijzen (dezelfde RaaS kent veel affiliates).\n\nADVIES (met eigenaar):\n1. MFA afdwingen op alle (service)accounts en svc-herstel resetten — eigenaar: IT, binnen 24 uur.\n2. C2- en exfil-hosts blokkeren en takedown aanvragen — eigenaar: SOC + hostingpartij.\n3. Offline/immutable back-ups verifiëren en herstel starten; niet betalen — eigenaar: CISO.\n4. De losgeld-wallet volgen tot aan de exchange (KYC-knelpunt) en bevriezing/aangifte voorbereiden — eigenaar: opsporing.\n\nONDERBOUWING: bekend = logs (gekochte login zonder MFA, LSASS-toegang, 6 GB exfil, versleuteling) en de geldstroom (4,0 BTC in, 3,80 BTC bij de exchange). Afgeleid = cybercrimebende met gekochte toegang (ACH: unieke laagste inconsistentie-score). Betrouwbaarheid: hoog voor de techniek en de geldstroom, lager voor de exacte dader.',
+      },
+      questions: [
+        { q: 'Wat hoort in een BLUF-product bovenaan te staan?', options: ['De conclusie en het advies (de kernboodschap)', 'De volledige chronologie', 'De lijst met alle loghashes', 'De namen van alle analisten'], answer: 0, explain: 'BLUF = Bottom Line Up Front: eerst de conclusie en wat er moet gebeuren, daarna de onderbouwing.' },
+        { q: 'Hoe schrijf je de attributie in het eindproduct verantwoord?', options: ['Zeer waarschijnlijk een cybercrimebende (afgeleid); specifieke groep niet aan te wijzen (aanname vermijden)', 'Het is zeker groep X', 'De RaaS bepaalt de dader', 'Attributie laat je weg'], answer: 0, explain: 'Je benoemt de best passende hypothese met waarschijnlijkheidstaal en vermijdt de tool=actor-valkuil.' },
+        { q: 'Welke vlag hoort bij het afronden van het BLUF-eindproduct?', answer: ['JVT{product_geleverd}'], hint: 'Staat in de uitleg van deze taak, als beloning.', explain: 'Een echt BLUF-product levert de vlag JVT{product_geleverd} op.' },
+      ],
+    },
+
+    {
+      title: 'Slotstation — De buit opmaken en netjes afronden',
+      content: `
+        <p>Gefeliciteerd, onderzoeker. 🏴 Je hebt het hele Spookgeld-netwerk ontrafeld: tien vlaggen, van de eerste
+        gekraakte hash tot het eindproduct. Je doorliep in het klein een complete keten: <strong>toegang &rarr; uitvoering
+        &rarr; buit &rarr; witwassen &rarr; attributie &rarr; product</strong>.</p>
+
+        <h3>Wat je liet zien</h3>
+        <ul>
+          <li>Een hash eerst <strong>herkennen</strong> (SHA-1) en dan pas gericht kraken met een woordenlijst.</li>
+          <li>Een onderschept bericht <strong>ontcijferen</strong> met de juiste Vigenère-sleutel.</li>
+          <li>De aanval vertalen naar <strong>MITRE ATT&amp;CK</strong>: één gedeelde taal voor detectie en delen.</li>
+          <li>De buit <strong>volgen</strong> door katvangers en een mixer naar de exchange — het KYC-knelpunt.</li>
+          <li><strong>Pivoten</strong> met de zeldzaamheidstoets (het certificaat, niet de hoster) en <strong>attribueren</strong>
+          met ACH (unieke laagste I-score), zonder in de tool=actor-valkuil te trappen.</li>
+          <li>Een <strong>BLUF-product</strong> leveren: conclusie eerst, waarschijnlijkheidstaal, eigenaar per advies.</li>
+        </ul>
+
+        <h3>De eindvlag</h3>
+        <p>Als bewijs dat je de hele operatie hebt afgerond, krijg je de eindvlag:
+        <strong>JVT{operatie_spookgeld_voltooid}</strong>. Zet die bovenaan je write-up.</p>
+
+        <h3>Hoe je nu rapporteert — en verder groeit</h3>
+        <ul>
+          <li><strong>Scheid feiten van advies.</strong> Feit: "4,0 BTC betaald, 3,80 BTC bij de exchange aangekomen".
+          Advies: "wallet volgen, exchange aanspreken, niet betalen".</li>
+          <li><strong>Label bekend / afgeleid / aanname.</strong> Dat voorkomt dat een aanname als feit gaat rondzingen.</li>
+          <li><strong>Maak het reproduceerbaar.</strong> Noteer per station je stappen, zodat collega's je kunnen nalopen.</li>
+        </ul>
+
+        <div class="callout danger"><strong>Ethische afsluiting:</strong> alles in deze CTF was fictief en rechtmatig.
+        Je vaardigheden zijn krachtig en dus gevoelig. Gebruik ze uitsluitend binnen een wettelijke grondslag of in je
+        eigen lab, betaal nooit blind losgeld, meld kwetsbaarheden netjes (coordinated vulnerability disclosure, bijvoorbeeld
+        via het NCSC), en blijf aan de goede kant van art.&nbsp;138ab&nbsp;Sr. Daar word je een professional van — geen
+        verdachte.</div>
+      `,
+      questions: [
+        { q: 'Wat is de eindvlag van Operatie Spookgeld?', answer: ['JVT{operatie_spookgeld_voltooid}'], hint: 'Staat in deze slottaak, als beloning voor het afronden.', explain: 'De eindvlag is JVT{operatie_spookgeld_voltooid} — alle tien vlaggen binnen.' },
+        { q: 'Waarom is de exchange het belangrijkste aangrijpingspunt bij het witwassen van het losgeld?', options: ['Omdat de exchange de hoogste fee rekent', 'Omdat daar crypto naar euro moet en KYC-identificatie het spoor weer zichtbaar maakt', 'Omdat mixers verboden zijn', 'Omdat het slachtoffer daar klant is'], answer: 1, explain: 'De exchange is het knelpunt: om uit te betalen is identificatie (KYC) nodig, hét moment waarop opsporing kan ingrijpen.' },
+        { q: 'Ik heb alle tien vlaggen verzameld en rond de operatie ethisch en reproduceerbaar af. 🏆', noAnswer: true },
       ],
     },
   ],

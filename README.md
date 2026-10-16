@@ -93,6 +93,14 @@ Van fenomeen naar interventie: denken en werken als intelligence-analist.
 7. **Praktijkcase: de complete workflow** — één casus van tijdlijn t/m BLUF-product.
 8. **Werkblad** — alle technieken in één werkproces met een checklist.
 
+### 🧩 Puzzels & uitdagingen
+Leren door te doen — veel plezier met oplosbare cybercrime-puzzels.
+1. **Follow the money: cryptostromen volgen** — volg de buit door mules, mixers en exchanges.
+2. **Datastromen & exfiltratie herkennen** — beaconing, DNS-tunneling en een exfil-tijdlijn.
+3. **OSINT-jacht: ontmasker de operator** — correleer sporen tot één identiteit.
+4. **Cybercrime-arcade: gemengde puzzels** — verbanden, volgorde, regex-golf, cijfers en een crackme.
+5. **Cybercrime-CTF: Operatie Spookgeld** — een grote capstone van hash tot BLUF (tien vlaggen).
+
 ### 🏁 Eindopdracht
 1. **Mini-CTF: Operatie KoffieKlap** — breng alles samen in een afsluitende Capture The Flag met zes vlaggen.
 2. **Grote kraak-CTF: Operatie Sleutelbos** — een uitgebreide kraak-CTF langs hashes, cijfers, codering, een crackme, een JWT en NTLM (zeven vlaggen).
@@ -137,6 +145,11 @@ Alle labs draaien **volledig in je browser** — veilig, offline, zonder dat er 
 | 🗺️ **ATT&CK-mapping** | Een waarneming aan de juiste MITRE ATT&CK-techniek koppelen. |
 | 📡 **Pivot-sandbox** | Door een fictieve entiteit/relatie-graaf pivoteren om het dwarsverband te vinden. |
 | 📝 **BLUF-herschrijven** | Een chronologisch verhaal herschrijven naar "conclusie eerst" (met rubric-check). |
+| 💸 **Stroom volgen** | Geld of data door mules, mixers en exchanges volgen naar de cash-out. |
+| 🔢 **Volgorde-puzzel** | Een aanvals-tijdlijn of kill chain reconstrueren. |
+| 🎯 **Regex-golf** | Eén patroon dat de kwaadaardige regels matcht en de goede mijdt. |
+| 🔎 **OSINT-puzzel** | Fictieve fragmenten correleren en het verband ontmaskeren. |
+| 🧩 **Verbanden** | 16 begrippen in 4 categorieën groeperen (Connections-stijl). |
 
 Alle tools zijn ook los te gebruiken via de **🧰 Gereedschapskist** (knop op de startpagina, of `#/tools`) — handig voor je eigen, ethische oefeningen.
 
