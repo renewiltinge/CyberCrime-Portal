@@ -15,8 +15,7 @@ CS.registerRoom({
     'Kwantitatieve en kwalitatieve informatie combineren tot één onderbouwd oordeel',
     'Een bron beoordelen met de Admiralty Code: betrouwbaarheid (A–F) en geloofwaardigheid (1–6) apart',
     'Waarschijnlijkheidstaal (yardstick) correct gebruiken en het betrouwbaarheidsniveau apart aangeven',
-    'Hypothesen gestructureerd afwegen met ACH, inclusief een gevoeligheidscheck en indicatoren',
-    'Veelvoorkomende denkfouten herkennen en met tegenmaatregelen bestrijden',
+    'Hypothesen gestructureerd afwegen met ACH (met gevoeligheidscheck en indicatoren) en veelvoorkomende denkfouten met tegenmaatregelen bestrijden',
   ],
   tasks: [
     {
@@ -461,7 +460,6 @@ CS.registerRoom({
   ],
   terms: [
     { term: 'Intelligencecyclus', def: 'Het terugkerende werkproces richten, verzamelen, verwerken, analyseren en verspreiden, met feedback die elke nieuwe ronde stuurt.' },
-    { term: 'Intelligence requirement', def: 'De concreet geformuleerde vraag die bepaalt wat je gaat verzamelen en analyseren; het resultaat van de stap "richten".' },
     { term: '"So what?"-test', def: 'Controle of een feit of conclusie een handeling of beslissing oplevert voor de lezer; zo niet, dan is het ruis.' },
     { term: 'CSAE', def: 'Collect, Store, Analyse, Engage: praktische checklist om data gericht te verzamelen, als entiteiten met herkomst en tijd te bewaren, te duiden en partners te betrekken.' },
     { term: 'Entiteit (met herkomst en tijd)', def: 'Een los te bewaren gegeven (IP, domein, hash, alias, wallet) met vermelding van de bron en het moment waarop het gold.' },
@@ -469,8 +467,7 @@ CS.registerRoom({
     { term: 'Admiralty Code', def: 'Systeem dat een bron op betrouwbaarheid (A–F) en de informatie op geloofwaardigheid (1–6) apart beoordeelt, bijvoorbeeld A1 of E4.' },
     { term: 'Waarschijnlijkheidstaal (yardstick)', def: 'Vaste set termen die elk bij een percentagebereik horen, van "vrijwel uitgesloten" tot "vrijwel zeker", met gaten tegen schijnprecisie.' },
     { term: 'Betrouwbaarheidsniveau (confidence)', def: 'Apart aangegeven maat voor hoe stevig een oordeel is, op basis van bronkwaliteit, aantal bronnen en openstaande aannames.' },
-    { term: 'Analysis of Competing Hypotheses (ACH)', def: 'Methode van Heuer waarbij je hypothesen naast elkaar zet en de inconsistenties (I) telt; de hypothese met de minste I\'s wint.' },
-    { term: 'Niet-diagnostisch bewijs', def: 'Bewijs dat bij alle hypothesen past en je daarom niet helpt kiezen.' },
+    { term: 'Analysis of Competing Hypotheses (ACH)', def: 'Methode van Heuer waarbij je hypothesen naast elkaar zet en de inconsistenties (I) telt; de hypothese met de minste I\'s wint. Bewijs dat bij alle hypothesen past is niet-diagnostisch.' },
     { term: 'Gevoeligheidscheck', def: 'Toets hoe afhankelijk je conclusie is van een enkel bewijsstuk, bijvoorbeeld als dat een bewuste false flag blijkt.' },
     { term: 'Mirror imaging', def: 'Denkfout waarbij je aanneemt dat de tegenstander denkt en handelt zoals jijzelf zou doen.' },
     { term: '"Tool = actor"', def: 'Denkfout waarbij gedeeld gereedschap of infrastructuur wordt verward met een gedeelde dader, terwijl tools gehuurd en gedeeld worden.' },
