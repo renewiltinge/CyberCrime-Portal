@@ -68,7 +68,7 @@ CS.registerRoom({
 
         <div class="callout tip">
           <strong>Beloning:</strong> de eerste vlag van deze room vat het in één zin samen —
-          <code>JVT{juiste_lezer_juist_niveau}</code>. Schrijf altijd voor de lezer en de beslissing, niet voor jezelf.
+          <code>NM{juiste_lezer_juist_niveau}</code>. Schrijf altijd voor de lezer en de beslissing, niet voor jezelf.
         </div>
 
         <div class="callout warn">
@@ -81,7 +81,7 @@ CS.registerRoom({
         { q: 'Een bestuurder moet beslissen waar de organisatie de komende jaren geld en mensen op inzet. Welk niveau product past daarbij?', options: ['Strategisch', 'Tactisch', 'Operationeel', 'Geen enkel'], answer: 0, explain: 'Lange termijn, groot plaatje, een investerings- of beleidsbeslissing: dat is strategisch.' },
         { q: 'Een SOC-analist moet nú iets doen met een verdachte verbinding in één zaak. Welk niveau past daarbij?', options: ['Strategisch', 'Tactisch', 'Operationeel'], answer: 2, explain: 'Het hier en nu, één concrete zaak met directe handvatten (IOC\'s, een blokkade): dat is operationeel.' },
         { q: 'Op welk niveau bepaal je de aanpak en prioriteiten voor een heel type zaak of thema (bijvoorbeeld de moneymule-structuur)?', answer: ['tactisch', 'Tactisch', 'tactisch niveau'], hint: 'Tussen het grote plaatje en de losse zaak in.', explain: 'Het tactische niveau gaat over de aanpak van een thema of type zaak, voor teamleiding en coördinatie.' },
-        { q: 'Wat is de eerste vlag van deze room (zie de groene tip)?', answer: ['JVT{juiste_lezer_juist_niveau}'], hint: 'Staat in de beloning onderaan de taak.' },
+        { q: 'Wat is de eerste vlag van deze room (zie de groene tip)?', answer: ['NM{juiste_lezer_juist_niveau}'], hint: 'Staat in de beloning onderaan de taak.' },
       ],
     },
 
@@ -178,7 +178,7 @@ CS.registerRoom({
         het meegeleverde modelantwoord.</p>
 
         <div class="callout tip">
-          <strong>Beloning:</strong> de tweede vlag is de hele les in twee woorden — <code>JVT{conclusie_bovenaan}</code>.
+          <strong>Beloning:</strong> de tweede vlag is de hele les in twee woorden — <code>NM{conclusie_bovenaan}</code>.
         </div>
       `,
       lab: {
@@ -213,7 +213,7 @@ Op de afdeling Financiën staan ook persoonsgegevens (salaris- en declaratiebest
         { q: 'Waar staat "BLUF" voor?', answer: ['Bottom Line Up Front', 'bottom line up front', 'bottom line upfront'], hint: 'Engels; letterlijk "de kern vooraan".', explain: 'BLUF = Bottom Line Up Front: de conclusie en aanbeveling bovenaan, de onderbouwing daaronder.' },
         { q: 'Wat hoort volgens de vuistregels NIET in de eerste zinnen van een BLUF-product, maar pas daaronder?', options: ['De gedetailleerde chronologie en het bewijs', 'De conclusie', 'De aanbeveling', 'Het betrouwbaarheidsniveau'], answer: 0, explain: 'Conclusie, aanbeveling en de mate van zekerheid staan bovenaan; de details en de tijdlijn komen eronder.' },
         { q: 'Waarom zet je achter elke aanbeveling een eigenaar?', options: ['Een advies zonder naam erbij voert niemand uit', 'Om het product langer te maken', 'Omdat dat verplicht is in de AVG', 'Om de bron te verbergen'], answer: 0, explain: 'Met een eigenaar (en een termijn) wordt een advies een actie; zonder eigenaar blijft het een vrome wens.' },
-        { q: 'Wat is de tweede vlag van deze room (zie de groene tip)?', answer: ['JVT{conclusie_bovenaan}'], hint: 'Staat in de beloning onderaan de taak.' },
+        { q: 'Wat is de tweede vlag van deze room (zie de groene tip)?', answer: ['NM{conclusie_bovenaan}'], hint: 'Staat in de beloning onderaan de taak.' },
       ],
     },
 
@@ -308,14 +308,14 @@ Op de afdeling Financiën staan ook persoonsgegevens (salaris- en declaratiebest
 
         <div class="callout tip">
           <strong>Beloning:</strong> de derde vlag herinnert je aan de bouwsteen die het vaakst wordt vergeten —
-          <code>JVT{advies_met_eigenaar}</code>. Een advies zonder eigenaar en termijn gebeurt niet.
+          <code>NM{advies_met_eigenaar}</code>. Een advies zonder eigenaar en termijn gebeurt niet.
         </div>
       `,
       questions: [
         { q: 'Welke vijf bouwstenen horen in een volledig interventieadvies?', answer: ['wat waarom wie wanneer risico\'s', 'wat, waarom, wie, wanneer, risico\'s', 'wat waarom wie wanneer risicos'], hint: 'Een concrete maatregel, de onderbouwing, de eigenaar, de termijn en de neveneffecten.', explain: 'Wat, waarom, wie (eigenaar), wanneer (termijn) en risico\'s maken van een zorg een uitvoerbaar advies.' },
         { q: 'Welke bouwsteen koppelt het advies aan je bevinding en aan de "so what?"-test?', options: ['Waarom', 'Wat', 'Wanneer', 'Wie'], answer: 0, explain: 'Het "waarom" geeft de onderbouwing en het verwachte effect; zonder dat kan de lezer niet afwegen.' },
         { q: 'Een dader wijkt na je maatregel uit naar een andere route. Hoe heet dit neveneffect dat je bij de risico\'s benoemt?', answer: ['displacement', 'verplaatsing'], hint: 'Engelse term uit de crime-scripting-room; het probleem verplaatst zich.', explain: 'Displacement (verplaatsing) hoort bij de risico\'s: de interventie verplaatst het probleem in plaats van het op te lossen.' },
-        { q: 'Wat is de derde vlag van deze room (zie de groene tip)?', answer: ['JVT{advies_met_eigenaar}'], hint: 'Staat in de beloning onderaan de taak.' },
+        { q: 'Wat is de derde vlag van deze room (zie de groene tip)?', answer: ['NM{advies_met_eigenaar}'], hint: 'Staat in de beloning onderaan de taak.' },
       ],
     },
 

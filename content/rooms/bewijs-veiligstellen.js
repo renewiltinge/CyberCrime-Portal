@@ -160,7 +160,7 @@ CS.registerRoom({
         motd: 'Write blocker actief op /dev/sdb (alleen-lezen). Typ de commando\'s uit de opdracht.',
         fs: {
           '/home/rechercheur/zaak-0042/werkmap.txt': 'Werkmap voor het veiligstellen van USB-stick (bewijsnummer B-0042-01).\n',
-          '/home/rechercheur/zaak-0042/chain-of-custody.txt': 'CHAIN OF CUSTODY — bewijs B-0042-01 (USB-stick)\n-----------------------------------------------\n2026-10-03 08:55  Inbeslaggenomen op locatie door agent Yilmaz\n2026-10-03 09:30  Overgedragen aan digitaal rechercheur De Vries (handtekening)\n2026-10-03 09:45  Achter write blocker geplaatst; image gemaakt (bewijs.dd)\n2026-10-03 09:52  Integriteit vastgelegd met SHA-256\n2026-10-03 10:05  Verzegeld opgeborgen in kluis K-7\nControlecode: JVT{keten_is_sluitend}\n',
+          '/home/rechercheur/zaak-0042/chain-of-custody.txt': 'CHAIN OF CUSTODY — bewijs B-0042-01 (USB-stick)\n-----------------------------------------------\n2026-10-03 08:55  Inbeslaggenomen op locatie door agent Yilmaz\n2026-10-03 09:30  Overgedragen aan digitaal rechercheur De Vries (handtekening)\n2026-10-03 09:45  Achter write blocker geplaatst; image gemaakt (bewijs.dd)\n2026-10-03 09:52  Integriteit vastgelegd met SHA-256\n2026-10-03 10:05  Verzegeld opgeborgen in kluis K-7\nControlecode: NM{keten_is_sluitend}\n',
         },
         denied: ['/root'],
         commands: {
@@ -171,7 +171,7 @@ CS.registerRoom({
       },
       questions: [
         { q: 'Vergelijk de twee sha256sum-uitkomsten. Komen de hashes van /dev/sdb en bewijs.dd overeen?', options: ['Ja, ze zijn identiek — de kopie is integer', 'Nee, ze verschillen', 'Er is geen hash', 'Kan ik niet zien'], answer: 0, explain: 'Beide tonen 9f2c4b7a… — identiek, dus de kopie is een exacte, integere image.' },
-        { q: 'Welke controlecode (vlag) staat in chain-of-custody.txt?', answer: 'JVT{keten_is_sluitend}', hint: 'cat chain-of-custody.txt', explain: 'De chain of custody is sluitend gedocumenteerd — inclusief je vlag.' },
+        { q: 'Welke controlecode (vlag) staat in chain-of-custody.txt?', answer: 'NM{keten_is_sluitend}', hint: 'cat chain-of-custody.txt', explain: 'De chain of custody is sluitend gedocumenteerd — inclusief je vlag.' },
         { q: 'Welk commando maakte het image?', answer: ['dd if=/dev/sdb of=bewijs.dd bs=4M', 'dd', 'dd if=/dev/sdb of=bewijs.dd'], hint: 'Begint met dd.', explain: 'dd maakt de rauwe bit-voor-bit-kopie.' },
         { q: 'Ik kan nu uitleggen hoe je bewijs onveranderd veiligstelt en de integriteit aantoont.', noAnswer: true },
       ],

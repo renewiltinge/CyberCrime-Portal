@@ -65,7 +65,7 @@ Drie soorten:
 ```js
 // 1. Open antwoord (zoals TryHackMe). Hoofdletters en spaties aan begin/eind tellen niet mee.
 { q: 'Welke poort gebruikt HTTPS standaard?', answer: '443', hint: 'Kijk in de tabel met poorten.', explain: 'HTTPS = HTTP over TLS op TCP-poort 443.' }
-{ q: 'Wat is de vlag in notes.txt?', answer: ['JVT{eerste_stap}'], hint: 'Gebruik cat.' }
+{ q: 'Wat is de vlag in notes.txt?', answer: ['NM{eerste_stap}'], hint: 'Gebruik cat.' }
 
 // 2. Meerkeuze. answer = index (vanaf 0) van het juiste antwoord.
 { q: 'Welk protocol is verbindingsloos?', options: ['TCP', 'UDP', 'HTTP'], answer: 1, explain: 'UDP stuurt zonder handshake.' }
@@ -87,7 +87,7 @@ Regels voor goede vragen:
 - Elk antwoord moet te vinden of af te leiden zijn uit de tekst van de taak of uit het lab.
 - Open antwoorden zijn kort en eenduidig: een getal, een woord, een commando, een vlag. Geef varianten mee
   (bijv. `['ls -a', 'ls -la', 'ls -al']`).
-- Vlaggen hebben altijd het formaat `JVT{kleine_letters_met_underscores}`.
+- Vlaggen hebben altijd het formaat `NM{kleine_letters_met_underscores}`.
 
 ## Labs
 
@@ -99,12 +99,12 @@ Er is maximaal één lab per taak. De beschikbare types staan hieronder.
 lab: {
   type: 'terminal',
   shell: 'bash',                 // 'bash' (standaard) of 'powershell'
-  user: 'student', host: 'jvt-lab',
+  user: 'student', host: 'nm-lab',
   home: '/home/student', cwd: '/home/student',
   motd: 'Welkom! Typ help voor de commando\'s.',
   fs: {                          // platte map: absoluut pad -> inhoud. Mappen worden afgeleid.
-    '/home/student/notes.txt': 'Hallo!\nJVT{eerste_stap}\n',
-    '/home/student/.verborgen/flag.txt': 'JVT{verborgen_bestand}\n',
+    '/home/student/notes.txt': 'Hallo!\nNM{eerste_stap}\n',
+    '/home/student/.verborgen/flag.txt': 'NM{verborgen_bestand}\n',
     '/home/student/leeg/': null,  // lege map: pad eindigt op '/' met waarde null
   },
   denied: ['/root', '/etc/shadow'],          // lezen/openen geeft "Permission denied"
@@ -175,7 +175,7 @@ lab: { type: 'cipher', text: '<versleutelde tekst of hex>' }
 Methodes: **Caesar/ROT** (toont alle 26 verschuivingen plus een automatische "beste gok" via frequentiescore),
 **XOR (1 byte)** (brute-forcet alle 256 sleutels, top-kandidaten gesorteerd; leest hex-invoer automatisch),
 **Vigenère** (ontsleutelt met een ingevulde sleutel), **Atbash** en **Omkeren**. De automatische gok scoort op
-Nederlandse/Engelse letterfrequentie en veelvoorkomende woorden (incl. `jvt{`). **Reken je ciphertext zelf na**: een
+Nederlandse/Engelse letterfrequentie en veelvoorkomende woorden (incl. `NM{`). **Reken je ciphertext zelf na**: een
 vlag die pas ná ontsleutelen verschijnt, zet je met `encoded: true` op de vraag.
 
 ### `password`: sterkte en kraaktijd van een wachtwoord
@@ -221,11 +221,11 @@ de leerling moet vinden.
 ```js
 lab: {
   type: 'http',
-  host: 'shop.jvt.lab',
+  host: 'shop.nm.lab',
   start: { method: 'GET', path: '/', headers: { 'Cookie': 'session=8f2a; role=user' }, body: '' },
   routes: [   // eerste match wint
     { method: 'GET', path: '/robots.txt', status: 200, headers: { 'Content-Type': 'text/plain' }, body: 'User-agent: *\nDisallow: /beheer' },
-    { method: 'GET', path: '/beheer', when: [{ header: 'Cookie', contains: 'role=admin' }], status: 200, body: 'JVT{...}' },
+    { method: 'GET', path: '/beheer', when: [{ header: 'Cookie', contains: 'role=admin' }], status: 200, body: 'NM{...}' },
     { method: 'GET', path: '/beheer', status: 403, body: 'Geen toegang' },
     { method: 'POST', path: '/login', when: [{ body: 'contains', value: 'user=admin' }], status: 302, headers: { 'Location': '/' } },
   ],
@@ -238,7 +238,7 @@ Zonder match volgt `404 Not Found`.
 ### `sqli`: SQL-injectie op een nep-loginformulier
 
 ```js
-lab: { type: 'sqli', flag: 'JVT{...}' }
+lab: { type: 'sqli', flag: 'NM{...}' }
 ```
 Een loginformulier dat de SQL-query live laat zien en die echt evalueert op een kleine tabel `users`
 (id, username, password, role) met de gebruikers admin, jan en fatima. Wie als admin inlogt, krijgt de vlag.
@@ -274,7 +274,7 @@ lab: {
   packets: [
     { no: 1, time: '0.001', src: '10.0.0.5', dst: '93.184.216.34', proto: 'TCP',  len: 74,  info: '51000 → 80 [SYN]' },
     { no: 2, time: '0.052', src: '10.0.0.5', dst: '93.184.216.34', proto: 'HTTP', len: 412, info: 'POST /upload',
-      stream: 'POST /upload HTTP/1.1\nHost: evil.jvt.lab\n\nsecret=JVT{...}' },  // stream optioneel
+      stream: 'POST /upload HTTP/1.1\nHost: evil.nm.lab\n\nsecret=NM{...}' },  // stream optioneel
   ],
 }
 ```
@@ -325,16 +325,16 @@ opleveren. **Reken voorbeeldwaarden zelf na met Node.**
 ### `ioc`: indicatoren (IOC's) uit tekst halen
 
 ```js
-lab: { type: 'ioc', text: 'Rapport ... 185.220.101[.]4 ... hxxps://evil[.]jvt[.]lab/x ... 44d88612fea8a8f36de82e1278abb02f ...' }
+lab: { type: 'ioc', text: 'Rapport ... 185.220.101[.]4 ... hxxps://evil[.]nineminds[.]lab/x ... 44d88612fea8a8f36de82e1278abb02f ...' }
 ```
 Haalt IPv4-adressen, domeinen, URL's, e-mailadressen, MD5/SHA-1/SHA-256-hashes en CVE-nummers uit vrije
 tekst — ook als ze "defanged" zijn (`hxxp`, `[.]`, `(.)`, `[at]`). Telt per soort, en kan de lijst
-defangen (veilig delen) of refangen. Fictieve domeinen eindigen bij voorkeur op `.jvt.lab` of `.example`.
+defangen (veilig delen) of refangen. Fictieve domeinen eindigen bij voorkeur op `.nm.lab` of `.example`.
 
 ### `url`: URL's ontleden (phishing-analyse)
 
 ```js
-lab: { type: 'url', urls: ['https://nederbank.nl.login-check.jvt.lab/inloggen?id=1', 'http://192.0.2.7/pakket'] }
+lab: { type: 'url', urls: ['https://nederbank.nl.login-check.nm.lab/inloggen?id=1', 'http://192.0.2.7/pakket'] }
 ```
 Splitst elke URL in schema, gebruikersdeel (de `@`-truc), host, subdomein, geregistreerd domein, poort, pad en
 queryparameters, en toont rode vlaggen: IP-adres als host, `@` in de URL, punycode (`xn--`), http i.p.v. https,
@@ -348,12 +348,12 @@ lab: {
   type: 'yara',
   rule: `rule Verdacht_Script {
   meta:
-    auteur = "JVT"
+    auteur = "NineMinds"
   strings:
     $a = "powershell" nocase
     $b = "-enc" nocase
     $mz = { 4D 5A }
-    $re = /https?:\\/\\/[a-z0-9.]+\\.jvt\\.lab/
+    $re = /https?:\\/\\/[a-z0-9.]+\\.nineminds\\.lab/
   condition:
     ($a and $b) or ($mz at 0 and $re)
 }`,
@@ -461,14 +461,14 @@ ATT&CK-ID's.**
 ```js
 lab: {
   type: 'pivot', title: 'Zaak A vs Zaak B', scenario: '<intro>',
-  entities: [ { id: 'd1', type: 'domain', label: 'boos.jvt.lab' }, { id: 'ip1', type: 'ip', label: '203.0.113.9' }, ... ],
+  entities: [ { id: 'd1', type: 'domain', label: 'boos.nm.lab' }, { id: 'ip1', type: 'ip', label: '203.0.113.9' }, ... ],
   edges: [ { from: 'd1', to: 'ip1', rel: 'resolvet naar', time: '2026-01', source: 'passive DNS' }, ... ],
   goal: 'Welke entiteit verbindt beide zaken?', bridge: ['203.0.113.9'],   // antwoord(en)
 }
 ```
 Een klikbare entiteit/relatie-verkenner (types: ip, domain, cert, hash, wallet, alias, email, asn, file). De leerling
 pivoteert langs relaties (met tijd + herkomst) en zoekt het bruggende kenmerk. **Alles fictief** (gebruik
-documentatie-IP's en `.jvt.lab`/`.example`), nooit live bronnen — opsec.
+documentatie-IP's en `.nm.lab`/`.example`), nooit live bronnen — opsec.
 
 ### `bluf`: herschrijven naar "conclusie eerst"
 
@@ -496,7 +496,7 @@ lab: {
   intro: 'Een programma vraagt om een sleutel. Lees de controle en leid de juiste sleutel af.',
   source: `function check(key) {\n  return key.split('').reverse().join('') === '62oziuj';\n}`, // wat de leerling leest
   check: (key) => key.split('').reverse().join('') === '62oziuj',                               // de ECHTE controle (functie!)
-  flag: 'JVT{...}',          // getoond bij succes (optioneel)
+  flag: 'NM{...}',          // getoond bij succes (optioneel)
   reveal: 'Mooi — ...',       // extra tekst bij succes (optioneel)
   hint: 'Draai de doelstring om.', // getoond na 3 pogingen (optioneel)
 }
@@ -513,7 +513,7 @@ lab: { type: 'multidecode', input: '536c5a55653231316248527058327868655756795832
 ```
 Herkent en pelt lagen codering af: Base64, Base32, hex, binair, URL, ROT13, Atbash, decimaal (code points), Morse en
 omkeren. Toont een automatisch gevonden "ketting" (bijv. Hex → Base64 → tekst) én per laag alle kandidaten (klikbaar om
-verder te ontleden). Scoort op leesbaarheid en herkent `JVT{...}`. **Bereken je gelaagde invoer met Node** en controleer
+verder te ontleden). Scoort op leesbaarheid en herkent `NM{...}`. **Bereken je gelaagde invoer met Node** en controleer
 dat de ketting op de bedoelde tekst uitkomt; zet `encoded: true` op een vlag-vraag waarvan de vlag pas na decoderen verschijnt.
 
 ### `rainbow`: rainbow table (precomputatie) vs. salt
@@ -549,7 +549,7 @@ Ideaal voor "datastromen": laagjes (layering), splitsingen, mixers en cash-out b
 ```js
 lab: { type: 'ordering', prompt: 'Zet de gebeurtenissen op tijd.',
   items: [ { id: 'a', label: '08:00 VPN-login' }, { id: 'b', label: '09:00 exfiltratie' }, ... ],
-  correct: ['a', 'b', ...], flag: 'JVT{...}', explain: '...' }   // flag/explain optioneel
+  correct: ['a', 'b', ...], flag: 'NM{...}', explain: '...' }   // flag/explain optioneel
 ```
 Toont de items geschud; de leerling schuift ze met ▲/▼ en controleert. Goed voor tijdlijnen, kill-chain-fasen of een crime script.
 
@@ -557,7 +557,7 @@ Toont de items geschud; de leerling schuift ze met ▲/▼ en controleert. Goed 
 
 ```js
 lab: { type: 'regexgolf', prompt: 'Match de kwaadaardige domeinen.',
-  match: ['boos.jvt.lab', 'kwaad.jvt.lab'], avoid: ['bank.nl', 'post.nl'], flags: '', flag: 'JVT{...}' }
+  match: ['boos.nm.lab', 'kwaad.nm.lab'], avoid: ['bank.nl', 'post.nl'], flags: '', flag: 'NM{...}' }
 ```
 Live per regel ✓/✗; "Opgelost" als alle match-regels matchen en geen enkele avoid-regel. Toont de patroonlengte (golf).
 
@@ -565,7 +565,7 @@ Live per regel ✓/✗; "Opgelost" als alle match-regels matchen en geen enkele 
 
 ```js
 lab: { type: 'osintpuzzle', scenario: '<intro>',
-  records: [ { title: 'Forumpost', icon: '💬', lines: ['user: n1ghtcrawl3r', 'mailt vanaf nc@mail.jvt.lab'] }, ... ],
+  records: [ { title: 'Forumpost', icon: '💬', lines: ['user: n1ghtcrawl3r', 'mailt vanaf nc@mail.nm.lab'] }, ... ],
   ask: [ { q: 'Welke gebruikersnaam linkt de twee bronnen?', answer: ['n1ghtcrawl3r'], hint: '...' } ] }
 ```
 Toont fictieve fragmenten als kaarten; de leerling correleert (hergebruikte aliassen, e-mails, tijden, metadata) en beantwoordt zelf-checkende vragen. **Alles fictief.**
@@ -573,7 +573,7 @@ Toont fictieve fragmenten als kaarten; de leerling correleert (hergebruikte alia
 ### `connections`: groepeer 16 items in 4 categorieën
 
 ```js
-lab: { type: 'connections', prompt: '...', flag: 'JVT{...}',
+lab: { type: 'connections', prompt: '...', flag: 'NM{...}',
   groups: [ { name: 'Hashes', items: ['MD5','SHA-1','SHA-256','NTLM'] }, ...4 groepen van 4... ] }
 ```
 16 geschudde items; selecteer vier die bij elkaar horen en controleer. Geeft "drie goed" als hint. Leuk voor hashtypes,

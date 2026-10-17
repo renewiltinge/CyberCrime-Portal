@@ -40,7 +40,7 @@ CS.registerRoom({
       title: 'Ronde 1 — Sorteer de begrippen (Connections)',
       content: `
         <p>Welkom in de <strong>Cybercrime-arcade</strong>! Geen lange theorie, wel zes rondes mini-puzzels. Elke ronde die
-        je wint levert een <strong>vlag</strong> op (<code>JVT{...}</code>). Haal ze allemaal en pak de bonusvlag.</p>
+        je wint levert een <strong>vlag</strong> op (<code>NM{...}</code>). Haal ze allemaal en pak de bonusvlag.</p>
 
         <p>We openen met een klassieker: <strong>Connections</strong>. Je ziet zestien door elkaar gegooide begrippen. Ze
         horen bij <strong>vier groepen van vier</strong>. Jouw taak: selecteer telkens vier die bij elkaar horen en controleer.
@@ -64,7 +64,7 @@ CS.registerRoom({
       lab: {
         type: 'connections',
         prompt: 'Sleep de zestien begrippen in de juiste vier categorieën van elk vier.',
-        flag: 'JVT{alles_gesorteerd}',
+        flag: 'NM{alles_gesorteerd}',
         groups: [
           { name: 'Hash-algoritmen', items: ['MD5', 'SHA-1', 'SHA-256', 'NTLM'] },
           { name: 'Cybercrime-rollen', items: ['Money mule', 'Access broker', 'Botnetbeheerder', 'Witwasser'] },
@@ -75,7 +75,7 @@ CS.registerRoom({
       questions: [
         { q: 'In welke groep hoort "NTLM" thuis?', options: ['Hash-algoritmen', 'Cybercrime-rollen', 'ATT&CK-tactieken', 'OSINT-bronnen'], answer: 0, explain: 'NTLM is een Windows-wachtwoordhash (MD4 van UTF-16LE) en hoort dus bij de hash-algoritmen.' },
         { q: 'Welk begrip is een cybercrime-rol en geen OSINT-bron?', options: ['Shodan', 'Access broker', 'WHOIS', 'Wayback Machine'], answer: 1, explain: 'Een access broker (toegangsmakelaar) verkoopt toegang tot gehackte netwerken — een rol, geen zoekbron.' },
-        { q: 'Welke vlag verschijnt als je alle vier de groepen goed hebt? (JVT{alles_gesorteerd})', answer: ['JVT{alles_gesorteerd}'], hint: 'De vlag staat in het lab en letterlijk in deze vraag.', explain: 'Ronde 1 gehaald: JVT{alles_gesorteerd}.' },
+        { q: 'Welke vlag verschijnt als je alle vier de groepen goed hebt? (NM{alles_gesorteerd})', answer: ['NM{alles_gesorteerd}'], hint: 'De vlag staat in het lab en letterlijk in deze vraag.', explain: 'Ronde 1 gehaald: NM{alles_gesorteerd}.' },
       ],
     },
 
@@ -118,13 +118,13 @@ CS.registerRoom({
           { id: 'actions', label: 'Acties op het doel — data stelen of versleutelen' },
         ],
         correct: ['recon', 'weapon', 'delivery', 'exploit', 'install', 'c2', 'actions'],
-        flag: 'JVT{kill_chain_compleet}',
+        flag: 'NM{kill_chain_compleet}',
         explain: 'De volgorde is Verkenning → Bewapening → Aflevering → Exploitatie → Installatie → C2 → Acties op het doel.',
       },
       questions: [
         { q: 'Welke fase komt direct NA "Aflevering"?', options: ['Verkenning', 'Exploitatie', 'Command & Control', 'Installatie'], answer: 1, explain: 'Na aflevering volgt exploitatie: de kwetsbaarheid wordt misbruikt zodra het slachtoffer het bestand opent.' },
         { q: 'Hoeveel fasen telt de Cyber Kill Chain?', answer: ['7', 'zeven'], hint: 'Tel de fasen in de opsomming.', explain: 'De Cyber Kill Chain heeft zeven fasen, van verkenning tot acties op het doel.' },
-        { q: 'Welke vlag hoort bij de juiste volgorde? (JVT{kill_chain_compleet})', answer: ['JVT{kill_chain_compleet}'], hint: 'De vlag verschijnt in het lab en staat letterlijk in de vraag.', explain: 'Ronde 2 gehaald: JVT{kill_chain_compleet}.' },
+        { q: 'Welke vlag hoort bij de juiste volgorde? (NM{kill_chain_compleet})', answer: ['NM{kill_chain_compleet}'], hint: 'De vlag verschijnt in het lab en staat letterlijk in de vraag.', explain: 'Ronde 2 gehaald: NM{kill_chain_compleet}.' },
       ],
     },
 
@@ -140,35 +140,35 @@ CS.registerRoom({
         <table>
           <thead><tr><th>Match (nep)</th><th>Avoid (echt)</th></tr></thead>
           <tbody>
-            <tr><td>nederbank-beveiliging.jvt.lab</td><td>nederbank.nl</td></tr>
-            <tr><td>pakketpost-track.jvt.lab</td><td>pakketpost.nl</td></tr>
-            <tr><td>mijnoverheid-check.jvt.lab</td><td>mijnoverheid.nl</td></tr>
-            <tr><td>rijksbelastingen-terugbetaling.jvt.lab</td><td>rijksbelastingen.nl</td></tr>
+            <tr><td>nederbank-beveiliging.nm.lab</td><td>nederbank.nl</td></tr>
+            <tr><td>pakketpost-track.nm.lab</td><td>pakketpost.nl</td></tr>
+            <tr><td>mijnoverheid-check.nm.lab</td><td>mijnoverheid.nl</td></tr>
+            <tr><td>rijksbelastingen-terugbetaling.nm.lab</td><td>rijksbelastingen.nl</td></tr>
           </tbody>
         </table>
 
         <p>Zie je het patroon? De nep-domeinen <strong>plakken met een koppelteken een extra woord</strong> achter de merknaam
-        (en wonen op <code>.jvt.lab</code> in plaats van <code>.nl</code>). De echte domeinen zijn kaal: <code>merk.nl</code>.
+        (en wonen op <code>.nm.lab</code> in plaats van <code>.nl</code>). De echte domeinen zijn kaal: <code>merk.nl</code>.
         Een piepklein patroon als <code>-</code> matcht al <strong>alle</strong> nep-regels en <strong>geen enkele</strong>
         echte. Ook <code>\\.lab</code> of <code>lab</code> werkt. Typ je patroon en kijk live per regel het vinkje ✓/✗.</p>
 
         <div class="callout warn">
           <strong>Let op:</strong> in het echt zijn phishing-domeinen zo herkenbaar: een koppelteken tussen merk en woord, een
-          vreemd verlengstuk, of een ander topniveaudomein. Deze oefendomeinen zijn fictief (<code>.jvt.lab</code>).
+          vreemd verlengstuk, of een ander topniveaudomein. Deze oefendomeinen zijn fictief (<code>.nm.lab</code>).
         </div>
       `,
       lab: {
         type: 'regexgolf',
         prompt: 'Schrijf één patroon dat alle nep-domeinen matcht en geen enkel echt domein.',
-        match: ['nederbank-beveiliging.jvt.lab', 'pakketpost-track.jvt.lab', 'mijnoverheid-check.jvt.lab', 'rijksbelastingen-terugbetaling.jvt.lab'],
+        match: ['nederbank-beveiliging.nm.lab', 'pakketpost-track.nm.lab', 'mijnoverheid-check.nm.lab', 'rijksbelastingen-terugbetaling.nm.lab'],
         avoid: ['nederbank.nl', 'pakketpost.nl', 'mijnoverheid.nl', 'rijksbelastingen.nl'],
         flags: '',
-        flag: 'JVT{patroon_gevonden}',
+        flag: 'NM{patroon_gevonden}',
       },
       questions: [
-        { q: 'Welk kenmerk onderscheidt de nep-domeinen van de echte?', options: ['Ze zijn langer dan 10 tekens', 'Ze plakken met een koppelteken een extra woord achter de merknaam', 'Ze beginnen met een hoofdletter', 'Ze bevatten een cijfer'], answer: 1, explain: 'De nep-domeinen gebruiken een koppelteken plus extra woord (en .jvt.lab); een patroon op "-" is al genoeg.' },
+        { q: 'Welk kenmerk onderscheidt de nep-domeinen van de echte?', options: ['Ze zijn langer dan 10 tekens', 'Ze plakken met een koppelteken een extra woord achter de merknaam', 'Ze beginnen met een hoofdletter', 'Ze bevatten een cijfer'], answer: 1, explain: 'De nep-domeinen gebruiken een koppelteken plus extra woord (en .nm.lab); een patroon op "-" is al genoeg.' },
         { q: 'Welk kort patroon matcht alle nep-domeinen en geen enkel echt domein? (één teken volstaat)', answer: ['-'], hint: 'Kijk naar het teken dat álle nep-domeinen hebben en geen enkel echt domein.', explain: 'Het koppelteken "-" komt alleen in de nep-domeinen voor. Ook \\.lab of lab is een geldige oplossing.' },
-        { q: 'Welke vlag hoort bij een opgelost patroon? (JVT{patroon_gevonden})', answer: ['JVT{patroon_gevonden}'], hint: 'De vlag staat in het lab en letterlijk in deze vraag.', explain: 'Ronde 3 gehaald: JVT{patroon_gevonden}.' },
+        { q: 'Welke vlag hoort bij een opgelost patroon? (NM{patroon_gevonden})', answer: ['NM{patroon_gevonden}'], hint: 'De vlag staat in het lab en letterlijk in deze vraag.', explain: 'Ronde 3 gehaald: NM{patroon_gevonden}.' },
       ],
     },
 
@@ -176,11 +176,11 @@ CS.registerRoom({
       title: 'Ronde 4 — Kraak het cijfer (Caesar)',
       content: `
         <p>Ronde 4: een <strong>versleuteld bericht</strong>. Ergens in de arcade knippert dit op het scherm:</p>
-        <pre><code>Kl nlolptl cshn pz QCA{jhlzhy_pz_thrrlspqr}</code></pre>
+        <pre><code>Kl nlolptl cshn pz UT{jhlzhy_pz_thrrlspqr}</code></pre>
 
         <p>Het ziet er als wartaal uit, maar de structuur verraadt een <strong>Caesarcijfer</strong> (ook wel ROT genoemd):
         elke letter is een vast aantal plaatsen in het alfabet <strong>opgeschoven</strong>. Zie je dat <code>QCA{...}</code>-blok?
-        Dat is bijna zeker een vlag die eigenlijk <code>JVT{...}</code> moet zijn. Tel het verschil: <code>Q</code> → <code>J</code>
+        Dat is bijna zeker een vlag die eigenlijk <code>NM{...}</code> moet zijn. Tel het verschil: <code>Q</code> → <code>J</code>
         is zeven letters terug. De hele tekst is dus met <strong>7 opgeschoven</strong>; schuif alles 7 terug en je leest het.</p>
 
         <p>Gebruik het <strong>cipher-lab</strong> hieronder. Zet het op <strong>Caesar/ROT</strong>: de tool toont alle 26
@@ -192,10 +192,10 @@ CS.registerRoom({
           ("brute-force") tot er leesbare Nederlandse tekst verschijnt. Dat heet het aftellen van de sleutelruimte.
         </div>
       `,
-      lab: { type: 'cipher', text: 'Kl nlolptl cshn pz QCA{jhlzhy_pz_thrrlspqr}' },
+      lab: { type: 'cipher', text: 'Kl nlolptl cshn pz UT{jhlzhy_pz_thrrlspqr}' },
       questions: [
         { q: 'Met hoeveel plaatsen is de tekst opgeschoven (dus hoeveel moet je terugschuiven)?', answer: ['7'], hint: 'Vergelijk de cijfer-letter Q met de verwachte J: hoeveel plaatsen zit daartussen?', explain: 'Q → J is 7 plaatsen; de hele tekst is met ROT7 versleuteld.' },
-        { q: 'Wat is de vlag uit het ontsleutelde bericht?', answer: ['JVT{caesar_is_makkelijk}'], encoded: true, hint: 'Ontsleutel met het cipher-lab (Caesar, 7 terug); de "beste gok" toont de hele zin met de vlag.', explain: 'De tekst luidt "De geheime vlag is JVT{caesar_is_makkelijk}". Ronde 4 gehaald.' },
+        { q: 'Wat is de vlag uit het ontsleutelde bericht?', answer: ['NM{caesar_is_makkelijk}'], encoded: true, hint: 'Ontsleutel met het cipher-lab (Caesar, 7 terug); de "beste gok" toont de hele zin met de vlag.', explain: 'De tekst luidt "De geheime vlag is NM{caesar_is_makkelijk}". Ronde 4 gehaald.' },
         { q: 'Waarom is een Caesarcijfer makkelijk te kraken?', options: ['Omdat het razendsnel te berekenen is', 'Omdat er maar 26 mogelijke verschuivingen zijn om te proberen', 'Omdat het alleen op Windows werkt', 'Omdat de sleutel altijd 7 is'], answer: 1, explain: 'Met slechts 26 sleutels probeer je ze simpelweg allemaal tot er leesbare tekst verschijnt.' },
       ],
     },
@@ -246,14 +246,14 @@ CS.registerRoom({
           const omgekeerd = verhoogd.split('').reverse().join('');
           return omgekeerd === '6313ojpd';
         },
-        flag: 'JVT{insert_coin}',
+        flag: 'NM{insert_coin}',
         reveal: 'Toegang verleend! Je keerde de doelstring om (dpjo3136) en trok overal 1 af. Insert coin om te spelen.',
         hint: 'Keer 6313ojpd om tot dpjo3136 en trek van elke tekencode 1 af: d→c, p→o, j→i, o→n, 3→2, 1→0, 3→2, 6→5.',
       },
       questions: [
         { q: 'Welke muntcode (sleutel) geeft toegang tot de automaat?', answer: ['coin2025'], hint: '6313ojpd omgekeerd is dpjo3136; trek van elk teken 1 af.', explain: 'dpjo3136 met elke tekencode -1 wordt coin2025 — dat is de sleutel.' },
         { q: 'Wat is de algemene truc om een crackme te kraken?', options: ['Heel snel typen', 'De bewerkingen van de controle in omgekeerde volgorde terugdraaien', 'Het programma verwijderen', 'De automaat resetten'], answer: 1, explain: 'Je leest wat de controle doet en draait elke stap in omgekeerde volgorde om naar de juiste invoer.' },
-        { q: 'Welke vlag verschijnt bij de juiste muntcode? (JVT{insert_coin})', answer: ['JVT{insert_coin}'], hint: 'De vlag verschijnt in het lab en staat letterlijk in de vraag.', explain: 'Ronde 5 gehaald: JVT{insert_coin}.' },
+        { q: 'Welke vlag verschijnt bij de juiste muntcode? (NM{insert_coin})', answer: ['NM{insert_coin}'], hint: 'De vlag verschijnt in het lab en staat letterlijk in de vraag.', explain: 'Ronde 5 gehaald: NM{insert_coin}.' },
       ],
     },
 
@@ -281,7 +281,7 @@ CS.registerRoom({
 
         <div class="callout danger">
           <strong>Arcade-kampioen:</strong> heb je alle zes de rondes gewonnen, dan verdien je de bonusvlag
-          <code>JVT{arcade_kampioen}</code>. Goed gespeeld!
+          <code>NM{arcade_kampioen}</code>. Goed gespeeld!
         </div>
       `,
       lab: {
@@ -297,13 +297,13 @@ CS.registerRoom({
           { id: 'cashout', label: 'Losgeld door een mixer naar een exchange sluizen (cash-out)' },
         ],
         correct: ['koop', 'login', 'lateraal', 'exfil', 'encrypt', 'afpers', 'cashout'],
-        flag: 'JVT{crime_script_af}',
+        flag: 'NM{crime_script_af}',
         explain: 'Toegang kopen → inloggen → lateraal bewegen → data exfiltreren → versleutelen → afpersen → cash-out.',
       },
       questions: [
         { q: 'Waarom stelen de criminelen de data (exfiltratie) vóór ze versleutelen?', options: ['Omdat versleutelde data niet meer te kopiëren is en de gestolen data extra chantagemiddel oplevert', 'Omdat het sneller is', 'Omdat de politie dat voorschrijft', 'Dat maakt geen verschil'], answer: 0, explain: 'Bij double extortion is de gestolen data het tweede drukmiddel; na versleuteling kun je niets bruikbaars meer kopiëren.' },
         { q: 'Wat is de laatste stap van het crime script?', answer: ['cash-out', 'cashout'], hint: 'Het gaat om wat er met het losgeld gebeurt.', explain: 'De cash-out: het losgeld via een mixer naar een exchange sluizen om het te verzilveren.' },
-        { q: 'Welke bonusvlag verdien je als je alle zes de rondes hebt gewonnen? (JVT{arcade_kampioen})', answer: ['JVT{arcade_kampioen}'], hint: 'De bonusvlag staat in de laatste callout en letterlijk in deze vraag.', explain: 'Alle rondes gehaald: JVT{arcade_kampioen}. Jij bent de arcade-kampioen!' },
+        { q: 'Welke bonusvlag verdien je als je alle zes de rondes hebt gewonnen? (NM{arcade_kampioen})', answer: ['NM{arcade_kampioen}'], hint: 'De bonusvlag staat in de laatste callout en letterlijk in deze vraag.', explain: 'Alle rondes gehaald: NM{arcade_kampioen}. Jij bent de arcade-kampioen!' },
       ],
     },
   ],

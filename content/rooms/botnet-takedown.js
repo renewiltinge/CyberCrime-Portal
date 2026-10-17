@@ -3,19 +3,19 @@
 // --- pcap: C2-beaconing van bot WS-MARKETING-09 (10.0.9.33) ---
 // DGA-misses -> botmodule-download bij drop-server -> HTTP-beaconing naar C2 -> exfil over C2.
 const PCAP_BOTNET = [
-  { no: 1, time: '0.000', src: '10.0.9.33', dst: '10.0.9.1', proto: 'DNS', len: 84, info: 'Standaardquery A q7x2k9fz1a.jvt.lab (willekeurig?)' },
+  { no: 1, time: '0.000', src: '10.0.9.33', dst: '10.0.9.1', proto: 'DNS', len: 84, info: 'Standaardquery A q7x2k9fz1a.nm.lab (willekeurig?)' },
   { no: 2, time: '0.013', src: '10.0.9.1', dst: '10.0.9.33', proto: 'DNS', len: 84, info: 'Antwoord: NXDOMAIN (bestaat niet)' },
-  { no: 3, time: '0.260', src: '10.0.9.33', dst: '10.0.9.1', proto: 'DNS', len: 86, info: 'Standaardquery A m4p8r2wd9c.jvt.lab (willekeurig?)' },
+  { no: 3, time: '0.260', src: '10.0.9.33', dst: '10.0.9.1', proto: 'DNS', len: 86, info: 'Standaardquery A m4p8r2wd9c.nm.lab (willekeurig?)' },
   { no: 4, time: '0.274', src: '10.0.9.1', dst: '10.0.9.33', proto: 'DNS', len: 86, info: 'Antwoord: NXDOMAIN (bestaat niet)' },
-  { no: 5, time: '0.540', src: '10.0.9.33', dst: '10.0.9.1', proto: 'DNS', len: 80, info: 'Standaardquery A cdn-schim.jvt.lab' },
-  { no: 6, time: '0.556', src: '10.0.9.1', dst: '10.0.9.33', proto: 'DNS', len: 96, info: 'Antwoord A cdn-schim.jvt.lab = 198.51.100.77' },
+  { no: 5, time: '0.540', src: '10.0.9.33', dst: '10.0.9.1', proto: 'DNS', len: 80, info: 'Standaardquery A cdn-schim.nm.lab' },
+  { no: 6, time: '0.556', src: '10.0.9.1', dst: '10.0.9.33', proto: 'DNS', len: 96, info: 'Antwoord A cdn-schim.nm.lab = 198.51.100.77' },
   { no: 7, time: '0.610', src: '10.0.9.33', dst: '198.51.100.77', proto: 'TCP', len: 74, info: '50112 -> 80 [SYN]' },
   { no: 8, time: '0.622', src: '198.51.100.77', dst: '10.0.9.33', proto: 'TCP', len: 74, info: '80 -> 50112 [SYN, ACK]' },
   {
     no: 9, time: '0.660', src: '10.0.9.33', dst: '198.51.100.77', proto: 'HTTP', len: 332,
     info: 'GET /modules/core.bin HTTP/1.1',
     stream: `GET /modules/core.bin HTTP/1.1
-Host: cdn-schim.jvt.lab
+Host: cdn-schim.nm.lab
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
 Accept: */*
 
@@ -31,17 +31,17 @@ Analist: de loader die al op de machine stond, haalt hier de ECHTE botmodule
 op (ingress tool transfer). Pas daarna gaat de bot zelf praten met zijn C2.`,
   },
   { no: 10, time: '0.910', src: '198.51.100.77', dst: '10.0.9.33', proto: 'HTTP', len: 4212, info: 'HTTP/1.1 200 OK (application/octet-stream, 3.904 bytes)' },
-  { no: 11, time: '6.000', src: '10.0.9.33', dst: '10.0.9.1', proto: 'DNS', len: 80, info: 'Standaardquery A schim-sync.jvt.lab' },
-  { no: 12, time: '6.016', src: '10.0.9.1', dst: '10.0.9.33', proto: 'DNS', len: 96, info: 'Antwoord A schim-sync.jvt.lab = 203.0.113.50' },
+  { no: 11, time: '6.000', src: '10.0.9.33', dst: '10.0.9.1', proto: 'DNS', len: 80, info: 'Standaardquery A schim-sync.nm.lab' },
+  { no: 12, time: '6.016', src: '10.0.9.1', dst: '10.0.9.33', proto: 'DNS', len: 96, info: 'Antwoord A schim-sync.nm.lab = 203.0.113.50' },
   { no: 13, time: '6.060', src: '10.0.9.33', dst: '203.0.113.50', proto: 'TCP', len: 74, info: '50140 -> 80 [SYN]' },
   { no: 14, time: '6.072', src: '203.0.113.50', dst: '10.0.9.33', proto: 'TCP', len: 74, info: '80 -> 50140 [SYN, ACK]' },
   {
     no: 15, time: '6.110', src: '10.0.9.33', dst: '203.0.113.50', proto: 'HTTP', len: 268,
     info: 'POST /gate.php HTTP/1.1 (check-in)',
-    stream: `C2-baken — gereconstrueerde check-in naar 203.0.113.50 (host schim-sync.jvt.lab)
+    stream: `C2-baken — gereconstrueerde check-in naar 203.0.113.50 (host schim-sync.nm.lab)
 
 >> POST /gate.php HTTP/1.1
->> Host: schim-sync.jvt.lab
+>> Host: schim-sync.nm.lab
 >> User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
 >> Cookie: botid=SCHIM-7F3A
 >> Content-Length: 22
@@ -51,7 +51,7 @@ op (ingress tool transfer). Pas daarna gaat de bot zelf praten met zijn C2.`,
 << Server: nginx
 << Content-Length: 41
 <<
-<< sleep=45; note=JVT{c2_fluistert}
+<< sleep=45; note=NM{c2_fluistert}
 
 Analist: elke ~45 seconden exact dezelfde kleine POST naar hetzelfde IP.
 Dat strakke ritme is "beaconing": de bot vraagt zijn command-and-control-
@@ -142,7 +142,7 @@ CS.registerRoom({
         </figure>
 
         <div class="callout info">
-          <strong>Alles fictief:</strong> alle namen, domeinen (<code>*.jvt.lab</code>) en adressen
+          <strong>Alles fictief:</strong> alle namen, domeinen (<code>*.nm.lab</code>) en adressen
           (<code>10.x</code>, <code>203.0.113.x</code>, <code>198.51.100.x</code>, <code>192.0.2.x</code> — officiële
           documentatiebereiken) in deze room zijn verzonnen. Je oefent in een afgeschermd lab, niet op echte
           infrastructuur.
@@ -167,10 +167,10 @@ CS.registerRoom({
         <h3>Wat je verwacht te zien</h3>
         <ol>
           <li><strong>DGA-missers:</strong> bovenaan probeert de bot een paar willekeurig ogende domeinen
-          (<code>q7x2k9fz1a.jvt.lab</code>, ...). Die bestaan niet: het antwoord is <code>NXDOMAIN</code>. Dat is het
+          (<code>q7x2k9fz1a.nm.lab</code>, ...). Die bestaan niet: het antwoord is <code>NXDOMAIN</code>. Dat is het
           DGA-gedrag uit taak 1.</li>
           <li><strong>Botmodule ophalen:</strong> daarna haalt de loader de echte bot op met een
-          <code>GET /modules/core.bin</code> bij de drop-server <code>cdn-schim.jvt.lab</code>
+          <code>GET /modules/core.bin</code> bij de drop-server <code>cdn-schim.nm.lab</code>
           (<code>198.51.100.77</code>). Open de "Follow stream" om die download te lezen.</li>
           <li><strong>C2-beaconing:</strong> vervolgens doet de bot elke ~45 seconden een kleine, bijna even grote
           <code>POST /gate.php</code> naar hetzelfde externe IP. Dat strakke ritme is het baken. In de server-respons
@@ -188,9 +188,9 @@ CS.registerRoom({
       `,
       lab: { type: 'pcap', title: 'spookzwerm-ws09.pcap', packets: PCAP_BOTNET },
       questions: [
-        { q: 'Naar welk extern IP-adres bakent de bot elke ~45 seconden (de C2-server)?', answer: ['203.0.113.50'], hint: 'Welk extern IP keert met dezelfde pakketlengte (268) op een vast interval terug?', explain: 'Alle check-ins van 10.0.9.33 gaan via POST /gate.php naar 203.0.113.50 (schim-sync.jvt.lab).' },
-        { q: 'Welke vlag staat in de server-respons van de C2-check-in (Follow stream)?', answer: ['JVT{c2_fluistert}'], encoded: true, hint: 'Open Follow stream op de eerste POST /gate.php en lees de note= in het 200 OK-antwoord.', explain: 'De C2 antwoordt met sleep=45; note=JVT{c2_fluistert}.' },
-        { q: 'Welk antwoord krijgen de eerste twee willekeurig ogende domeinen (het DGA-gedrag)?', answer: ['NXDOMAIN', 'nxdomain'], hint: 'Het DNS-antwoord dat zegt dat een domein niet bestaat.', explain: 'q7x2k9fz1a.jvt.lab en m4p8r2wd9c.jvt.lab leveren NXDOMAIN op; de bot tikt DGA-domeinen af tot er een leeft.' },
+        { q: 'Naar welk extern IP-adres bakent de bot elke ~45 seconden (de C2-server)?', answer: ['203.0.113.50'], hint: 'Welk extern IP keert met dezelfde pakketlengte (268) op een vast interval terug?', explain: 'Alle check-ins van 10.0.9.33 gaan via POST /gate.php naar 203.0.113.50 (schim-sync.nm.lab).' },
+        { q: 'Welke vlag staat in de server-respons van de C2-check-in (Follow stream)?', answer: ['NM{c2_fluistert}'], encoded: true, hint: 'Open Follow stream op de eerste POST /gate.php en lees de note= in het 200 OK-antwoord.', explain: 'De C2 antwoordt met sleep=45; note=NM{c2_fluistert}.' },
+        { q: 'Welk antwoord krijgen de eerste twee willekeurig ogende domeinen (het DGA-gedrag)?', answer: ['NXDOMAIN', 'nxdomain'], hint: 'Het DNS-antwoord dat zegt dat een domein niet bestaat.', explain: 'q7x2k9fz1a.nm.lab en m4p8r2wd9c.nm.lab leveren NXDOMAIN op; de bot tikt DGA-domeinen af tot er een leeft.' },
         { q: 'Waaraan herken je C2-beaconing in de pakketlijst, ook zonder de inhoud te lezen?', options: ['Aan het vaste interval en de vaste, kleine pakketgrootte naar hetzelfde IP', 'Aan heel veel verschillende bestemmingen', 'Aan één enkele grote download', 'Aan een lege pakketlijst'], answer: 0, explain: 'Een regelmatig interval met constante grootte naar één extern IP is de klassieke signatuur van beaconing.' },
       ],
     },
@@ -223,15 +223,15 @@ CS.registerRoom({
           zichzelf in de Run-sleutel" is een klassieke autostart-truc.
         </div>
 
-        <p>Map je alle zes waarnemingen correct, dan verdien je de vlag <code>JVT{zwerm_in_kaart}</code> — je hebt het
+        <p>Map je alle zes waarnemingen correct, dan verdien je de vlag <code>NM{zwerm_in_kaart}</code> — je hebt het
         gedrag van de zwerm volledig in kaart.</p>
       `,
       lab: {
         type: 'attackmap',
         items: [
           { desc: 'Het slachtoffer opent de bijlage factuur-herinnering.zip uit een spammail; daarin zit een snelkoppeling die de loader start.', code: 'T1566.001', explain: 'Spearphishing Attachment (Initial Access): een kwaadaardige bijlage is nog steeds de nummer-1-manier waarop botnet-loaders binnenkomen.' },
-          { desc: 'De loader haalt de eigenlijke botmodule core.bin op bij cdn-schim.jvt.lab en zet hem op schijf.', code: 'T1105', explain: 'Ingress Tool Transfer (Command and Control): extra gereedschap of modules binnenhalen vanaf een externe server — precies wat je in de pcap zag.' },
-          { desc: 'De bot checkt elke 45 seconden in bij schim-sync.jvt.lab via gewone HTTP-POSTs om opdrachten op te halen.', code: 'T1071', explain: 'Application Layer Protocol (Command and Control): C2-verkeer verstoppen in normaal ogend web-verkeer (HTTP) — het baken uit taak 2.' },
+          { desc: 'De loader haalt de eigenlijke botmodule core.bin op bij cdn-schim.nm.lab en zet hem op schijf.', code: 'T1105', explain: 'Ingress Tool Transfer (Command and Control): extra gereedschap of modules binnenhalen vanaf een externe server — precies wat je in de pcap zag.' },
+          { desc: 'De bot checkt elke 45 seconden in bij schim-sync.nm.lab via gewone HTTP-POSTs om opdrachten op te halen.', code: 'T1071', explain: 'Application Layer Protocol (Command and Control): C2-verkeer verstoppen in normaal ogend web-verkeer (HTTP) — het baken uit taak 2.' },
           { desc: 'De bot schrijft zichzelf in de Windows Run-sleutel zodat hij na elke herstart automatisch opnieuw start.', code: 'T1547', explain: 'Boot or Logon Autostart Execution (Persistence): via een Run-sleutel blijft de bot ook na een herstart actief.' },
           { desc: 'De operator stuurt via het botnet een verborgen, Base64-gecodeerde opdracht: powershell.exe -w hidden -enc <base64>.', code: 'T1059.001', explain: 'PowerShell (Execution): met -enc wordt de opdracht in Base64 verhuld en verborgen uitgevoerd.' },
           { desc: 'Buitgemaakte inloggegevens worden via dezelfde gate.php-POSTs teruggestuurd naar de C2-server (de grote upload in de pcap).', code: 'T1041', explain: 'Exfiltration Over C2 Channel (Exfiltration): data weglekken via precies hetzelfde kanaal waarover de bot al praat, zodat het niet opvalt.' },
@@ -241,7 +241,7 @@ CS.registerRoom({
         { q: 'Welk techniek-ID past bij "de bot checkt elke 45 seconden in via HTTP-POSTs naar de C2"?', answer: ['T1071'], hint: 'Application Layer Protocol, tactiek Command and Control.', explain: 'T1071 (Application Layer Protocol): C2-verkeer verstopt in normaal web-verkeer.' },
         { q: 'Welk techniek-ID hoort bij het ophalen van de botmodule core.bin bij de drop-server?', answer: ['T1105'], hint: 'Ingress Tool ...', explain: 'T1105 (Ingress Tool Transfer): extra gereedschap binnenhalen vanaf een externe server.' },
         { q: 'De bot zet zichzelf in de Windows Run-sleutel. Welke techniek is dat?', options: ['T1547 Boot or Logon Autostart Execution', 'T1486 Data Encrypted for Impact', 'T1110 Brute Force', 'T1190 Exploit Public-Facing Application'], answer: 0, explain: 'T1547 (Boot or Logon Autostart Execution, tactiek Persistence): via autostart blijft de bot na een herstart draaien.' },
-        { q: 'Welke vlag verdien je door alle zes waarnemingen juist te mappen?', answer: ['JVT{zwerm_in_kaart}'], hint: 'Staat als beloning in de tekst van deze taak.', explain: 'Alle zes correct gekoppeld levert JVT{zwerm_in_kaart} op.' },
+        { q: 'Welke vlag verdien je door alle zes waarnemingen juist te mappen?', answer: ['NM{zwerm_in_kaart}'], hint: 'Staat als beloning in de tekst van deze taak.', explain: 'Alle zes correct gekoppeld levert NM{zwerm_in_kaart} op.' },
       ],
     },
 
@@ -254,9 +254,9 @@ CS.registerRoom({
 
         <h3>De twee clusters</h3>
         <ul>
-          <li><strong>Cluster Alpha:</strong> de C2 die je al kent, <code>schim-sync.jvt.lab</code> op
+          <li><strong>Cluster Alpha:</strong> de C2 die je al kent, <code>schim-sync.nm.lab</code> op
           <code>203.0.113.50</code>.</li>
-          <li><strong>Cluster Bravo:</strong> een pas opgedoken C2, <code>update-knoop.jvt.lab</code> op een <em>ander</em>
+          <li><strong>Cluster Bravo:</strong> een pas opgedoken C2, <code>update-knoop.nm.lab</code> op een <em>ander</em>
           IP (<code>198.51.100.90</code>). Is dit toeval, of dezelfde baas?</li>
         </ul>
 
@@ -273,20 +273,20 @@ CS.registerRoom({
         </div>
 
         <p>Pas je de zeldzaamheidstoets juist toe — kies het certificaat, niet de hoster — dan verdien je de vlag
-        <code>JVT{cert_bruggt_de_zwerm}</code>.</p>
+        <code>NM{cert_bruggt_de_zwerm}</code>.</p>
       `,
       lab: {
         type: 'pivot',
         title: 'SchimNet — Cluster Alpha vs. Cluster Bravo',
         scenario: 'Cluster Alpha is de bekende C2 van SchimNet. Cluster Bravo is net opgedoken. Horen ze bij dezelfde operator? Pivoteer langs de relaties en toets de zeldzaamheid van elk gedeeld kenmerk.',
         entities: [
-          { id: 'dA', type: 'domain', label: 'schim-sync.jvt.lab' },
+          { id: 'dA', type: 'domain', label: 'schim-sync.nm.lab' },
           { id: 'ipA', type: 'ip', label: '203.0.113.50' },
-          { id: 'dB', type: 'domain', label: 'update-knoop.jvt.lab' },
+          { id: 'dB', type: 'domain', label: 'update-knoop.nm.lab' },
           { id: 'ipB', type: 'ip', label: '198.51.100.90' },
           { id: 'cert', type: 'cert', label: 'A1B2C3D4' },
           { id: 'wal', type: 'wallet', label: 'bc1qfictiefschim' },
-          { id: 'mail', type: 'email', label: 'beheer@schim-sync.jvt.lab' },
+          { id: 'mail', type: 'email', label: 'beheer@schim-sync.nm.lab' },
           { id: 'asn', type: 'asn', label: 'AS64500 FictiefHost' },
         ],
         edges: [
@@ -305,7 +305,7 @@ CS.registerRoom({
       questions: [
         { q: 'Welk zeldzaam kenmerk bruggt Cluster Alpha en Cluster Bravo?', answer: ['certificaat', 'cert', 'A1B2C3D4', 'het certificaat', 'tls-certificaat'], hint: 'Hetzelfde kenmerk staat in crt.sh bij beide domeinen; de IP-adressen verschillen juist.', explain: 'Beide C2-domeinen presenteren hetzelfde TLS-certificaat A1B2C3D4. Hergebruik van een certificaat is zeldzaam, dus een sterke brug tussen de clusters.' },
         { q: 'Beide C2-IP\'s horen bij dezelfde hostingprovider (AS64500). Waarom is dat geen sterke brug?', options: ['Omdat heel veel onschuldige sites dezelfde hoster delen — het kenmerk is niet zeldzaam', 'Omdat ASN-nummers altijd nep zijn', 'Omdat hosting niets met IP-adressen te maken heeft', 'Dat is juist wél de sterkste brug'], answer: 0, explain: 'Een gedeelde hoster is te algemeen om iets te bewijzen; de zeldzaamheidstoets bepaalt of een gedeeld kenmerk echt bewijs is.' },
-        { q: 'Welke vlag verdien je door de zeldzaamheidstoets juist toe te passen?', answer: ['JVT{cert_bruggt_de_zwerm}'], hint: 'Staat als beloning in de tekst van deze taak.', explain: 'Kies het zeldzame dwarsverband (het certificaat), niet het toevallige (de hoster): JVT{cert_bruggt_de_zwerm}.' },
+        { q: 'Welke vlag verdien je door de zeldzaamheidstoets juist toe te passen?', answer: ['NM{cert_bruggt_de_zwerm}'], hint: 'Staat als beloning in de tekst van deze taak.', explain: 'Kies het zeldzame dwarsverband (het certificaat), niet het toevallige (de hoster): NM{cert_bruggt_de_zwerm}.' },
       ],
     },
 
@@ -342,13 +342,13 @@ CS.registerRoom({
         </div>
 
         <p>Zet in het lab de stappen in de juiste volgorde. Klopt het, dan verschijnt de vlag
-        <code>JVT{keten_doorgeknipt}</code>.</p>
+        <code>NM{keten_doorgeknipt}</code>.</p>
       `,
       lab: {
         type: 'ordering',
         title: 'Operatie Spookzwerm — de takedown',
         prompt: 'Zet de stappen van de botnet-takedown in de juiste volgorde (gebruik de uitleg uit de taaktekst).',
-        flag: 'JVT{keten_doorgeknipt}',
+        flag: 'NM{keten_doorgeknipt}',
         explain: 'De vaste keten loopt: identificeren -> in kaart brengen -> juridische basis -> sinkholen & seizen -> slachtoffers notificeren -> nazorg. Te vroeg sinkholen verraadt je; seizen zonder recht maakt het bewijs onbruikbaar; zonder notificatie blijven slachtoffers besmet.',
         items: [
           { id: 'a', label: 'Identificeren — samples en C2-verkeer analyseren; de C2-domeinen, IP\'s en het DGA vaststellen' },
@@ -363,7 +363,7 @@ CS.registerRoom({
       questions: [
         { q: 'Welke stap komt direct vóór het notificeren van de slachtoffers?', options: ['Sinkholen & seizen', 'Identificeren', 'Nazorg', 'In kaart brengen'], answer: 0, explain: 'Pas na het sinkholen ziet de sinkhole welke IP-adressen besmet zijn; die lijst gebruik je daarna om te notificeren.' },
         { q: 'Waarom moet de juridische basis geregeld zijn vóór de seize?', options: ['Anders is het in beslag genomen bewijs onbruikbaar in de rechtszaal', 'Omdat sinkholing anders niet werkt', 'Omdat de bots anders geen opdrachten meer krijgen', 'Dat hoeft helemaal niet'], answer: 0, explain: 'Zonder machtiging (officier van justitie, rechter-commissaris, internationale rechtshulp) houdt het bewijs geen stand.' },
-        { q: 'Welke vlag verschijnt als de volgorde klopt?', answer: ['JVT{keten_doorgeknipt}'], hint: 'Verschijnt in het ordering-lab bij de juiste volgorde.', explain: 'De juiste keten levert JVT{keten_doorgeknipt} op.' },
+        { q: 'Welke vlag verschijnt als de volgorde klopt?', answer: ['NM{keten_doorgeknipt}'], hint: 'Verschijnt in het ordering-lab bij de juiste volgorde.', explain: 'De juiste keten levert NM{keten_doorgeknipt} op.' },
       ],
     },
 
@@ -388,13 +388,13 @@ CS.registerRoom({
           (sinkholing, inbeslagname). Zo valt elk begrip op zijn plek.
         </div>
 
-        <p>Alle zestien juist gegroepeerd levert de vlag <code>JVT{zestien_op_een_rij}</code> op.</p>
+        <p>Alle zestien juist gegroepeerd levert de vlag <code>NM{zestien_op_een_rij}</code> op.</p>
       `,
       lab: {
         type: 'connections',
         title: 'Botnet & takedown — zestien begrippen',
         prompt: 'Sleep de zestien begrippen in vier groepen van vier. Elk begrip hoort bij precies één categorie.',
-        flag: 'JVT{zestien_op_een_rij}',
+        flag: 'NM{zestien_op_een_rij}',
         groups: [
           { name: 'Onderdelen van een botnet', items: ['Bot (zombie)', 'Loader', 'C2-server', 'Botherder (operator)'] },
           { name: 'C2-kanalen & -technieken', items: ['HTTP-beaconing', 'DGA', 'Fast-flux DNS', 'IRC-kanaal'] },
@@ -405,7 +405,7 @@ CS.registerRoom({
       questions: [
         { q: 'In welke categorie hoort "Sinkholing"?', options: ['Acties bij een takedown', 'Onderdelen van een botnet', 'C2-kanalen & -technieken', 'Partners bij een takedown'], answer: 0, explain: 'Sinkholing is iets wat opsporing dóét om het botnet te verstoren — een takedown-actie, geen kanaal van de bot.' },
         { q: 'Welk begrip is een C2-kanaal/-techniek en geen onderdeel of takedown-actie?', options: ['Fast-flux DNS', 'Loader', 'Inbeslagname', 'Europol'], answer: 0, explain: 'Fast-flux DNS wisselt razendsnel van IP om de C2 moeilijk te blokkeren — een C2-techniek. Een loader is een botnet-onderdeel, inbeslagname een actie en Europol een partner.' },
-        { q: 'Welke vlag verschijnt als alle vier de groepen kloppen?', answer: ['JVT{zestien_op_een_rij}'], hint: 'Verschijnt in het connections-lab bij vier goede groepen.', explain: 'Vier correcte groepen van vier leveren JVT{zestien_op_een_rij} op.' },
+        { q: 'Welke vlag verschijnt als alle vier de groepen kloppen?', answer: ['NM{zestien_op_een_rij}'], hint: 'Verschijnt in het connections-lab bij vier goede groepen.', explain: 'Vier correcte groepen van vier leveren NM{zestien_op_een_rij} op.' },
       ],
     },
 

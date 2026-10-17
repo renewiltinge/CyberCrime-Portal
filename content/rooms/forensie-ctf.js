@@ -6,18 +6,18 @@ const PCAP_ZAAK = [
   { no: 2, time: '0.014', src: '10.10.80.1', dst: '10.10.80.5', proto: 'DNS', len: 94, info: 'Antwoord A share.zilverlab.lab = 10.10.50.20' },
   { no: 3, time: '1.210', src: '10.10.80.5', dst: '10.10.50.20', proto: 'SMB', len: 320, info: 'SMB2 Read  \\\\zilverlab\\onderzoek\\prototype.zip' },
   { no: 4, time: '1.260', src: '10.10.50.20', dst: '10.10.80.5', proto: 'SMB', len: 1480, info: 'SMB2 Read Response (bestand gelezen)' },
-  { no: 5, time: '48.300', src: '10.10.80.5', dst: '10.10.90.77', proto: 'DNS', len: 80, info: 'Standaardquery A leak.jvt.lab' },
+  { no: 5, time: '48.300', src: '10.10.80.5', dst: '10.10.90.77', proto: 'DNS', len: 80, info: 'Standaardquery A leak.nm.lab' },
   { no: 6, time: '48.330', src: '10.10.80.5', dst: '10.10.90.77', proto: 'TCP', len: 74, info: '51210 -> 80 [SYN]' },
   { no: 7, time: '48.344', src: '10.10.90.77', dst: '10.10.80.5', proto: 'TCP', len: 74, info: '80 -> 51210 [SYN, ACK]' },
   {
     no: 8, time: '48.360', src: '10.10.80.5', dst: '10.10.90.77', proto: 'HTTP', len: 5120,
     info: 'POST /drop HTTP/1.1  (data 4.820 bytes!)',
     stream: `POST /drop HTTP/1.1
-Host: leak.jvt.lab
+Host: leak.nm.lab
 User-Agent: wexport/1.2
 Content-Type: application/octet-stream
 Content-Length: 4820
-X-Case: JVT{buit_onderschept}
+X-Case: NM{buit_onderschept}
 
 PK..........prototype.zip......(binaire ZIP-inhoud: gestolen onderzoeksdata)......
 
@@ -48,7 +48,7 @@ const LOGS_ZAAK = `2026-09-28 08:02:11 WS-DEKKER Security 4624 Logon geslaagd   
 2026-09-28 23:18:52 WS-DEKKER Sysmon   3    NetworkConnect       Image=wexport.exe  Dest=10.10.90.77:80
 2026-09-28 23:19:40 WS-DEKKER Security 4634 Logoff              Account=j.dekker
 2026-09-29 07:55:12 WS-DEKKER Security 4624 Logon geslaagd       Account=m.visser   LogonType=2 (Interactief)
-2026-09-29 09:03:00 WS-DEKKER SOC-tag  incident ZILVERLAB: na-werktijd logon j.dekker + share-toegang + upload naar 10.10.90.77 = JVT{tijdlijn_rond}`;
+2026-09-29 09:03:00 WS-DEKKER SOC-tag  incident ZILVERLAB: na-werktijd logon j.dekker + share-toegang + upload naar 10.10.90.77 = NM{tijdlijn_rond}`;
 
 CS.registerRoom({
   id: 'forensie-ctf',
@@ -89,7 +89,7 @@ CS.registerRoom({
         </div>
 
         <h3>Je onderzoekslijn</h3>
-        <p>Je doorloopt zes stappen en verzamelt bij elke stap een vlag (<code>JVT{...}</code>):</p>
+        <p>Je doorloopt zes stappen en verzamelt bij elke stap een vlag (<code>NM{...}</code>):</p>
         <ol>
           <li><strong>Het verdachte bestand</strong> — herken het echte bestandstype aan de magic bytes (hex).</li>
           <li><strong>Integriteit van bewijs</strong> — bevestig met een hash dat er niet is geknoeid, en lees het bewijs.</li>
@@ -145,12 +145,12 @@ CS.registerRoom({
       lab: {
         type: 'hexviewer',
         filename: 'vakantiefoto.jpg',
-        hex: '50 4B 03 04 14 00 00 00 00 00 08 00 08 00 6E 6F 74 69 74 69 65 2E 74 78 74 0A 42 45 57 49 4A 53 20 2D 20 4A 56 54 7B 6D 61 67 69 73 63 68 65 5F 62 79 74 65 73 7D 0A',
+        hex: '50 4B 03 04 14 00 00 00 00 00 08 00 08 00 6E 6F 74 69 74 69 65 2E 74 78 74 0A 42 45 57 49 4A 53 20 2D 20 4E 4D 7B 6D 61 67 69 73 63 68 65 5F 62 79 74 65 73 7D 0A',
       },
       questions: [
         { q: 'Wat is dit bestand in werkelijkheid (kijk naar de magic bytes), ondanks de naam .jpg?', answer: ['ZIP', 'zip', 'ZIP-archief', 'een zip'], hint: 'De eerste bytes zijn 50 4B 03 04 — zoek die op in de tabel.', explain: 'De handtekening 50 4B 03 04 (PK..) hoort bij een ZIP-archief, niet bij een JPEG.' },
         { q: 'Welke vier bytes (hex) staan helemaal vooraan in het bestand?', answer: ['50 4B 03 04', '504b0304', '50 4b 03 04', '50 4B 03 04 '], hint: 'De allereerste rij van de hex-dump, vier byteparen.', explain: 'De eerste vier bytes 50 4B 03 04 zijn de ZIP-signatuur (PK\\x03\\x04).' },
-        { q: 'Welke vlag staat verstopt in de ASCII-kolom van het bestand?', answer: ['JVT{magische_bytes}'], encoded: true, hint: 'Lees de leesbare tekst rechts in de hex-dump (na "BEWIJS -").', explain: 'In de ASCII staat "BEWIJS - JVT{magische_bytes}". De bytes zelf bevatten de leesbare vlag.' },
+        { q: 'Welke vlag staat verstopt in de ASCII-kolom van het bestand?', answer: ['NM{magische_bytes}'], encoded: true, hint: 'Lees de leesbare tekst rechts in de hex-dump (na "BEWIJS -").', explain: 'In de ASCII staat "BEWIJS - NM{magische_bytes}". De bytes zelf bevatten de leesbare vlag.' },
       ],
     },
 
@@ -187,7 +187,7 @@ CS.registerRoom({
         home: '/home/analist', cwd: '/home/analist/zaak-zilverlab/bewijs',
         motd: 'NFI forensisch lab — Zaak Zilverlab. Werkmap: zaak-zilverlab/bewijs. Typ de commando\'s uit de opdracht.',
         fs: {
-          '/home/analist/zaak-zilverlab/bewijs/carved_0x4e20.bin': 'MEMO - vertrouwelijk\nAccount: j.dekker\nDoel: 10.10.80.5\nNotitie van analist: JVT{integriteit_bewezen}\n',
+          '/home/analist/zaak-zilverlab/bewijs/carved_0x4e20.bin': 'MEMO - vertrouwelijk\nAccount: j.dekker\nDoel: 10.10.80.5\nNotitie van analist: NM{integriteit_bewezen}\n',
           '/home/analist/zaak-zilverlab/bewijs/LEESMIJ.txt': 'Vastgelegde SHA-256 van carved_0x4e20.bin:\n730c5a2e1394e9cb07e9b94a3f0450e197828bd7564ff8a016abe22d065f2827\nControleer met sha256sum voordat je het bewijs gebruikt.\n',
           '/home/analist/zaak-zilverlab/logboek.txt': 'Chain of custody - Zaak Zilverlab\n2026-09-29 10:15 veiliggesteld door rechercheur (machtiging RC-2026-0442)\n2026-09-29 10:16 SHA-256 berekend en vastgelegd\n',
         },
@@ -198,7 +198,7 @@ CS.registerRoom({
       },
       questions: [
         { q: 'Komt de berekende SHA-256 overeen met de vastgelegde hash in het logboek?', options: ['Ja, ze zijn identiek — de integriteit is bewezen', 'Nee, ze verschillen', 'Dat kun je niet controleren', 'Alleen MD5 kan dat'], answer: 0, explain: 'sha256sum geeft exact 730c5a2e...065f2827, gelijk aan de vastgelegde hash. Het bewijs is onaangeroerd.' },
-        { q: 'Welke vlag liet de analist achter in het bestand (gebruik strings)?', answer: ['JVT{integriteit_bewezen}'], hint: 'Run "strings carved_0x4e20.bin" (of cat) en lees de notitieregel.', explain: 'strings toont de leesbare tekst, waaronder "Notitie van analist: JVT{integriteit_bewezen}".' },
+        { q: 'Welke vlag liet de analist achter in het bestand (gebruik strings)?', answer: ['NM{integriteit_bewezen}'], hint: 'Run "strings carved_0x4e20.bin" (of cat) en lees de notitieregel.', explain: 'strings toont de leesbare tekst, waaronder "Notitie van analist: NM{integriteit_bewezen}".' },
         { q: 'Welk account wordt in het bewijsbestand genoemd?', answer: ['j.dekker', 'jdekker', 'dekker'], hint: 'Kijk bij "Account:" in de strings-uitvoer.', explain: 'Het bestand noemt Account: j.dekker — dezelfde verdachte als in de opdracht.' },
         { q: 'Waarom bewijst een gelijke hash dat er niet is geknoeid?', options: ['Elke wijziging, zelfs 1 bit, geeft een totaal andere hash', 'Omdat de hash kort is', 'Omdat SHA-256 geheim is', 'Dat bewijst het niet'], answer: 0, explain: 'Een cryptografische hash verandert volledig bij de kleinste wijziging; gelijke hashes betekenen identieke data.' },
       ],
@@ -222,16 +222,16 @@ CS.registerRoom({
         </ol>
 
         <div class="callout tip">
-          <strong>Tip:</strong> de upload gaat naar het externe IP <code>10.10.90.77</code> (host <code>leak.jvt.lab</code>).
+          <strong>Tip:</strong> de upload gaat naar het externe IP <code>10.10.90.77</code> (host <code>leak.nm.lab</code>).
           Kijk ook naar de User-Agent <code>wexport/1.2</code> — dat is geen browser, maar een exfiltratietool. Onthoud
           die naam; je komt hem in de geheugendump en de logs weer tegen.
         </div>
       `,
       lab: { type: 'pcap', title: 'zilverlab-netwerk.pcap', packets: PCAP_ZAAK },
       questions: [
-        { q: 'Naar welk extern IP-adres werd de buit geuploadt?', answer: ['10.10.90.77'], hint: 'Kijk naar de bestemming (dst) van het grote POST-pakket.', explain: 'De POST ging naar 10.10.90.77 (leak.jvt.lab), buiten het interne netwerk.' },
+        { q: 'Naar welk extern IP-adres werd de buit geuploadt?', answer: ['10.10.90.77'], hint: 'Kijk naar de bestemming (dst) van het grote POST-pakket.', explain: 'De POST ging naar 10.10.90.77 (leak.nm.lab), buiten het interne netwerk.' },
         { q: 'Welke tool deed de upload (lees de User-Agent in de stream)?', answer: ['wexport', 'wexport/1.2', 'wexport.exe'], hint: 'In de HTTP-kop staat User-Agent: ...', explain: 'De User-Agent is wexport/1.2 — geen browser maar een exfiltratietool. Dezelfde naam zie je terug in geheugen en logs.' },
-        { q: 'Welke vlag staat in de HTTP-kop van de POST (Follow stream)?', answer: ['JVT{buit_onderschept}'], encoded: true, hint: 'Open Follow stream op het grote POST-pakket en lees de X-Case-regel.', explain: 'In de header X-Case staat JVT{buit_onderschept}; eronder de binaire ZIP met de gestolen onderzoeksdata.' },
+        { q: 'Welke vlag staat in de HTTP-kop van de POST (Follow stream)?', answer: ['NM{buit_onderschept}'], encoded: true, hint: 'Open Follow stream op het grote POST-pakket en lees de X-Case-regel.', explain: 'In de header X-Case staat NM{buit_onderschept}; eronder de binaire ZIP met de gestolen onderzoeksdata.' },
       ],
     },
 
@@ -291,14 +291,14 @@ UDPv4  10.10.80.5    53         *             *            *            636    s
 PID    Process        Args
 2210   OUTLOOK.EXE    "C:\\Program Files\\Microsoft Office\\root\\Office16\\OUTLOOK.EXE"
 2880   EXCEL.EXE      "C:\\Program Files\\Microsoft Office\\root\\Office16\\EXCEL.EXE"
-5120   wexport.exe    C:\\Users\\jdekker\\AppData\\Roaming\\wexport.exe --dst 10.10.90.77 --tag JVT{proces_ontmaskerd}`,
+5120   wexport.exe    C:\\Users\\jdekker\\AppData\\Roaming\\wexport.exe --dst 10.10.90.77 --tag NM{proces_ontmaskerd}`,
         },
       },
       questions: [
         { q: 'Welk proces hoort niet thuis en deed de exfiltratie?', answer: ['wexport.exe', 'wexport'], hint: 'Vergelijk met de bekende Office/systeemprocessen; één valt op en start om 23:15.', explain: 'wexport.exe (PID 5120, kind van explorer.exe) is de exfiltratietool — dezelfde naam als de User-Agent in de pcap.' },
         { q: 'Met welk extern IP praat dit proces (windows.netscan)?', answer: ['10.10.90.77'], hint: 'Kijk bij de ForeignAddr op de wexport.exe-regel.', explain: 'wexport.exe (PID 5120) verbindt met 10.10.90.77:80 — hetzelfde IP als de upload in de pcap.' },
         { q: 'Vanuit welke map draait wexport.exe (windows.cmdline)?', answer: ['AppData', 'C:\\Users\\jdekker\\AppData\\Roaming', 'appdata', 'Roaming'], hint: 'Lees het pad in de Args-kolom; het is geen System32.', explain: 'Het draait uit C:\\Users\\jdekker\\AppData\\Roaming — een gebruikersmap, niet System32: verdacht.' },
-        { q: 'Welke vlag staat in de opdrachtregel van wexport.exe?', answer: ['JVT{proces_ontmaskerd}'], hint: 'Lees de --tag in de Args van windows.cmdline.', explain: 'De argumenten bevatten --tag JVT{proces_ontmaskerd}.' },
+        { q: 'Welke vlag staat in de opdrachtregel van wexport.exe?', answer: ['NM{proces_ontmaskerd}'], hint: 'Lees de --tag in de Args van windows.cmdline.', explain: 'De argumenten bevatten --tag NM{proces_ontmaskerd}.' },
       ],
     },
 
@@ -319,7 +319,7 @@ PID    Process        Args
           <code>\\\\zilverlab\\onderzoek</code> (event <code>5140</code>), en een netwerkverbinding naar
           <code>10.10.90.77</code> (Sysmon event <code>3</code>). Dat is het hele verhaal op één tijdlijn.</li>
           <li><strong>De vlag.</strong> Onderaan tagde de SOC-analist het incident. Daarin staat de vlag. Filter desnoods
-          op <code>JVT</code> of op <code>SOC-tag</code>.</li>
+          op <code>NM</code> of op <code>SOC-tag</code>.</li>
         </ol>
 
         <div class="callout tip">
@@ -333,7 +333,7 @@ PID    Process        Args
         { q: 'Welk account logde buiten werktijd (laat op de avond) in?', answer: ['j.dekker', 'jdekker', 'dekker'], hint: 'Zoek de 4624-logon rond 23:14; welk account?', explain: 'Om 23:14 logde j.dekker interactief in — ruim buiten werktijd, het begin van de keten.' },
         { q: 'Hoe laat (uu:mm) vond die afwijkende login plaats?', answer: ['23:14', '23:14:07'], hint: 'Lees het tijdstip op de 4624-regel met de markering "buiten werktijd".', explain: 'De afwijkende logon was om 23:14:07, direct gevolgd door het starten van wexport.exe.' },
         { q: 'Welke share werd tijdens het incident benaderd (event 5140)?', answer: ['\\\\zilverlab\\onderzoek', 'zilverlab\\onderzoek', '\\\\zilverlab\\onderzoek', 'onderzoek'], hint: 'Kijk bij de 5140-regel naar Share=...', explain: 'De netwerkshare \\\\zilverlab\\onderzoek werd benaderd — de bron van het gelekte prototype.' },
-        { q: 'Welke vlag staat in de SOC-tag onderaan de logs?', answer: ['JVT{tijdlijn_rond}'], hint: 'Filter op "SOC-tag" of op "JVT" en lees de laatste regel.', explain: 'De analist tagde: na-werktijd logon + share-toegang + upload = JVT{tijdlijn_rond}.' },
+        { q: 'Welke vlag staat in de SOC-tag onderaan de logs?', answer: ['NM{tijdlijn_rond}'], hint: 'Filter op "SOC-tag" of op "NM" en lees de laatste regel.', explain: 'De analist tagde: na-werktijd logon + share-toegang + upload = NM{tijdlijn_rond}.' },
       ],
     },
 
@@ -345,7 +345,7 @@ PID    Process        Args
         terug te draaien.</p>
 
         <p>De boodschap luidt:</p>
-        <pre><code>V0lHe21ubnhfdHJmeWJncmF9</code></pre>
+        <pre><code>QVp7bW5ueF90cmZ5YmdyYX0=</code></pre>
 
         <p>Twee aanwijzingen:</p>
         <ul>
@@ -367,9 +367,9 @@ PID    Process        Args
           onderscheid ook in je rapport.
         </div>
       `,
-      lab: { type: 'cyberchef', input: 'V0lHe21ubnhfdHJmeWJncmF9' },
+      lab: { type: 'cyberchef', input: 'QVp7bW5ueF90cmZ5YmdyYX0=' },
       questions: [
-        { q: 'Wat is de vlag na Base64-decoderen + ROT13?', answer: ['JVT{zaak_gesloten}'], encoded: true, hint: 'Recept: eerst "Base64 decoderen", dan "ROT13".', explain: 'Base64 is de buitenste laag, ROT13 de binnenste. Resultaat: JVT{zaak_gesloten}. Zaak afgerond!' },
+        { q: 'Wat is de vlag na Base64-decoderen + ROT13?', answer: ['NM{zaak_gesloten}'], encoded: true, hint: 'Recept: eerst "Base64 decoderen", dan "ROT13".', explain: 'Base64 is de buitenste laag, ROT13 de binnenste. Resultaat: NM{zaak_gesloten}. Zaak afgerond!' },
         { q: 'Welk recept onthult de boodschap?', options: ['Base64 decoderen, daarna ROT13', 'Alleen MD5', 'Alleen URL-decoderen', 'XOR met een geheime sleutel'], answer: 0, explain: 'De boodschap is eerst met ROT13 verschoven en daarna Base64-gecodeerd; je draait dat in omgekeerde volgorde terug.' },
         { q: 'Waarom is dit geen echte versleuteling?', options: ['Base64 en ROT13 zijn omkeerbaar zonder geheime sleutel', 'Omdat het te kort is', 'Omdat het in CyberChef staat', 'Dat is het wel'], answer: 0, explain: 'Zonder sleutel terug te draaien = codering, geen encryptie. Echte encryptie vereist een geheime sleutel.' },
       ],

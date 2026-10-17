@@ -1,11 +1,11 @@
 /* Room: Puzzels & uitdagingen — Cybercrime-CTF "Operatie Spookgeld" (afsluitend) */
 
 // --- Onderschept bericht (station 2): Vigenère met sleutel "dojo" ---
-// Ontsleuteld: "De sleutel is dojo en de vlag luidt JVT{vigenere_gekraakt}"
+// Ontsleuteld: "De sleutel is dojo en de vlag luidt NM{vigenere_gekraakt}"
 // (geverifieerd met de cipher-lab-functie; zie CRACK-REF).
 //
 // --- Campagne-tag (intro): Base64 ---
-// Y2FtcGFnbmUtdGFnOiBKVlR7c3RpbGxlX3Zlbm5vb3R9  ->  "campagne-tag: JVT{stille_vennoot}"
+// Y2FtcGFnbmUtdGFnOiBOTXtzdGlsbGVfdmVubm9vdH0=  ->  "campagne-tag: NM{stille_vennoot}"
 
 CS.registerRoom({
   id: 'cybercrime-ctf',
@@ -26,7 +26,7 @@ CS.registerRoom({
   ],
   terms: [
     { term: 'CTF', def: 'Capture The Flag: een oefening waarin je uitdagingen oplost en geheime codes (vlaggen) verzamelt.' },
-    { term: 'Vlag (flag)', def: 'Een unieke code die bewijst dat je een uitdaging oploste, hier in het formaat JVT{...}.' },
+    { term: 'Vlag (flag)', def: 'Een unieke code die bewijst dat je een uitdaging oploste, hier in het formaat NM{...}.' },
     { term: 'Ransomware', def: 'Afpersingssoftware die bestanden versleutelt; de dader eist losgeld voor de sleutel, vaak gecombineerd met diefstal van data (dubbele afpersing).' },
     { term: 'Witwassen', def: 'Crimineel geld een legale schijn geven. Klassiek in drie stappen: placement (erin brengen), layering (verhullen via vele stappen) en integration (terug de echte economie in).' },
     { term: 'Money mule (katvanger)', def: 'Iemand die zijn rekening of wallet beschikbaar stelt om crimineel geld door te sluizen, zodat het spoor naar de dader vertroebelt.' },
@@ -52,7 +52,7 @@ CS.registerRoom({
         in een (fictief) gezamenlijk cybercrimeteam aan een netwerk dat wij "De Spookgeld-bende" noemen: ze breken binnen,
         gijzelen bestanden met <strong>ransomware</strong> en <strong>wassen</strong> het losgeld wit via cryptomunten.
         Alles in deze room is <strong>verzonnen</strong>: de IP-adressen zijn documentatie-adressen (RFC&nbsp;5737), de
-        domeinen eindigen op <code>.jvt.lab</code> en je werkt met bewijs dat rechtmatig is veiliggesteld.</p>
+        domeinen eindigen op <code>.nm.lab</code> en je werkt met bewijs dat rechtmatig is veiliggesteld.</p>
 
         <p>Je bent <strong>geautoriseerd</strong>: er ligt een bevel en je blijft binnen de wettelijke kaders (zoals
         art.&nbsp;126j&nbsp;Sv en de Wet politiegegevens). Dat is cruciaal, want precies dezelfde handelingen zonder
@@ -62,24 +62,24 @@ CS.registerRoom({
 
         <p>Je doorloopt acht stations die samen de hele keten vormen: <strong>toegang &rarr; uitvoering &rarr; buit
         &rarr; witwassen &rarr; attributie &rarr; product</strong>. Per station verdien je minstens één vlag
-        (<code>JVT{...}</code>); in totaal zijn het er tien. Houd, net als in het echt, een korte <strong>write-up</strong>
+        (<code>NM{...}</code>); in totaal zijn het er tien. Houd, net als in het echt, een korte <strong>write-up</strong>
         bij: noteer per station wat je deed en wat je vond.</p>
 
         <p>In een onderschept chatlog liet de bende een gecodeerde <em>campagne-tag</em> achter:</p>
-        <pre><code>Y2FtcGFnbmUtdGFnOiBKVlR7c3RpbGxlX3Zlbm5vb3R9</code></pre>
+        <pre><code>Y2FtcGFnbmUtdGFnOiBOTXtzdGlsbGVfdmVubm9vdH0=</code></pre>
         <p>Het is geen hash maar <strong>Base64</strong> (letters, cijfers, eindigt op <code>=</code>). Decodeer de string
         met een decoder uit een eerdere room en je leest de eerste verborgen vlag.</p>
 
         <div class="callout tip"><strong>Startschot:</strong> als bewijs dat je de operatie bent gestart, krijg je de
-        eerste vlag cadeau: <code>JVT{spookgeld_gestart}</code>. De rest verdien je onderweg.</div>
+        eerste vlag cadeau: <code>NM{spookgeld_gestart}</code>. De rest verdien je onderweg.</div>
 
         <div class="callout danger"><strong>Ethiek, eerst:</strong> deze technieken oefen je uitsluitend in dit lab of
         met een rechtmatige grondslag. Buiten je opdracht ben je geen onderzoeker maar een verdachte (art.&nbsp;138ab&nbsp;Sr).</div>
       `,
       questions: [
         { q: 'Wat maakt jouw onderzoek rechtmatig in plaats van strafbaar?', options: ['Dat de bende fictief is', 'Een rechtmatige grondslag/bevel binnen de wettelijke kaders (art. 126j Sv, Wpg)', 'Dat je tien vlaggen zoekt', 'Dat je het snel doet'], answer: 1, explain: 'Een wettelijke grondslag is de grens tussen rechtmatig onderzoek en computervredebreuk (art. 138ab Sr). Zonder bevel zou je zelf strafbaar zijn.' },
-        { q: 'Decodeer de Base64-campagne-tag. Welke vlag staat erin?', answer: ['JVT{stille_vennoot}'], encoded: true, hint: 'Haal de string door een Base64-decoder; er staat "campagne-tag: ..." voor.', explain: 'De Base64 decodeert naar "campagne-tag: JVT{stille_vennoot}".' },
-        { q: 'Wat is de startvlag van deze operatie?', answer: ['JVT{spookgeld_gestart}'], hint: 'Staat in de tip-callout als startschot.', explain: 'De startvlag is JVT{spookgeld_gestart}.' },
+        { q: 'Decodeer de Base64-campagne-tag. Welke vlag staat erin?', answer: ['NM{stille_vennoot}'], encoded: true, hint: 'Haal de string door een Base64-decoder; er staat "campagne-tag: ..." voor.', explain: 'De Base64 decodeert naar "campagne-tag: NM{stille_vennoot}".' },
+        { q: 'Wat is de startvlag van deze operatie?', answer: ['NM{spookgeld_gestart}'], hint: 'Staat in de tip-callout als startschot.', explain: 'De startvlag is NM{spookgeld_gestart}.' },
         { q: 'Ik heb een rechtmatige grondslag en werk de dump station voor station uit, zonder blind te betalen.', noAnswer: true },
       ],
     },
@@ -131,7 +131,7 @@ CS.registerRoom({
         net zoals Hashcat en John the Ripper dat doen.</p>
 
         <p>Zodra je de hash kraakt, log je met dat wachtwoord in op het beheerportaal van de bende. Het dashboard
-        verwelkomt je en toont de vlag <strong>JVT{eerste_toegang}</strong>. Noteer zowel het gekraakte wachtwoord als de
+        verwelkomt je en toont de vlag <strong>NM{eerste_toegang}</strong>. Noteer zowel het gekraakte wachtwoord als de
         vlag in je write-up.</p>
 
         <div class="callout warn"><strong>Les voor later:</strong> SHA-1, MD5 én SHA-256 zijn razendsnel te berekenen.
@@ -146,7 +146,7 @@ CS.registerRoom({
       },
       questions: [
         { q: 'Wat is het gekraakte wachtwoord van het beheeraccount?', answer: ['KoffieKlap2026'], hint: 'Start de woordenlijstaanval op SHA-1; het is een bedrijfsthema-wachtwoord met een jaartal.', explain: 'De SHA-1-hash 48df3bc2... hoort bij het wachtwoord "KoffieKlap2026".' },
-        { q: 'Welke vlag toont het beheerportaal nadat je bent ingelogd?', answer: ['JVT{eerste_toegang}'], hint: 'Staat in de uitleg van deze taak, als beloning voor het kraken.', explain: 'Met het gekraakte wachtwoord krijg je toegang: JVT{eerste_toegang}.' },
+        { q: 'Welke vlag toont het beheerportaal nadat je bent ingelogd?', answer: ['NM{eerste_toegang}'], hint: 'Staat in de uitleg van deze taak, als beloning voor het kraken.', explain: 'Met het gekraakte wachtwoord krijg je toegang: NM{eerste_toegang}.' },
       ],
     },
 
@@ -159,7 +159,7 @@ CS.registerRoom({
         herhalend sleutelwoord. Zonder de sleutel is het lastig; mét de sleutel valt het in één keer open.</p>
 
         <p>Het onderschepte bericht luidt:</p>
-        <pre><code>Gs bzhicso wb rrxx sq rn joop zxwmh MJC{jlunbhfn_uhyaodyc}</code></pre>
+        <pre><code>Gs bzhicso wb rrxx sq rn joop zxwmh QA{ewjswsus_psnfjonh}</code></pre>
 
         <p>Uit een eerder bericht wisten we al dat deze bende voor interne berichten steevast het sleutelwoord
         <strong>dojo</strong> gebruikt. Gebruik het cijfer-lab hieronder, kies de methode <strong>Vigenère</strong> en vul
@@ -173,10 +173,10 @@ CS.registerRoom({
         steeds zwak. Ken je de sleutel niet, dan helpen herhalingen in de tekst (Kasiski) of korte veelvoorkomende woorden
         je op weg. Codering en klassieke cijfers zijn geen vervanging voor moderne encryptie.</div>
       `,
-      lab: { type: 'cipher', text: 'Gs bzhicso wb rrxx sq rn joop zxwmh MJC{jlunbhfn_uhyaodyc}' },
+      lab: { type: 'cipher', text: 'Gs bzhicso wb rrxx sq rn joop zxwmh QA{ewjswsus_psnfjonh}' },
       questions: [
         { q: 'Welk sleutelwoord maakt het Vigenère-bericht leesbaar?', answer: ['dojo'], hint: 'Staat in de taaktekst: de bende gebruikt steeds hetzelfde korte woord.', explain: 'Met de sleutel "dojo" ontsleutelt het bericht naar leesbaar Nederlands.' },
-        { q: 'Wat is de vlag na het ontcijferen van het Vigenère-bericht?', answer: ['JVT{vigenere_gekraakt}'], encoded: true, hint: 'Kies Vigenère, vul sleutel "dojo" in; de zin eindigt op de vlag.', explain: 'Ontsleuteld staat er: "De sleutel is dojo en de vlag luidt JVT{vigenere_gekraakt}".' },
+        { q: 'Wat is de vlag na het ontcijferen van het Vigenère-bericht?', answer: ['NM{vigenere_gekraakt}'], encoded: true, hint: 'Kies Vigenère, vul sleutel "dojo" in; de zin eindigt op de vlag.', explain: 'Ontsleuteld staat er: "De sleutel is dojo en de vlag luidt NM{vigenere_gekraakt}".' },
       ],
     },
 
@@ -201,7 +201,7 @@ CS.registerRoom({
 
         <p>In het lab staan zes waarnemingen uit de tijdlijn. Kies bij elke waarneming de juiste ATT&amp;CK-techniek uit de
         bank; bij <em>Controleer</em> zie je naam en tactiek. Heb je alle zes goed, dan heb je de keten in kaart en verdien
-        je de vlag <strong>JVT{keten_gemapt}</strong>.</p>
+        je de vlag <strong>NM{keten_gemapt}</strong>.</p>
 
         <div class="callout warn"><strong>Let op de context:</strong> dezelfde techniek kan bij meerdere tactieken horen.
         Het doel in de situatie bepaalt de tactiek, niet de tool op zichzelf.</div>
@@ -221,7 +221,7 @@ CS.registerRoom({
         { q: 'Welk techniek-ID hoort bij het uitlezen van LSASS-geheugen?', answer: ['T1003.001'], hint: 'Credential Access, sub-techniek van OS Credential Dumping.', explain: 'T1003.001 (LSASS Memory) valt onder Credential Access.' },
         { q: 'Welk techniek-ID past bij het uploaden van data naar een externe clouddienst vóór de versleuteling?', answer: ['T1567'], hint: 'Exfiltration Over Web Service.', explain: 'T1567 (Exfiltration Over Web Service): hét kenmerk van dubbele afpersing.' },
         { q: 'Het inloggen met een geldig maar gestolen serviceaccount is in ATT&CK vooral welke techniek?', options: ['T1078 Valid Accounts', 'T1486 Data Encrypted for Impact', 'T1110 Brute Force', 'T1083 File and Directory Discovery'], answer: 0, explain: 'T1078 Valid Accounts: geen bruteforce, maar misbruik van echte inloggegevens.' },
-        { q: 'Welke vlag verdien je als je de hele keten correct mapt?', answer: ['JVT{keten_gemapt}'], hint: 'Staat in de uitleg van deze taak, als beloning.', explain: 'Alle zes waarnemingen juist gekoppeld levert JVT{keten_gemapt} op.' },
+        { q: 'Welke vlag verdien je als je de hele keten correct mapt?', answer: ['NM{keten_gemapt}'], hint: 'Staat in de uitleg van deze taak, als beloning.', explain: 'Alle zes waarnemingen juist gekoppeld levert NM{keten_gemapt} op.' },
       ],
     },
 
@@ -242,7 +242,7 @@ CS.registerRoom({
         worden.</p>
 
         <p>Beantwoord de vragen in het lab (reken ze uit de ledger) én hieronder. Doorzie je dat de exchange het
-        cash-out-knelpunt is, dan verdien je de vlag <strong>JVT{spoor_naar_de_exchange}</strong>.</p>
+        cash-out-knelpunt is, dan verdien je de vlag <strong>NM{spoor_naar_de_exchange}</strong>.</p>
 
         <div class="callout danger"><strong>Nooit blind betalen:</strong> losgeld betalen financiert de volgende aanval en
         geeft geen garantie. Het spoor volgen tot aan een exchange (met KYC-plicht) is juist het aangrijpingspunt voor
@@ -276,7 +276,7 @@ CS.registerRoom({
       questions: [
         { q: 'Hoeveel BTC komt uiteindelijk bij de exchange aan?', answer: ['3.8', '3.80', '3,8', '3,80'], hint: 'Lees de inkomende transactie bij Wisselhuis Delta in de ledger.', explain: 'De mixer stuurt 3,80 BTC naar de exchange; dat is wat er aankomt.' },
         { q: 'Bij welk type knoop is KYC het grote knelpunt waar het spoor weer zichtbaar kan worden?', options: ['De mixer', 'De exchange', 'De katvanger', 'Het slachtoffer'], answer: 1, explain: 'De exchange moet klanten identificeren (KYC); daar komt de stroom samen en kan het spoor weer oppikbaar worden.' },
-        { q: 'Welke vlag hoort bij het volgen van de buit naar de cash-out?', answer: ['JVT{spoor_naar_de_exchange}'], hint: 'Staat in de uitleg van deze taak, als beloning.', explain: 'Het geld volgen tot aan de exchange levert JVT{spoor_naar_de_exchange} op.' },
+        { q: 'Welke vlag hoort bij het volgen van de buit naar de cash-out?', answer: ['NM{spoor_naar_de_exchange}'], hint: 'Staat in de uitleg van deze taak, als beloning.', explain: 'Het geld volgen tot aan de exchange levert NM{spoor_naar_de_exchange} op.' },
       ],
     },
 
@@ -289,9 +289,9 @@ CS.registerRoom({
         passive DNS, certificate transparency via crt.sh). Je benadert de infrastructuur van de verdachte nooit zelf
         (opsec).</p>
 
-        <p>In het lab staan twee fictieve zaken. <strong>Zaak Alpha</strong> (<code>betaal-controle.jvt.lab</code>) is de
+        <p>In het lab staan twee fictieve zaken. <strong>Zaak Alpha</strong> (<code>betaal-controle.nm.lab</code>) is de
         phishing waarmee de bende de toegang bij Spoedbouw stal. <strong>Zaak Bravo</strong>
-        (<code>inlog-verificatie.jvt.lab</code>) is een losse zaak van een ander team. Op het eerste gezicht lijken ze niet
+        (<code>inlog-verificatie.nm.lab</code>) is een losse zaak van een ander team. Op het eerste gezicht lijken ze niet
         verbonden: ze draaien op <em>verschillende</em> IP-adressen. Jouw taak: vind het kenmerk dat ze tóch verbindt.</p>
 
         <p>Pas de <strong>zeldzaamheidstoets</strong> toe: niet elk gedeeld kenmerk is bewijs. Je ziet dat beide IP's bij
@@ -302,7 +302,7 @@ CS.registerRoom({
 
         <p>Pivoteer door de entiteiten aan te klikken, let op <strong>tijd</strong> en <strong>herkomst</strong> bij elke
         relatie, en typ het bruggende kenmerk in. Herken je dat het certificaat (en niet het ASN) de echte brug is, dan
-        verdien je de vlag <strong>JVT{cert_is_de_brug}</strong>.</p>
+        verdien je de vlag <strong>NM{cert_is_de_brug}</strong>.</p>
 
         <div class="callout warn"><strong>Blijf kritisch:</strong> "beide domeinen presenteren certificaat A1B2C3D4" is
         <em>bekend</em>. "Dezelfde actor beheert beide" is <em>afgeleid</em>. "Het is dezelfde persoon als in zaak X vorig
@@ -313,13 +313,13 @@ CS.registerRoom({
         title: 'Zaak Alpha (bende-phishing) vs. Zaak Bravo',
         scenario: 'Zaak Alpha stal de toegang bij Spoedbouw. Zaak Bravo is een losse phishingzaak. Wat verbindt ze? Toets de zeldzaamheid van elk gedeeld kenmerk.',
         entities: [
-          { id: 'dA', type: 'domain', label: 'betaal-controle.jvt.lab' },
+          { id: 'dA', type: 'domain', label: 'betaal-controle.nm.lab' },
           { id: 'ipA', type: 'ip', label: '203.0.113.10' },
-          { id: 'dB', type: 'domain', label: 'inlog-verificatie.jvt.lab' },
+          { id: 'dB', type: 'domain', label: 'inlog-verificatie.nm.lab' },
           { id: 'ipB', type: 'ip', label: '198.51.100.20' },
           { id: 'cert', type: 'cert', label: 'A1B2C3D4' },
           { id: 'wal', type: 'wallet', label: 'bc1qfictief0alpha' },
-          { id: 'mail', type: 'email', label: 'beheer@betaal-controle.jvt.lab' },
+          { id: 'mail', type: 'email', label: 'beheer@betaal-controle.nm.lab' },
           { id: 'asn', type: 'asn', label: 'AS64500 FictiefHost' },
         ],
         edges: [
@@ -338,7 +338,7 @@ CS.registerRoom({
       questions: [
         { q: 'Welk zeldzaam kenmerk bruggt Zaak Alpha en Zaak Bravo?', answer: ['certificaat', 'cert', 'A1B2C3D4', 'het certificaat', 'tls-certificaat'], hint: 'Hetzelfde kenmerk staat in crt.sh bij beide domeinen; de IP-adressen verschillen juist.', explain: 'Beide domeinen presenteren hetzelfde TLS-certificaat A1B2C3D4 (bekend). Een hergebruikt certificaat is zeldzaam, dus een sterke brug.' },
         { q: 'Beide IP-adressen horen bij dezelfde hostingprovider (AS64500). Waarom is dat geen sterke brug?', options: ['Omdat heel veel onschuldige sites dezelfde hostingprovider delen — het kenmerk is niet zeldzaam', 'Omdat ASN-nummers altijd nep zijn', 'Omdat hosting niets met IP-adressen te maken heeft', 'Dat is wél een sterke brug'], answer: 0, explain: 'Een gedeelde hoster is te algemeen: de zeldzaamheidstoets bepaalt of een gedeeld kenmerk echt bewijs is.' },
-        { q: 'Welke vlag verdien je door de zeldzaamheidstoets juist toe te passen?', answer: ['JVT{cert_is_de_brug}'], hint: 'Staat in de uitleg van deze taak.', explain: 'Kies het zeldzame dwarsverband (het certificaat), niet het toevallige (de hoster): JVT{cert_is_de_brug}.' },
+        { q: 'Welke vlag verdien je door de zeldzaamheidstoets juist toe te passen?', answer: ['NM{cert_is_de_brug}'], hint: 'Staat in de uitleg van deze taak.', explain: 'Kies het zeldzame dwarsverband (het certificaat), niet het toevallige (de hoster): NM{cert_is_de_brug}.' },
       ],
     },
 
@@ -363,7 +363,7 @@ CS.registerRoom({
         <p>Reken mee: in het expertoordeel houdt de <strong>cybercrimebende 0</strong> inconsistenties over, de
         <strong>statelijke actor 3</strong> en de <strong>insider 4</strong>. Er is dus één duidelijke, <strong>unieke</strong>
         winnaar met de laagste I-score. Herken je dat de bende het scherpst overeind blijft, dan verdien je de vlag
-        <strong>JVT{dader_het_scherpst}</strong>.</p>
+        <strong>NM{dader_het_scherpst}</strong>.</p>
 
         <div class="callout danger"><strong>Verantwoord attribueren:</strong> schrijf nooit "het is groep X" als je dat
         niet kunt onderbouwen. Schrijf: "de waarnemingen passen het best bij een financieel gemotiveerde cybercrimebende
@@ -386,7 +386,7 @@ CS.registerRoom({
         { q: 'Welke hypothese houdt in het expertoordeel de minste inconsistenties over en wint dus (uniek)?', options: ['Statelijke actor (spionage/sabotage)', 'Financieel gemotiveerde cybercrimebende (kocht toegang bij een IAB)', 'Ontevreden insider bij Spoedbouw', 'Ze eindigen gelijk'], answer: 1, explain: 'De bende houdt 0 I\'s over, de statelijke actor 3 en de insider 4. De cybercrimebende wint duidelijk en uniek.' },
         { q: 'De waarneming "bekende RaaS wordt gebruikt" is consistent met alle drie de hypothesen. Hoe heet zulk bewijs?', options: ['Niet-diagnostisch', 'Doorslaggevend', 'Een false flag', 'Een aanname'], answer: 0, explain: 'Bewijs dat overal past, helpt je niet kiezen: het is niet-diagnostisch. Het lab markeert deze rij.' },
         { q: 'Mag je de aanval aan een specifieke groep toeschrijven puur omdat ze die bekende RaaS gebruikten?', options: ['Nee, dezelfde RaaS wordt door veel affiliates gehuurd — tool is niet gelijk aan actor', 'Ja, de RaaS bepaalt de dader', 'Ja, maar alleen bij hoog losgeld', 'Alleen als de insider het ontkent'], answer: 0, explain: 'De "tool = actor"-valkuil: gedeelde tooling is een aanwijzing, geen identiteitsbewijs.' },
-        { q: 'Welke vlag hoort bij een correct afgewogen attributie?', answer: ['JVT{dader_het_scherpst}'], hint: 'Staat in de uitleg van deze taak.', explain: 'De hypothese met de unieke laagste I-score (de bende) blijft het scherpst overeind: JVT{dader_het_scherpst}.' },
+        { q: 'Welke vlag hoort bij een correct afgewogen attributie?', answer: ['NM{dader_het_scherpst}'], hint: 'Staat in de uitleg van deze taak.', explain: 'De hypothese met de unieke laagste I-score (de bende) blijft het scherpst overeind: NM{dader_het_scherpst}.' },
       ],
     },
 
@@ -413,7 +413,7 @@ CS.registerRoom({
 
         <p>In het lab staat het chronologische bronmateriaal. Herschrijf het naar een BLUF-product, toets tegen de rubric
         (een heuristische checklist, geen AI-oordeel) en vergelijk met het modelantwoord. Lever je een echt
-        BLUF-product, dan verdien je de vlag <strong>JVT{product_geleverd}</strong>.</p>
+        BLUF-product, dan verdien je de vlag <strong>NM{product_geleverd}</strong>.</p>
 
         <div class="callout danger"><strong>Nooit blind betalen:</strong> zet in je advies expliciet dat losgeld betalen
         de volgende aanval financiert en geen garantie geeft. Adviseer herstel uit offline back-ups en het volgen van de
@@ -427,7 +427,7 @@ CS.registerRoom({
       questions: [
         { q: 'Wat hoort in een BLUF-product bovenaan te staan?', options: ['De conclusie en het advies (de kernboodschap)', 'De volledige chronologie', 'De lijst met alle loghashes', 'De namen van alle analisten'], answer: 0, explain: 'BLUF = Bottom Line Up Front: eerst de conclusie en wat er moet gebeuren, daarna de onderbouwing.' },
         { q: 'Hoe schrijf je de attributie in het eindproduct verantwoord?', options: ['Zeer waarschijnlijk een cybercrimebende (afgeleid); specifieke groep niet aan te wijzen (aanname vermijden)', 'Het is zeker groep X', 'De RaaS bepaalt de dader', 'Attributie laat je weg'], answer: 0, explain: 'Je benoemt de best passende hypothese met waarschijnlijkheidstaal en vermijdt de tool=actor-valkuil.' },
-        { q: 'Welke vlag hoort bij het afronden van het BLUF-eindproduct?', answer: ['JVT{product_geleverd}'], hint: 'Staat in de uitleg van deze taak, als beloning.', explain: 'Een echt BLUF-product levert de vlag JVT{product_geleverd} op.' },
+        { q: 'Welke vlag hoort bij het afronden van het BLUF-eindproduct?', answer: ['NM{product_geleverd}'], hint: 'Staat in de uitleg van deze taak, als beloning.', explain: 'Een echt BLUF-product levert de vlag NM{product_geleverd} op.' },
       ],
     },
 
@@ -451,7 +451,7 @@ CS.registerRoom({
 
         <h3>De eindvlag</h3>
         <p>Als bewijs dat je de hele operatie hebt afgerond, krijg je de eindvlag:
-        <strong>JVT{operatie_spookgeld_voltooid}</strong>. Zet die bovenaan je write-up.</p>
+        <strong>NM{operatie_spookgeld_voltooid}</strong>. Zet die bovenaan je write-up.</p>
 
         <h3>Hoe je nu rapporteert — en verder groeit</h3>
         <ul>
@@ -468,7 +468,7 @@ CS.registerRoom({
         verdachte.</div>
       `,
       questions: [
-        { q: 'Wat is de eindvlag van Operatie Spookgeld?', answer: ['JVT{operatie_spookgeld_voltooid}'], hint: 'Staat in deze slottaak, als beloning voor het afronden.', explain: 'De eindvlag is JVT{operatie_spookgeld_voltooid} — alle tien vlaggen binnen.' },
+        { q: 'Wat is de eindvlag van Operatie Spookgeld?', answer: ['NM{operatie_spookgeld_voltooid}'], hint: 'Staat in deze slottaak, als beloning voor het afronden.', explain: 'De eindvlag is NM{operatie_spookgeld_voltooid} — alle tien vlaggen binnen.' },
         { q: 'Waarom is de exchange het belangrijkste aangrijpingspunt bij het witwassen van het losgeld?', options: ['Omdat de exchange de hoogste fee rekent', 'Omdat daar crypto naar euro moet en KYC-identificatie het spoor weer zichtbaar maakt', 'Omdat mixers verboden zijn', 'Omdat het slachtoffer daar klant is'], answer: 1, explain: 'De exchange is het knelpunt: om uit te betalen is identificatie (KYC) nodig, hét moment waarop opsporing kan ingrijpen.' },
         { q: 'Ik heb alle tien vlaggen verzameld en rond de operatie ethisch en reproduceerbaar af. 🏆', noAnswer: true },
       ],

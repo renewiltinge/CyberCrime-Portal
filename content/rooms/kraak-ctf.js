@@ -4,7 +4,7 @@
 // header = {"alg":"none","typ":"JWT"} , payload bevat role=admin en een vlag.
 const JWT_SLEUTELBOS =
   'eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.' +
-  'eyJzdWIiOiJtLmRla2tlciIsIm5hbWUiOiJNYXggRGVra2VyIiwicm9sZSI6ImFkbWluIiwiZGVwdCI6ImJlaGVlciIsImZsYWciOiJKVlR7dG9rZW5fZ2VsZXplbn0ifQ.';
+  'eyJzdWIiOiJtLmRla2tlciIsIm5hbWUiOiJNYXggRGVra2VyIiwicm9sZSI6ImFkbWluIiwiZGVwdCI6ImJlaGVlciIsImZsYWciOiJOTXt0b2tlbl9nZWxlemVufSJ9.';
 
 CS.registerRoom({
   id: 'kraak-ctf',
@@ -25,7 +25,7 @@ CS.registerRoom({
   ],
   terms: [
     { term: 'CTF', def: 'Capture The Flag: een oefening waarin je uitdagingen oplost en geheime codes (vlaggen) verzamelt.' },
-    { term: 'Vlag (flag)', def: 'Een unieke code die bewijst dat je een uitdaging oploste, hier in het formaat JVT{...}.' },
+    { term: 'Vlag (flag)', def: 'Een unieke code die bewijst dat je een uitdaging oploste, hier in het formaat NM{...}.' },
     { term: 'Hashtype herkennen (hash-ID)', def: 'Aan lengte en vorm bepalen welk algoritme een hash maakte (32 hex = MD5/NTLM, 40 = SHA-1, 64 = SHA-256).' },
     { term: 'Woordenlijstaanval (dictionary attack)', def: 'Elk woord uit een lijst waarschijnlijke wachtwoorden hashen en vergelijken met de doel-hash.' },
     { term: 'Salt', def: 'Een unieke, willekeurige toevoeging per wachtwoord vóór het hashen; maakt vooraf berekende tabellen (rainbow tables) nutteloos.' },
@@ -58,7 +58,7 @@ CS.registerRoom({
         licentiesoftware en een sessietoken. In deze CTF werk je je stap voor stap door die dump heen. Alles erin is
         <strong>verzonnen</strong> en staat in een afgeschermd lab.</p>
 
-        <p>Je verzamelt <strong>zeven vlaggen</strong> (formaat <code>JVT{...}</code>), één per station. Je gebruikt alles uit
+        <p>Je verzamelt <strong>zeven vlaggen</strong> (formaat <code>NM{...}</code>), één per station. Je gebruikt alles uit
         de eerdere rooms: hashes herkennen en kraken, cijfers ontrafelen, codering afpellen, software reverse-engineeren en
         tokens inspecteren. Houd, net als in het echt, een korte <strong>write-up</strong> bij: noteer per station wat je deed
         en wat je vond. Dat is precies hoe je straks aan de klant rapporteert.</p>
@@ -116,7 +116,7 @@ CS.registerRoom({
         the Ripper dat doen. Het wachtwoord hier is een populaire gamer-bijnaam met een paar cijfers erachter.</p>
 
         <p>Zodra je de hash kraakt, log je met dat wachtwoord in op het interne beheerportaal van Sleutelbos. Het dashboard
-        verwelkomt je en toont de eerste vlag: <strong>JVT{toegang_verleend}</strong>. Noteer zowel het gekraakte wachtwoord
+        verwelkomt je en toont de eerste vlag: <strong>NM{toegang_verleend}</strong>. Noteer zowel het gekraakte wachtwoord
         als de vlag in je write-up.</p>
 
         <div class="callout warn"><strong>Les voor de klant:</strong> MD5 én SHA-256 zijn razendsnel te berekenen. Wachtwoorden
@@ -131,7 +131,7 @@ CS.registerRoom({
       },
       questions: [
         { q: 'Wat is het gekraakte wachtwoord van het beheeraccount?', answer: ['ninja123'], hint: 'Start de woordenlijstaanval op SHA-256; het is een gamer-bijnaam met cijfers.', explain: 'De SHA-256-hash a25ad97a... hoort bij het wachtwoord "ninja123".' },
-        { q: 'Welke vlag toont het beheerportaal nadat je bent ingelogd?', answer: ['JVT{toegang_verleend}'], hint: 'Staat in de uitleg van deze taak, als beloning voor het kraken.', explain: 'Met het gekraakte wachtwoord krijg je toegang: JVT{toegang_verleend}.' },
+        { q: 'Welke vlag toont het beheerportaal nadat je bent ingelogd?', answer: ['NM{toegang_verleend}'], hint: 'Staat in de uitleg van deze taak, als beloning voor het kraken.', explain: 'Met het gekraakte wachtwoord krijg je toegang: NM{toegang_verleend}.' },
       ],
     },
 
@@ -144,7 +144,7 @@ CS.registerRoom({
         verschuivingen volstrekt onveilig.</p>
 
         <p>Het onderschepte bericht luidt:</p>
-        <pre><code>Kl nlolptl cshn pz QCA{jhlzhy_pz_thrrlspqr}</code></pre>
+        <pre><code>Kl nlolptl cshn pz UT{jhlzhy_pz_thrrlspqr}</code></pre>
 
         <p>Gebruik het cijfer-lab hieronder. Kies de methode <strong>Caesar/ROT</strong>: de tool toont alle 26 verschuivingen
         tegelijk én zet er een automatische <strong>"beste gok"</strong> bij op basis van letterfrequentie. Zoek de
@@ -157,10 +157,10 @@ CS.registerRoom({
         <div class="callout info"><strong>Onthoud:</strong> een Caesarcijfer heeft geen echte sleutel die je moet raden — je
         probeert gewoon alle 25 verschuivingen. Codering en zwakke cijfers zijn geen vervanging voor echte encryptie.</div>
       `,
-      lab: { type: 'cipher', text: 'Kl nlolptl cshn pz QCA{jhlzhy_pz_thrrlspqr}' },
+      lab: { type: 'cipher', text: 'Kl nlolptl cshn pz UT{jhlzhy_pz_thrrlspqr}' },
       questions: [
-        { q: 'Welke verschuiving (ROT-getal) maakt het bericht leesbaar?', answer: ['7', 'rot7', 'rot 7', '7 plaatsen'], hint: 'Kijk bij welke verschuiving er leesbaar Nederlands staat; de "beste gok" helpt je.', explain: 'Met ROT7 wordt het bericht leesbaar: "De geheime vlag is JVT{...}".' },
-        { q: 'Wat is de vlag na het ontcijferen van het Caesar-bericht?', answer: ['JVT{caesar_is_makkelijk}'], encoded: true, hint: 'Pas ROT7 toe; de zin eindigt op de vlag.', explain: 'Ontcijferd staat er: "De geheime vlag is JVT{caesar_is_makkelijk}".' },
+        { q: 'Welke verschuiving (ROT-getal) maakt het bericht leesbaar?', answer: ['7', 'rot7', 'rot 7', '7 plaatsen'], hint: 'Kijk bij welke verschuiving er leesbaar Nederlands staat; de "beste gok" helpt je.', explain: 'Met ROT7 wordt het bericht leesbaar: "De geheime vlag is NM{...}".' },
+        { q: 'Wat is de vlag na het ontcijferen van het Caesar-bericht?', answer: ['NM{caesar_is_makkelijk}'], encoded: true, hint: 'Pas ROT7 toe; de zin eindigt op de vlag.', explain: 'Ontcijferd staat er: "De geheime vlag is NM{caesar_is_makkelijk}".' },
       ],
     },
 
@@ -172,7 +172,7 @@ CS.registerRoom({
         geen sleutel nodig om het terug te draaien — je hoeft alleen de lagen te herkennen en af te pellen.</p>
 
         <p>De blob uit de backup is:</p>
-        <pre><code>536c5a55653352335a5756666247466e5a573539</code></pre>
+        <pre><code>546b31376448646c5a5639735957646c626e303d</code></pre>
 
         <p>Alleen cijfers en de letters a–f, en een even aantal tekens: dat ruikt naar <strong>hexadecimaal</strong>. Pel je
         die laag af, dan krijg je tekst die eruitziet als <strong>Base64</strong> (letters, cijfers, hoofd- en kleine letters).
@@ -186,10 +186,10 @@ CS.registerRoom({
         <code>=</code> of ziet het eruit als willekeurige letters/cijfers → waarschijnlijk Base64. Twee lagen codering zijn nog
         steeds geen encryptie.</div>
       `,
-      lab: { type: 'multidecode', input: '536c5a55653352335a5756666247466e5a573539' },
+      lab: { type: 'multidecode', input: '546b31376448646c5a5639735957646c626e303d' },
       questions: [
         { q: 'In welke volgorde moet je de blob afpellen?', options: ['Base64, daarna hex', 'Hex, daarna Base64', 'ROT13, daarna hex', 'Alleen Base64'], answer: 1, explain: 'Eerst hex decoderen, dan Base64 — de auto-ketting toont Hex → Base64 → tekst.' },
-        { q: 'Wat is de vlag na het afpellen van beide lagen?', answer: ['JVT{twee_lagen}'], encoded: true, hint: 'Laat de multi-decoder de ketting Hex → Base64 vinden.', explain: 'Na hex en Base64 verschijnt JVT{twee_lagen}.' },
+        { q: 'Wat is de vlag na het afpellen van beide lagen?', answer: ['NM{twee_lagen}'], encoded: true, hint: 'Laat de multi-decoder de ketting Hex → Base64 vinden.', explain: 'Na hex en Base64 verschijnt NM{twee_lagen}.' },
       ],
     },
 
@@ -207,7 +207,7 @@ CS.registerRoom({
         voorvoegsel voor en je hebt de volledige sleutel.</p>
 
         <p>Typ je sleutel in het lab. Het lab voert de <strong>echte</strong> controle uit op jouw invoer en meldt
-        "Toegang verleend" als het klopt, met de vlag <strong>JVT{licentie_gekraakt}</strong>. Noteer zowel de sleutel als de
+        "Toegang verleend" als het klopt, met de vlag <strong>NM{licentie_gekraakt}</strong>. Noteer zowel de sleutel als de
         vlag in je write-up.</p>
 
         <div class="callout info"><strong>Waarom dit werkt:</strong> zodra de controle lokaal op jouw apparaat draait, kun je
@@ -236,13 +236,13 @@ function check(sleutel) {
           if (code.length !== 10) return false;
           return code.split('').reverse().join('') === 'sobletuels';
         },
-        flag: 'JVT{licentie_gekraakt}',
+        flag: 'NM{licentie_gekraakt}',
         reveal: 'Toegang verleend. De doelstring "sobletuels" achterstevoren is "sleutelbos", dus de sleutel is SLB-sleutelbos.',
         hint: 'Draai de doelstring "sobletuels" om en plak er SLB- voor.',
       },
       questions: [
         { q: 'Welke volledige licentiesleutel accepteert de controle?', answer: ['SLB-sleutelbos'], hint: 'Voorvoegsel SLB-, daarna de doelstring "sobletuels" achterstevoren.', explain: '"sobletuels" omgedraaid is "sleutelbos"; met het voorvoegsel wordt dat SLB-sleutelbos.' },
-        { q: 'Welke vlag toont het lab bij een geldige sleutel?', answer: ['JVT{licentie_gekraakt}'], hint: 'Verschijnt bij "Toegang verleend".', explain: 'Een geldige sleutel levert de vlag JVT{licentie_gekraakt} op.' },
+        { q: 'Welke vlag toont het lab bij een geldige sleutel?', answer: ['NM{licentie_gekraakt}'], hint: 'Verschijnt bij "Toegang verleend".', explain: 'Een geldige sleutel levert de vlag NM{licentie_gekraakt} op.' },
         { q: 'Waarom kon je de sleutel afleiden zonder te gokken?', options: ['Omdat de controlecode zelf verklapt wat wordt geaccepteerd', 'Omdat de sleutel heel kort is', 'Omdat SLB- een geheim voorvoegsel is', 'Dat kon niet, je moest wel gokken'], answer: 0, explain: 'Een controle die lokaal draait en leesbaar is, kun je terugredeneren — dat is reverse engineering.' },
       ],
     },
@@ -256,7 +256,7 @@ function check(sleutel) {
         gewoon <strong>Base64</strong> — dus leesbaar voor iedereen die het token in handen krijgt.</p>
 
         <p>Het buitgemaakte token is:</p>
-        <pre><code>eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJzdWIiOiJtLmRla2tlciIsIm5hbWUiOiJNYXggRGVra2VyIiwicm9sZSI6ImFkbWluIiwiZGVwdCI6ImJlaGVlciIsImZsYWciOiJKVlR7dG9rZW5fZ2VsZXplbn0ifQ.</code></pre>
+        <pre><code>eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJzdWIiOiJtLmRla2tlciIsIm5hbWUiOiJNYXggRGVra2VyIiwicm9sZSI6ImFkbWluIiwiZGVwdCI6ImJlaGVlciIsImZsYWciOiJOTXt0b2tlbl9nZWxlemVufSJ9.</code></pre>
 
         <p>Plak dit token in het JWT-lab hieronder. Het decodeert de header en de payload voor je. Lees de
         <strong>payload</strong>: welke <code>role</code>-claim staat erin? En kijk naar de <strong>header</strong>: welk
@@ -276,7 +276,7 @@ function check(sleutel) {
       questions: [
         { q: 'Welke rol (role-claim) staat in de payload van het token?', answer: ['admin'], hint: 'Lees het gedecodeerde payload-deel in het lab; zoek de sleutel "role".', explain: 'De payload bevat "role": "admin" — het token claimt beheerdersrechten.' },
         { q: 'Wat is de belangrijkste zwakte in de header van dit token?', options: ['Het gebruikt alg: none, dus er is geen handtekening', 'De header is te lang', 'Het gebruikt HS256', 'Er zit een geldige handtekening op'], answer: 0, explain: 'alg: none betekent geen handtekening; iedereen kan de inhoud dan aanpassen. Ook ontbreekt een exp (verloopdatum).' },
-        { q: 'Welke vlag staat als claim in de payload?', answer: ['JVT{token_gelezen}'], encoded: true, hint: 'Decodeer de payload en zoek de claim "flag".', explain: 'De payload bevat "flag": "JVT{token_gelezen}" — leesbaar omdat JWT-payloads niet versleuteld zijn.' },
+        { q: 'Welke vlag staat als claim in de payload?', answer: ['NM{token_gelezen}'], encoded: true, hint: 'Decodeer de payload en zoek de claim "flag".', explain: 'De payload bevat "flag": "NM{token_gelezen}" — leesbaar omdat JWT-payloads niet versleuteld zijn.' },
       ],
     },
 
@@ -298,7 +298,7 @@ function check(sleutel) {
 
         <p>De hash-kraker hieronder staat al op <strong>NTLM</strong> (zie "Doel-hash (NTLM)" bovenaan). Start de
         woordenlijstaanval. Het wachtwoord is een bekende Nederlandse stad. Kraak het en je ontgrendelt de laatste
-        stationsvlag: <strong>JVT{domein_overgenomen}</strong>.</p>
+        stationsvlag: <strong>NM{domein_overgenomen}</strong>.</p>
 
         <div class="callout warn"><strong>Onthoud:</strong> MD5 en NTLM zijn aan de hash niet te onderscheiden — beide 32 hex.
         De herkomst (een <code>/etc/shadow</code>, een database-dump of een Windows-SAM) vertelt je welke je moet kiezen.</div>
@@ -312,7 +312,7 @@ function check(sleutel) {
       questions: [
         { q: 'Welk hashtype kies je voor een 32 hex-teken-hash uit een Windows-domeincontroller?', options: ['SHA-256', 'bcrypt', 'NTLM', 'SHA-1'], answer: 2, explain: 'Windows slaat wachtwoorden op als NTLM. Bij 32 hex uit een Windows-bron kies je NTLM, niet MD5.' },
         { q: 'Wat is het gekraakte wachtwoord van de domeinbeheerder?', answer: ['amsterdam'], hint: 'Kies NTLM en start de aanval; het is een bekende Nederlandse stad.', explain: 'De NTLM-hash 9b86ae4b... hoort bij het wachtwoord "amsterdam".' },
-        { q: 'Welke vlag verdien je met het overnemen van het domein?', answer: ['JVT{domein_overgenomen}'], hint: 'Staat in de uitleg van deze taak, als beloning.', explain: 'Het kraken van de domeinbeheerder levert JVT{domein_overgenomen} op.' },
+        { q: 'Welke vlag verdien je met het overnemen van het domein?', answer: ['NM{domein_overgenomen}'], hint: 'Staat in de uitleg van deze taak, als beloning.', explain: 'Het kraken van de domeinbeheerder levert NM{domein_overgenomen} op.' },
       ],
     },
 
@@ -332,7 +332,7 @@ function check(sleutel) {
         </ul>
 
         <h3>De eindvlag</h3>
-        <p>Als bewijs dat je de hele operatie hebt afgerond, krijg je de eindvlag: <strong>JVT{operatie_sleutelbos_voltooid}</strong>.
+        <p>Als bewijs dat je de hele operatie hebt afgerond, krijg je de eindvlag: <strong>NM{operatie_sleutelbos_voltooid}</strong>.
         Zet die bovenaan je write-up.</p>
 
         <h3>Hoe je nu rapporteert — en verder groeit</h3>
@@ -349,7 +349,7 @@ function check(sleutel) {
         de goede kant van art. 138ab Sr. Daar word je een professional van — geen verdachte.</div>
       `,
       questions: [
-        { q: 'Wat is de eindvlag van Operatie Sleutelbos?', answer: ['JVT{operatie_sleutelbos_voltooid}'], hint: 'Staat in deze slottaak, als beloning voor het afronden.', explain: 'De eindvlag is JVT{operatie_sleutelbos_voltooid} — alle zeven vlaggen binnen.' },
+        { q: 'Wat is de eindvlag van Operatie Sleutelbos?', answer: ['NM{operatie_sleutelbos_voltooid}'], hint: 'Staat in deze slottaak, als beloning voor het afronden.', explain: 'De eindvlag is NM{operatie_sleutelbos_voltooid} — alle zeven vlaggen binnen.' },
         { q: 'Wat is de belangrijkste aanbeveling tegen het kraken van de wachtwoordhashes die je vond?', options: ['Langere gebruikersnamen eisen', 'Opslag met een traag, gesalt algoritme (bcrypt/scrypt/Argon2)', 'De hashes dubbel MD5-en', 'De hashes geheimhouden'], answer: 1, explain: 'Een traag, gesalt algoritme maakt massaal kraken onbetaalbaar traag en breekt rainbow tables.' },
         { q: 'Ik heb alle zeven vlaggen verzameld en rond de opdracht ethisch en reproduceerbaar af. 🏆', noAnswer: true },
       ],

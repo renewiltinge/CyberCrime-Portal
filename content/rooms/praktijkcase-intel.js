@@ -1,7 +1,7 @@
 /* Room: Praktijkcase — de complete intelligence-workflow (afsluitend) */
 
 // --- Super-timeline van het (fictieve) incident bij Noorderlicht Logistiek B.V. ---
-// Alles fictief: documentatie-IP's (RFC 5737) en .jvt.lab-domeinen.
+// Alles fictief: documentatie-IP's (RFC 5737) en .nm.lab-domeinen.
 // In de PowerShell-regel zit een Base64-opdracht; die decodeert naar de campagne-tag (vlag).
 const INCIDENT_TIMELINE = [
   // Dag 1 — de gekochte toegang wordt één keer kort getest
@@ -16,16 +16,16 @@ const INCIDENT_TIMELINE = [
   // Dag 4 — hands-on-keyboard (de affiliate is nu actief)
   { t: '2026-09-17 19:03:11', src: 'Security', host: 'WS-ADM-04', desc: '4624 aanmelding type 10 (RDP) svc-backup vanaf 10.20.3.12' },
   { t: '2026-09-17 19:05:40', src: 'Sysmon', host: 'WS-ADM-04', desc: 'ProcessCreate net.exe  CommandLine: net group "Domain Admins" /domain' },
-  { t: '2026-09-17 19:06:12', src: 'Sysmon', host: 'WS-ADM-04', desc: 'ProcessCreate nltest.exe  CommandLine: nltest /dclist:noorderlicht.jvt.lab' },
-  { t: '2026-09-17 19:09:55', src: 'Sysmon', host: 'WS-ADM-04', desc: 'ProcessCreate powershell.exe -w hidden -enc U3RhZ2UyIGdlbGFkZW4gdmFuYWYgY2RuLXNsdWlzLmp2dC5sYWI7IGNhbXBhZ25lLXRhZzogSlZUe3N0YWdlX3R3ZWVfb250aHVsZH0=' },
-  { t: '2026-09-17 19:10:30', src: 'Proxy', host: 'WS-ADM-04', desc: 'GET hxxps://cdn-sluis[.]jvt[.]lab/stage2  ->  203.0.113.91:443' },
+  { t: '2026-09-17 19:06:12', src: 'Sysmon', host: 'WS-ADM-04', desc: 'ProcessCreate nltest.exe  CommandLine: nltest /dclist:noorderlicht.nm.lab' },
+  { t: '2026-09-17 19:09:55', src: 'Sysmon', host: 'WS-ADM-04', desc: 'ProcessCreate powershell.exe -w hidden -enc U3RhZ2UyIGdlbGFkZW4gdmFuYWYgY2RuLXNsdWlzLm5tLmxhYjsgY2FtcGFnbmUtdGFnOiBOTXtzdGFnZV90d2VlX29udGh1bGR9' },
+  { t: '2026-09-17 19:10:30', src: 'Proxy', host: 'WS-ADM-04', desc: 'GET hxxps://cdn-sluis[.]nineminds[.]lab/stage2  ->  203.0.113.91:443' },
   { t: '2026-09-17 19:14:03', src: 'Sysmon', host: 'WS-ADM-04', desc: 'ProcessAccess rundll32.exe -> lsass.exe  GrantedAccess=0x1010' },
   { t: '2026-09-17 19:14:20', src: 'EDR', host: 'WS-ADM-04', desc: 'ALERT HIGH  Credential.LsassAccess  Process=rundll32.exe' },
-  { t: '2026-09-17 19:40:12', src: 'Analist', host: '-', desc: 'Handmatige notitie: het gat van ~3 dagen tussen de eerste toegang en de hands-on-keyboard-actie past bij koop-en-doorverkoop van toegang (IAB -> affiliate). JVT{pauze_is_een_signaal}' },
+  { t: '2026-09-17 19:40:12', src: 'Analist', host: '-', desc: 'Handmatige notitie: het gat van ~3 dagen tussen de eerste toegang en de hands-on-keyboard-actie past bij koop-en-doorverkoop van toegang (IAB -> affiliate). NM{pauze_is_een_signaal}' },
   // Dag 5 — laterale beweging, exfiltratie, versleuteling
   { t: '2026-09-18 00:52:40', src: 'Security', host: 'SRV-FS02', desc: '4624 aanmelding type 10 (RDP) svc-backup vanaf WS-ADM-04' },
   { t: '2026-09-18 01:10:18', src: 'Sysmon', host: 'SRV-FS02', desc: 'ProcessCreate 7z.exe  CommandLine: 7z.exe a -p<redacted> C:\\Temp\\klanten.7z D:\\Shares\\Klanten' },
-  { t: '2026-09-18 01:55:30', src: 'Proxy', host: 'SRV-FS02', desc: 'POST hxxps://opslag-cloud[.]jvt[.]lab/upload  ->  192.0.2.60:443  BytesSent=2147483648' },
+  { t: '2026-09-18 01:55:30', src: 'Proxy', host: 'SRV-FS02', desc: 'POST hxxps://opslag-cloud[.]nineminds[.]lab/upload  ->  192.0.2.60:443  BytesSent=2147483648' },
   // Korte pauze (~1,5 uur): de staging is klaar, de affiliate wacht
   { t: '2026-09-18 03:28:05', src: 'Sysmon', host: 'SRV-FS02', desc: 'ProcessCreate vssadmin.exe  CommandLine: vssadmin.exe delete shadows /all /quiet' },
   { t: '2026-09-18 03:30:11', src: 'FileAudit', host: 'SRV-FS02', desc: 'FileRename D:\\Shares\\Klanten\\contracten.xlsx -> contracten.xlsx.sluislock' },
@@ -37,11 +37,11 @@ const INCIDENT_TIMELINE = [
 // --- IOC-tekst voor de defang-oefening (alles fictief, gedefanged) ---
 const INCIDENT_IOCS = `INTERN IOC-OVERZICHT — incident Noorderlicht Logistiek (TLP:AMBER)
 Bron-IP VPN-login (gekochte toegang): 203.0.113[.]77
-Stage2-download: hxxps://cdn-sluis[.]jvt[.]lab/stage2  (203.0.113[.]91)
-C2/stage2-host: cdn-sluis[.]jvt[.]lab
-Exfiltratie naar: hxxps://opslag-cloud[.]jvt[.]lab/upload  (192.0.2[.]60)
+Stage2-download: hxxps://cdn-sluis[.]nineminds[.]lab/stage2  (203.0.113[.]91)
+C2/stage2-host: cdn-sluis[.]nineminds[.]lab
+Exfiltratie naar: hxxps://opslag-cloud[.]nineminds[.]lab/upload  (192.0.2[.]60)
 Let op: 203.0.113[.]91 komt zowel bij de download als in het beacon-verkeer voor (tel één keer).
-Afzender oorspronkelijke phishing (via de IAB): beheer[at]betaal-controle[.]jvt[.]lab
+Afzender oorspronkelijke phishing (via de IAB): beheer[at]betaal-controle[.]nineminds[.]lab
 Losgeld-wallet: bc1qfictief0alpha
 Versleutelaar (SHA-256): 4f1c9b7a2e6d5038a1c4bb90de72f183ac05e9d1b7640c2fa38e91d6c7b4a502
 `;
@@ -91,7 +91,7 @@ CS.registerRoom({
         <p>Welkom bij de eindopdracht van dit leerpad. Dit is geen nieuwe theorie, maar de <strong>complete
         intelligence-workflow</strong> toegepast op één samenhangende casus. Je werkt als analist bij een (fictief)
         opsporings- en responseteam. Alles in deze room is <strong>verzonnen</strong>: de IP-adressen zijn
-        documentatie-adressen, de domeinen eindigen op <code>.jvt.lab</code>, en je werkt met bewijsmateriaal dat
+        documentatie-adressen, de domeinen eindigen op <code>.nm.lab</code>, en je werkt met bewijsmateriaal dat
         rechtmatig is veiliggesteld. Je valt niets aan; je <em>analyseert</em>.</p>
 
         <h3>De casus</h3>
@@ -127,7 +127,7 @@ CS.registerRoom({
         room) en je vindt de campagne-tag die de aanvaller achterliet.</p>
 
         <div class="callout tip"><strong>Startschot:</strong> als bewijs dat je de workflow bent gestart, krijg je de
-        eerste vlag cadeau: <code>JVT{de_complete_workflow}</code>. De rest verdien je onderweg.</div>
+        eerste vlag cadeau: <code>NM{de_complete_workflow}</code>. De rest verdien je onderweg.</div>
 
         <div class="callout danger"><strong>Ethiek:</strong> je reconstrueert en duidt bewijs dat rechtmatig is
         veiliggesteld. Pivoten doe je passief, op open bronnen en in een afgeschermde omgeving — nooit door de
@@ -137,9 +137,9 @@ CS.registerRoom({
       lab: { type: 'timeline', title: 'Incident Noorderlicht Logistiek — super-timeline', events: INCIDENT_TIMELINE },
       questions: [
         { q: 'Hoeveel dagen zit er ongeveer tussen de eerste VPN-login (14 sep) en de hands-on-keyboard-activiteit (17 sep)?', answer: ['3', '3 dagen', 'drie', 'drie dagen'], hint: 'Kijk naar de datums en naar de grote Δ in het lab.', explain: 'Het gat van ~3 dagen (bekend) wijst erop dat de toegang eerst is gekocht en pas later gebruikt (afgeleid): een IAB verkocht aan een affiliate.' },
-        { q: 'Welke vlag staat in de handmatige analistennotitie in de tijdlijn?', answer: ['JVT{pauze_is_een_signaal}'], hint: 'Filter in het lab op de bron "Analist" of op het woord notitie.', explain: 'De notitie onderstreept de les: een opvallende pauze (dwell time) is zelf een aanwijzing.' },
-        { q: 'Decodeer de Base64 in het powershell -enc commando. Wat is de campagne-tag (vlag)?', answer: ['JVT{stage_twee_onthuld}'], encoded: true, hint: 'Kopieer de lange string na -enc en haal hem door een Base64-decoder.', explain: 'De Base64 decodeert naar: "Stage2 geladen vanaf cdn-sluis.jvt.lab; campagne-tag: JVT{stage_twee_onthuld}".' },
-        { q: 'Wat is de startvlag van deze praktijkcase?', answer: ['JVT{de_complete_workflow}'], hint: 'Staat in de tip-callout als startschot.', explain: 'De startvlag is JVT{de_complete_workflow}.' },
+        { q: 'Welke vlag staat in de handmatige analistennotitie in de tijdlijn?', answer: ['NM{pauze_is_een_signaal}'], hint: 'Filter in het lab op de bron "Analist" of op het woord notitie.', explain: 'De notitie onderstreept de les: een opvallende pauze (dwell time) is zelf een aanwijzing.' },
+        { q: 'Decodeer de Base64 in het powershell -enc commando. Wat is de campagne-tag (vlag)?', answer: ['NM{stage_twee_onthuld}'], encoded: true, hint: 'Kopieer de lange string na -enc en haal hem door een Base64-decoder.', explain: 'De Base64 decodeert naar: "Stage2 geladen vanaf cdn-sluis.nm.lab; campagne-tag: NM{stage_twee_onthuld}".' },
+        { q: 'Wat is de startvlag van deze praktijkcase?', answer: ['NM{de_complete_workflow}'], hint: 'Staat in de tip-callout als startschot.', explain: 'De startvlag is NM{de_complete_workflow}.' },
       ],
     },
 
@@ -262,8 +262,8 @@ CS.registerRoom({
 
         <h3>Twee zaken, één dwarsverband</h3>
         <p>In het lab staan twee fictieve phishingzaken. <strong>Zaak Alpha</strong> is de infrastructuur waarmee de IAB
-        de inloggegevens van Noorderlicht stal (<code>betaal-controle.jvt.lab</code>). <strong>Zaak Bravo</strong> is een
-        losse phishingzaak van een ander team (<code>inlog-verificatie.jvt.lab</code>). Op het eerste gezicht lijken ze
+        de inloggegevens van Noorderlicht stal (<code>betaal-controle.nm.lab</code>). <strong>Zaak Bravo</strong> is een
+        losse phishingzaak van een ander team (<code>inlog-verificatie.nm.lab</code>). Op het eerste gezicht lijken ze
         niet verbonden: ze draaien op <em>verschillende</em> IP-adressen. Jouw taak: vind het kenmerk dat ze tóch
         verbindt.</p>
 
@@ -280,7 +280,7 @@ CS.registerRoom({
         gedeelde ASN.</p>
 
         <div class="callout tip"><strong>Beloning:</strong> herken je dat het certificaat (en niet de hostingprovider) de
-        echte brug is, dan verdien je de vlag <code>JVT{zeldzaamheid_boven_toeval}</code>.</div>
+        echte brug is, dan verdien je de vlag <code>NM{zeldzaamheid_boven_toeval}</code>.</div>
 
         <div class="callout warn"><strong>Blijf kritisch (bekend/afgeleid/aanname):</strong> "beide domeinen presenteren
         certificaat A1B2C3D4" is <em>bekend</em>. "Dezelfde actor beheert beide" is <em>afgeleid</em>. "Het is dezelfde
@@ -291,13 +291,13 @@ CS.registerRoom({
         title: 'Zaak Alpha (IAB-phishing) vs. Zaak Bravo',
         scenario: 'Zaak Alpha stal de VPN-gegevens van Noorderlicht. Zaak Bravo is een losse phishingzaak. Wat verbindt ze? Toets de zeldzaamheid van elk gedeeld kenmerk.',
         entities: [
-          { id: 'dA', type: 'domain', label: 'betaal-controle.jvt.lab' },
+          { id: 'dA', type: 'domain', label: 'betaal-controle.nm.lab' },
           { id: 'ipA', type: 'ip', label: '203.0.113.10' },
-          { id: 'dB', type: 'domain', label: 'inlog-verificatie.jvt.lab' },
+          { id: 'dB', type: 'domain', label: 'inlog-verificatie.nm.lab' },
           { id: 'ipB', type: 'ip', label: '198.51.100.20' },
           { id: 'cert', type: 'cert', label: 'A1B2C3D4' },
           { id: 'wal', type: 'wallet', label: 'bc1qfictief0alpha' },
-          { id: 'mail', type: 'email', label: 'beheer@betaal-controle.jvt.lab' },
+          { id: 'mail', type: 'email', label: 'beheer@betaal-controle.nm.lab' },
           { id: 'asn', type: 'asn', label: 'AS64500 FictiefHost' },
         ],
         edges: [
@@ -316,7 +316,7 @@ CS.registerRoom({
       questions: [
         { q: 'Welk zeldzaam kenmerk bruggt Zaak Alpha en Zaak Bravo?', answer: ['certificaat', 'cert', 'A1B2C3D4', 'het certificaat', 'tls-certificaat'], hint: 'Hetzelfde kenmerk staat in crt.sh bij beide domeinen; de IP-adressen verschillen juist.', explain: 'Beide domeinen presenteren hetzelfde TLS-certificaat A1B2C3D4 (bekend). Een hergebruikt certificaat is zeldzaam, dus een sterke brug.' },
         { q: 'Beide IP-adressen horen bij dezelfde hostingprovider (AS64500). Waarom is dat geen sterke brug?', options: ['Omdat heel veel onschuldige sites dezelfde hostingprovider delen — het kenmerk is niet zeldzaam', 'Omdat ASN-nummers altijd nep zijn', 'Omdat hosting niets met IP-adressen te maken heeft', 'Dat is wél een sterke brug'], answer: 0, explain: 'Een gedeelde hoster is te algemeen: het is de zeldzaamheidstoets die bepaalt of een gedeeld kenmerk echt bewijs is.' },
-        { q: 'Welke vlag verdien je door de zeldzaamheidstoets juist toe te passen?', answer: ['JVT{zeldzaamheid_boven_toeval}'], hint: 'Staat in de tip-callout van deze taak.', explain: 'De les: kies het zeldzame dwarsverband (het certificaat), niet het toevallige (de hoster): JVT{zeldzaamheid_boven_toeval}.' },
+        { q: 'Welke vlag verdien je door de zeldzaamheidstoets juist toe te passen?', answer: ['NM{zeldzaamheid_boven_toeval}'], hint: 'Staat in de tip-callout van deze taak.', explain: 'De les: kies het zeldzame dwarsverband (het certificaat), niet het toevallige (de hoster): NM{zeldzaamheid_boven_toeval}.' },
       ],
     },
 
@@ -383,7 +383,7 @@ CS.registerRoom({
         een eigenaar.</p>
 
         <h3>Defangen: de tanden eruit</h3>
-        <p>Plak je <code>https://cdn-sluis.jvt.lab/stage2</code> rechtstreeks in een mail of ticket, dan maakt de software
+        <p>Plak je <code>https://cdn-sluis.nm.lab/stage2</code> rechtstreeks in een mail of ticket, dan maakt de software
         er vaak een klikbare link van of haalt automatisch een voorbeeld op — en heb je per ongeluk contact gemaakt met de
         infrastructuur van de aanvaller. Daarom <strong>defang</strong> je indicatoren: <code>hxxps://</code> in plaats van
         <code>https://</code>, en <code>[.]</code> in plaats van een punt. Zo is <code>192.0.2.60</code> gedefangd
@@ -397,7 +397,7 @@ CS.registerRoom({
         <table>
           <thead><tr><th>Indicator / fase</th><th>Interventie</th><th>Soort (eigenaar)</th></tr></thead>
           <tbody>
-            <tr><td>C2/stage2-host <code>cdn-sluis[.]jvt[.]lab</code>, exfil-host</td><td>Blokkeren in proxy/DNS, takedown aanvragen</td><td>Verstoren (SOC + hostingpartij/registrar)</td></tr>
+            <tr><td>C2/stage2-host <code>cdn-sluis[.]nineminds[.]lab</code>, exfil-host</td><td>Blokkeren in proxy/DNS, takedown aanvragen</td><td>Verstoren (SOC + hostingpartij/registrar)</td></tr>
             <tr><td>Losgeld-wallet <code>bc1qfictief0alpha</code></td><td>Volgen op de blockchain; exchange als knelpunt aanspreken</td><td>Strafrechtelijk (opsporing)</td></tr>
             <tr><td>Gekochte toegang / ontbrekende MFA</td><td>MFA afdwingen, serviceaccounts herzien</td><td>Preventief (IT/CISO)</td></tr>
             <tr><td>Jonge first-offender in beeld</td><td>Alternatief traject (bijv. Hack_Right-achtig)</td><td>Alternatief (opsporing/OM)</td></tr>
@@ -449,7 +449,7 @@ CS.registerRoom({
         heuristische checklist, geen AI-oordeel) en vergelijk met het modelantwoord.</p>
 
         <div class="callout tip"><strong>Slotvlag:</strong> rond je de workflow af met een echt BLUF-product, dan verdien
-        je de laatste vlag: <code>JVT{conclusie_staat_boven}</code>.</div>
+        je de laatste vlag: <code>NM{conclusie_staat_boven}</code>.</div>
 
         <div class="callout info"><strong>Gefeliciteerd:</strong> je hebt de complete intelligence-workflow doorlopen —
         van ruwe logs tot een bruikbaar advies. Dit is precies het werkproces dat een intelligence-analist bij de politie,
@@ -457,12 +457,12 @@ CS.registerRoom({
       `,
       lab: {
         type: 'bluf',
-        source: 'Op 14 september logde serviceaccount svc-backup om 02:14 kort in op de VPN vanaf 203.0.113.77, zonder MFA. Daarna gebeurde er drie dagen niets. Op 17 september om 19:03 werd via RDP ingelogd op WS-ADM-04. De aanvaller verkende de omgeving (net group, nltest), downloadde een stage2-payload van cdn-sluis.jvt.lab (203.0.113.91) via een Base64-gecodeerd PowerShell-commando en las LSASS uit; de EDR sloeg alarm. Op 18 september werd via RDP doorgesprongen naar fileserver SRV-FS02, werd de map Klanten met 7-Zip ingepakt en werd 2 GB naar opslag-cloud.jvt.lab (192.0.2.60) geüpload. Daarna werden de schaduwkopieën gewist en 3187 bestanden versleuteld (.sluislock), met een losgeldbrief. Uit de ACH blijkt dat de waarnemingen het best passen bij een financieel gemotiveerde RaaS-affiliate die toegang kocht bij een IAB; de gebruikte RaaS wordt door veel affiliates gehuurd, dus een specifieke groep is niet aan te wijzen. Een hergebruikt TLS-certificaat verbindt de phishinginfrastructuur met een tweede zaak.',
+        source: 'Op 14 september logde serviceaccount svc-backup om 02:14 kort in op de VPN vanaf 203.0.113.77, zonder MFA. Daarna gebeurde er drie dagen niets. Op 17 september om 19:03 werd via RDP ingelogd op WS-ADM-04. De aanvaller verkende de omgeving (net group, nltest), downloadde een stage2-payload van cdn-sluis.nm.lab (203.0.113.91) via een Base64-gecodeerd PowerShell-commando en las LSASS uit; de EDR sloeg alarm. Op 18 september werd via RDP doorgesprongen naar fileserver SRV-FS02, werd de map Klanten met 7-Zip ingepakt en werd 2 GB naar opslag-cloud.nm.lab (192.0.2.60) geüpload. Daarna werden de schaduwkopieën gewist en 3187 bestanden versleuteld (.sluislock), met een losgeldbrief. Uit de ACH blijkt dat de waarnemingen het best passen bij een financieel gemotiveerde RaaS-affiliate die toegang kocht bij een IAB; de gebruikte RaaS wordt door veel affiliates gehuurd, dus een specifieke groep is niet aan te wijzen. Een hergebruikt TLS-certificaat verbindt de phishinginfrastructuur met een tweede zaak.',
         model: 'BEOORDELING (BLUF): Noorderlicht Logistiek is zeer waarschijnlijk getroffen door een financieel gemotiveerde RaaS-affiliate die gekochte VPN-toegang (IAB) gebruikte; er is sprake van dubbele afpersing (data geëxfiltreerd vóór versleuteling). Een specifieke groep is niet met zekerheid aan te wijzen (aanname vermijden: dezelfde RaaS kent veel affiliates).\n\nADVIES (met eigenaar):\n1. MFA afdwingen op alle (service)accounts en svc-backup resetten — eigenaar: IT, binnen 24 uur.\n2. C2- en exfil-hosts blokkeren en takedown aanvragen — eigenaar: SOC + hostingpartij.\n3. Offline/immutable back-ups verifiëren en herstel starten; niet betalen — eigenaar: CISO.\n4. Losgeld-wallet laten volgen; aangifte doen — eigenaar: opsporing.\n\nONDERBOUWING: bekend = logs (VPN-login zonder MFA, LSASS-toegang, exfil 2 GB, versleuteling 3187 bestanden). Afgeleid = RaaS-affiliate met gekochte toegang (ACH: minste inconsistenties). Betrouwbaarheid: hoog voor de techniek, lager voor de exacte dader.',
       },
       questions: [
         { q: 'Wat hoort in een BLUF-product bovenaan te staan?', options: ['De conclusie en het advies (de kernboodschap)', 'De volledige chronologie', 'De lijst met alle loghashes', 'De namen van alle analisten'], answer: 0, explain: 'BLUF = Bottom Line Up Front: eerst de conclusie en wat er moet gebeuren, daarna de onderbouwing.' },
-        { q: 'Welke vlag hoort bij het afronden van het BLUF-eindproduct?', answer: ['JVT{conclusie_staat_boven}'], hint: 'Staat in de slotvlag-callout van deze taak.', explain: 'De slotvlag is JVT{conclusie_staat_boven}.' },
+        { q: 'Welke vlag hoort bij het afronden van het BLUF-eindproduct?', answer: ['NM{conclusie_staat_boven}'], hint: 'Staat in de slotvlag-callout van deze taak.', explain: 'De slotvlag is NM{conclusie_staat_boven}.' },
         { q: 'Hoe schrijf je de attributie in het eindproduct verantwoord?', options: ['Waarschijnlijk een RaaS-affiliate (afgeleid); specifieke groep niet aan te wijzen (aanname vermijden)', 'Het is zeker groep X', 'De RaaS bepaalt de dader', 'Attributie laat je weg'], answer: 0, explain: 'Je benoemt de best passende hypothese met waarschijnlijkheidstaal en vermijdt de tool=actor-valkuil.' },
         { q: 'Ik heb een BLUF-product geschreven met conclusie eerst, waarschijnlijkheidstaal, een eigenaar per advies en onzekerheid apart. 🧩', noAnswer: true },
       ],

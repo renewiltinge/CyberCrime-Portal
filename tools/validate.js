@@ -177,7 +177,7 @@ for (const file of files) {
       if (!answers.length || answers.some((a) => typeof a !== 'string' || !a.trim())) { err(rel, `${w}: answer ontbreekt of is leeg`); return; }
       if (answers[0].length > 60) warn(rel, `${w}: lang antwoord (${answers[0].length} tekens) — kan het korter?`);
       for (const a of answers) {
-        if (/^JVT\{/.test(a) && !/^JVT\{[a-z0-9_]+\}$/.test(a)) warn(rel, `${w}: vlag "${a}" volgt niet JVT{kleine_letters_underscores}`);
+        if (/^NM\{/.test(a) && !/^NM\{[a-z0-9_]+\}$/.test(a)) warn(rel, `${w}: vlag "${a}" volgt niet NM{kleine_letters_underscores}`);
       }
     });
     // Vlaggen moeten ergens in deze room (tekst of lab) te vinden zijn, eventueel gecodeerd.
@@ -186,7 +186,7 @@ for (const file of files) {
   r.tasks.forEach((t, ti) => (t.questions || []).forEach((q, qi) => {
     if (q.noAnswer || Array.isArray(q.options)) return;
     const answers = Array.isArray(q.answer) ? q.answer : [q.answer];
-    const flag = answers.find((a) => /^JVT\{/.test(a));
+    const flag = answers.find((a) => /^NM\{/.test(a));
     if (flag && !corpus.includes(flag) && !q.encoded) {
       warn(rel, `taak ${ti + 1} vraag ${qi + 1}: vlag ${flag} komt niet letterlijk voor in tekst/lab (gecodeerd? zet dan encoded: true)`);
     }

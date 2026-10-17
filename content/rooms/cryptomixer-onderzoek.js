@@ -1,7 +1,7 @@
 /* Room: Casus — het cryptomixer-onderzoek (taint, CoinJoin, attributie) */
 
 // =======================================================================
-//  Alles in deze room is FICTIEF: documentatie-IP's (RFC 5737), .jvt.lab-
+//  Alles in deze room is FICTIEF: documentatie-IP's (RFC 5737), .nm.lab-
 //  domeinen en verzonnen wallets/bedrijven. Je oefent de denkwijze.
 // =======================================================================
 
@@ -48,13 +48,13 @@ const FLOW_EDGES = [
 
 // --- Pivot: twee zaken verbonden door één hergebruikt certificaat (INTEL-REF) ---
 const CMX_ENTITIES = [
-  { id: 'dA', type: 'domain', label: 'betaal-controle.jvt.lab' },
+  { id: 'dA', type: 'domain', label: 'betaal-controle.nm.lab' },
   { id: 'ipA', type: 'ip', label: '203.0.113.10' },
-  { id: 'dB', type: 'domain', label: 'inlog-verificatie.jvt.lab' },
+  { id: 'dB', type: 'domain', label: 'inlog-verificatie.nm.lab' },
   { id: 'ipB', type: 'ip', label: '198.51.100.20' },
   { id: 'cert', type: 'cert', label: 'A1B2C3D4' },
   { id: 'wal', type: 'wallet', label: 'bc1qfictief0alpha' },
-  { id: 'mail', type: 'email', label: 'beheer@betaal-controle.jvt.lab' },
+  { id: 'mail', type: 'email', label: 'beheer@betaal-controle.nm.lab' },
 ];
 const CMX_EDGES = [
   { from: 'dA', to: 'ipA', rel: 'resolvet naar', time: '2026-01', source: 'passive DNS' },
@@ -114,7 +114,7 @@ CS.registerRoom({
 
         <div class="callout warn"><strong>Alles fictief:</strong> Zuidwaard, de wallets, de mixer "CoinMenger" en de
         exchange "EuroMunt" zijn verzonnen. De IP-adressen zijn documentatie-adressen en de domeinen eindigen op
-        <code>.jvt.lab</code>. Je volgt geen echte mensen; je oefent de methode.</div>
+        <code>.nm.lab</code>. Je volgt geen echte mensen; je oefent de methode.</div>
 
         <h3>Wat is "taint"?</h3>
         <p>Op de blockchain is elke munt gelijk, maar voor een onderzoeker niet. <strong>Taint</strong> (letterlijk:
@@ -195,13 +195,13 @@ CS.registerRoom({
         klassieke valkuil die je moet herkennen, anders beschuldig je de verkeerde.</p>
 
         <div class="callout info"><strong>Beloning — tussenvlag:</strong> je snapt nu dat een mixer het vuil verdunt maar
-        niet wist. Noteer <code>JVT{taint_verdunt_maar_wist_niet}</code>.</div>
+        niet wist. Noteer <code>NM{taint_verdunt_maar_wist_niet}</code>.</div>
       `,
       questions: [
         { q: 'Wat gebeurt er met het vuile BEDRAG als je 6 BTC vuil met 6 BTC schoon mengt?', options: ['Het blijft 6 BTC vuil, alleen het percentage zakt naar 50%', 'Het verdwijnt helemaal', 'Het verdubbelt naar 12 BTC vuil', 'Het wordt 0 BTC'], answer: 0, explain: 'Het percentage zakt (50%), maar het vuile bedrag van 6 BTC blijft in de outputs aanwezig.' },
         { q: 'Waarom levert de common-input-heuristiek bij een CoinJoin een vals cluster op?', options: ['Omdat vreemden daar bewust samen één transactie tekenen, terwijl de heuristiek aanneemt dat co-inputs één eigenaar hebben', 'Omdat CoinJoin de blockchain wist', 'Omdat mixers geen inputs hebben', 'Omdat de fee te hoog is'], answer: 0, explain: 'CoinJoin breekt de aanname "co-inputs = één eigenaar"; de deposit en de schone liquiditeit worden dan onterecht samengeklonterd.' },
         { q: 'Hoe heet een mixvorm zonder centrale dienst waarbij meerdere partijen samen één transactie tekenen?', answer: ['CoinJoin', 'coinjoin', 'coin join'], hint: 'Munten "samenvoegen" in één transactie.', explain: 'CoinJoin: meerdere partijen ondertekenen samen één transactie, zodat in- en outputs niet meer één-op-één koppelen.' },
-        { q: 'Welke vlag staat als beloning in de info-callout van deze taak?', answer: ['JVT{taint_verdunt_maar_wist_niet}'], hint: 'Lees de info-callout onderaan de uitleg.', explain: 'De tussenvlag is JVT{taint_verdunt_maar_wist_niet}.' },
+        { q: 'Welke vlag staat als beloning in de info-callout van deze taak?', answer: ['NM{taint_verdunt_maar_wist_niet}'], hint: 'Lees de info-callout onderaan de uitleg.', explain: 'De tussenvlag is NM{taint_verdunt_maar_wist_niet}.' },
       ],
     },
 
@@ -238,7 +238,7 @@ CS.registerRoom({
         </ul>
 
         <div class="callout tip"><strong>Beloning:</strong> reken je de haircut goed na, dan verdien je de vlag
-        <code>JVT{haircut_wijst_de_weg}</code> — want de haircut wijst, ondanks de mixer, nog altijd de weg naar het vuile
+        <code>NM{haircut_wijst_de_weg}</code> — want de haircut wijst, ondanks de mixer, nog altijd de weg naar het vuile
         geld bij de cash-out.</div>
 
         <div class="callout warn"><strong>Let op het valse cluster:</strong> de tracer meldt een cluster met de schone
@@ -264,7 +264,7 @@ CS.registerRoom({
         { q: 'Hoeveel BTC vuil geld bereikt de exchange volgens de tracer?', answer: ['3', '3.0', '3,0', '3 btc'], hint: 'Staat in de callout "Vuil geld dat een exchange bereikt".', explain: 'Uitbetaling 1 (6 BTC, 50% vuil = 3 BTC) gaat naar de exchange: 3 BTC taint bij de cash-out.' },
         { q: 'Wat is de taint op het exchange-account in procenten?', answer: ['50%', '50', '50 %'], hint: 'Lees de kolom Taint in het adres-overzicht.', explain: 'De mix verdunde 6 vuil + 6 schoon tot 50%, en die fractie reist mee naar de exchange.' },
         { q: 'De tracer meldt een cluster waarin de schone mixer-liquiditeit zit. Wat is dat?', options: ['Een vals cluster door de CoinJoin (de common-input-heuristiek faalt hier)', 'Bewijs dat de liquiditeit-eigenaar de dader is', 'Een rekenfout van de tracer', 'Het echte cluster van de aanvaller'], answer: 0, explain: 'CoinJoin laat vreemden samen tekenen; de heuristiek klontert dan onterecht de deposit en de schone liquiditeit samen.' },
-        { q: 'Welke vlag hoort bij het goed narekenen van de haircut?', answer: ['JVT{haircut_wijst_de_weg}'], hint: 'Staat in de tip-callout van deze taak.', explain: 'De vlag is JVT{haircut_wijst_de_weg}: de haircut wijst ondanks de mixer de weg naar het vuile geld.' },
+        { q: 'Welke vlag hoort bij het goed narekenen van de haircut?', answer: ['NM{haircut_wijst_de_weg}'], hint: 'Staat in de tip-callout van deze taak.', explain: 'De vlag is NM{haircut_wijst_de_weg}: de haircut wijst ondanks de mixer de weg naar het vuile geld.' },
       ],
     },
 
@@ -324,9 +324,9 @@ CS.registerRoom({
         zelf benaderen (opsec).</p>
 
         <h3>Twee zaken, één dwarsverband</h3>
-        <p>In het lab staan twee fictieve phishingzaken. <strong>Zaak Alpha</strong> (<code>betaal-controle.jvt.lab</code>)
+        <p>In het lab staan twee fictieve phishingzaken. <strong>Zaak Alpha</strong> (<code>betaal-controle.nm.lab</code>)
         is de infrastructuur rond de aanval op Zuidwaard; daar hangt ook de losgeld-wallet <code>bc1qfictief0alpha</code>
-        aan vast. <strong>Zaak Bravo</strong> (<code>inlog-verificatie.jvt.lab</code>) is een losse phishingzaak van een
+        aan vast. <strong>Zaak Bravo</strong> (<code>inlog-verificatie.nm.lab</code>) is een losse phishingzaak van een
         ander team. De IP-adressen verschillen (<code>203.0.113.10</code> vs. <code>198.51.100.20</code>), dus op het
         eerste gezicht lijken ze niet verbonden.</p>
 
@@ -339,7 +339,7 @@ CS.registerRoom({
         hoe sterker de link</em>. Een gedeelde hostingprovider zou veel te algemeen zijn.</p>
 
         <div class="callout tip"><strong>Beloning:</strong> herken je dat het certificaat de twee zaken bruggt, dan
-        verdien je de vlag <code>JVT{cert_bruggt_de_zaken}</code>.</div>
+        verdien je de vlag <code>NM{cert_bruggt_de_zaken}</code>.</div>
 
         <div class="callout warn"><strong>Blijf kritisch (bekend/afgeleid/aanname):</strong> "beide domeinen presenteren
         certificaat A1B2C3D4" is <em>bekend</em>. "Dezelfde actor beheert beide" is <em>afgeleid</em>. "Het is dezelfde
@@ -358,7 +358,7 @@ CS.registerRoom({
         { q: 'Welk zeldzaam kenmerk bruggt Zaak Alpha en Zaak Bravo?', answer: ['certificaat', 'cert', 'A1B2C3D4', 'a1b2c3d4', 'het certificaat', 'tls-certificaat'], hint: 'Hetzelfde kenmerk staat in crt.sh bij beide domeinen; de IP-adressen verschillen juist.', explain: 'Beide domeinen presenteren hetzelfde TLS-certificaat A1B2C3D4 (bekend). Een hergebruikt certificaat is zeldzaam, dus een sterke brug.' },
         { q: 'Via welke openbare bron vind je een hergebruikt TLS-certificaat terug?', options: ['Certificate transparency (crt.sh)', 'De blockchain', 'Het telefoonboek', 'De firewall-logs van het slachtoffer'], answer: 0, explain: 'Certificate transparency-logs (zoals crt.sh) bevatten alle uitgegeven certificaten; zo vind je hergebruik over domeinen.' },
         { q: 'Waarom is een hergebruikt certificaat een sterkere brug dan een gedeelde hostingprovider?', options: ['Omdat een gedeeld certificaat zeldzaam is en een gedeelde hoster veel te algemeen', 'Omdat certificaten nooit worden hergebruikt', 'Omdat hosting niets met domeinen te maken heeft', 'Dat is het niet — de hoster is sterker'], answer: 0, explain: 'De zeldzaamheidstoets: hoe zeldzamer het gedeelde kenmerk, hoe sterker het bewijs.' },
-        { q: 'Welke vlag verdien je door de zaken via het certificaat te koppelen?', answer: ['JVT{cert_bruggt_de_zaken}'], hint: 'Staat in de tip-callout van deze taak.', explain: 'De vlag is JVT{cert_bruggt_de_zaken}.' },
+        { q: 'Welke vlag verdien je door de zaken via het certificaat te koppelen?', answer: ['NM{cert_bruggt_de_zaken}'], hint: 'Staat in de tip-callout van deze taak.', explain: 'De vlag is NM{cert_bruggt_de_zaken}.' },
       ],
     },
 
@@ -442,7 +442,7 @@ CS.registerRoom({
         heuristische checklist, geen AI-oordeel) en vergelijk met het modelantwoord.</p>
 
         <div class="callout tip"><strong>Slotvlag:</strong> rond je de zaak af met een echt BLUF-product dat de cash-out
-        als aangrijppunt benoemt, dan verdien je de laatste vlag: <code>JVT{cash_out_is_het_knelpunt}</code>.</div>
+        als aangrijppunt benoemt, dan verdien je de laatste vlag: <code>NM{cash_out_is_het_knelpunt}</code>.</div>
 
         <div class="callout danger"><strong>Nooit blind betalen, en denk aan privacy:</strong> losgeld betalen financiert
         de volgende aanval en geeft geen garantie. Deel indicatoren onder het juiste TLP-label en haal persoonsgegevens
@@ -458,7 +458,7 @@ CS.registerRoom({
         { q: 'Wat hoort in een BLUF-product bovenaan te staan?', options: ['De conclusie en het advies (de kernboodschap)', 'De volledige chronologie', 'De lijst met alle transactie-ID\'s', 'De namen van alle analisten'], answer: 0, explain: 'BLUF = Bottom Line Up Front: eerst de conclusie en wat er moet gebeuren, daarna de onderbouwing.' },
         { q: 'Wat is in deze zaak het belangrijkste aangrijppunt voor de opsporing?', options: ['Het exchange-account, waar via KYC/Wwft een identiteit aan het spoor hangt', 'De mixer, die je offline kunt halen', 'De hop-wallets', 'De losgeldbrief'], answer: 0, explain: 'De cash-out bij de exchange koppelt het pseudonieme spoor aan een echte naam; daar grijp je aan met een vordering.' },
         { q: 'Hoe schrijf je de attributie in het eindproduct verantwoord?', options: ['Waarschijnlijk een professionele cash-out-dienst (afgeleid); een specifieke beheerder niet aan te wijzen (aanname vermijden)', 'Het is zeker persoon X', 'De mixer bepaalt de dader', 'Attributie laat je weg'], answer: 0, explain: 'Je benoemt de best passende hypothese met waarschijnlijkheidstaal en vermijdt de tool=actor-valkuil.' },
-        { q: 'Welke slotvlag hoort bij het afronden van het BLUF-eindproduct?', answer: ['JVT{cash_out_is_het_knelpunt}'], hint: 'Staat in de tip-callout van deze taak.', explain: 'De slotvlag is JVT{cash_out_is_het_knelpunt}.' },
+        { q: 'Welke slotvlag hoort bij het afronden van het BLUF-eindproduct?', answer: ['NM{cash_out_is_het_knelpunt}'], hint: 'Staat in de tip-callout van deze taak.', explain: 'De slotvlag is NM{cash_out_is_het_knelpunt}.' },
       ],
     },
   ],

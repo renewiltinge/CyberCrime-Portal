@@ -167,14 +167,14 @@ CS.registerRoom({
 47 50 53 41 72 65 61 49 6E 66 6F 72 6D 61 74 69
 6F 6E 3D 44 6F 6D 70 6C 65 69 6E 2C 20 55 74 72
 65 63 68 74 2C 20 4E 4C 0A 55 73 65 72 43 6F 6D
-6D 65 6E 74 3D 4A 56 54 7B 65 78 69 66 5F 76 65
+6D 65 6E 74 3D 4E 4D 7B 65 78 69 66 5F 76 65
 72 72 61 61 64 74 5F 6C 6F 63 61 74 69 65 7D 0A
 FF D9`,
       },
       questions: [
         { q: 'Welke eerste vier bytes (hex) staan er, en welk bestandstype hoort daarbij?', options: ['89 50 4E 47 — een PNG', 'FF D8 FF E1 — een JPEG met EXIF', '25 50 44 46 — een PDF', 'FF D8 FF E0 — een JPEG zonder EXIF'], answer: 1, explain: 'FF D8 FF E1 is de signatuur van een JPEG met een EXIF-segment (APP1). Dus: hier zit metadata in.' },
         { q: 'In welke plaats is de foto volgens de EXIF-tekst gemaakt?', answer: ['utrecht'], hint: 'Lees de ASCII-kolom rechts bij GPSAreaInformation.', explain: 'De EXIF-tekst noemt Domplein, Utrecht, NL als locatie — bevestigd door de GPS-coördinaten (52.0894 N, 5.1100 E).' },
-        { q: 'Welke vlag staat in de UserComment van het bestand?', answer: ['JVT{exif_verraadt_locatie}'], encoded: true, hint: 'Lees de leesbare ASCII onderaan; de vlag staat na UserComment=.', explain: 'In de ASCII-kolom staat UserComment=JVT{exif_verraadt_locatie}. De bytes verbergen dus gewoon leesbare tekst.' },
+        { q: 'Welke vlag staat in de UserComment van het bestand?', answer: ['NM{exif_verraadt_locatie}'], encoded: true, hint: 'Lees de leesbare ASCII onderaan; de vlag staat na UserComment=.', explain: 'In de ASCII-kolom staat UserComment=NM{exif_verraadt_locatie}. De bytes verbergen dus gewoon leesbare tekst.' },
       ],
     },
 
@@ -201,7 +201,7 @@ FF D9`,
       lab: {
         type: 'terminal',
         shell: 'bash',
-        user: 'rechercheur', host: 'jvt-lab',
+        user: 'rechercheur', host: 'nm-lab',
         home: '/home/rechercheur', cwd: '/home/rechercheur',
         motd: 'OSINT-werkplek. Lees de metadata uit met: exiftool foto.jpg',
         fs: {
@@ -222,7 +222,7 @@ Modify Date                     : 2026:07:14 15:42:10
 GPS Latitude                    : 52 deg 5' 21.84" N
 GPS Longitude                   : 5 deg 6' 36.00" E
 GPS Position                    : 52.0894 N, 5.1100 E
-User Comment                    : JVT{metadata_is_bewijs}
+User Comment                    : NM{metadata_is_bewijs}
 Image Size                      : 4032x3024`,
           'exiftool -gps:all foto.jpg': `GPS Latitude                    : 52 deg 5' 21.84" N
 GPS Longitude                   : 5 deg 6' 36.00" E
@@ -231,7 +231,7 @@ GPS Position                    : 52.0894 N, 5.1100 E`,
       },
       questions: [
         { q: 'Draai exiftool foto.jpg. Welk cameramodel (Camera Model Name) staat erin?', answer: ['PixaCam X20', 'pixacam x20'], hint: 'Kijk in de regel Camera Model Name.', explain: 'Het veld Camera Model Name toont PixaCam X20 — handig om foto\'s van hetzelfde toestel te koppelen.' },
-        { q: 'Welke vlag staat in het veld User Comment?', answer: ['JVT{metadata_is_bewijs}'], hint: 'Onderaan de uitvoer van exiftool, bij User Comment.', explain: 'exiftool toont User Comment : JVT{metadata_is_bewijs}. De maker liet dat per ongeluk in de metadata staan.' },
+        { q: 'Welke vlag staat in het veld User Comment?', answer: ['NM{metadata_is_bewijs}'], hint: 'Onderaan de uitvoer van exiftool, bij User Comment.', explain: 'exiftool toont User Comment : NM{metadata_is_bewijs}. De maker liet dat per ongeluk in de metadata staan.' },
         { q: 'Waarom heeft een foto die rechtstreeks van een sociaal-mediaprofiel komt vaak géén GPS-data meer?', options: ['GPS werkt niet binnen', 'Veel platforms strippen de EXIF-metadata bij het uploaden om privacyredenen', 'exiftool kan het niet lezen', 'De camera slaat het nooit op'], answer: 1, explain: 'De meeste grote platforms verwijderen EXIF bij upload. Rechtstreeks doorgestuurde of originele bestanden hebben de metadata vaak nog wel.' },
       ],
     },

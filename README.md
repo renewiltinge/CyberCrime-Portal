@@ -1,4 +1,4 @@
-# 🥷 JVT Cyber Dojo
+# 🥷 NineMinds Cyber Dojo
 
 Een **doelgericht, Nederlandstalig leerportaal voor cybersecurity** — in de stijl van TryHackMe, maar helemaal van jou. Korte uitleg, veel oefenen in **echte interactieve browser-labs**, en oefenvragen met **vlaggen** (flags) om te vinden. Van de absolute basis tot je eerste hacks én verdedigingen.
 
@@ -23,7 +23,7 @@ python3 -m http.server 8000
 ```
 
 **Optie D — één bestand** 
-In [`dist/jvt-cyber-dojo.html`](dist/jvt-cyber-dojo.html) staat het hele portaal (alle lessen, labs en opmaak) in één bestand. Handig om te mailen, op een USB-stick te zetten of offline te openen. Opnieuw genereren na een wijziging: `node tools/build-artifact.js`.
+In [`dist/nineminds-cyber-dojo.html`](dist/nineminds-cyber-dojo.html) staat het hele portaal (alle lessen, labs en opmaak) in één bestand. Handig om te mailen, op een USB-stick te zetten of offline te openen. Opnieuw genereren na een wijziging: `node tools/build-artifact.js`.
 
 ---
 
@@ -185,7 +185,7 @@ Werkwijze:
 |--------|------|
 | `node tools/validate.js [bestand…]` | Controleert rooms op structuur, vragen, vlaggen en labs. Rekent hashes na. |
 | `node tools/build.js` | Zet alle rooms (gesorteerd op leerpad + volgorde) in `index.html`. |
-| `node tools/build-artifact.js` | Bouwt de losse versie `dist/jvt-cyber-dojo.html` (alles in één bestand). |
+| `node tools/build-artifact.js` | Bouwt de losse versie `dist/nineminds-cyber-dojo.html` (alles in één bestand). |
 | `node tools/smoke.js` | Laadt het portaal in een headless browser en controleert dat alles rendert. |
 | `node tools/labtest.js` + `labtest-extra.js` | Bedienen de labs echt en controleren de uitkomsten. |
 

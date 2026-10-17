@@ -87,7 +87,7 @@ CS.registerRoom({
         </ul>
 
         <div class="callout tip">
-          <strong>Lab:</strong> hieronder staat de nep-webwinkel <code>shop.jvt.lab</code>. Je bent ingelogd als
+          <strong>Lab:</strong> hieronder staat de nep-webwinkel <code>shop.nm.lab</code>. Je bent ingelogd als
           klant 1001. Het verzoek begint op <code>/bestelling?id=1001</code> — dat is je eigen bestelling. Verander
           nu het id in het pad naar <code>/bestelling?id=1002</code> en verstuur het verzoek. Je ziet dan de
           bestelling van een andere klant, inclusief een interne notitie met een vlag. De winkel controleert nergens
@@ -96,18 +96,18 @@ CS.registerRoom({
       `,
       lab: {
         type: 'http',
-        host: 'shop.jvt.lab',
+        host: 'shop.nm.lab',
         start: { method: 'GET', path: '/bestelling?id=1001', headers: { 'Cookie': 'session=7b2f9c; klant=1001; role=user' }, body: '' },
         routes: [
-          { method: 'GET', path: '/', status: 200, headers: { 'Content-Type': 'text/html' }, body: 'Welkom bij shop.jvt.lab\n\nJe bestellingen staan onder /bestelling?id=<nummer>\nProbeer: /bestelling?id=1001' },
+          { method: 'GET', path: '/', status: 200, headers: { 'Content-Type': 'text/html' }, body: 'Welkom bij shop.nm.lab\n\nJe bestellingen staan onder /bestelling?id=<nummer>\nProbeer: /bestelling?id=1001' },
           { method: 'GET', path: '/bestelling?id=1001', status: 200, headers: { 'Content-Type': 'text/plain' }, body: 'Bestelling 1001\nKlant: Jan Jansen (klant 1001 - dit ben jij)\nArtikel: USB-stick 64GB\nTotaal: EUR 12,95\nStatus: verzonden' },
-          { method: 'GET', path: '/bestelling?id=1002', status: 200, headers: { 'Content-Type': 'text/plain' }, body: 'Bestelling 1002\nKlant: Fatima El Amrani (klant 1002)\nArtikel: Mechanisch toetsenbord\nTotaal: EUR 89,00\nStatus: in behandeling\nInterne notitie: JVT{idor_andermans_bestelling}' },
+          { method: 'GET', path: '/bestelling?id=1002', status: 200, headers: { 'Content-Type': 'text/plain' }, body: 'Bestelling 1002\nKlant: Fatima El Amrani (klant 1002)\nArtikel: Mechanisch toetsenbord\nTotaal: EUR 89,00\nStatus: in behandeling\nInterne notitie: NM{idor_andermans_bestelling}' },
           { method: 'GET', path: '/bestelling?id=1003', status: 200, headers: { 'Content-Type': 'text/plain' }, body: 'Bestelling 1003\nKlant: Pieter de Vries (klant 1003)\nArtikel: Webcam 1080p\nTotaal: EUR 34,50\nStatus: geannuleerd' },
           { method: 'GET', path: '/robots.txt', status: 200, headers: { 'Content-Type': 'text/plain' }, body: 'User-agent: *\nDisallow: /beheer' },
         ],
       },
       questions: [
-        { q: 'Verander het id in het pad naar 1002. Welke vlag staat in de interne notitie van die bestelling?', answer: ['JVT{idor_andermans_bestelling}'], hint: 'Zet in het padveld /bestelling?id=1002 en verstuur het verzoek.', explain: 'De winkel controleert niet of de bestelling van jou is. Zo kun je andermans gegevens inzien: dat is IDOR.' },
+        { q: 'Verander het id in het pad naar 1002. Welke vlag staat in de interne notitie van die bestelling?', answer: ['NM{idor_andermans_bestelling}'], hint: 'Zet in het padveld /bestelling?id=1002 en verstuur het verzoek.', explain: 'De winkel controleert niet of de bestelling van jou is. Zo kun je andermans gegevens inzien: dat is IDOR.' },
         { q: 'Waar staat IDOR voor?', options: ['Insecure Direct Object Reference', 'Internal Data Output Request', 'Identity Defense Over Roles'], answer: 0, explain: 'Een onveilige directe verwijzing naar een object: je verwijst rechtstreeks naar data zonder dat de server je rechten controleert.' },
         { q: 'Onder welke OWASP-categorie valt SSRF in de editie 2025?', options: ['Broken Access Control', 'Cryptographic Failures', 'Injection'], answer: 0, explain: 'SSRF (Server-Side Request Forgery) is in 2025 ondergebracht bij A01 Broken Access Control.' },
         { q: 'Wat is de belangrijkste maatregel tegen IDOR?', options: ['Op de server controleren of de gebruiker dit specifieke object mag zien', 'De id onzichtbaar maken in de interface', 'De id langer maken'], answer: 0, explain: 'De echte oplossing is een eigenaarschapscontrole op de server bij elke actie, niet alleen iets verbergen.' },
@@ -123,7 +123,7 @@ CS.registerRoom({
         interne details lekken, een beheerpaneel dat open op internet staat, onnodige functies die aan staan, of
         mappen die per ongeluk toegankelijk zijn (bijvoorbeeld een zichtbare <code>.git</code>-map of een
         backupbestand). Analogie: een gloednieuw, stevig slot op je voordeur, maar de sleutel ligt onder de mat.</p>
-        <p><strong>Voorbeeld:</strong> een testserver van <code>shop.jvt.lab</code> gaat live met de ingebouwde
+        <p><strong>Voorbeeld:</strong> een testserver van <code>shop.nm.lab</code> gaat live met de ingebouwde
         beheerder <code>admin/admin</code> en met gedetailleerde foutmeldingen aan. Een aanvaller logt in met het
         standaardwachtwoord en leest in een foutmelding zo de databasestructuur af.</p>
         <p><strong>Maatregel:</strong> werk met veilige standaardinstellingen (secure defaults), verwijder wat je

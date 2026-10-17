@@ -53,12 +53,12 @@ CS.registerRoom({
 
         <div class="callout tip"><strong>Onthoud de richting:</strong> het proces loopt van de vraag naar het advies, niet
         andersom. Wie met de data begint in plaats van met de vraag, verdwaalt. Beloning voor wie het hele proces kan
-        navertellen: <strong>JVT{van_richten_tot_product}</strong>.</div>
+        navertellen: <strong>NM{van_richten_tot_product}</strong>.</div>
       `,
       questions: [
         { q: 'Waarmee begin je het werkproces: met de data of met de vraag?', options: ['Met de data die je toevallig hebt', 'Met een scherpe intelligence-vraag van de opdrachtgever', 'Met het BLUF-product', 'Met het interventieadvies'], answer: 1, explain: 'Richten komt eerst: de vraag stuurt wat je verzamelt, modelleert en concludeert.' },
         { q: 'Welke stap komt direct ná "modelleren" in dit werkproces?', options: ['Richten', 'Pivoten', 'Interventieadvies', 'Product maken'], answer: 1, explain: 'De volgorde is richten → verzamelen → modelleren → pivoten → analyseren → product → interventieadvies.' },
-        { q: 'Wat is de vlag die je als beloning krijgt voor het navertellen van het hele proces?', answer: ['JVT{van_richten_tot_product}'], hint: 'Staat vetgedrukt in de tip onderaan de taak.', explain: 'JVT{van_richten_tot_product} — van de vraag helemaal tot het advies.' },
+        { q: 'Wat is de vlag die je als beloning krijgt voor het navertellen van het hele proces?', answer: ['NM{van_richten_tot_product}'], hint: 'Staat vetgedrukt in de tip onderaan de taak.', explain: 'NM{van_richten_tot_product} — van de vraag helemaal tot het advies.' },
       ],
     },
 
@@ -203,7 +203,7 @@ CS.registerRoom({
         <h3>2. Labelen: bekend, afgeleid of aanname</h3>
         <p>Dit is misschien wel de belangrijkste gewoonte uit het hele pad. Markeer elke bewering expliciet:</p>
         <ul>
-          <li><strong>Bekend</strong> — een feit of directe waarneming ("het domein <code>betaal-controle.jvt.lab</code>
+          <li><strong>Bekend</strong> — een feit of directe waarneming ("het domein <code>betaal-controle.nm.lab</code>
           resolvete op 2026-01 naar 203.0.113.10, bron: passive DNS").</li>
           <li><strong>Afgeleid</strong> — een analytische conclusie uit het bewijs ("beide zaken delen één TLS-certificaat,
           dus zijn ze waarschijnlijk door dezelfde actor opgezet").</li>
@@ -211,7 +211,7 @@ CS.registerRoom({
           een aanname, geen feit).</li>
         </ul>
         <p>Wie deze drie door elkaar haalt, presenteert een gok als een feit. Dat is precies waar rapporten in de
-        rechtszaal op sneuvelen. Beloning voor wie dit standaard toepast: <strong>JVT{bekend_afgeleid_aanname}</strong>.</p>
+        rechtszaal op sneuvelen. Beloning voor wie dit standaard toepast: <strong>NM{bekend_afgeleid_aanname}</strong>.</p>
 
         <h3>3. Herkomst en tijd vastleggen (provenance)</h3>
         <p>Bij élke entiteit en bewering leg je vast: wáár komt het vandaan en wannéér is het waargenomen. Zonder herkomst
@@ -226,7 +226,7 @@ CS.registerRoom({
       questions: [
         { q: '"Beide zaken delen één zeldzaam TLS-certificaat, dus waarschijnlijk dezelfde actor." Welk label hoort hierbij?', options: ['bekend', 'afgeleid', 'aanname'], answer: 1, explain: 'Een analytische conclusie uit bewijs is afgeleid — niet een direct waargenomen feit (bekend) en niet onbewezen (aanname).' },
         { q: 'Wat is het belangrijkste doel van peer review bij een intelligence-product?', options: ['Spelfouten verbeteren', 'Controleren of de conclusie echt uit het bewijs volgt en of een hypothese is gemist', 'Het product korter maken', 'De auteur beoordelen'], answer: 1, explain: 'Peer review toetst de redenering: een frisse blik ziet de logische sprongen die de auteur niet meer opmerkt.' },
-        { q: 'Welke vlag hoort bij het standaard labelen van je beweringen?', answer: ['JVT{bekend_afgeleid_aanname}'], hint: 'Staat vetgedrukt onder het kopje over labelen.', explain: 'JVT{bekend_afgeleid_aanname} — de drie labels die je gok van een feit onderscheiden.' },
+        { q: 'Welke vlag hoort bij het standaard labelen van je beweringen?', answer: ['NM{bekend_afgeleid_aanname}'], hint: 'Staat vetgedrukt onder het kopje over labelen.', explain: 'NM{bekend_afgeleid_aanname} — de drie labels die je gok van een feit onderscheiden.' },
       ],
     },
 
@@ -251,20 +251,20 @@ CS.registerRoom({
         <div class="callout tip"><strong>Aanpak:</strong> lees de casus, bepaal de kernboodschap ("wat is hier aan de hand en
         wat moet er gebeuren?"), schrijf die als eerste zin, en vul daarna de onderbouwing en het advies aan. Het lab
         draait een heuristische checklist over je tekst — geen AI-cijfer, maar een spiegel. Haal je alle punten, dan
-        verdien je de vlag <strong>JVT{conclusie_eerst}</strong>.</div>
+        verdien je de vlag <strong>NM{conclusie_eerst}</strong>.</div>
 
         <p>Vergelijk je versie daarna met het meegeleverde voorbeeld (de knop in het lab). Er is niet één juist antwoord;
         het gaat erom dat de lezer binnen vijf seconden weet wat hij moet doen.</p>
       `,
       lab: {
         type: 'bluf',
-        source: 'CASUS (ruw, chronologisch):\n\nOp 12 januari 2026 meldde de helpdesk dat drie medewerkers een e-mail hadden ontvangen met een link naar "betaal-controle.jvt.lab". Op 13 januari bevestigde onze eigen SIEM-log (A2) dat een medewerker op de link had geklikt en inloggegevens had ingevoerd. Op 15 januari zag het SOC uitgaand verkeer vanaf het werkstation naar 203.0.113.10. Via passive DNS (crt.sh en WHOIS, herkomst vastgelegd) bleek dat "betaal-controle.jvt.lab" een TLS-certificaat met vingerafdruk A1B2C3D4 presenteerde. Datzelfde certificaat A1B2C3D4 dook op 2 februari op bij een tweede phishingdomein, "inlog-verificatie.jvt.lab", dat een collega-organisatie had gemeld (bron B, nog onbevestigd). De WHOIS-contactmail bij de eerste zaak was "beheer@betaal-controle.jvt.lab". Een extern rapport (betrouwbaarheid C) noemde een losgeld-wallet bc1qfictief0alpha. De twee domeinen resolveerden naar verschillende IP-adressen, maar deelden dus wel het certificaat. Er is nog geen bewijs voor de identiteit van de actor.',
-        model: 'BLUF: Zaak Alpha (betaal-controle.jvt.lab) en Zaak Bravo (inlog-verificatie.jvt.lab) zijn waarschijnlijk (55-75%) opgezet door dezelfde actor; betrouwbaarheidsniveau: gemiddeld. De sterkste aanwijzing is een zeldzaam, herbruikt TLS-certificaat (A1B2C3D4) dat op beide domeinen voorkomt. Er is bevestigde phishing met credential-diefstal op ons eigen netwerk.\n\nADVIES:\n1. Blokkeer beide domeinen en het IP 203.0.113.10 op de proxy/DNS-filter (eigenaar: SOC, vandaag).\n2. Reset de wachtwoorden van de getroffen medewerker en schakel MFA af/opnieuw in (eigenaar: IT-beheer, binnen 24 uur).\n3. Deel certificaat A1B2C3D4 en de IOCs (defanged) met de ISAC en het NCSC (eigenaar: analist, deze week).\n\nONZEKERHEID: de identiteit van de actor is onbekend (aanname, geen bewijs). De melding van Zaak Bravo is nog onbevestigd (bron B). De losgeld-wallet komt uit een extern rapport van beperkte betrouwbaarheid (C).\n\nONDERBOUWING (kort): bevestigde klik + credential-invoer (eigen SIEM, A2) op 13-1; uitgaand verkeer naar 203.0.113.10 op 15-1; gedeeld certificaat A1B2C3D4 bij beide domeinen (crt.sh, herkomst vastgelegd). IP-adressen verschillen, het certificaat bruggt de zaken.',
+        source: 'CASUS (ruw, chronologisch):\n\nOp 12 januari 2026 meldde de helpdesk dat drie medewerkers een e-mail hadden ontvangen met een link naar "betaal-controle.nm.lab". Op 13 januari bevestigde onze eigen SIEM-log (A2) dat een medewerker op de link had geklikt en inloggegevens had ingevoerd. Op 15 januari zag het SOC uitgaand verkeer vanaf het werkstation naar 203.0.113.10. Via passive DNS (crt.sh en WHOIS, herkomst vastgelegd) bleek dat "betaal-controle.nm.lab" een TLS-certificaat met vingerafdruk A1B2C3D4 presenteerde. Datzelfde certificaat A1B2C3D4 dook op 2 februari op bij een tweede phishingdomein, "inlog-verificatie.nm.lab", dat een collega-organisatie had gemeld (bron B, nog onbevestigd). De WHOIS-contactmail bij de eerste zaak was "beheer@betaal-controle.nm.lab". Een extern rapport (betrouwbaarheid C) noemde een losgeld-wallet bc1qfictief0alpha. De twee domeinen resolveerden naar verschillende IP-adressen, maar deelden dus wel het certificaat. Er is nog geen bewijs voor de identiteit van de actor.',
+        model: 'BLUF: Zaak Alpha (betaal-controle.nm.lab) en Zaak Bravo (inlog-verificatie.nm.lab) zijn waarschijnlijk (55-75%) opgezet door dezelfde actor; betrouwbaarheidsniveau: gemiddeld. De sterkste aanwijzing is een zeldzaam, herbruikt TLS-certificaat (A1B2C3D4) dat op beide domeinen voorkomt. Er is bevestigde phishing met credential-diefstal op ons eigen netwerk.\n\nADVIES:\n1. Blokkeer beide domeinen en het IP 203.0.113.10 op de proxy/DNS-filter (eigenaar: SOC, vandaag).\n2. Reset de wachtwoorden van de getroffen medewerker en schakel MFA af/opnieuw in (eigenaar: IT-beheer, binnen 24 uur).\n3. Deel certificaat A1B2C3D4 en de IOCs (defanged) met de ISAC en het NCSC (eigenaar: analist, deze week).\n\nONZEKERHEID: de identiteit van de actor is onbekend (aanname, geen bewijs). De melding van Zaak Bravo is nog onbevestigd (bron B). De losgeld-wallet komt uit een extern rapport van beperkte betrouwbaarheid (C).\n\nONDERBOUWING (kort): bevestigde klik + credential-invoer (eigen SIEM, A2) op 13-1; uitgaand verkeer naar 203.0.113.10 op 15-1; gedeeld certificaat A1B2C3D4 bij beide domeinen (crt.sh, herkomst vastgelegd). IP-adressen verschillen, het certificaat bruggt de zaken.',
       },
       questions: [
         { q: 'Wat betekent BLUF?', answer: ['bottom line up front', 'bottom-line up front'], hint: 'Engelse term; de conclusie komt eerst.', explain: 'Bottom Line Up Front: zet de kernboodschap en het advies bovenaan, de onderbouwing daaronder.' },
         { q: 'In het BLUF-voorbeeld: welk kenmerk verbindt Zaak Alpha en Zaak Bravo?', options: ['Hetzelfde IP-adres', 'Hetzelfde herbruikte TLS-certificaat (A1B2C3D4)', 'Dezelfde losgeld-wallet', 'Dezelfde medewerker'], answer: 1, explain: 'De IP-adressen verschillen; het gedeelde, zeldzame certificaat A1B2C3D4 is de brug tussen de zaken.' },
-        { q: 'Ik heb de casus naar een BLUF-product herschreven en tegen de rubric getoetst (vlag JVT{conclusie_eerst}).', noAnswer: true },
+        { q: 'Ik heb de casus naar een BLUF-product herschreven en tegen de rubric getoetst (vlag NM{conclusie_eerst}).', noAnswer: true },
       ],
     },
 

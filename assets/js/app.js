@@ -1,5 +1,5 @@
 /* ======================================================================
-   JVT Cyber Dojo — core engine
+   NineMinds Cyber Dojo — core engine
    Geen build, geen dependencies. Werkt via file:// en GitHub Pages.
    ====================================================================== */
 (function () {
@@ -46,7 +46,7 @@
   CS.util = { $, $$, el, norm, esc };
 
   // ---- Voortgang (localStorage) -----------------------------------------
-  const LS_KEY = 'jvt-cyber-dojo-v1';
+  const LS_KEY = 'nineminds-cyber-dojo-v1';
   let STATE = loadState();
   function loadState() {
     try { return JSON.parse(localStorage.getItem(LS_KEY)) || {}; } catch (e) { return {}; }
@@ -136,14 +136,14 @@
 
   // ---- Thema -------------------------------------------------------------
   function initTheme() {
-    const saved = localStorage.getItem('jvt-theme');
+    const saved = localStorage.getItem('nineminds-theme');
     if (saved) document.documentElement.setAttribute('data-theme', saved);
   }
   function toggleTheme() {
     const cur = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
     const next = cur === 'light' ? 'dark' : 'light';
     document.documentElement.setAttribute('data-theme', next);
-    localStorage.setItem('jvt-theme', next);
+    localStorage.setItem('nineminds-theme', next);
     $('#themeBtn').textContent = next === 'light' ? '🌙' : '☀️';
   }
 
@@ -156,7 +156,7 @@
     const wrap = el('div', { class: 'wrap' });
     const brand = el('button', { class: 'brand', onclick: () => go('#/') }, [
       el('span', { class: 'logo', text: '◈' }),
-      el('span', {}, [document.createTextNode('JVT Cyber Dojo'), el('small', { text: 'Leer cybersecurity, stap voor stap' })]),
+      el('span', {}, [document.createTextNode('NineMinds Cyber Dojo'), el('small', { text: 'Leer cybersecurity, stap voor stap' })]),
     ]);
     const search = el('div', { class: 'search' }, [
       el('span', { text: '🔎' }),
@@ -394,7 +394,7 @@
     STATE.answered[key] = true;
     // vlaggen tellen
     const ansFirst = Array.isArray(q.answer) ? q.answer[0] : q.answer;
-    if (typeof ansFirst === 'string' && /^JVT\{/.test(ansFirst)) { STATE.flags = (STATE.flags || 0) + 1; }
+    if (typeof ansFirst === 'string' && /^NM\{/.test(ansFirst)) { STATE.flags = (STATE.flags || 0) + 1; }
     saveState();
     addXP(qXP(q), 'vraag');
     updateTaskNav(room);
@@ -739,12 +739,12 @@
   //  Gereedschapskist — alle interactieve tools los te gebruiken
   // =======================================================================
   const TOOLBOX = [
-    { type: 'cyberchef', icon: '🧪', name: 'CyberChef', desc: 'Coderen, decoderen en hashen (Base64, hex, ROT13, XOR, MD5/SHA-…).', cfg: { input: 'JVT{probeer_mij}' } },
+    { type: 'cyberchef', icon: '🧪', name: 'CyberChef', desc: 'Coderen, decoderen en hashen (Base64, hex, ROT13, XOR, MD5/SHA-…).', cfg: { input: 'NM{probeer_mij}' } },
     { type: 'hashcrack', icon: '🔓', name: 'Hash-kraker', desc: 'Woordenlijst, regels (mangling) of brute-force (masker) — op MD5/SHA/NTLM.', cfg: { algo: 'md5', hash: '5f4dcc3b5aa765d61d8327deb882cf99', wordlist: ['123456', 'welkom', 'password', 'qwerty', 'geheim', 'letmein'] } },
     { type: 'hashid', icon: '🧭', name: 'Hash-herkenner', desc: 'Welk hashtype is dit? Herkent MD5, NTLM, SHA, bcrypt en meer.', cfg: { value: '$2y$10$N9qo8uLOickgx2ZMRZoMy.MH/rq8qjHjhHj' } },
     { type: 'cipher', icon: '🗝️', name: 'Cijfer-kraker', desc: 'Caesar/ROT, XOR, Vigenère en Atbash ontcijferen.', cfg: { text: 'Kl nlolptl cshn pz QCA{jhlzhy_pz_thrrlspqr}' } },
     { type: 'multidecode', icon: '✨', name: 'Multi-decoder', desc: 'Herkent en pelt lagen codering af (Base64/32, hex, binair, morse, ROT13, URL…).', cfg: { input: '536c5a55653231316248527058327868655756795832397266513d3d' } },
-    { type: 'crackme', icon: '🔃', name: 'Crackme', desc: 'Reverse-engineering puzzel: lees de controle en vind de sleutel.', cfg: { title: 'demo', source: 'function check(key) {\n  // toegang als key, achterstevoren gelezen, "62oziuj" oplevert\n  return key.split("").reverse().join("") === "62oziuj";\n}', check: (k) => k.split('').reverse().join('') === '62oziuj', flag: 'JVT{reverse_engineered}', hint: 'Draai de doelstring om: wat moet key dan zijn?' } },
+    { type: 'crackme', icon: '🔃', name: 'Crackme', desc: 'Reverse-engineering puzzel: lees de controle en vind de sleutel.', cfg: { title: 'demo', source: 'function check(key) {\n  // toegang als key, achterstevoren gelezen, "62oziuj" oplevert\n  return key.split("").reverse().join("") === "62oziuj";\n}', check: (k) => k.split('').reverse().join('') === '62oziuj', flag: 'NM{reverse_engineered}', hint: 'Draai de doelstring om: wat moet key dan zijn?' } },
     { type: 'rainbow', icon: '🌈', name: 'Rainbow table', desc: 'Zie waarom onvergezouten hashes direct op te zoeken zijn — en salt dat breekt.', cfg: { algo: 'md5', wordlist: ['welkom', 'zomer2024', 'admin', 'geheim', 'voetbal', 'wachtwoord', 'qwerty', 'liefde'], target: '371620aa75830b1388b63305b0d42f06', saltExample: { word: 'welkom', salt: 'Xy7' } } },
     { type: 'ach', icon: '🧮', name: 'ACH-matrix', desc: 'Concurrerende hypothesen afwegen door bewijs te scoren (C/I/N).', cfg: { question: 'Wie zit achter de ransomware-aanval op een fictief bedrijf?', hypotheses: ['Ontevreden insider', 'Georganiseerde crimineel (RaaS-affiliate)', 'Statelijke actor'], evidence: [{ text: 'Er is losgeld in crypto geëist', expert: ['I', 'C', 'I'] }, { text: 'Zeer gerichte spear-phishing vooraf' }, { text: 'Data gelekt op een bekende leksite' }, { text: 'Activiteit vooral tijdens kantooruren UTC+3' }] } },
     { type: 'crimescript', icon: '🎬', name: 'Crime script-builder', desc: 'Ontleed een delict in zes fasen met interventies per fase.', cfg: { scenario: 'Phishing-fraude met moneymules (fictief).' } },
@@ -754,8 +754,8 @@
     { type: 'bluf', icon: '📝', name: 'BLUF-herschrijven', desc: 'Herschrijf een chronologisch verhaal naar "conclusie eerst".', cfg: { source: 'Om 08:40 vijf mislukte RDP-logins vanaf 203.0.113.77. Om 08:44 een geslaagde login als adm.backup. Om 08:45 start powershell.exe. Om 09:01 een grote upload naar een clouddienst. Om 09:25 is het securitylog gewist.', model: 'Waarschijnlijk is account adm.backup overgenomen en is data geëxfiltreerd (betrouwbaarheid: gemiddeld, op basis van eigen logs). Advies: reset adm.backup en blokkeer het bron-IP — eigenaar: SOC. Onderbouwing: brute-force om 08:40, geslaagde login 08:44, upload 09:01, logwissing 09:25.' } },
     { type: 'flow', icon: '💸', name: 'Stroom volgen', desc: 'Volg geld/data door mules, mixers en exchanges naar de cash-out.', cfg: { unit: 'BTC', scenario: 'Losgeld van 3 BTC — waar komt het eruit?', nodes: [{ id: 'v', type: 'victim', label: 'Slachtoffer' }, { id: 'm1', type: 'mule', label: 'Mule A' }, { id: 'm2', type: 'mule', label: 'Mule B' }, { id: 'mix', type: 'mixer', label: 'Mixer' }, { id: 'ex', type: 'exchange', label: 'Exchange Zuid' }], edges: [{ from: 'v', to: 'm1', amount: 1.8, time: '10:00' }, { from: 'v', to: 'm2', amount: 1.2, time: '10:01', note: 'splitsing' }, { from: 'm1', to: 'mix', amount: 1.75, time: '10:20', note: 'fee' }, { from: 'm2', to: 'mix', amount: 1.15, time: '10:22', note: 'fee' }, { from: 'mix', to: 'ex', amount: 2.8, time: '11:30' }], ask: [{ q: 'Waar stroomt het geld uiteindelijk uit?', answer: ['Exchange Zuid', 'exchange'], hint: 'Volg tot het laatste knooppunt.' }, { q: 'Hoeveel BTC bereikt de exchange?', answer: ['2.8'], hint: 'Tel de twee stromen door de mixer op.' }] } },
     { type: 'ordering', icon: '🔢', name: 'Volgorde-puzzel', desc: 'Reconstrueer de juiste volgorde van een aanval (tijdlijn/kill chain).', cfg: { prompt: 'Zet de fasen van de Cyber Kill Chain op volgorde.', items: [{ id: '1', label: 'Reconnaissance' }, { id: '2', label: 'Weaponization' }, { id: '3', label: 'Delivery' }, { id: '4', label: 'Exploitation' }, { id: '5', label: 'Installation' }, { id: '6', label: 'Command & Control' }, { id: '7', label: 'Actions on Objectives' }], correct: ['1', '2', '3', '4', '5', '6', '7'], explain: 'Dit is de volgorde van de Lockheed Martin Cyber Kill Chain.' } },
-    { type: 'regexgolf', icon: '🎯', name: 'Regex-golf', desc: 'Schrijf één patroon dat de kwaadaardige regels matcht en de goede mijdt.', cfg: { prompt: 'Match alleen de phishing-domeinen.', match: ['login-nederbank.jvt.lab', 'verify-postnl.jvt.lab', 'ideal-check.jvt.lab'], avoid: ['nederbank.nl', 'postnl.nl', 'ideal.nl'] } },
-    { type: 'osintpuzzle', icon: '🔎', name: 'OSINT-puzzel', desc: 'Correleer fictieve fragmenten en ontmasker het verband.', cfg: { scenario: 'Drie fragmenten over verdachte "M". Welke draad verbindt ze?', records: [{ title: 'Hackforum-post', icon: '💬', lines: ['gebruiker: <b>n1ghtcrawl3r</b>', 'biedt loader-dienst aan', 'contact: nc_sales@mail.jvt.lab'] }, { title: 'WHOIS (crt.sh)', icon: '📜', lines: ['domein: loader-shop.jvt.lab', 'registrant-e-mail: nc_sales@mail.jvt.lab'] }, { title: 'Wallet-tag', icon: '💰', lines: ['alias n1ghtcrawl3r gelinkt', 'aan wallet bc1qfictief…'] }], ask: [{ q: 'Welke gebruikersnaam/alias verbindt alle drie de bronnen?', answer: ['n1ghtcrawl3r'], hint: 'Zoek wat letterlijk terugkomt.' }, { q: 'Welk e-mailadres linkt de forumpost aan het domein?', answer: ['nc_sales@mail.jvt.lab'], hint: 'Vergelijk contact en registrant.' }] } },
+    { type: 'regexgolf', icon: '🎯', name: 'Regex-golf', desc: 'Schrijf één patroon dat de kwaadaardige regels matcht en de goede mijdt.', cfg: { prompt: 'Match alleen de phishing-domeinen.', match: ['login-nederbank.nm.lab', 'verify-postnl.nm.lab', 'ideal-check.nm.lab'], avoid: ['nederbank.nl', 'postnl.nl', 'ideal.nl'] } },
+    { type: 'osintpuzzle', icon: '🔎', name: 'OSINT-puzzel', desc: 'Correleer fictieve fragmenten en ontmasker het verband.', cfg: { scenario: 'Drie fragmenten over verdachte "M". Welke draad verbindt ze?', records: [{ title: 'Hackforum-post', icon: '💬', lines: ['gebruiker: <b>n1ghtcrawl3r</b>', 'biedt loader-dienst aan', 'contact: nc_sales@mail.nm.lab'] }, { title: 'WHOIS (crt.sh)', icon: '📜', lines: ['domein: loader-shop.nm.lab', 'registrant-e-mail: nc_sales@mail.nm.lab'] }, { title: 'Wallet-tag', icon: '💰', lines: ['alias n1ghtcrawl3r gelinkt', 'aan wallet bc1qfictief…'] }], ask: [{ q: 'Welke gebruikersnaam/alias verbindt alle drie de bronnen?', answer: ['n1ghtcrawl3r'], hint: 'Zoek wat letterlijk terugkomt.' }, { q: 'Welk e-mailadres linkt de forumpost aan het domein?', answer: ['nc_sales@mail.nm.lab'], hint: 'Vergelijk contact en registrant.' }] } },
     { type: 'chaintrace', icon: '⛓️', name: 'Blockchain-tracer', desc: 'Volg vuil geld door transacties: common-input-clustering en taint-analyse.', cfg: { unit: 'BTC', scenario: 'Losgeld van 10 BTC gaat de keten in. Hoeveel bereikt de exchange?', labels: { D: 'Ransom-wallet', EX: 'Exchange Zuid', C: 'Schone handelaar' }, exchanges: ['EX'], origins: [{ addr: 'D', amount: 10 }, { addr: 'C', amount: 5, dirty: false }], txs: [{ inputs: ['D'], outputs: [{ addr: 'A', amount: 6 }, { addr: 'B', amount: 4 }], time: '10:00' }, { inputs: ['A'], outputs: [{ addr: 'EX', amount: 3 }, { addr: 'M', amount: 3 }], time: '11:00' }, { inputs: ['B', 'C'], outputs: [{ addr: 'EX', amount: 9 }], time: '12:00' }], ask: [{ q: 'Hoeveel vuil geld (BTC) bereikt de exchange?', answer: ['7'], hint: 'Lees de taint-kolom bij de exchange.' }] } },
     { type: 'connections', icon: '🧩', name: 'Verbanden', desc: 'Groepeer 16 begrippen in 4 categorieën — zoals NYT Connections, maar cyber.', cfg: { prompt: 'Vind de vier groepen van vier.', groups: [{ name: 'Hashtypes', items: ['MD5', 'SHA-256', 'NTLM', 'bcrypt'] }, { name: 'Cybercrime-rollen', items: ['IAB', 'Affiliate', 'Moneymule', 'Bulletproof hoster'] }, { name: 'ATT&CK-tactieken', items: ['Execution', 'Persistence', 'Exfiltration', 'Impact'] }, { name: 'OSINT-bronnen', items: ['crt.sh', 'Shodan', 'VirusTotal', 'abuse.ch'] }] } },
     { type: 'password', icon: '🔑', name: 'Wachtwoord-analyse', desc: 'Live de sterkte en kraaktijd van een wachtwoord zien.', cfg: {} },
@@ -765,8 +765,8 @@
     { type: 'regex', icon: '🔤', name: 'Regex-tester', desc: 'Reguliere expressies live testen met markering en groepen.', cfg: { text: 'Oct 1 08:12:03 srv sshd[2211]: Failed password for root from 203.0.113.9\nOct 1 08:12:07 srv sshd[2213]: Failed password for invalid user admin from 203.0.113.9\nOct 1 08:13:01 srv sshd[2219]: Accepted password for jbakker from 10.0.0.5', pattern: 'Failed password for (?:invalid user )?(\\w+)', flags: 'gm' } },
     { type: 'cvss', icon: '🩹', name: 'CVSS-calculator', desc: 'De CVSS v3.1-basisscore uit de vector berekenen.', cfg: {} },
     { type: 'timestamp', icon: '🕰️', name: 'Tijdstempel-omrekenaar', desc: 'Unix, FILETIME, WebKit en Cocoa-tijd omzetten.', cfg: {} },
-    { type: 'ioc', icon: '🧾', name: 'IOC-extractor', desc: 'Indicatoren uit tekst halen en defangen.', cfg: { text: 'Verdachte host 203.0.113[.]44 en hxxps://login-check[.]jvt[.]lab/x\nMD5 44d88612fea8a8f36de82e1278abb02f — zie CVE-2021-44228.' } },
-    { type: 'url', icon: '🔗', name: 'URL-ontleder', desc: 'Een link ontleden en phishing-rode-vlaggen tonen.', cfg: { urls: ['https://www.nederbank.nl@203.0.113.45/inloggen', 'https://pakketpost.nl.bezorging-status.jvt.lab/track?id=1'] } },
+    { type: 'ioc', icon: '🧾', name: 'IOC-extractor', desc: 'Indicatoren uit tekst halen en defangen.', cfg: { text: 'Verdachte host 203.0.113[.]44 en hxxps://login-check[.]nineminds[.]lab/x\nMD5 44d88612fea8a8f36de82e1278abb02f — zie CVE-2021-44228.' } },
+    { type: 'url', icon: '🔗', name: 'URL-ontleder', desc: 'Een link ontleden en phishing-rode-vlaggen tonen.', cfg: { urls: ['https://www.nederbank.nl@203.0.113.45/inloggen', 'https://pakketpost.nl.bezorging-status.nm.lab/track?id=1'] } },
     { type: 'yara', icon: '🧬', name: 'YARA-lab', desc: 'Detectieregels schrijven en op bestanden testen.', cfg: {
       rule: 'rule Verdacht_Script {\n  strings:\n    $a = "powershell" nocase\n    $b = "-enc" nocase\n    $mz = { 4D 5A }\n  condition:\n    ($a and $b) or $mz at 0\n}',
       files: [
@@ -905,7 +905,7 @@
         qbox.append(el('div', { class: 'callout ' + (pass ? 'tip' : 'warn'), html: (pass ? '🎉 <strong>Geslaagd!</strong>' : '📚 <strong>Nog niet gehaald.</strong>') + ' Je scoorde <strong>' + score + ' / ' + qs.length + '</strong> (' + pctScore + '%) in ' + Math.floor(secs / 60) + 'm ' + (secs % 60) + 's.' + (pass ? ' Mooi werk!' : ' De grens is 70% — probeer het nog eens.') }));
         if (pass) qbox.append(el('div', { class: 'task', style: 'text-align:center' }, [
           el('div', { style: 'font-size:2.4rem', text: '🎓' }),
-          el('div', { style: 'font-weight:800;font-size:1.2rem', text: 'JVT Cyber Dojo — Examencertificaat' }),
+          el('div', { style: 'font-weight:800;font-size:1.2rem', text: 'NineMinds Cyber Dojo — Examencertificaat' }),
           el('div', { class: 'found-note', text: 'Score ' + pctScore + '% · ' + qs.length + ' vragen · onderwerp: ' + (paths.find((p) => p.id === filter) || {}).title }),
         ]));
         nav.append(el('button', { class: 'btn', text: '↺ Opnieuw', onclick: () => renderExam() }), el('button', { class: 'btn primary', text: '🏠 Naar home', onclick: () => go('#/') }));
@@ -1024,7 +1024,7 @@
   // =======================================================================
   function renderFooter(root) {
     root.append(el('footer', { class: 'sitefoot' }, el('div', { class: 'wrap' }, [
-      el('div', { html: 'JVT Cyber Dojo · gemaakt om doelgericht te leren · <em>oefen aanvalstechnieken alleen in je eigen lab of met schriftelijke toestemming</em>' }),
+      el('div', { html: 'NineMinds Cyber Dojo · gemaakt om doelgericht te leren · <em>oefen aanvalstechnieken alleen in je eigen lab of met schriftelijke toestemming</em>' }),
       el('div', { text: 'Voortgang wordt lokaal in je browser bewaard.' }),
     ])));
   }

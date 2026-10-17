@@ -37,7 +37,7 @@ CS.registerRoom({
       content: `
         <p>Welkom bij <strong>Crack the Hash</strong>. Dit is een oefen-CTF: zes levels, oplopend in moeilijkheid. In elk
         level krijg je een wachtwoordhash en kraak je die. Het <strong>gekraakte wachtwoord is telkens het antwoord</strong>
-        op de hoofdvraag. Onderweg verdien je drie vlaggen (<code>JVT{...}</code>).</p>
+        op de hoofdvraag. Onderweg verdien je drie vlaggen (<code>NM{...}</code>).</p>
 
         <div class="callout danger">
           <strong>Ethiek eerst:</strong> hashes kraken oefen je alleen op je eigen materiaal of in een lab als dit. Andermans
@@ -90,7 +90,7 @@ CS.registerRoom({
 
         <div class="callout info">
           <strong>Vlag verdiend (levels 1-2):</strong> je hebt je eerste twee hashes met een woordenlijst gekraakt.
-          Noteer de vlag <code>JVT{eerste_hashes_gekraakt}</code>.
+          Noteer de vlag <code>NM{eerste_hashes_gekraakt}</code>.
         </div>
       `,
       lab: {
@@ -102,7 +102,7 @@ CS.registerRoom({
       questions: [
         { q: 'Wat is het gekraakte wachtwoord?', answer: ['voetbal'], hint: 'Start de aanval met algoritme SHA-1; het is een populaire sport.', explain: 'De SHA-1-hash fda48d6a... hoort bij het wachtwoord "voetbal".' },
         { q: 'Hoeveel hex-tekens telt een SHA-1-hash?', answer: ['40'], hint: 'Tel de tekens van de hash in deze taak.', explain: 'SHA-1 is 160 bits = 20 bytes = 40 hex-tekens.' },
-        { q: 'Je hebt de eerste twee hashes gekraakt. Welke vlag hoort bij deze mijlpaal? (JVT{eerste_hashes_gekraakt})', answer: ['JVT{eerste_hashes_gekraakt}'], hint: 'De vlag staat letterlijk in de vraag en hieronder bij de uitleg.', explain: 'Goed bezig: JVT{eerste_hashes_gekraakt}. Je hebt MD5 en SHA-1 met een woordenlijst gekraakt.' },
+        { q: 'Je hebt de eerste twee hashes gekraakt. Welke vlag hoort bij deze mijlpaal? (NM{eerste_hashes_gekraakt})', answer: ['NM{eerste_hashes_gekraakt}'], hint: 'De vlag staat letterlijk in de vraag en hieronder bij de uitleg.', explain: 'Goed bezig: NM{eerste_hashes_gekraakt}. Je hebt MD5 en SHA-1 met een woordenlijst gekraakt.' },
       ],
     },
 
@@ -165,7 +165,7 @@ CS.registerRoom({
 
         <div class="callout info">
           <strong>Vlag verdiend (levels 3-4):</strong> je herkent nu het type én gebruikt de context om de juiste keuze te maken.
-          Noteer de vlag <code>JVT{types_herkend}</code>.
+          Noteer de vlag <code>NM{types_herkend}</code>.
         </div>
       `,
       lab: {
@@ -177,7 +177,7 @@ CS.registerRoom({
       questions: [
         { q: 'Een 32 hex-teken-hash uit een Windows-SAM: welk type kies je?', options: ['SHA-256', 'NTLM', 'SHA-1', 'bcrypt'], answer: 1, explain: 'Windows slaat lokale wachtwoorden op als NTLM. Bij 32 hex uit Windows kies je NTLM, niet MD5.' },
         { q: 'Wat is het gekraakte wachtwoord?', answer: ['computer'], hint: 'Kies NTLM en start de aanval; het is een alledaags apparaat.', explain: 'De NTLM-hash 2b2ac2d1... hoort bij het wachtwoord "computer".' },
-        { q: 'Je hebt nu ook SHA-256 en NTLM aangepakt. Welke vlag hoort bij dit level-paar? (JVT{types_herkend})', answer: ['JVT{types_herkend}'], hint: 'De vlag staat letterlijk in de vraag.', explain: 'Netjes: JVT{types_herkend}. Je herkent nu het type én gebruikt de context om de juiste keuze te maken.' },
+        { q: 'Je hebt nu ook SHA-256 en NTLM aangepakt. Welke vlag hoort bij dit level-paar? (NM{types_herkend})', answer: ['NM{types_herkend}'], hint: 'De vlag staat letterlijk in de vraag.', explain: 'Netjes: NM{types_herkend}. Je herkent nu het type én gebruikt de context om de juiste keuze te maken.' },
       ],
     },
 
@@ -247,7 +247,7 @@ CS.registerRoom({
 
         <div class="callout tip">
           <strong>Slotvlag verdiend (levels 5-6):</strong> van MD5 tot NTLM, brute-force en gesalte hashes — je hebt ze
-          alle zes gekraakt. Noteer de slotvlag <code>JVT{hash_meester}</code>.
+          alle zes gekraakt. Noteer de slotvlag <code>NM{hash_meester}</code>.
         </div>
       `,
       lab: {
@@ -261,7 +261,7 @@ CS.registerRoom({
       questions: [
         { q: 'Wat is het gekraakte wachtwoord?', answer: ['welkom'], hint: 'De tool zet de salt Xy7 al vooraan; start de woordenlijstaanval. Het is hetzelfde woord als in level 1.', explain: 'md5("Xy7" + "welkom") = 329f3abf... — het wachtwoord is "welkom".' },
         { q: 'Waarom breekt een salt rainbow tables?', options: ['Omdat de hash dan langer wordt', 'Omdat de tabellen voor kale wachtwoorden zijn gemaakt en de salt per wachtwoord uniek is', 'Omdat MD5 dan trager wordt', 'Dat doet het niet'], answer: 1, explain: 'Rainbow tables bevatten hashes van wachtwoorden zonder salt; met een unieke salt komt geen enkele hash in zo\'n tabel voor.' },
-        { q: 'Je hebt alle zes de hashes gekraakt. Welke slotvlag verdien je? (JVT{hash_meester})', answer: ['JVT{hash_meester}'], hint: 'De vlag staat letterlijk in de vraag.', explain: 'Gefeliciteerd: JVT{hash_meester}. Van MD5 tot NTLM, brute-force en gesalte hashes — je hebt ze alle zes gekraakt.' },
+        { q: 'Je hebt alle zes de hashes gekraakt. Welke slotvlag verdien je? (NM{hash_meester})', answer: ['NM{hash_meester}'], hint: 'De vlag staat letterlijk in de vraag.', explain: 'Gefeliciteerd: NM{hash_meester}. Van MD5 tot NTLM, brute-force en gesalte hashes — je hebt ze alle zes gekraakt.' },
       ],
     },
   ],

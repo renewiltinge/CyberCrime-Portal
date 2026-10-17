@@ -86,7 +86,7 @@ CS.registerRoom({
         Centrum). Je geeft de eigenaar redelijk de tijd om het te repareren voordat er iets naar buiten komt.</p>
 
         <div class="callout tip">
-          <strong>Tip:</strong> gebruik voor oefenen altijd legale omgevingen: dit JVT-lab, of platforms als
+          <strong>Tip:</strong> gebruik voor oefenen altijd legale omgevingen: dit NineMinds-lab, of platforms als
           TryHackMe en Hack The Box, of je eigen virtuele machines thuis. Daar mag je alles, want het is van jou
           of expliciet daarvoor bedoeld.
         </div>
@@ -149,22 +149,22 @@ CS.registerRoom({
       title: 'Taak 4 — Verkenning met whois en DNS (dig)',
       content: `
         <p>Tijd om zelf te verkennen — passief, met openbare registers. Je fictieve opdracht gaat over het domein
-        <code>nederbank.jvt.lab</code> van NederBank N.V. (een verzonnen bank; alles in dit lab is fictief). De
+        <code>nederbank.nm.lab</code> van NederBank N.V. (een verzonnen bank; alles in dit lab is fictief). De
         toegestane scope staat in het bestand <code>opdracht.txt</code> in je thuismap; lees dat eerst met
         <code>cat opdracht.txt</code>.</p>
 
         <h3>whois: wie staat er achter een domein?</h3>
         <p>Met <strong>whois</strong> vraag je registratiegegevens van een domein op: wie het registreerde, bij welke
         registrar, de aanmaakdatum en de naamservers. Typ in het lab:</p>
-        <pre><code>whois nederbank.jvt.lab</code></pre>
+        <pre><code>whois nederbank.nm.lab</code></pre>
 
         <h3>dig: het DNS ondervragen</h3>
         <p><strong>DNS</strong> (Domain Name System) is het "telefoonboek" van internet: het vertaalt namen naar
         IP-adressen. Met het commando <strong>dig</strong> stel je het DNS gerichte vragen. Een paar nuttige:</p>
         <ul>
-          <li><code>dig nederbank.jvt.lab</code> — de volledige uitvoer, inclusief de ANSWER-sectie met het A-record.</li>
-          <li><code>dig +short nederbank.jvt.lab</code> — alleen het IP-adres, korter.</li>
-          <li><code>dig TXT nederbank.jvt.lab +short</code> — de <strong>TXT-records</strong> van het domein.</li>
+          <li><code>dig nederbank.nm.lab</code> — de volledige uitvoer, inclusief de ANSWER-sectie met het A-record.</li>
+          <li><code>dig +short nederbank.nm.lab</code> — alleen het IP-adres, korter.</li>
+          <li><code>dig TXT nederbank.nm.lab +short</code> — de <strong>TXT-records</strong> van het domein.</li>
         </ul>
         <p>TXT-records worden vaak gebruikt voor instellingen (zoals SPF tegen e-mailvervalsing), maar organisaties
         zetten er soms per ongeluk gevoelige of interne informatie in. Juist daarom zijn ze een leuke OSINT-bron.
@@ -182,19 +182,19 @@ CS.registerRoom({
         home: '/home/student', cwd: '/home/student',
         motd: 'Verkennings-lab. Alles is fictief. Blijf binnen de scope in opdracht.txt.',
         fs: {
-          '/home/student/opdracht.txt': 'PENTEST-OPDRACHT (FICTIEF)\nOpdrachtgever: NederBank N.V.\nContract/CVD: JVT-2026-014 (schriftelijk akkoord)\nScope: nederbank.jvt.lab en 10.10.50.0/24\nBuiten scope: ALLES anders. Niet aanraken.\nToegestane fasen: verkenning + scannen.\n',
+          '/home/student/opdracht.txt': 'PENTEST-OPDRACHT (FICTIEF)\nOpdrachtgever: NederBank N.V.\nContract/CVD: NM-2026-014 (schriftelijk akkoord)\nScope: nederbank.nm.lab en 10.10.50.0/24\nBuiten scope: ALLES anders. Niet aanraken.\nToegestane fasen: verkenning + scannen.\n',
         },
         commands: {
-          'whois nederbank.jvt.lab': 'Domain Name: NEDERBANK.JVT.LAB\nRegistrar: JVT-LAB Registrar BV\nRegistrant Organization: NederBank N.V. (fictief)\nRegistrant Country: NL\nCreation Date: 2019-03-11T09:14:22Z\nUpdated Date: 2026-01-08T11:02:50Z\nRegistry Expiry Date: 2027-03-11T09:14:22Z\nName Server: NS1.JVT.LAB\nName Server: NS2.JVT.LAB\nAdmin Email: hostmaster@nederbank.jvt.lab\n>>> Fictief lab-domein, uitsluitend voor oefendoeleinden. <<<',
-          'dig nederbank.jvt.lab': '; <<>> DiG 9.18 <<>> nederbank.jvt.lab\n;; global options: +cmd\n;; Got answer:\n;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 42411\n;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1\n\n;; QUESTION SECTION:\n;nederbank.jvt.lab.\t\tIN\tA\n\n;; ANSWER SECTION:\nnederbank.jvt.lab.\t300\tIN\tA\t10.10.50.10\n\n;; Query time: 6 msec\n;; SERVER: 10.10.50.2#53(10.10.50.2)\n;; MSG SIZE  rcvd: 62',
-          'dig +short nederbank.jvt.lab': '10.10.50.10',
-          'dig TXT nederbank.jvt.lab +short': '"v=spf1 include:_spf.jvt.lab ~all"\n"intern-notitie: migratie-portaal staat op poort 80"\n"JVT{dns_txt_lekt_info}"',
-          'cat opdracht.txt': 'PENTEST-OPDRACHT (FICTIEF)\nOpdrachtgever: NederBank N.V.\nContract/CVD: JVT-2026-014 (schriftelijk akkoord)\nScope: nederbank.jvt.lab en 10.10.50.0/24\nBuiten scope: ALLES anders. Niet aanraken.\nToegestane fasen: verkenning + scannen.',
+          'whois nederbank.nm.lab': 'Domain Name: NEDERBANK.NM.LAB\nRegistrar: NineMinds-LAB Registrar BV\nRegistrant Organization: NederBank N.V. (fictief)\nRegistrant Country: NL\nCreation Date: 2019-03-11T09:14:22Z\nUpdated Date: 2026-01-08T11:02:50Z\nRegistry Expiry Date: 2027-03-11T09:14:22Z\nName Server: NS1.NM.LAB\nName Server: NS2.NM.LAB\nAdmin Email: hostmaster@nederbank.nm.lab\n>>> Fictief lab-domein, uitsluitend voor oefendoeleinden. <<<',
+          'dig nederbank.nm.lab': '; <<>> DiG 9.18 <<>> nederbank.nm.lab\n;; global options: +cmd\n;; Got answer:\n;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 42411\n;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1\n\n;; QUESTION SECTION:\n;nederbank.nm.lab.\t\tIN\tA\n\n;; ANSWER SECTION:\nnederbank.nm.lab.\t300\tIN\tA\t10.10.50.10\n\n;; Query time: 6 msec\n;; SERVER: 10.10.50.2#53(10.10.50.2)\n;; MSG SIZE  rcvd: 62',
+          'dig +short nederbank.nm.lab': '10.10.50.10',
+          'dig TXT nederbank.nm.lab +short': '"v=spf1 include:_spf.nm.lab ~all"\n"intern-notitie: migratie-portaal staat op poort 80"\n"NM{dns_txt_lekt_info}"',
+          'cat opdracht.txt': 'PENTEST-OPDRACHT (FICTIEF)\nOpdrachtgever: NederBank N.V.\nContract/CVD: NM-2026-014 (schriftelijk akkoord)\nScope: nederbank.nm.lab en 10.10.50.0/24\nBuiten scope: ALLES anders. Niet aanraken.\nToegestane fasen: verkenning + scannen.',
         },
       },
       questions: [
-        { q: 'Welk IP-adres (A-record) hoort bij nederbank.jvt.lab?', answer: ['10.10.50.10'], hint: 'Gebruik dig +short nederbank.jvt.lab of kijk in de ANSWER SECTION.', explain: 'Het A-record wijst nederbank.jvt.lab aan 10.10.50.10 toe; dat wordt straks je scan-doelwit.' },
-        { q: 'Vraag de TXT-records op met dig TXT nederbank.jvt.lab +short. Welke vlag staat erin?', answer: ['JVT{dns_txt_lekt_info}'], hint: 'TXT-records kunnen per ongeluk interne info lekken. Lees alle regels van de uitvoer.', explain: 'In een TXT-record is een interne notitie met een vlag blijven staan: een klassiek OSINT-lek.' },
+        { q: 'Welk IP-adres (A-record) hoort bij nederbank.nm.lab?', answer: ['10.10.50.10'], hint: 'Gebruik dig +short nederbank.nm.lab of kijk in de ANSWER SECTION.', explain: 'Het A-record wijst nederbank.nm.lab aan 10.10.50.10 toe; dat wordt straks je scan-doelwit.' },
+        { q: 'Vraag de TXT-records op met dig TXT nederbank.nm.lab +short. Welke vlag staat erin?', answer: ['NM{dns_txt_lekt_info}'], hint: 'TXT-records kunnen per ongeluk interne info lekken. Lees alle regels van de uitvoer.', explain: 'In een TXT-record is een interne notitie met een vlag blijven staan: een klassiek OSINT-lek.' },
         { q: 'Is het opvragen van whois- en DNS-gegevens passieve of actieve verkenning?', options: ['Passief: je raadpleegt openbare registers, niet het doelsysteem zelf', 'Actief: je valt de server direct aan', 'Geen van beide'], answer: 0, explain: 'whois en DNS raadpleeg je bij registers/naamservers, niet bij het doelsysteem; dat is passief.' },
       ],
     },
@@ -236,18 +236,18 @@ CS.registerRoom({
         shell: 'bash',
         user: 'student', host: 'recon-lab',
         home: '/home/student', cwd: '/home/student',
-        motd: 'Scan-lab. Doelwit binnen scope: 10.10.50.10 (nederbank.jvt.lab).',
+        motd: 'Scan-lab. Doelwit binnen scope: 10.10.50.10 (nederbank.nm.lab).',
         fs: {
-          '/home/student/scope.txt': 'Toegestaan scan-doelwit: 10.10.50.0/24\nHoofddoelwit: 10.10.50.10 (nederbank.jvt.lab)\n',
+          '/home/student/scope.txt': 'Toegestaan scan-doelwit: 10.10.50.0/24\nHoofddoelwit: 10.10.50.10 (nederbank.nm.lab)\n',
         },
         commands: {
           'nmap -sn 10.10.50.0/24': 'Starting Nmap 7.94 ( https://nmap.org ) at 2026-10-03 14:01 CET\nNmap scan report for 10.10.50.2\nHost is up (0.0021s latency).\nNmap scan report for 10.10.50.10\nHost is up (0.0119s latency).\nNmap done: 256 IP addresses (2 hosts up) scanned in 2.84 seconds',
-          'nmap 10.10.50.10': 'Starting Nmap 7.94 ( https://nmap.org ) at 2026-10-03 14:02 CET\nNmap scan report for nederbank.jvt.lab (10.10.50.10)\nHost is up (0.012s latency).\nNot shown: 997 closed tcp ports (reset)\nPORT     STATE SERVICE\n22/tcp   open  ssh\n80/tcp   open  http\n3306/tcp open  mysql\n\nNmap done: 1 IP address scanned in 1.90 seconds',
-          'nmap -sV 10.10.50.10': 'Starting Nmap 7.94 ( https://nmap.org ) at 2026-10-03 14:03 CET\nNmap scan report for nederbank.jvt.lab (10.10.50.10)\nHost is up (0.012s latency).\nNot shown: 997 closed tcp ports (reset)\nPORT     STATE SERVICE VERSION\n22/tcp   open  ssh     OpenSSH 8.9p1 Ubuntu 3ubuntu0.4 (Ubuntu Linux; protocol 2.0)\n80/tcp   open  http    Apache httpd 2.4.52 ((Ubuntu))\n|_http-server-header: Apache/2.4.52 (Ubuntu) X-Intern: JVT{open_poort_80_apache}\n|_http-title: NederBank Intern Migratie-portaal\n3306/tcp open  mysql   MySQL 8.0.36-0ubuntu0.22.04.1\nService Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel\n\nService detection performed. Please report any incorrect results at https://nmap.org/submit/ .\nNmap done: 1 IP address scanned in 7.21 seconds',
+          'nmap 10.10.50.10': 'Starting Nmap 7.94 ( https://nmap.org ) at 2026-10-03 14:02 CET\nNmap scan report for nederbank.nm.lab (10.10.50.10)\nHost is up (0.012s latency).\nNot shown: 997 closed tcp ports (reset)\nPORT     STATE SERVICE\n22/tcp   open  ssh\n80/tcp   open  http\n3306/tcp open  mysql\n\nNmap done: 1 IP address scanned in 1.90 seconds',
+          'nmap -sV 10.10.50.10': 'Starting Nmap 7.94 ( https://nmap.org ) at 2026-10-03 14:03 CET\nNmap scan report for nederbank.nm.lab (10.10.50.10)\nHost is up (0.012s latency).\nNot shown: 997 closed tcp ports (reset)\nPORT     STATE SERVICE VERSION\n22/tcp   open  ssh     OpenSSH 8.9p1 Ubuntu 3ubuntu0.4 (Ubuntu Linux; protocol 2.0)\n80/tcp   open  http    Apache httpd 2.4.52 ((Ubuntu))\n|_http-server-header: Apache/2.4.52 (Ubuntu) X-Intern: NM{open_poort_80_apache}\n|_http-title: NederBank Intern Migratie-portaal\n3306/tcp open  mysql   MySQL 8.0.36-0ubuntu0.22.04.1\nService Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel\n\nService detection performed. Please report any incorrect results at https://nmap.org/submit/ .\nNmap done: 1 IP address scanned in 7.21 seconds',
         },
       },
       questions: [
-        { q: 'Voer nmap -sV 10.10.50.10 uit. Welke vlag staat in de http-server-header (de banner van de webserver)?', answer: ['JVT{open_poort_80_apache}'], hint: 'Kijk bij de regel van poort 80/tcp, onder |_http-server-header.', explain: 'De webserver lekt in zijn banner een interne header met een vlag; daarom wil je banners zo karig mogelijk houden.' },
+        { q: 'Voer nmap -sV 10.10.50.10 uit. Welke vlag staat in de http-server-header (de banner van de webserver)?', answer: ['NM{open_poort_80_apache}'], hint: 'Kijk bij de regel van poort 80/tcp, onder |_http-server-header.', explain: 'De webserver lekt in zijn banner een interne header met een vlag; daarom wil je banners zo karig mogelijk houden.' },
         { q: 'Welke drie poorten staan open op 10.10.50.10 (volgens de scan)?', options: ['22 (ssh), 80 (http), 3306 (mysql)', '21 (ftp), 25 (smtp), 110 (pop3)', '53 (dns), 443 (https), 8080 (http-alt)'], answer: 0, explain: 'De scan toont 22/ssh, 80/http en 3306/mysql als open.' },
         { q: 'Wat doet de optie -sV bij nmap?', options: ['Servicedetectie: probeert dienst én versie achter een open poort te bepalen', 'Alleen controleren of een host online is', 'De scan sneller maken zonder extra info'], answer: 0, explain: '-sV ("service/version detection") leest de banners uit en bepaalt welke software en versie draait.' },
         { q: 'Welk nmap-commando gebruik je voor host discovery (kijken welke apparaten leven) zonder poorten te scannen?', answer: ['nmap -sn 10.10.50.0/24', 'nmap -sn'], hint: 'De optie heet -sn ( "no port scan").', explain: 'Met nmap -sn doe je alleen host discovery: je ziet welke hosts up zijn, zonder poortscan.' },
@@ -316,7 +316,7 @@ CS.registerRoom({
         </ul>
         <p>Voor ons voorbeeld zou je bijvoorbeeld rapporteren: "De webserver op 10.10.50.10 lekt in zijn HTTP-banner
         versie- en interne informatie (zie <code>-sV</code>-output). Advies: verberg versiebanners en verwijder
-        interne headers." En: "Een TXT-record van nederbank.jvt.lab bevat een interne notitie. Advies: verwijder
+        interne headers." En: "Een TXT-record van nederbank.nm.lab bevat een interne notitie. Advies: verwijder
         gevoelige info uit publieke DNS-records."</p>
 
         <h3>Verantwoord melden buiten een opdracht</h3>

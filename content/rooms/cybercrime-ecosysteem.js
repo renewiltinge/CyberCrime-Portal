@@ -73,7 +73,7 @@ CS.registerRoom({
         </div>
 
         <p>Als beloning voor het doorgronden van het ketenidee, hier je eerste vlag van dit leerpad:
-        <strong>JVT{misdaad_als_keten}</strong>.</p>
+        <strong>NM{misdaad_als_keten}</strong>.</p>
       `,
       questions: [
         {
@@ -94,9 +94,9 @@ CS.registerRoom({
         },
         {
           q: 'Wat is de vlag die als beloning in deze taak staat?',
-          answer: ['JVT{misdaad_als_keten}'],
+          answer: ['NM{misdaad_als_keten}'],
           hint: 'Hij staat vetgedrukt onderaan de uitleg.',
-          explain: 'JVT{misdaad_als_keten} — onthoud: een keten heeft breekpunten.',
+          explain: 'NM{misdaad_als_keten} — onthoud: een keten heeft breekpunten.',
         },
       ],
     },
@@ -261,7 +261,7 @@ CS.registerRoom({
         <strong>onbevestigde claim van een onbetrouwbare partij</strong> &mdash; nuttig als signaal, maar nooit zomaar als
         waarheid aan te nemen. Precies dat afwegen oefen je in de volgende taak.</p>
 
-        <p>Beloning voor dit inzicht: <strong>JVT{dubbele_afpersing}</strong>.</p>
+        <p>Beloning voor dit inzicht: <strong>NM{dubbele_afpersing}</strong>.</p>
       `,
       questions: [
         {
@@ -286,9 +286,9 @@ CS.registerRoom({
         },
         {
           q: 'Wat is de vlag die als beloning in deze taak staat?',
-          answer: ['JVT{dubbele_afpersing}'],
+          answer: ['NM{dubbele_afpersing}'],
           hint: 'Hij staat vetgedrukt onderaan de uitleg.',
-          explain: 'JVT{dubbele_afpersing} — het pressiemiddel dat zelfs een goede back-up omzeilt.',
+          explain: 'NM{dubbele_afpersing} — het pressiemiddel dat zelfs een goede back-up omzeilt.',
         },
       ],
     },
@@ -333,7 +333,7 @@ CS.registerRoom({
         </div>
 
         <p>Beoordeel in het lab hieronder drie bronnen op betrouwbaarheid én geloofwaardigheid, en vergelijk daarna
-        met het expertoordeel. Lukt het? Dan verdien je: <strong>JVT{beoordeel_je_bron}</strong>.</p>
+        met het expertoordeel. Lukt het? Dan verdien je: <strong>NM{beoordeel_je_bron}</strong>.</p>
       `,
       lab: {
         type: 'admiralty',
@@ -376,9 +376,9 @@ CS.registerRoom({
         },
         {
           q: 'Wat is de vlag die je verdient na deze oefening?',
-          answer: ['JVT{beoordeel_je_bron}'],
+          answer: ['NM{beoordeel_je_bron}'],
           hint: 'Hij staat vetgedrukt boven het lab.',
-          explain: 'JVT{beoordeel_je_bron} — altijd eerst wegen wie iets zegt én hoe aannemelijk het is.',
+          explain: 'NM{beoordeel_je_bron} — altijd eerst wegen wie iets zegt én hoe aannemelijk het is.',
         },
         { q: 'Ik heb de drie bronnen in het lab beoordeeld en met het expertoordeel vergeleken.', noAnswer: true },
       ],

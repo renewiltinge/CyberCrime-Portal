@@ -80,13 +80,13 @@ CS.registerRoom({
 
         <div class="callout danger"><strong>Onthoud:</strong> een bank vraagt je <strong>nooit</strong> om je pincode, je
         volledige inlogcode of om geld over te boeken naar een "veilige rekening". Een echte medewerker komt ook nooit je
-        pinpas ophalen. Noteer de kernvlag: <code>JVT{bank_belt_nooit_om_je_pincode}</code>.</div>
+        pinpas ophalen. Noteer de kernvlag: <code>NM{bank_belt_nooit_om_je_pincode}</code>.</div>
       `,
       questions: [
         { q: 'Phishing via de telefoon, waarbij een "medewerker" je aan de lijn praat, heet:', answer: ['vishing'], hint: 'Voice + phishing.', explain: 'Vishing = voice phishing: de oplichter werkt via een telefoongesprek.' },
         { q: 'In het schermpje staat "NederBank" of zelfs het echte 0800-nummer. Wat is hier aan de hand?', options: ['Dan is het zeker de echte bank', 'Nummerspoofing: de beller-ID is vervalst en zegt dus niets', 'De telefoon is gehackt', 'Dat kan technisch niet'], answer: 1, explain: 'Via spoofing is het weergegeven nummer vrij in te stellen. Het nummer in je scherm is geen bewijs van wie er belt.' },
         { q: 'Bankhelpdeskfraude valt vooral de ... aan.', options: ['firewall van de bank', 'app van de bank', 'mens (het slachtoffer zelf)', 'geldautomaat'], answer: 2, explain: 'Het is social engineering: het slachtoffer wordt zelf naar de overboeking gepraat.' },
-        { q: 'Welke kernvlag staat in de rode callout?', answer: ['JVT{bank_belt_nooit_om_je_pincode}'], hint: 'Lees de danger-callout onderaan.', explain: 'De kernboodschap en -vlag: JVT{bank_belt_nooit_om_je_pincode}.' },
+        { q: 'Welke kernvlag staat in de rode callout?', answer: ['NM{bank_belt_nooit_om_je_pincode}'], hint: 'Lees de danger-callout onderaan.', explain: 'De kernboodschap en -vlag: NM{bank_belt_nooit_om_je_pincode}.' },
       ],
     },
 
@@ -116,7 +116,7 @@ CS.registerRoom({
         <div class="callout tip"><strong>Tegengif:</strong> elk van deze knoppen werkt alleen onder druk en in het moment.
         Het tegengif is dus simpel: <strong>ophangen, zelf terugbellen</strong> via een nummer dat je zélf opzoekt (achterop
         je pas of in de app), en het er met iemand over hebben. Wie één minuut rust pakt, prikt het verhaal meestal meteen
-        door. Beloning voor dit inzicht: <code>JVT{autoriteit_opent_deuren}</code>.</div>
+        door. Beloning voor dit inzicht: <code>NM{autoriteit_opent_deuren}</code>.</div>
 
         <h3>Mini-oefening: benoem het principe</h3>
         <p>In het gesprek met mevrouw De Boer vielen deze zinnen. Koppel ze straks in de vragen aan het juiste principe.</p>
@@ -131,7 +131,7 @@ CS.registerRoom({
         { q: '"We moeten NU handelen, anders bent u uw geld kwijt." Dat is vooral een beroep op:', options: ['sympathie', 'urgentie', 'schaarste', 'autoriteit'], answer: 1, explain: 'Urgentie/tijdsdruk zorgt dat je handelt vóór je nadenkt of verifieert.' },
         { q: 'Welk middel gebruikt de oplichter om te voorkomen dat je het bij een ander checkt?', answer: ['geheimhouding', 'geheim houden', 'zwijgen'], hint: '"Vertel dit aan niemand."', explain: 'Geheimhouding knipt de persoon weg die de truc zou doorzien — een grote rode vlag.' },
         { q: 'Wat is het beste tegengif tegen al deze druk-knoppen?', options: ['Snel meewerken zodat het voorbij is', 'Ophangen en zelf terugbellen via een nummer dat je zelf opzoekt', 'Het nummer in je scherm terugbellen', 'Je pincode doorgeven zodat ze het kunnen oplossen'], answer: 1, explain: 'Rust nemen, ophangen en via een eigen, opgezocht kanaal verifiëren breekt de hele truc.' },
-        { q: 'Welke beloningsvlag staat in de tip-callout?', answer: ['JVT{autoriteit_opent_deuren}'], hint: 'Lees de groene tip-callout.', explain: 'De beloningsvlag is JVT{autoriteit_opent_deuren}.' },
+        { q: 'Welke beloningsvlag staat in de tip-callout?', answer: ['NM{autoriteit_opent_deuren}'], hint: 'Lees de groene tip-callout.', explain: 'De beloningsvlag is NM{autoriteit_opent_deuren}.' },
       ],
     },
 
@@ -150,7 +150,7 @@ CS.registerRoom({
         <h3>De inbox</h3>
         <p>Let vooral op het domein achter de knoppen en adressen; de naam voor het adres mag namelijk van alles zijn.</p>
 
-        <div class="callout tip"><strong>Beloning:</strong> wie afzender, link en dreiging doorprikt, verdient de vlag <code>JVT{herken_de_spoof}</code>.</div>
+        <div class="callout tip"><strong>Beloning:</strong> wie afzender, link en dreiging doorprikt, verdient de vlag <code>NM{herken_de_spoof}</code>.</div>
       `,
       lab: {
         type: 'phishing',
@@ -209,7 +209,7 @@ CS.registerRoom({
         { q: 'In het eerste bericht: wat is het échte hoofddomein waar de knop "Blokkeer nu mijn rekening" naartoe leidt? (de laatste twee delen vóór het pad)', answer: ['beveilig-login.ru'], hint: 'Lees de hele link. "nederbank.nl" staat er alleen als subdomein; het echte domein zijn de laatste twee delen.', explain: 'Het hoofddomein is beveilig-login.ru. Alles ervoor (nederbank.nl.) is maar een subdomein om je te misleiden.' },
         { q: 'Het tweede bericht vraagt om geld naar een "veilige kluisrekening". Wat is zo\'n rekening in werkelijkheid?', options: ['Een extra spaarrekening van de bank', 'Een rekening van een money mule (katvanger)', 'Een kluis bij de Nederlandsche Bank', 'Een beveiligde crypto-wallet van de bank'], answer: 1, explain: 'Een "veilige kluisrekening" bestaat niet; het is altijd de rekening van een katvanger waar jouw geld verdwijnt.' },
         { q: 'Welk bericht was legitiem?', options: ['Het eerste (nieuw apparaat)', 'Het tweede (actie vereist)', 'Het derde (babbeltrucs-tip van nederbank.nl)', 'Geen van alle'], answer: 2, explain: 'Alleen het derde komt van nederbank.nl, vraagt nergens om in te loggen en kondigt geen actie aan.' },
-        { q: 'Je hebt de rode vlaggen doorzien. Noteer de beloningsvlag uit de inbox-opdracht: JVT{herken_de_spoof}.', answer: ['JVT{herken_de_spoof}'], hint: 'Staat in de vraagtekst hierboven.', explain: 'Wie afzender, link en dreiging doorprikt, verdient JVT{herken_de_spoof}.' },
+        { q: 'Je hebt de rode vlaggen doorzien. Noteer de beloningsvlag uit de inbox-opdracht: NM{herken_de_spoof}.', answer: ['NM{herken_de_spoof}'], hint: 'Staat in de vraagtekst hierboven.', explain: 'Wie afzender, link en dreiging doorprikt, verdient NM{herken_de_spoof}.' },
       ],
     },
 
@@ -230,7 +230,7 @@ CS.registerRoom({
         type: 'ordering',
         title: 'Van belletje tot cash-out',
         prompt: 'Zet de zeven stappen van de bankhelpdeskfraude in de juiste volgorde (van eerste contact tot cash-out).',
-        flag: 'JVT{van_belletje_tot_cashout}',
+        flag: 'NM{van_belletje_tot_cashout}',
         explain: 'De oplichter bereidt voor (nummer spoofen), belt met gezag en urgentie, bouwt het "veilige kluisrekening"-verhaal op, laat het slachtoffer overboeken naar katvangers, die sluizen door naar een verzamelrekening, en ten slotte wordt het geld opgenomen/omgezet (cash-out).',
         items: [
           { id: 'a', label: 'Oplichter bereidt de aanval voor en stelt de beller-ID in op "NederBank" (spoofing)' },
@@ -246,7 +246,7 @@ CS.registerRoom({
       questions: [
         { q: 'Met welke stap begint de oplichting?', options: ['Met de overboeking', 'Met het voorbereiden en spoofen van het nummer', 'Met de cash-out', 'Met de verzamelrekening'], answer: 1, explain: 'Eerst bereidt de oplichter de aanval voor en stelt hij de beller-ID in; pas daarna rinkelt de telefoon.' },
         { q: 'Vlak voordat de overboeking plaatsvindt, bouwt de oplichter welk verhaal op?', options: ['Dat je een prijs hebt gewonnen', 'Dat je geld "in veiligheid" moet brengen op een veilige kluisrekening', 'Dat je een pakket moet betalen', 'Dat je software moet installeren'], answer: 1, explain: 'Het "veilige kluisrekening"-verhaal is de kern van bankhelpdeskfraude.' },
-        { q: 'Los de volgorde-puzzel op. Welke vlag verschijnt bij de juiste reconstructie?', answer: ['JVT{van_belletje_tot_cashout}'], hint: 'Zet de zeven stappen goed; bij succes toont het lab de vlag.', explain: 'De juiste tijdlijn beloont je met JVT{van_belletje_tot_cashout}.' },
+        { q: 'Los de volgorde-puzzel op. Welke vlag verschijnt bij de juiste reconstructie?', answer: ['NM{van_belletje_tot_cashout}'], hint: 'Zet de zeven stappen goed; bij succes toont het lab de vlag.', explain: 'De juiste tijdlijn beloont je met NM{van_belletje_tot_cashout}.' },
       ],
     },
 
@@ -354,7 +354,7 @@ CS.registerRoom({
         </ol>
 
         <div class="callout info"><strong>Melden = helpen.</strong> Noteer de laatste vlag als je weet waar een slachtoffer
-        in Nederland terechtkan: <code>JVT{melden_bij_fraudehelpdesk}</code>.</div>
+        in Nederland terechtkan: <code>NM{melden_bij_fraudehelpdesk}</code>.</div>
 
         <div class="callout warn"><strong>Let op de nummers:</strong> een echte bank en de Fraudehelpdesk gebruiken
         <strong>gratis 0800-nummers</strong>. Een <strong>0900-nummer</strong> (betaald) in een "bank"-bericht is juist
@@ -365,7 +365,7 @@ CS.registerRoom({
         { q: 'Je hebt zojuist geld overgemaakt na zo\'n telefoontje. Wat is de eerste stap?', answer: ['bank bellen', 'direct de bank bellen', 'de bank bellen'], hint: 'Zorg dat de overboeking nog geblokkeerd/teruggehaald kan worden.', explain: 'Bel meteen je echte bank (nummer achter op je pas) om te blokkeren; daarna aangifte en melden.' },
         { q: 'Bij welke instantie meld je dit type fraude (naast je bank en de politie)?', answer: ['fraudehelpdesk', 'de fraudehelpdesk'], hint: 'Een landelijk meldpunt met een gratis 0800-nummer.', explain: 'De Fraudehelpdesk is het landelijke meldpunt; melden helpt ook anderen.' },
         { q: 'Welk soort telefoonnummer in een "bank"-bericht is juist verdacht?', options: ['Een gratis 0800-nummer', 'Een betaald 0900-nummer', 'Het alarmnummer 112', 'Een mobiel 06-nummer van een familielid'], answer: 1, explain: 'Echte banken en de Fraudehelpdesk gebruiken gratis 0800-nummers; een 0900-nummer is een rode vlag.' },
-        { q: 'Welke vlag staat in de laatste info-callout?', answer: ['JVT{melden_bij_fraudehelpdesk}'], hint: 'Lees de info-callout over melden.', explain: 'De afsluitende vlag is JVT{melden_bij_fraudehelpdesk}.' },
+        { q: 'Welke vlag staat in de laatste info-callout?', answer: ['NM{melden_bij_fraudehelpdesk}'], hint: 'Lees de info-callout over melden.', explain: 'De afsluitende vlag is NM{melden_bij_fraudehelpdesk}.' },
       ],
     },
   ],

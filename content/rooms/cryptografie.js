@@ -61,11 +61,11 @@ CS.registerRoom({
         het lab staat als Base64. Vind hem. Plak daarna de hex-string uit de vraag erin en kies
         <code>Van Hex</code>.</p>
       `,
-      lab: { type: 'cyberchef', input: 'SlZUe2Jhc2U2NF9pc19zbGVjaHRzX2NvZGVyaW5nfQ==' },
+      lab: { type: 'cyberchef', input: 'Tk17YmFzZTY0X2lzX3NsZWNodHNfY29kZXJpbmd9' },
       questions: [
         { q: 'Is Base64 een vorm van versleuteling?', options: ['Ja, het maakt tekst geheim', 'Nee, het is codering zonder sleutel', 'Alleen met een wachtwoord'], answer: 1, explain: 'Base64 heeft geen sleutel. Iedereen kan het terugdraaien, dus het beschermt niets.' },
-        { q: 'Decodeer de Base64-string in het lab. Wat is de vlag?', answer: ['JVT{base64_is_slechts_codering}'], encoded: true, hint: 'Kies in CyberChef de bewerking "Van Base64".', explain: 'Base64 is zo terug te draaien — precies waarom het geen beveiliging is.' },
-        { q: 'Plak 4a56547b6865785f69735f6f6f6b5f6d6161725f636f646572696e677d in CyberChef en kies "Van Hex". Wat is de vlag?', answer: ['JVT{hex_is_ook_maar_codering}'], encoded: true, hint: 'Hex gebruikt de tekens 0-9 en a-f; elke twee tekens zijn één byte.', explain: 'Hex is net als Base64 alleen een andere schrijfwijze van dezelfde bytes.' },
+        { q: 'Decodeer de Base64-string in het lab. Wat is de vlag?', answer: ['NM{base64_is_slechts_codering}'], encoded: true, hint: 'Kies in CyberChef de bewerking "Van Base64".', explain: 'Base64 is zo terug te draaien — precies waarom het geen beveiliging is.' },
+        { q: 'Plak 4e4d7b6865785f69735f6f6f6b5f6d6161725f636f646572696e677d in CyberChef en kies "Van Hex". Wat is de vlag?', answer: ['NM{hex_is_ook_maar_codering}'], encoded: true, hint: 'Hex gebruikt de tekens 0-9 en a-f; elke twee tekens zijn één byte.', explain: 'Hex is net als Base64 alleen een andere schrijfwijze van dezelfde bytes.' },
         { q: 'Welke bewerking is NIET omkeerbaar?', options: ['Base64', 'AES-encryptie', 'Hashing (SHA-256)'], answer: 2, explain: 'Een hash is eenrichtingsverkeer; je krijgt de invoer er niet uit terug.' },
       ],
     },
@@ -109,11 +109,11 @@ CS.registerRoom({
         als Base64 gecodeerd. Je draait dat terug door eerst <code>Van Base64</code> en dan <code>ROT13</code> toe
         te passen.</p>
       `,
-      lab: { type: 'cyberchef', input: 'WIG{xynffvrxr_pvwsref_mvwa_mjnx}' },
+      lab: { type: 'cyberchef', input: 'AZ{xynffvrxr_pvwsref_mvwa_mjnx}' },
       questions: [
         { q: 'Decodeer jhkhlp met een Caesarcijfer (verschuiving 3 terug). Welk Nederlandse woord krijg je?', answer: ['geheim'], hint: 'Schuif elke letter drie plaatsen terug: j -> g, h -> e ...', explain: 'jhkhlp met drie terug is "geheim". Zo makkelijk is Caesar te kraken.' },
-        { q: 'Pas ROT13 toe op de string in het lab. Wat is de vlag?', answer: ['JVT{klassieke_cijfers_zijn_zwak}'], encoded: true, hint: 'ROT13 is zijn eigen omkering; één keer toepassen is genoeg.', explain: 'ROT13 verbergt niets; het is binnen één klik leesbaar.' },
-        { q: 'Meerstaps: neem V0lHe2dqcnJfbWpueHhyX3ludHJhfQ==, kies eerst "Van Base64" en daarna "ROT13". Wat is de vlag?', answer: ['JVT{twee_zwakke_lagen}'], encoded: true, hint: 'Twee zwakke lagen stapelen maakt het niet sterk. Eerst Base64 eraf, dan ROT13.', explain: 'Twee omkeerbare bewerkingen stapelen levert nog steeds geen echte beveiliging op.' },
+        { q: 'Pas ROT13 toe op de string in het lab. Wat is de vlag?', answer: ['NM{klassieke_cijfers_zijn_zwak}'], encoded: true, hint: 'ROT13 is zijn eigen omkering; één keer toepassen is genoeg.', explain: 'ROT13 verbergt niets; het is binnen één klik leesbaar.' },
+        { q: 'Meerstaps: neem QVp7Z2pycl9tam54eHJfeW50cmF9, kies eerst "Van Base64" en daarna "ROT13". Wat is de vlag?', answer: ['NM{twee_zwakke_lagen}'], encoded: true, hint: 'Twee zwakke lagen stapelen maakt het niet sterk. Eerst Base64 eraf, dan ROT13.', explain: 'Twee omkeerbare bewerkingen stapelen levert nog steeds geen echte beveiliging op.' },
         { q: 'Hoeveel zinvolle sleutels (verschuivingen) heeft een Caesarcijfer op het Latijnse alfabet?', answer: ['25'], hint: 'Een verschuiving van 0 verandert niets; alle andere letters van het alfabet min die ene.', explain: 'Met 25 mogelijkheden is brute-forcen een fluitje van een cent.' },
       ],
     },

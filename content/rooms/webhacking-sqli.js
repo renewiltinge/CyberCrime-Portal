@@ -105,7 +105,7 @@ CS.registerRoom({
     {
       title: 'Taak 3 — SQL-injectie in de praktijk (lab)',
       content: `
-        <p>Tijd om het zelf te doen. Hieronder staat een nep-loginformulier van <code>portaal.jvt.lab</code>. Het lab
+        <p>Tijd om het zelf te doen. Hieronder staat een nep-loginformulier van <code>portaal.nm.lab</code>. Het lab
         laat de SQL-query die achter de schermen wordt opgebouwd <strong>live</strong> zien en voert hem echt uit op
         een kleine tabel <code>users</code> met de gebruikers <code>admin</code>, <code>jan</code> en
         <code>fatima</code>. Wie als <strong>admin</strong> binnenkomt, krijgt de vlag.</p>
@@ -132,9 +132,9 @@ CS.registerRoom({
           dat is de hele kern van de verdediging.
         </div>
       `,
-      lab: { type: 'sqli', flag: 'JVT{sql_injectie_als_admin}' },
+      lab: { type: 'sqli', flag: 'NM{sql_injectie_als_admin}' },
       questions: [
-        { q: 'Log met SQL-injectie in als admin. Welke vlag krijg je te zien?', answer: ['JVT{sql_injectie_als_admin}'], hint: "Typ in het gebruikersnaamveld admin' --  of  ' OR '1'='1' --", explain: 'Je injectie verandert de query zo dat je als admin binnenkomt zonder het wachtwoord te kennen.' },
+        { q: 'Log met SQL-injectie in als admin. Welke vlag krijg je te zien?', answer: ['NM{sql_injectie_als_admin}'], hint: "Typ in het gebruikersnaamveld admin' --  of  ' OR '1'='1' --", explain: 'Je injectie verandert de query zo dat je als admin binnenkomt zonder het wachtwoord te kennen.' },
         { q: 'Wat gebeurt er met je injectie als je prepared statements aanzet?', options: ['Ze faalt: je invoer wordt als letterlijke tekst behandeld, niet als SQL', 'Ze werkt nog beter', 'De database crasht'], answer: 0, explain: 'Met prepared statements is invoer altijd data; er bestaat geen gebruiker die letterlijk admin\' -- heet.' },
         { q: "Wat doet het toevoegen van -- aan het einde van je injectie?", options: ['Het maakt de rest van de query (zoals de wachtwoordcontrole) tot commentaar', 'Het versleutelt de query', 'Het verwijdert de tabel'], answer: 0, explain: 'In SQL begint met -- een commentaar; zo schakel je de controle op het wachtwoord uit.' },
       ],
@@ -237,7 +237,7 @@ CS.registerRoom({
       title: 'Taak 6 — HTTP-verzoeken en cookies manipuleren (lab)',
       content: `
         <p>Niet elke webtruc heeft een database nodig. Soms vertrouwt een server simpelweg te veel op wat jij meestuurt.
-        In dit lab zie je een intern portaal van <code>portaal.jvt.lab</code>. Je bent ingelogd als gewone gebruiker,
+        In dit lab zie je een intern portaal van <code>portaal.nm.lab</code>. Je bent ingelogd als gewone gebruiker,
         en je cookie bevat onder andere <code>role=user</code>.</p>
 
         <h3>Stap 1 — Vind het verborgen endpoint</h3>
@@ -263,12 +263,12 @@ CS.registerRoom({
       `,
       lab: {
         type: 'http',
-        host: 'portaal.jvt.lab',
+        host: 'portaal.nm.lab',
         start: { method: 'GET', path: '/', headers: { 'Cookie': 'session=4c1a9e; role=user' }, body: '' },
         routes: [
-          { method: 'GET', path: '/', status: 200, headers: { 'Content-Type': 'text/html' }, body: 'Welkom op het interne portaal van portaal.jvt.lab.\nJe bent ingelogd als rol: user.\nHet beheergedeelte is alleen voor beheerders.\nTip: kijk eens in /robots.txt' },
+          { method: 'GET', path: '/', status: 200, headers: { 'Content-Type': 'text/html' }, body: 'Welkom op het interne portaal van portaal.nm.lab.\nJe bent ingelogd als rol: user.\nHet beheergedeelte is alleen voor beheerders.\nTip: kijk eens in /robots.txt' },
           { method: 'GET', path: '/robots.txt', status: 200, headers: { 'Content-Type': 'text/plain' }, body: 'User-agent: *\nDisallow: /beheer\nDisallow: /export' },
-          { method: 'GET', path: '/beheer', when: [{ header: 'Cookie', contains: 'role=admin' }], status: 200, headers: { 'Content-Type': 'text/plain' }, body: 'Beheerpaneel - toegang verleend (rol: admin)\nWelkom, beheerder.\nGeheime beheernotitie: JVT{cookie_rol_omhoog_admin}' },
+          { method: 'GET', path: '/beheer', when: [{ header: 'Cookie', contains: 'role=admin' }], status: 200, headers: { 'Content-Type': 'text/plain' }, body: 'Beheerpaneel - toegang verleend (rol: admin)\nWelkom, beheerder.\nGeheime beheernotitie: NM{cookie_rol_omhoog_admin}' },
           { method: 'GET', path: '/beheer', status: 403, headers: { 'Content-Type': 'text/plain' }, body: '403 Forbidden\nGeen toegang: je rol is user. Alleen role=admin mag hier komen.' },
           { method: 'GET', path: '/export', when: [{ header: 'Cookie', contains: 'role=admin' }], status: 200, headers: { 'Content-Type': 'text/plain' }, body: 'Export van klantgegevens (alleen admin). Deze functie is in het lab uitgeschakeld.' },
           { method: 'GET', path: '/export', status: 403, headers: { 'Content-Type': 'text/plain' }, body: '403 Forbidden\nGeen toegang.' },
@@ -276,7 +276,7 @@ CS.registerRoom({
       },
       questions: [
         { q: 'Welk verborgen beheerpad wordt genoemd in /robots.txt?', answer: ['/beheer', 'beheer'], hint: 'Kijk bij de Disallow-regels; het eerste pad is het beheergedeelte.', explain: 'robots.txt verraadt met Disallow: /beheer juist het pad dat "verborgen" zou moeten zijn.' },
-        { q: 'Verander role=user in role=admin in je cookie en vraag /beheer op. Welke vlag krijg je?', answer: ['JVT{cookie_rol_omhoog_admin}'], hint: 'Pas het Cookie-veld aan naar role=admin en verstuur GET /beheer opnieuw.', explain: 'De server leidt je rol af uit een cookie dat jij beheert; door role=admin te zetten krijg je ten onrechte toegang.' },
+        { q: 'Verander role=user in role=admin in je cookie en vraag /beheer op. Welke vlag krijg je?', answer: ['NM{cookie_rol_omhoog_admin}'], hint: 'Pas het Cookie-veld aan naar role=admin en verstuur GET /beheer opnieuw.', explain: 'De server leidt je rol af uit een cookie dat jij beheert; door role=admin te zetten krijg je ten onrechte toegang.' },
         { q: 'Hoe heet het verkrijgen van meer rechten dan je hoort te hebben, zoals van user naar admin?', answer: ['privilege escalation', 'privilege-escalation', 'rechtenescalatie'], hint: 'Engelse term: "privilege ..."', explain: 'Privilege escalation is het ophogen van je rechten; hier een vorm van Broken Access Control.' },
         { q: 'Wat is de juiste verdediging tegen deze cookie-manipulatie?', options: ['Rechten bepalen aan de serverkant op basis van een veilige sessie, niet uit een door de client beheersbaar cookie', 'Het cookie langer maken', 'De gebruiker vragen eerlijk te zijn'], answer: 0, explain: 'De server mag een rol nooit uit een door de client te wijzigen cookie afleiden; gebruik serverside sessiestate.' },
       ],

@@ -3,16 +3,16 @@
 // =====================================================================
 //  Fictieve pivot-dataset — twee phishingzaken, gebrugd door een
 //  HERGEBRUIKT TLS-certificaat (certificate transparency-pivot).
-//  Alles fictief: documentatie-IP's (RFC 5737) en .jvt.lab-domeinen.
+//  Alles fictief: documentatie-IP's (RFC 5737) en .nm.lab-domeinen.
 // =====================================================================
 const PIVOT_ENTITIES = [
-  { id: 'dA', type: 'domain', label: 'betaal-controle.jvt.lab' },   // Zaak Alpha
+  { id: 'dA', type: 'domain', label: 'betaal-controle.nm.lab' },   // Zaak Alpha
   { id: 'ipA', type: 'ip', label: '203.0.113.10' },
-  { id: 'dB', type: 'domain', label: 'inlog-verificatie.jvt.lab' }, // Zaak Bravo
+  { id: 'dB', type: 'domain', label: 'inlog-verificatie.nm.lab' }, // Zaak Bravo
   { id: 'ipB', type: 'ip', label: '198.51.100.20' },
   { id: 'cert', type: 'cert', label: 'A1B2C3D4' },                  // ZELFDE cert op beide zaken = de brug
   { id: 'wal', type: 'wallet', label: 'bc1qfictief0alpha' },
-  { id: 'mail', type: 'email', label: 'beheer@betaal-controle.jvt.lab' },
+  { id: 'mail', type: 'email', label: 'beheer@betaal-controle.nm.lab' },
   // --- twee toegevoegde entiteiten (brug blijft intact) ---
   { id: 'asnA', type: 'asn', label: 'AS64500 · FICTIEF-NET' },
   { id: 'walB', type: 'wallet', label: 'bc1qfictief0bravo' },
@@ -62,7 +62,7 @@ CS.registerRoom({
           <tbody>
             <tr><td><strong>IP-adres</strong></td><td>Het numerieke adres van een server, bijv. <code>203.0.113.10</code>.</td></tr>
             <tr><td><strong>ASN</strong></td><td>Autonomous System Number: het netwerkblok van een provider waar een IP onder valt (bijv. een hostingpartij).</td></tr>
-            <tr><td><strong>Domein</strong></td><td>De naam die naar een IP wijst, bijv. <code>betaal-controle.jvt.lab</code>.</td></tr>
+            <tr><td><strong>Domein</strong></td><td>De naam die naar een IP wijst, bijv. <code>betaal-controle.nm.lab</code>.</td></tr>
             <tr><td><strong>Certificaat</strong></td><td>Het TLS-certificaat dat een site aanbiedt voor HTTPS; heeft een unieke vingerafdruk en geldigheid.</td></tr>
             <tr><td><strong>Hash</strong></td><td>De vingerafdruk van een bestand (bijv. een malwaremonster), zoals een SHA-256.</td></tr>
             <tr><td><strong>Wallet</strong></td><td>Een cryptovaluta-adres waar losgeld of buit naartoe gaat.</td></tr>
@@ -76,7 +76,7 @@ CS.registerRoom({
         <h3>Label wat je weet: bekend, afgeleid, aanname</h3>
         <p>Een valkuil is dat je waarnemingen en conclusies door elkaar gaat halen. Houd ze streng uit elkaar met drie labels:</p>
         <ul>
-          <li><strong>Bekend</strong> — een harde waarneming uit een bron. "Domein <code>betaal-controle.jvt.lab</code> presenteert certificaat <code>A1B2C3D4</code> (bron: crt.sh)."</li>
+          <li><strong>Bekend</strong> — een harde waarneming uit een bron. "Domein <code>betaal-controle.nm.lab</code> presenteert certificaat <code>A1B2C3D4</code> (bron: crt.sh)."</li>
           <li><strong>Afgeleid</strong> — een analytische conclusie uit meerdere bekende feiten. "Beide zaken gebruiken hetzelfde certificaat, dus ze draaien waarschijnlijk op dezelfde opzet."</li>
           <li><strong>Aanname</strong> — iets wat je vermoedt maar niet bewijst. "Het is dezelfde dadergroep." (Nog niet bewezen.)</li>
         </ul>
@@ -183,22 +183,22 @@ CS.registerRoom({
 
         <div class="callout tip"><strong>Vuistregel:</strong> hoe meer willekeurige dingen een kenmerk zou kunnen delen met toeval, hoe zwakker het is. Twee huizen in dezelfde stad zegt weinig; twee huizen met exact hetzelfde (zelfgemaakte) slot zegt veel.</div>
 
-        <p>Leg deze toets in je geheugen. Je beloning voor wie dit onthoudt: <strong>JVT{pivot_toets_de_zeldzaamheid}</strong>.</p>
+        <p>Leg deze toets in je geheugen. Je beloning voor wie dit onthoudt: <strong>NM{pivot_toets_de_zeldzaamheid}</strong>.</p>
       `,
       questions: [
         { q: 'Waarom is pivoten een "lus" en geen rechte lijn?', options: ['Omdat je altijd terugkeert naar de eerste bron', 'Omdat elke nieuwe entiteit weer een nieuw vertrekpunt is om verder te pivoten', 'Omdat het eindeloos duurt', 'Omdat de volgorde niet uitmaakt'], answer: 1, explain: 'Elke gevonden entiteit is een nieuwe seed; je haalt er weer een kenmerk bij en de graaf groeit ronde na ronde.' },
         { q: 'Twee verdachte sites delen hetzelfde kenmerk. Welk kenmerk is het STERKSTE bewijs voor een echte link?', options: ['Dezelfde provider (ASN)', 'Een "Server: nginx"-header', 'Een hergebruikt, specifiek TLS-certificaat', 'Een populaire standaard-favicon'], answer: 2, explain: 'Een specifiek certificaat is zeldzaam; provider, nginx-header en een populaire favicon komen massaal voor en zijn dus zwak.' },
-        { q: 'Welke vlag is de beloning voor de zeldzaamheidstoets?', answer: ['JVT{pivot_toets_de_zeldzaamheid}'], hint: 'Hij staat onderaan de uitleg over zeldzaamheid.', explain: 'JVT{pivot_toets_de_zeldzaamheid} — de kern van de taak: toets elk kenmerk op uniciteit voordat je het een link noemt.' },
+        { q: 'Welke vlag is de beloning voor de zeldzaamheidstoets?', answer: ['NM{pivot_toets_de_zeldzaamheid}'], hint: 'Hij staat onderaan de uitleg over zeldzaamheid.', explain: 'NM{pivot_toets_de_zeldzaamheid} — de kern van de taak: toets elk kenmerk op uniciteit voordat je het een link noemt.' },
       ],
     },
 
     {
       title: 'Taak 5 — De pivot-sandbox: verbind Zaak Alpha en Zaak Bravo',
       content: `
-        <p>Tijd om het te doen. Je hebt twee fictieve phishingzaken op je bord. Alles hieronder is verzonnen: documentatie-IP's en <code>.jvt.lab</code>-domeinen, nooit echte infrastructuur.</p>
+        <p>Tijd om het te doen. Je hebt twee fictieve phishingzaken op je bord. Alles hieronder is verzonnen: documentatie-IP's en <code>.nm.lab</code>-domeinen, nooit echte infrastructuur.</p>
         <ul>
-          <li><strong>Zaak Alpha</strong> (januari 2026): het domein <code>betaal-controle.jvt.lab</code>, dat naar <code>203.0.113.10</code> resolvet.</li>
-          <li><strong>Zaak Bravo</strong> (februari 2026): het domein <code>inlog-verificatie.jvt.lab</code>, dat naar <code>198.51.100.20</code> resolvet.</li>
+          <li><strong>Zaak Alpha</strong> (januari 2026): het domein <code>betaal-controle.nm.lab</code>, dat naar <code>203.0.113.10</code> resolvet.</li>
+          <li><strong>Zaak Bravo</strong> (februari 2026): het domein <code>inlog-verificatie.nm.lab</code>, dat naar <code>198.51.100.20</code> resolvet.</li>
         </ul>
         <p>De vraag van je teamleider: <em>horen deze twee zaken bij elkaar?</em> De IP-adressen verschillen, dus op het eerste gezicht lijken het losse incidenten. Maar pivoteer verder.</p>
 
@@ -206,7 +206,7 @@ CS.registerRoom({
         <ol>
           <li>Klik links een entiteit aan. Je ziet rechts zijn relaties, telkens <strong>mét tijd en herkomst</strong> (bijv. "presenteert cert · 2026-01 · bron: crt.sh").</li>
           <li>Klik in de relatielijst door naar een buur-entiteit om verder te pivoten.</li>
-          <li>Begin bij <code>betaal-controle.jvt.lab</code> (Alpha), bekijk zijn kenmerken, en doe hetzelfde voor <code>inlog-verificatie.jvt.lab</code> (Bravo).</li>
+          <li>Begin bij <code>betaal-controle.nm.lab</code> (Alpha), bekijk zijn kenmerken, en doe hetzelfde voor <code>inlog-verificatie.nm.lab</code> (Bravo).</li>
           <li>Zoek het ene kenmerk dat in <strong>beide</strong> zaken terugkomt. Pas de zeldzaamheidstoets toe: is het uniek genoeg?</li>
         </ol>
 
@@ -217,7 +217,7 @@ CS.registerRoom({
       lab: {
         type: 'pivot',
         title: 'Zaak Alpha vs. Zaak Bravo',
-        scenario: 'Twee fictieve phishingzaken met verschillende IP-adressen. Pivoteer langs de relaties (let op tijd en herkomst) en vind het ene kenmerk dat beide zaken verbindt. Alles is fictief: documentatie-IP\'s en .jvt.lab-domeinen.',
+        scenario: 'Twee fictieve phishingzaken met verschillende IP-adressen. Pivoteer langs de relaties (let op tijd en herkomst) en vind het ene kenmerk dat beide zaken verbindt. Alles is fictief: documentatie-IP\'s en .nm.lab-domeinen.',
         entities: PIVOT_ENTITIES,
         edges: PIVOT_EDGES,
         goal: 'Welk kenmerk verbindt Zaak Alpha en Zaak Bravo? (typ het label of het type)',
@@ -239,9 +239,9 @@ CS.registerRoom({
         <table>
           <thead><tr><th>Van</th><th>Relatie</th><th>Naar</th><th>Tijd</th><th>Herkomst</th></tr></thead>
           <tbody>
-            <tr><td>betaal-controle.jvt.lab</td><td>presenteert cert</td><td>A1B2C3D4</td><td>2026-01</td><td>crt.sh</td></tr>
-            <tr><td>inlog-verificatie.jvt.lab</td><td>presenteert cert</td><td>A1B2C3D4</td><td>2026-02</td><td>crt.sh</td></tr>
-            <tr><td>betaal-controle.jvt.lab</td><td>resolvet naar</td><td>203.0.113.10</td><td>2026-01</td><td>passive DNS</td></tr>
+            <tr><td>betaal-controle.nm.lab</td><td>presenteert cert</td><td>A1B2C3D4</td><td>2026-01</td><td>crt.sh</td></tr>
+            <tr><td>inlog-verificatie.nm.lab</td><td>presenteert cert</td><td>A1B2C3D4</td><td>2026-02</td><td>crt.sh</td></tr>
+            <tr><td>betaal-controle.nm.lab</td><td>resolvet naar</td><td>203.0.113.10</td><td>2026-01</td><td>passive DNS</td></tr>
           </tbody>
         </table>
 
@@ -295,7 +295,7 @@ nx.betweenness_centrality(G)              # welke knoop is de spil?</code></pre>
           <li><strong>Passief vs. actief.</strong> Een archief bevragen (crt.sh, passive DNS, RIPEstat) is <em>passief</em>: de dader merkt er niets van. De verdachte server zélf benaderen (hem bezoeken, scannen, een JARM nemen) is <em>actief</em> en kan je verraden of zelfs strafbaar zijn.</li>
         </ul>
 
-        <div class="callout danger"><strong>Het uploadrisico — onthoud dit goed:</strong> gooi je een verdacht bestand naar VirusTotal, dan wordt die sample zichtbaar voor anderen (ook voor de dader, die zijn eigen hashes in de gaten houdt). Je tipt hem dat hij ontdekt is, en hij ruimt zijn infrastructuur op vóór je klaar bent. Hetzelfde geldt voor het actief bezoeken van zijn site. Daarom geldt de regel: <strong>JVT{deel_geen_sample}</strong> — upload of bezoek niets zonder je af te vragen wie er meekijkt.</div>
+        <div class="callout danger"><strong>Het uploadrisico — onthoud dit goed:</strong> gooi je een verdacht bestand naar VirusTotal, dan wordt die sample zichtbaar voor anderen (ook voor de dader, die zijn eigen hashes in de gaten houdt). Je tipt hem dat hij ontdekt is, en hij ruimt zijn infrastructuur op vóór je klaar bent. Hetzelfde geldt voor het actief bezoeken van zijn site. Daarom geldt de regel: <strong>NM{deel_geen_sample}</strong> — upload of bezoek niets zonder je af te vragen wie er meekijkt.</div>
       `,
       questions: [
         { q: 'Welke heuristiek zegt dat adressen die samen in één transactie worden uitgegeven, waarschijnlijk van dezelfde eigenaar zijn?', answer: ['common-input-heuristiek', 'common input', 'common-input', 'common input heuristiek'], hint: 'Je moet alle sleutels hebben om die inputs samen uit te geven.', explain: 'De common-input-ownership-heuristiek clustert alle input-adressen van één transactie als één entiteit.' },

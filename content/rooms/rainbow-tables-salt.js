@@ -120,7 +120,7 @@ CS.registerRoom({
 
         <h3>Je beloning</h3>
         <details><summary>Toon de vlag (pas openen nadat je het wachtwoord hebt opgezocht)</summary>
-          <p>Je verdiende vlag: <code>JVT{rainbow_zoekt_direct}</code>. Onthoud het gevoel: voor een onvergezouten,
+          <p>Je verdiende vlag: <code>NM{rainbow_zoekt_direct}</code>. Onthoud het gevoel: voor een onvergezouten,
           snelle hash hoef je niet te kraken — je zoekt gewoon op.</p>
         </details>
       `,
@@ -135,7 +135,7 @@ CS.registerRoom({
         { q: 'Zoek de hash 371620aa75830b1388b63305b0d42f06 op. Welk wachtwoord hoort erbij?', answer: ['welkom'], hint: 'Plak de hash in het opzoekveld en klik op Opzoeken; de tabel geeft het meteen.', explain: 'De onvergezouten MD5 van "welkom" is 371620aa75830b1388b63305b0d42f06 — direct terug te vinden in de tabel.' },
         { q: 'Waarom is het opzoeken "direct" en voelt het niet als kraken?', options: ['Omdat het rekenwerk al vooraf is gedaan en als hash → woord is opgeslagen', 'Omdat MD5 omkeerbaar is', 'Omdat de hash wordt ontsleuteld met een sleutel', 'Omdat de tabel het wachtwoord raadt'], answer: 0, explain: 'Alle hashes zijn vooraf berekend en opgeslagen. Opzoeken is daardoor een simpele lookup, geen gokwerk.' },
         { q: 'Plak de gesalte hash 329f3abf574738de33a01f7c630b1fb7. Wordt die in de tabel gevonden?', answer: ['nee', 'niet', 'niet gevonden', 'niet in de tabel'], hint: 'Deze hash is berekend met een salt; de tabel is dat niet.', explain: 'Nee — de gesalte hash staat niet in de voorberekende tabel, dus opzoeken faalt. Dat is de brug naar taak 3.' },
-        { q: 'Wat is de vlag die je hier verdient?', answer: ['JVT{rainbow_zoekt_direct}'], hint: 'Staat in het inklapbare blok onderaan de taak.', explain: 'JVT{rainbow_zoekt_direct} bevestigt dat je een onvergezouten hash rechtstreeks hebt opgezocht.' },
+        { q: 'Wat is de vlag die je hier verdient?', answer: ['NM{rainbow_zoekt_direct}'], hint: 'Staat in het inklapbare blok onderaan de taak.', explain: 'NM{rainbow_zoekt_direct} bevestigt dat je een onvergezouten hash rechtstreeks hebt opgezocht.' },
       ],
     },
 
@@ -178,7 +178,7 @@ CS.registerRoom({
 
         <h3>Je beloning</h3>
         <details><summary>Toon de vlag (pas openen nadat je beide hashes hebt opgezocht)</summary>
-          <p>Je verdiende vlag: <code>JVT{salt_breekt_de_tabel}</code>. Eén uniek salt per gebruiker en de hele
+          <p>Je verdiende vlag: <code>NM{salt_breekt_de_tabel}</code>. Eén uniek salt per gebruiker en de hele
           precomputatie-aanval valt in duigen.</p>
         </details>
       `,
@@ -193,7 +193,7 @@ CS.registerRoom({
         { q: 'Wat maakt een goede salt? Kies de beste omschrijving.', options: ['Per gebruiker uniek en willekeurig gegenereerd', 'Voor iedereen hetzelfde, zolang hij maar lang is', 'Afgeleid van de gebruikersnaam', 'Geheim gehouden en nooit opgeslagen'], answer: 0, explain: 'Uniek per gebruiker en willekeurig: dat is wat voorberekende tabellen waardeloos maakt.' },
         { q: 'Twee gebruikers kiezen hetzelfde wachtwoord. Wat doet een unieke salt met hun opgeslagen hashes?', options: ['Die worden toch verschillend', 'Die worden identiek', 'Die worden korter', 'Dat maakt geen verschil'], answer: 0, explain: 'Door het verschillende salt leveren identieke wachtwoorden verschillende hashes op — hergebruik en vergelijken wordt zinloos.' },
         { q: 'Moet een salt geheim zijn?', options: ['Nee, een salt mag openbaar naast de hash staan; zijn kracht is uniciteit', 'Ja, anders is hij waardeloos', 'Alleen op Windows', 'Ja, en hij mag nooit worden opgeslagen'], answer: 0, explain: 'Een salt hoeft niet geheim te zijn. Hij breekt precomputatie door uniek te zijn, niet door geheim te zijn.' },
-        { q: 'Wat is de vlag die je hier verdient?', answer: ['JVT{salt_breekt_de_tabel}'], hint: 'Staat in het inklapbare blok onderaan de taak.', explain: 'JVT{salt_breekt_de_tabel} — een unieke salt per gebruiker haalt de precomputatie-aanval onderuit.' },
+        { q: 'Wat is de vlag die je hier verdient?', answer: ['NM{salt_breekt_de_tabel}'], hint: 'Staat in het inklapbare blok onderaan de taak.', explain: 'NM{salt_breekt_de_tabel} — een unieke salt per gebruiker haalt de precomputatie-aanval onderuit.' },
       ],
     },
 
@@ -287,7 +287,7 @@ CS.registerRoom({
 
         <h3>Je beloning</h3>
         <details><summary>Toon de vlag (pas openen nadat je het wachtwoord hebt gekraakt)</summary>
-          <p>Je verdiende vlag: <code>JVT{zonder_salt_valt_het}</code>. Geen salt plus een snelle hash is een open deur —
+          <p>Je verdiende vlag: <code>NM{zonder_salt_valt_het}</code>. Geen salt plus een snelle hash is een open deur —
           voor opzoeken én voor een woordenlijst.</p>
         </details>
       `,
@@ -302,7 +302,7 @@ CS.registerRoom({
         { q: 'Start de woordenlijstaanval. Welk wachtwoord hoort bij de hash?', answer: ['voetbal'], hint: 'Laat de tool de hele lijst aflopen; één woord geeft precies dezelfde MD5.', explain: 'De onvergezouten MD5 van "voetbal" is d9898c6cad232125606d4ceea5a35e41 — een klassieke woordenlijst-treffer.' },
         { q: 'Waarom helpt een per-gebruiker unieke salt juist hier als verdediging?', options: ['De aanvaller kan één woordenlijst niet meer tegen alle hashes tegelijk gebruiken; hij moet per salt opnieuw hashen', 'De salt maakt het wachtwoord geheim', 'De salt versleutelt de database', 'De salt maakt MD5 trager'], answer: 0, explain: 'Door de unieke salt levert hetzelfde wachtwoord bij iedereen een andere hash op, dus de aanvaller moet per hash opnieuw rekenen.' },
         { q: 'Waarom is een kale, onvergezouten MD5 nauwelijks beter dan platte tekst?', options: ['MD5 is snel en zonder salt werken opzoeken én woordenlijsten direct', 'MD5 is omkeerbaar met een sleutel', 'Omdat MD5 te kort is om op te slaan', 'Dat klopt niet, MD5 is juist veilig'], answer: 0, explain: 'Een snelle, onvergezouten hash valt zowel voor precomputatie als voor een simpele woordenlijstaanval — een open deur.' },
-        { q: 'Wat is de vlag die je hier verdient?', answer: ['JVT{zonder_salt_valt_het}'], hint: 'Staat in het inklapbare blok onderaan de taak.', explain: 'JVT{zonder_salt_valt_het} — zonder salt en met een snelle hash valt het wachtwoord meteen.' },
+        { q: 'Wat is de vlag die je hier verdient?', answer: ['NM{zonder_salt_valt_het}'], hint: 'Staat in het inklapbare blok onderaan de taak.', explain: 'NM{zonder_salt_valt_het} — zonder salt en met een snelle hash valt het wachtwoord meteen.' },
       ],
     },
 

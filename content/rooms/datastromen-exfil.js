@@ -2,31 +2,31 @@
 
 // --- Egress/proxy-log voor het logs-lab (taak 5) ---
 // Een web-/egress-proxy ziet alleen uitgaand verkeer naar het internet. Erin verstopt:
-//  * C2-beaconing: elke ~60s (met jitter) een piepklein POST'je naar cdn-telemetry.c2relay.jvt.lab
-//  * één gigantische PUT van exfil.7z (±450 MB) naar de zeldzame bestemming opslag-x9f3.jvt.lab
+//  * C2-beaconing: elke ~60s (met jitter) een piepklein POST'je naar cdn-telemetry.c2relay.nm.lab
+//  * één gigantische PUT van exfil.7z (±450 MB) naar de zeldzame bestemming opslag-x9f3.nm.lab
 //  * twee vlaggen: in een gedecodeerd C2-antwoord en in de soc_note bij de upload.
 // Normaal surfverkeer (nos.nl, mail.google.com, o365, gemeente.nl, jsdelivr) zit ertussen als ruis.
-const EXFIL_PROXY_LOG = `# egress-proxy  jvt.lab  2026-10-11   kolommen: tijd | client | verdict | methode | bestemming | up=bytes_omhoog down=bytes_omlaag [note]
+const EXFIL_PROXY_LOG = `# egress-proxy  nm.lab  2026-10-11   kolommen: tijd | client | verdict | methode | bestemming | up=bytes_omhoog down=bytes_omlaag [note]
 2026-10-11 02:00:11  WS-MKT-04  allow  GET   nos.nl                               up=612        down=48310
-2026-10-11 02:00:52  WS-FIN-03  allow  GET   intranet.jvt.lab                     up=410        down=12044
+2026-10-11 02:00:52  WS-FIN-03  allow  GET   intranet.nm.lab                     up=410        down=12044
 2026-10-11 02:01:40  WS-HR-02   allow  GET   mail.google.com                      up=1820       down=23110
 2026-10-11 02:02:39  WS-MKT-04  allow  GET   cdn.jsdelivr.net                     up=180        down=88214
-2026-10-11 02:03:05  WS-MKT-04  ALERT  POST  cdn-telemetry.c2relay.jvt.lab        up=228        down=96     note=klein_vast_pakketje
-2026-10-11 02:03:51  WS-FIN-03  allow  GET   o365.portal.jvt.lab                  up=940        down=15502
-2026-10-11 02:04:01  WS-MKT-04  ALERT  POST  cdn-telemetry.c2relay.jvt.lab        up=231        down=96     note=klein_vast_pakketje
+2026-10-11 02:03:05  WS-MKT-04  ALERT  POST  cdn-telemetry.c2relay.nm.lab        up=228        down=96     note=klein_vast_pakketje
+2026-10-11 02:03:51  WS-FIN-03  allow  GET   o365.portal.nm.lab                  up=940        down=15502
+2026-10-11 02:04:01  WS-MKT-04  ALERT  POST  cdn-telemetry.c2relay.nm.lab        up=231        down=96     note=klein_vast_pakketje
 2026-10-11 02:04:48  WS-HR-02   allow  GET   portaal.gemeente.nl                  up=330        down=9900
-2026-10-11 02:05:12  WS-MKT-04  ALERT  POST  cdn-telemetry.c2relay.jvt.lab        up=226        down=140    note=C2-antwoord_gedecodeerd:"sleep=60;jitter=10" tag=JVT{baken_ritme}
+2026-10-11 02:05:12  WS-MKT-04  ALERT  POST  cdn-telemetry.c2relay.nm.lab        up=226        down=140    note=C2-antwoord_gedecodeerd:"sleep=60;jitter=10" tag=NM{baken_ritme}
 2026-10-11 02:05:59  WS-MKT-04  allow  GET   weerdienst.nl                        up=210        down=7404
-2026-10-11 02:06:03  WS-MKT-04  ALERT  POST  cdn-telemetry.c2relay.jvt.lab        up=233        down=96     note=klein_vast_pakketje
-2026-10-11 02:07:09  WS-MKT-04  ALERT  POST  cdn-telemetry.c2relay.jvt.lab        up=227        down=96     note=klein_vast_pakketje
-2026-10-11 02:08:02  WS-MKT-04  ALERT  POST  cdn-telemetry.c2relay.jvt.lab        up=229        down=96     note=klein_vast_pakketje
+2026-10-11 02:06:03  WS-MKT-04  ALERT  POST  cdn-telemetry.c2relay.nm.lab        up=233        down=96     note=klein_vast_pakketje
+2026-10-11 02:07:09  WS-MKT-04  ALERT  POST  cdn-telemetry.c2relay.nm.lab        up=227        down=96     note=klein_vast_pakketje
+2026-10-11 02:08:02  WS-MKT-04  ALERT  POST  cdn-telemetry.c2relay.nm.lab        up=229        down=96     note=klein_vast_pakketje
 2026-10-11 02:21:17  WS-FIN-03  allow  GET   nos.nl                               up=560        down=51220
 2026-10-11 02:40:33  WS-HR-02   allow  GET   mail.google.com                      up=2110       down=19877
 2026-10-11 02:55:46  WS-MKT-04  allow  GET   cdn.jsdelivr.net                     up=175        down=64012
-2026-10-11 03:01:58  WS-FIN-03  allow  GET   o365.portal.jvt.lab                  up=880        down=14003
-2026-10-11 03:05:02  WS-FIN-03  ALERT  PUT   opslag-x9f3.jvt.lab                  up=471859200  down=512    note=exfil.7z_zeldzame_bestemming_nooit_eerder_gezien  soc_note=JVT{egress_betrapt}
-2026-10-11 03:05:49  WS-FIN-03  allow  GET   intranet.jvt.lab                     up=402        down=11890
-2026-10-11 03:09:12  WS-MKT-04  ALERT  POST  cdn-telemetry.c2relay.jvt.lab        up=230        down=96     note=klein_vast_pakketje`;
+2026-10-11 03:01:58  WS-FIN-03  allow  GET   o365.portal.nm.lab                  up=880        down=14003
+2026-10-11 03:05:02  WS-FIN-03  ALERT  PUT   opslag-x9f3.nm.lab                  up=471859200  down=512    note=exfil.7z_zeldzame_bestemming_nooit_eerder_gezien  soc_note=NM{egress_betrapt}
+2026-10-11 03:05:49  WS-FIN-03  allow  GET   intranet.nm.lab                     up=402        down=11890
+2026-10-11 03:09:12  WS-MKT-04  ALERT  POST  cdn-telemetry.c2relay.nm.lab        up=230        down=96     note=klein_vast_pakketje`;
 
 CS.registerRoom({
   id: 'datastromen-exfil',
@@ -108,7 +108,7 @@ CS.registerRoom({
         <div class="callout info">
           <strong>Baseline eerst:</strong> "veel egress" betekent alleen iets als je weet wat normaal is. Daarom meet een
           SOC eerst een <strong>baseline</strong> (het gewone patroon per host en per tijdstip). Pas tegen die achtergrond
-          springt een afwijking eruit. Alles in deze room is fictief: documentatie-domeinen (<code>*.jvt.lab</code>) en een
+          springt een afwijking eruit. Alles in deze room is fictief: documentatie-domeinen (<code>*.nm.lab</code>) en een
           afgeschermd oefenlab.
         </div>
       `,
@@ -135,7 +135,7 @@ CS.registerRoom({
         vaste intervallen een piepklein pakketje naar hetzelfde externe adres sturen.</p>
 
         <div class="callout tip">
-          <strong>Voorbeeld:</strong> elke ~60 seconden een POST van ~230 bytes naar <code>cdn-telemetry.c2relay.jvt.lab</code>.
+          <strong>Voorbeeld:</strong> elke ~60 seconden een POST van ~230 bytes naar <code>cdn-telemetry.c2relay.nm.lab</code>.
           De naam klinkt als een onschuldige "telemetrie-CDN", maar het strakke ritme hoort bij geen enkele normale
           webdienst. Dat is een baken.
         </div>
@@ -180,14 +180,14 @@ CS.registerRoom({
         codeert de malware een stukje gestolen data en zet dat als <strong>subdomein</strong> vóór een domein dat hij zelf
         beheert. Dan vraagt hij dat op. De opvraging reist door elke firewall heen naar de kwaadaardige nameserver, die de
         data uit de naam pelt. Het ziet er zo uit:</p>
-        <pre><code>mz2wk3-chunk00-aegh5t7q.exfil.jvt.lab
-nf4xq1-chunk01-k9plm2wd.exfil.jvt.lab
-pq7za9-chunk02-r3nxc8vb.exfil.jvt.lab</code></pre>
+        <pre><code>mz2wk3-chunk00-aegh5t7q.exfil.nm.lab
+nf4xq1-chunk01-k9plm2wd.exfil.nm.lab
+pq7za9-chunk02-r3nxc8vb.exfil.nm.lab</code></pre>
 
         <h3>Waaraan je het herkent</h3>
         <ul>
           <li><strong>Veel, lange, willekeurig ogende subdomeinen</strong> — elk "stukje" (chunk) is een brok gecodeerde data.</li>
-          <li><strong>Alles naar hetzelfde "domein"</strong> (hier <code>exfil.jvt.lab</code>) en dezelfde nameserver.</li>
+          <li><strong>Alles naar hetzelfde "domein"</strong> (hier <code>exfil.nm.lab</code>) en dezelfde nameserver.</li>
           <li><strong>Veel TXT-queries</strong>. Het TXT-record mag willekeurige tekst bevatten en is daarom geliefd voor
           tunneling, maar ook A- en CNAME-queries worden misbruikt.</li>
           <li><strong>Hoge frequentie en volume</strong> voor DNS: een gewone client vraagt niet tientallen lange namen per
@@ -210,7 +210,7 @@ pq7za9-chunk02-r3nxc8vb.exfil.jvt.lab</code></pre>
       questions: [
         { q: 'Welke techniek verstopt gestolen data in de naam die via DNS wordt opgevraagd?', answer: ['DNS-tunneling', 'dns-tunneling', 'dns tunneling', 'dns-tunnel'], hint: 'Data wordt door DNS heen "getunneld".', explain: 'DNS-tunneling verpakt data in (sub)domeinnamen die door de firewall mogen.' },
         { q: 'Welk DNS-recordtype kan willekeurige tekst bevatten en is daarom geliefd voor tunneling?', answer: ['TXT', 'txt'], hint: 'Niet A of MX; het type voor vrije tekst.', explain: 'Het TXT-record mag vrije tekst bevatten, ideaal om gecodeerde data in te vervoeren.' },
-        { q: 'Welk "domein" wordt in het voorbeeld misbruikt als datakanaal (het deel achter de willekeurige subdomeinen)?', answer: ['exfil.jvt.lab'], hint: 'Kijk wat er steeds achter de chunk-namen staat.', explain: 'Alle namen eindigen op exfil.jvt.lab: dat is het kanaal naar de kwaadaardige nameserver.' },
+        { q: 'Welk "domein" wordt in het voorbeeld misbruikt als datakanaal (het deel achter de willekeurige subdomeinen)?', answer: ['exfil.nm.lab'], hint: 'Kijk wat er steeds achter de chunk-namen staat.', explain: 'Alle namen eindigen op exfil.nm.lab: dat is het kanaal naar de kwaadaardige nameserver.' },
         { q: 'Waarom is DNS een aantrekkelijk sluipkanaal voor aanvallers?', options: ['Firewalls laten DNS bijna altijd door, dus het verkeer mag ongehinderd naar buiten', 'DNS is altijd versleuteld', 'DNS kan geen data vervoeren', 'DNS werkt alleen binnen het LAN'], answer: 0, explain: 'Omdat naamopvragingen bijna overal mogen, tunnelt data via DNS dwars door de firewall.' },
       ],
     },
@@ -236,7 +236,7 @@ pq7za9-chunk02-r3nxc8vb.exfil.jvt.lab</code></pre>
         <h3>Datastromen optellen</h3>
         <p>Het lab hieronder toont de datastromen in <strong>MB</strong> als een stroomdiagram. Twee werkstations kopiëren
         hun buit naar de staging-host <code>SRV-ARCHIEF</code>; daar wordt alles gecomprimeerd en versleuteld tot
-        <code>exfil.7z</code> en in één keer naar de cloudbucket <code>opslag-x9f3.jvt.lab</code> geüpload. Let op: er loopt
+        <code>exfil.7z</code> en in één keer naar de cloudbucket <code>opslag-x9f3.nm.lab</code> geüpload. Let op: er loopt
         óók een legitieme nachtelijke back-up naar <code>SRV-BACKUP-01</code> — die hoort <em>niet</em> bij de aanval. Klik
         op een knoop om in- en uitgaand verkeer te zien, of lees de transactietabel.</p>
 
@@ -257,13 +257,13 @@ pq7za9-chunk02-r3nxc8vb.exfil.jvt.lab</code></pre>
         type: 'flow',
         title: 'Operatie Lekkende Kraan — datavolumes (MB)',
         unit: 'MB',
-        scenario: 'Reconstructie van een exfiltratie bij het fictieve bedrijf JVT. Volg de data (in MB) van de werkstations, via de staging-host SRV-ARCHIEF, naar de cloudbucket. Eén stroom is een legitieme back-up — trap daar niet in.',
+        scenario: 'Reconstructie van een exfiltratie bij het fictieve bedrijf NineMinds. Volg de data (in MB) van de werkstations, via de staging-host SRV-ARCHIEF, naar de cloudbucket. Eén stroom is een legitieme back-up — trap daar niet in.',
         nodes: [
           { id: 'ws1', type: 'victim', label: 'WS-FIN-03 (financiën)' },
           { id: 'ws2', type: 'victim', label: 'WS-HR-02 (HR)' },
           { id: 'stage', type: 'service', label: 'SRV-ARCHIEF (staging-host)' },
           { id: 'backup', type: 'service', label: 'SRV-BACKUP-01 (legitieme back-up)' },
-          { id: 'cloud', type: 'cashout', label: 'opslag-x9f3.jvt.lab (cloudbucket)' },
+          { id: 'cloud', type: 'cashout', label: 'opslag-x9f3.nm.lab (cloudbucket)' },
         ],
         edges: [
           { from: 'ws1', to: 'backup', amount: 300, time: '2026-10-11 01:00', note: 'nachtelijke back-up (legitiem)' },
@@ -273,7 +273,7 @@ pq7za9-chunk02-r3nxc8vb.exfil.jvt.lab</code></pre>
         ],
         ask: [
           { q: 'Hoeveel MB komt er in totaal binnen op de staging-host SRV-ARCHIEF? (tel de inkomende stromen op)', answer: ['1800', '1800 MB', '1800 mb'], hint: 'Klik op SRV-ARCHIEF en lees "in", of tel de twee kwaadaardige inkomende pijlen: 1200 + 600.' },
-          { q: 'Hoeveel MB verlaat het netwerk naar de cloudbucket opslag-x9f3.jvt.lab?', answer: ['450', '450 MB', '450 mb'], hint: 'De enige stroom die écht de deur uit gaat, naar buiten.' },
+          { q: 'Hoeveel MB verlaat het netwerk naar de cloudbucket opslag-x9f3.nm.lab?', answer: ['450', '450 MB', '450 mb'], hint: 'De enige stroom die écht de deur uit gaat, naar buiten.' },
           { q: 'Met welke factor kromp de buit door compressie op de staging-host? (inkomend ÷ uitgaand)', answer: ['4', '4x', 'factor 4', '4.0'], hint: '1800 ÷ 450.' },
           { q: 'Hoeveel MB bleef als ruwe kopie op SRV-ARCHIEF achter (het saldo: inkomend − uitgaand)?', answer: ['1350', '1350 MB', '1350 mb'], hint: '1800 − 450.' },
         ],
@@ -298,7 +298,7 @@ pq7za9-chunk02-r3nxc8vb.exfil.jvt.lab</code></pre>
         <h3>1. Timing — het baken vinden</h3>
         <p>Filter op <code>c2relay</code> of op <code>ALERT</code>. Je ziet steeds hetzelfde werkstation
         (<code>WS-MKT-04</code>) ongeveer elke minuut een piepklein POST'je (~230 bytes) naar
-        <code>cdn-telemetry.c2relay.jvt.lab</code> sturen. Kijk naar de seconden: 02:03:05, 02:04:01, 02:05:12, 02:06:03…
+        <code>cdn-telemetry.c2relay.nm.lab</code> sturen. Kijk naar de seconden: 02:03:05, 02:04:01, 02:05:12, 02:06:03…
         geen exact interval, maar een strakke band rond de 60 seconden — dat is jitter. Eén van die bakenregels bevat een
         gedecodeerd C2-antwoord met een <code>tag=</code>: daar staat een vlag.</p>
 
@@ -309,7 +309,7 @@ pq7za9-chunk02-r3nxc8vb.exfil.jvt.lab</code></pre>
         <code>exfil.7z</code>.</p>
 
         <h3>3. Bestemming — zeldzaam en nooit eerder gezien</h3>
-        <p>Waar ging die upload heen? Naar <code>opslag-x9f3.jvt.lab</code> — een domein dat verder nergens in de log
+        <p>Waar ging die upload heen? Naar <code>opslag-x9f3.nm.lab</code> — een domein dat verder nergens in de log
         voorkomt en dat de organisatie nog nooit had bezocht. Zo'n <strong>zeldzame bestemming</strong> (rare / newly-seen
         destination) is op zichzelf al een rode vlag; gecombineerd met een enorme upload is het een incident. De
         soc-analist heeft die regel al gemarkeerd met een <code>soc_note=</code>: daar staat de tweede vlag.</p>
@@ -327,15 +327,15 @@ pq7za9-chunk02-r3nxc8vb.exfil.jvt.lab</code></pre>
       `,
       lab: {
         type: 'logs',
-        title: 'egress-proxy.log — JVT, 11 okt 2026',
+        title: 'egress-proxy.log — NineMinds, 11 okt 2026',
         lines: EXFIL_PROXY_LOG,
       },
       questions: [
-        { q: 'Naar welk domein stuurt WS-MKT-04 ongeveer elke 60 seconden een klein, bijna even groot pakketje (beaconing)?', answer: ['cdn-telemetry.c2relay.jvt.lab'], hint: 'Filter op c2relay of op ALERT en kijk naar het herhaalde kleine POST-verkeer.', explain: 'De regelmatige kleine POSTs van ~230 bytes gaan naar cdn-telemetry.c2relay.jvt.lab: een C2-baken met jitter.' },
-        { q: 'Wat is de vlag in het gedecodeerde C2-antwoord (de baken-regel met tag=)?', answer: ['JVT{baken_ritme}'], encoded: true, hint: 'Filter op c2relay en zoek de regel met down=140 en een tag=.', explain: 'In het gedecodeerde antwoord "sleep=60;jitter=10" staat tag=JVT{baken_ritme}.' },
+        { q: 'Naar welk domein stuurt WS-MKT-04 ongeveer elke 60 seconden een klein, bijna even groot pakketje (beaconing)?', answer: ['cdn-telemetry.c2relay.nm.lab'], hint: 'Filter op c2relay of op ALERT en kijk naar het herhaalde kleine POST-verkeer.', explain: 'De regelmatige kleine POSTs van ~230 bytes gaan naar cdn-telemetry.c2relay.nm.lab: een C2-baken met jitter.' },
+        { q: 'Wat is de vlag in het gedecodeerde C2-antwoord (de baken-regel met tag=)?', answer: ['NM{baken_ritme}'], encoded: true, hint: 'Filter op c2relay en zoek de regel met down=140 en een tag=.', explain: 'In het gedecodeerde antwoord "sleep=60;jitter=10" staat tag=NM{baken_ritme}.' },
         { q: 'Ongeveer hoeveel MB was de grote upload (up=471859200 bytes ÷ 1.048.576)?', answer: ['450', '450 MB', '450 mb'], hint: 'Filter op PUT of op /up=\\d{7,}/ en reken de bytes om.', explain: '471.859.200 ÷ 1.048.576 = 450 MB — exact het gecomprimeerde exfil.7z uit het flow-lab.' },
-        { q: 'Wat is de vlag in de soc_note bij de exfil-regel (de grote PUT)?', answer: ['JVT{egress_betrapt}'], encoded: true, hint: 'Filter op PUT of op opslag-x9f3 en lees het einde van die regel.', explain: 'De analist markeerde de upload naar de zeldzame bestemming met soc_note=JVT{egress_betrapt}.' },
-        { q: 'Waardoor is opslag-x9f3.jvt.lab op zichzelf al verdacht?', options: ['Het is een zeldzame bestemming die verder nergens in de log voorkomt en nooit eerder is bezocht', 'Het staat op de witte lijst', 'Het is een bekende zoekmachine', 'Het gebruikt poort 53'], answer: 0, explain: 'Een nooit eerder geziene bestemming (rare/newly-seen destination) is een rode vlag, zeker samen met een enorme upload.' },
+        { q: 'Wat is de vlag in de soc_note bij de exfil-regel (de grote PUT)?', answer: ['NM{egress_betrapt}'], encoded: true, hint: 'Filter op PUT of op opslag-x9f3 en lees het einde van die regel.', explain: 'De analist markeerde de upload naar de zeldzame bestemming met soc_note=NM{egress_betrapt}.' },
+        { q: 'Waardoor is opslag-x9f3.nm.lab op zichzelf al verdacht?', options: ['Het is een zeldzame bestemming die verder nergens in de log voorkomt en nooit eerder is bezocht', 'Het staat op de witte lijst', 'Het is een bekende zoekmachine', 'Het gebruikt poort 53'], answer: 0, explain: 'Een nooit eerder geziene bestemming (rare/newly-seen destination) is een rode vlag, zeker samen met een enorme upload.' },
       ],
     },
 
@@ -349,9 +349,9 @@ pq7za9-chunk02-r3nxc8vb.exfil.jvt.lab</code></pre>
 
         <h3>Het signalement</h3>
         <p>Kijk eerst goed naar de twee lijsten in het lab. De kwaadaardige C2-/exfil-domeinen delen een kenmerk dat de
-        legitieme domeinen níet hebben. Let op: je kunt niet simpelweg op <code>.jvt.lab</code> matchen, want
-        <code>intranet.jvt.lab</code> is een gewoon, legitiem bedrijfsdomein. En een patroon dat alleen op "bevat een
-        cijfer" let, faalt ook: het legitieme <code>o365.portal.jvt.lab</code> (Office 365) bevat cijfers, en sommige boze
+        legitieme domeinen níet hebben. Let op: je kunt niet simpelweg op <code>.nm.lab</code> matchen, want
+        <code>intranet.nm.lab</code> is een gewoon, legitiem bedrijfsdomein. En een patroon dat alleen op "bevat een
+        cijfer" let, faalt ook: het legitieme <code>o365.portal.nm.lab</code> (Office 365) bevat cijfers, en sommige boze
         domeinen juist niet. Zoek het <em>gemeenschappelijke woord</em> in de parentdomeinen van de aanvaller.</p>
 
         <div class="callout tip">
@@ -379,27 +379,27 @@ pq7za9-chunk02-r3nxc8vb.exfil.jvt.lab</code></pre>
         prompt: 'Schrijf één regex die álle kwaadaardige domeinen (links) matcht en géén enkel legitiem domein (rechts).',
         flags: '',
         match: [
-          'kd3.exfil.jvt.lab',
-          'node7.c2relay.jvt.lab',
-          'sync.datasink.jvt.lab',
-          'out.beacon.jvt.lab',
-          'a1f.exfil.jvt.lab',
+          'kd3.exfil.nm.lab',
+          'node7.c2relay.nm.lab',
+          'sync.datasink.nm.lab',
+          'out.beacon.nm.lab',
+          'a1f.exfil.nm.lab',
         ],
         avoid: [
           'www.nederbank.nl',
-          'intranet.jvt.lab',
-          'o365.portal.jvt.lab',
+          'intranet.nm.lab',
+          'o365.portal.nm.lab',
           'mail.google.com',
           'cdn.jsdelivr.net',
           'portaal.gemeente.nl',
         ],
-        flag: 'JVT{boze_domeinen_gevangen}',
+        flag: 'NM{boze_domeinen_gevangen}',
       },
       questions: [
         { q: 'Welk patroon lost het regexgolf-lab op (match alle boze, mijd alle legitieme)?', answer: ['exfil|c2|beacon|datasink'], hint: 'Een alternatie van de vier functiewoorden in de boze parentdomeinen.', explain: 'Het patroon exfil|c2|beacon|datasink raakt alle vijf kwaadaardige domeinen en geen enkel legitiem domein.' },
-        { q: 'Waarom werkt een patroon dat alleen op "bevat een cijfer" (\\d) let hier niet?', options: ['Het legitieme o365.portal.jvt.lab bevat cijfers, en sommige boze domeinen juist niet', 'Cijfers mogen niet in een regex', 'DNS staat geen cijfers toe', 'Omdat de flag i ontbreekt'], answer: 0, explain: 'o365.portal.jvt.lab (legitiem) heeft cijfers en zou ten onrechte matchen; out.beacon.jvt.lab (boos) heeft geen cijfer en zou gemist worden.' },
-        { q: 'Waarom kun je niet simpelweg op .jvt.lab matchen om de boze domeinen te vinden?', options: ['Omdat intranet.jvt.lab een legitiem bedrijfsdomein is dat je niet wilt raken', 'Omdat .jvt.lab niet bestaat', 'Omdat regex geen punten kent', 'Omdat alle boze domeinen op .nl eindigen'], answer: 0, explain: 'Legitiem en kwaadaardig verkeer delen hier hetzelfde .jvt.lab; je moet op het onderscheidende kenmerk matchen, niet op het gedeelde domein.' },
-        { q: 'Welke vlag verschijnt als je het regexgolf-lab oplost?', answer: ['JVT{boze_domeinen_gevangen}'], encoded: true, hint: 'Los het lab op; de vlag staat bij "Opgelost".', explain: 'Bij een correcte oplossing toont het lab JVT{boze_domeinen_gevangen}.' },
+        { q: 'Waarom werkt een patroon dat alleen op "bevat een cijfer" (\\d) let hier niet?', options: ['Het legitieme o365.portal.nm.lab bevat cijfers, en sommige boze domeinen juist niet', 'Cijfers mogen niet in een regex', 'DNS staat geen cijfers toe', 'Omdat de flag i ontbreekt'], answer: 0, explain: 'o365.portal.nm.lab (legitiem) heeft cijfers en zou ten onrechte matchen; out.beacon.nm.lab (boos) heeft geen cijfer en zou gemist worden.' },
+        { q: 'Waarom kun je niet simpelweg op .nm.lab matchen om de boze domeinen te vinden?', options: ['Omdat intranet.nm.lab een legitiem bedrijfsdomein is dat je niet wilt raken', 'Omdat .nm.lab niet bestaat', 'Omdat regex geen punten kent', 'Omdat alle boze domeinen op .nl eindigen'], answer: 0, explain: 'Legitiem en kwaadaardig verkeer delen hier hetzelfde .nm.lab; je moet op het onderscheidende kenmerk matchen, niet op het gedeelde domein.' },
+        { q: 'Welke vlag verschijnt als je het regexgolf-lab oplost?', answer: ['NM{boze_domeinen_gevangen}'], encoded: true, hint: 'Los het lab op; de vlag staat bij "Opgelost".', explain: 'Bij een correcte oplossing toont het lab NM{boze_domeinen_gevangen}.' },
       ],
     },
 
@@ -417,7 +417,7 @@ pq7za9-chunk02-r3nxc8vb.exfil.jvt.lab</code></pre>
 
         <h3>Van sporen naar rapport</h3>
         <p>Scheid in je verslag <strong>feiten</strong> van <strong>interpretatie</strong>. Feit: "om 03:05 verstuurde
-        WS-FIN-03 een PUT van 471.859.200 bytes (±450 MB) naar het nooit eerder geziene domein opslag-x9f3.jvt.lab."
+        WS-FIN-03 een PUT van 471.859.200 bytes (±450 MB) naar het nooit eerder geziene domein opslag-x9f3.nm.lab."
         Interpretatie: "dit is vermoedelijk de exfiltratie van een gecomprimeerd, versleuteld archief met klant- en
         HR-gegevens." Maak je werk <strong>reproduceerbaar</strong>: noem de bron (de pcap of het log), de hash ervan en de
         exacte filters die je gebruikte, zodat een collega bij dezelfde data tot dezelfde conclusie komt.</p>
@@ -441,21 +441,21 @@ pq7za9-chunk02-r3nxc8vb.exfil.jvt.lab</code></pre>
         prompt: 'Zet de acht gebeurtenissen in de juiste chronologische volgorde (van vroeg naar laat).',
         items: [
           { id: 'a', label: '01:58 — kwaadaardige macro in Factuur.docm start een verborgen PowerShell (initiale toegang)' },
-          { id: 'b', label: '02:03 — PowerShell checkt in bij C2 cdn-telemetry.c2relay.jvt.lab (beaconing begint)' },
+          { id: 'b', label: '02:03 — PowerShell checkt in bij C2 cdn-telemetry.c2relay.nm.lab (beaconing begint)' },
           { id: 'c', label: '02:12 — gedeelde mappen en bestanden in kaart gebracht (verkenning)' },
           { id: 'd', label: '02:34 — klant-export en HR-dossiers gekopieerd naar SRV-ARCHIEF (staging/collectie)' },
           { id: 'e', label: '03:01 — 7-Zip bundelt en comprimeert de buit tot exfil.7z (compressie)' },
           { id: 'f', label: '03:03 — exfil.7z versleuteld met een wachtwoord (encryptie)' },
-          { id: 'g', label: '03:05 — exfil.7z (±450 MB) geüpload naar opslag-x9f3.jvt.lab (exfiltratie)' },
+          { id: 'g', label: '03:05 — exfil.7z (±450 MB) geüpload naar opslag-x9f3.nm.lab (exfiltratie)' },
           { id: 'h', label: '03:12 — logboeken gewist en tijdelijke bestanden verwijderd (opschonen)' },
         ],
         correct: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'],
-        flag: 'JVT{exfil_keten_compleet}',
+        flag: 'NM{exfil_keten_compleet}',
         explain: 'De keten: initiale toegang (01:58) → beaconing (02:03) → verkenning (02:12) → staging (02:34) → compressie (03:01) → encryptie (03:03) → upload (03:05) → opschonen (03:12).',
       },
       questions: [
         { q: 'Welke stap komt in de exfil-keten direct ná de compressie?', options: ['Encryptie van het archief', 'De verkenning', 'De initiale toegang', 'Het beaconing'], answer: 0, explain: 'Volgorde: collectie/staging → compressie → encryptie → upload. Na comprimeren wordt het archief versleuteld.' },
-        { q: 'Welke vlag verschijnt als je de tijdlijn perfect reconstrueert?', answer: ['JVT{exfil_keten_compleet}'], encoded: true, hint: 'Los het ordering-lab op; de vlag staat bij een perfecte volgorde.', explain: 'Bij de juiste volgorde toont het lab JVT{exfil_keten_compleet}.' },
+        { q: 'Welke vlag verschijnt als je de tijdlijn perfect reconstrueert?', answer: ['NM{exfil_keten_compleet}'], encoded: true, hint: 'Los het ordering-lab op; de vlag staat bij een perfecte volgorde.', explain: 'Bij de juiste volgorde toont het lab NM{exfil_keten_compleet}.' },
         { q: 'Wat hoort in een forensisch rapport strikt gescheiden te blijven?', options: ['Feiten en interpretatie', 'Datum en tijd', 'Bytes en bits', 'Bron-IP en bestemmings-IP'], answer: 0, explain: 'Feiten (wat je zag) en interpretatie (wat het betekent) hou je uit elkaar, zodat je verslag controleerbaar blijft.' },
         { q: 'Ik kan exfiltratie herkennen aan een ongewone richting, een groot volume, een te regelmatig ritme of een zeldzame bestemming.', noAnswer: true },
       ],

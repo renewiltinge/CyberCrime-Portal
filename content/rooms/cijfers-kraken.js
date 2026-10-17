@@ -100,13 +100,13 @@ CS.registerRoom({
 
         <h3>Aan de slag</h3>
         <p>In het lab staat een versleuteld bericht. Laat de tool alle verschuivingen tonen en vind de regel die
-        leesbaar Nederlands oplevert. Daarin staat een vlag in het formaat <code>JVT{...}</code>. Noteer ook welke
+        leesbaar Nederlands oplevert. Daarin staat een vlag in het formaat <code>NM{...}</code>. Noteer ook welke
         verschuiving (ROT-getal) het bericht gebruikt.</p>
       `,
-      lab: { type: 'cipher', text: 'Kl nlolptl cshn pz QCA{jhlzhy_pz_thrrlspqr}' },
+      lab: { type: 'cipher', text: 'Kl nlolptl cshn pz UT{jhlzhy_pz_thrrlspqr}' },
       questions: [
         { q: 'Welke verschuiving (ROT-getal) gebruikt het bericht in het lab?', answer: ['7', 'rot7', '7 plaatsen'], hint: 'Kijk bij welke verschuiving de regel leesbaar Nederlands wordt; het lab zet er een "beste gok" bij.', explain: 'De juiste verschuiving is 7 (ROT7); dan wordt het bericht leesbaar.' },
-        { q: 'Wat is de vlag in het ontsleutelde bericht?', answer: ['JVT{caesar_is_makkelijk}'], encoded: true, hint: 'Ontsleutel met ROT7 en lees de vlag tussen de accolades.', explain: 'Met 25 mogelijke sleutels is een Caesarcijfer binnen een seconde gekraakt.' },
+        { q: 'Wat is de vlag in het ontsleutelde bericht?', answer: ['NM{caesar_is_makkelijk}'], encoded: true, hint: 'Ontsleutel met ROT7 en lees de vlag tussen de accolades.', explain: 'Met 25 mogelijke sleutels is een Caesarcijfer binnen een seconde gekraakt.' },
         { q: 'Waarom is frequentieanalyse zo effectief tegen een Caesarcijfer?', options: ['Omdat de letterverdeling van de taal bewaard blijft; je herkent de e en leidt de verschuiving af', 'Omdat het cijfer de spaties weggooit', 'Omdat het cijfer een heel grote sleutelruimte heeft'], answer: 0, explain: 'Caesar verschuift alle letters gelijk, dus de frequentiepatronen van de taal blijven intact.' },
       ],
     },
@@ -146,9 +146,9 @@ CS.registerRoom({
         <p>In het lab staat een met Atbash versleutelde vlag. Kies in de tool de Atbash-bewerking (of pas de
         alfabet-spiegeling toe) en lees de vlag.</p>
       `,
-      lab: { type: 'cipher', text: 'QEG{zgyzhs_lntvwizzrw}' },
+      lab: { type: 'cipher', text: 'MN{zgyzhs_lntvwizzrw}' },
       questions: [
-        { q: 'Wat is de vlag na het toepassen van Atbash op het bericht in het lab?', answer: ['JVT{atbash_omgedraaid}'], encoded: true, hint: 'Atbash spiegelt het alfabet: a<->z, b<->y, ... en is zijn eigen omkering.', explain: 'Atbash heeft geen te raden sleutel; ken je de methode, dan is het direct leesbaar.' },
+        { q: 'Wat is de vlag na het toepassen van Atbash op het bericht in het lab?', answer: ['NM{atbash_omgedraaid}'], encoded: true, hint: 'Atbash spiegelt het alfabet: a<->z, b<->y, ... en is zijn eigen omkering.', explain: 'Atbash heeft geen te raden sleutel; ken je de methode, dan is het direct leesbaar.' },
         { q: 'Wat hebben Atbash en ROT13 gemeen?', options: ['Ze hebben een enorme sleutelruimte', 'Ze zijn hun eigen omkering: nog een keer toepassen geeft de originele tekst', 'Ze gebruiken allebei een lange, geheime sleutel'], answer: 1, explain: 'Bij beide draai je het bericht terug door dezelfde bewerking opnieuw toe te passen.' },
         { q: 'Is het omkeren van een tekst een vorm van versleuteling?', options: ['Nee, er is geen sleutel; het is een volgorde-truc zoals coderen', 'Ja, het is net zo sterk als AES', 'Alleen als de tekst langer is dan 20 tekens'], answer: 0, explain: 'Zonder sleutel is het geen encryptie; iedereen die de truc kent leest mee.' },
       ],
@@ -191,10 +191,10 @@ CS.registerRoom({
         <p>Open het lab, vul het sleutelwoord <code>dojo</code> in bij de Vigenère-bewerking en ontsleutel het
         bericht. Er staat een vlag in.</p>
       `,
-      lab: { type: 'cipher', text: 'Gs bzhicso wb rrxx sq rn joop zxwmh MJC{jlunbhfn_uhyaodyc}' },
+      lab: { type: 'cipher', text: 'Gs bzhicso wb rrxx sq rn joop zxwmh QA{ewjswsus_psnfjonh}' },
       questions: [
         { q: 'Welk sleutelwoord gebruik je om het Vigenère-bericht in het lab te ontsleutelen?', answer: ['dojo'], hint: 'Het staat in de uitleg van deze taak genoemd.', explain: 'Met het sleutelwoord "dojo" wordt het bericht leesbaar.' },
-        { q: 'Wat is de vlag in het ontsleutelde Vigenère-bericht?', answer: ['JVT{vigenere_gekraakt}'], encoded: true, hint: 'Vul de sleutel dojo in en lees de vlag tussen de accolades.', explain: 'Ken je (of raad je) de sleutel, dan valt ook een polyalfabetisch cijfer.' },
+        { q: 'Wat is de vlag in het ontsleutelde Vigenère-bericht?', answer: ['NM{vigenere_gekraakt}'], encoded: true, hint: 'Vul de sleutel dojo in en lees de vlag tussen de accolades.', explain: 'Ken je (of raad je) de sleutel, dan valt ook een polyalfabetisch cijfer.' },
         { q: 'Waar dient het Kasiski-onderzoek voor bij het kraken van Vigenère?', options: ['Het schat de lengte van het sleutelwoord uit afstanden tussen herhalingen', 'Het berekent direct de vlag', 'Het maakt de sleutel langer zodat hij veiliger wordt'], answer: 0, explain: 'Met de sleutellengte kun je de tekst in kolommen splitsen en per kolom frequentieanalyse doen.' },
       ],
     },
@@ -246,9 +246,9 @@ CS.registerRoom({
         <p>In het lab staat een XOR-ciphertext als hex. Laat de tool alle 256 sleutels proberen en vind de byte-sleutel
         die een leesbare vlag oplevert.</p>
       `,
-      lab: { type: 'cipher', text: '60 7c 7e 51 52 45 58 75 4f 4f 44 75 48 53 5e 4f 57' },
+      lab: { type: 'cipher', text: '64 67 51 52 45 58 75 4f 4f 44 75 48 53 5e 4f 57' },
       questions: [
-        { q: 'Wat is de vlag na het brute-forcen van de 1-byte-XOR in het lab?', answer: ['JVT{xor_een_byte}'], encoded: true, hint: 'Een byte-sleutel heeft maar 256 mogelijkheden; laat het lab ze allemaal proberen.', explain: 'Met slechts 256 sleutels is een 1-byte-XOR net zo triviaal te kraken als Caesar.' },
+        { q: 'Wat is de vlag na het brute-forcen van de 1-byte-XOR in het lab?', answer: ['NM{xor_een_byte}'], encoded: true, hint: 'Een byte-sleutel heeft maar 256 mogelijkheden; laat het lab ze allemaal proberen.', explain: 'Met slechts 256 sleutels is een 1-byte-XOR net zo triviaal te kraken als Caesar.' },
         { q: 'Hoeveel mogelijke sleutels moet je proberen om een 1-byte-XOR-cijfer te brute-forcen?', answer: ['256'], hint: 'Een byte is 8 bits.', explain: 'Een byte heeft 2^8 = 256 mogelijke waarden, dus maximaal 256 pogingen.' },
         { q: 'Welke drie eigenschappen maken een XOR-sleutel tot een onbreekbaar one-time pad?', options: ['Echt willekeurig, minstens even lang als het bericht, en maar één keer gebruikt', 'Kort, makkelijk te onthouden en vaak hergebruikt', 'Precies 8 tekens lang en alleen cijfers'], answer: 0, explain: 'Alle drie zijn nodig; breek er één en de garantie van onbreekbaarheid vervalt.' },
         { q: 'Waarom is XOR met een korte, herhaalde sleutel zwak?', options: ['Omdat de herhaling patronen in de ciphertext achterlaat die statistiek en frequentieanalyse uitbuiten', 'Omdat XOR niet omkeerbaar is', 'Omdat XOR alleen op letters werkt, niet op bytes'], answer: 0, explain: 'Een herhaalde sleutel brengt structuur terug; precies wat een aanvaller nodig heeft.' },

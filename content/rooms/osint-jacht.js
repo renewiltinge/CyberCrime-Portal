@@ -1,12 +1,12 @@
 /* Room: OSINT-jacht — ontmasker de operator (puzzels) */
 
 const KOERIER_POST = `GELEKTE OPERATOR-POST — bron: fraudeforum DropZone (gearchiveerd kopie)
-Zaakcode: JVT{koerier_ontmaskerd}
+Zaakcode: NM{koerier_ontmaskerd}
 
 [v0idkoerier] KOERIER-kit v3 — "uitbetalingen netjes geregeld"
-Contact alleen via v0idkoerier[at]mail[.]jvt[.]lab (PGP verplicht, geen DM's).
-Panel: hxxps://panel[.]koerier-track[.]jvt[.]lab/login
-Backup-panel: hxxps://koerier-track[.]jvt[.]lab/panel
+Contact alleen via v0idkoerier[at]mail[.]nineminds[.]lab (PGP verplicht, geen DM's).
+Panel: hxxps://panel[.]koerier-track[.]nineminds[.]lab/login
+Backup-panel: hxxps://koerier-track[.]nineminds[.]lab/panel
 C2 / check-in draait op 198.51.100[.]77 en 203.0.113[.]60
 Exfil-drop: 192.0.2[.]23
 Let op: 198.51.100[.]77 verzorgt óók de phishing-redirect, dus dat adres zie je dubbel.
@@ -81,17 +81,17 @@ CS.registerRoom({
             lines: [
               'gebruiker: v0idkoerier',
               'handtekening: "koeriersdienst voor je uitbetalingen"',
-              'contact: v0idkoerier@mail.jvt.lab',
+              'contact: v0idkoerier@mail.nm.lab',
               'PGP-fingerprint: 9F2A C1D9 4B77 0E65 7AB3',
             ],
           },
           {
             title: 'crt.sh + WHOIS — domeinregistratie', icon: '🔎',
             lines: [
-              'crt.sh zoekopdracht: koerier-track.jvt.lab',
-              'certificaat-subject: CN=panel.koerier-track.jvt.lab',
+              'crt.sh zoekopdracht: koerier-track.nm.lab',
+              'certificaat-subject: CN=panel.koerier-track.nm.lab',
               'WHOIS registrant-handle: v0idkoerier',
-              'WHOIS e-mail: v0idkoerier@mail.jvt.lab',
+              'WHOIS e-mail: v0idkoerier@mail.nm.lab',
             ],
           },
           {
@@ -105,10 +105,10 @@ CS.registerRoom({
           {
             title: 'Social post — Mastodon', icon: '📣',
             lines: [
-              'account: @v0idkoerier@sociaal.jvt.lab',
+              'account: @v0idkoerier@sociaal.nm.lab',
               'bio: "pakketjes & betalingen — dm voor tarief"',
               'post 03:14 UTC: "nieuwe panel-build is live"',
-              'memo (base64): SlZUe3Bpdm90X3ZpYV9oZXJnZWJydWlrfQ==',
+              'memo (base64): Tk17cGl2b3RfdmlhX2hlcmdlYnJ1aWt9',
             ],
           },
           {
@@ -117,30 +117,30 @@ CS.registerRoom({
               'Software: KoerierKit 3.0',
               'Author: v0idkoerier',
               'pad: C:\\Users\\v0idkoerier\\build\\panel',
-              'UserComment: JVT{alias_is_de_rode_draad}',
+              'UserComment: NM{alias_is_de_rode_draad}',
             ],
           },
           {
-            title: 'Paste — gelekte configsnipper (paste.jvt.lab)', icon: '📨',
+            title: 'Paste — gelekte configsnipper (paste.nm.lab)', icon: '📨',
             lines: [
-              'smtp_user = v0idkoerier@mail.jvt.lab',
-              'c2 = koerier-track.jvt.lab',
+              'smtp_user = v0idkoerier@mail.nm.lab',
+              'c2 = koerier-track.nm.lab',
               'note = zie forum DropZone voor tarief',
             ],
           },
         ],
         ask: [
           { q: 'Welke alias komt op (vrijwel) elke bron terug?', answer: ['v0idkoerier'], hint: 'Lees de gebruikersnaam, de registrant-handle, het wallet-label en de Author.' },
-          { q: 'Welk e-mailadres koppelt de forumpost aan de WHOIS-registratie?', answer: ['v0idkoerier@mail.jvt.lab'], hint: 'Hetzelfde adres staat op de forumkaart én de crt.sh/WHOIS-kaart.' },
-          { q: 'Welk domein registreerde de operator (uit crt.sh/WHOIS)?', answer: ['koerier-track.jvt.lab'], hint: 'Kijk naar de crt.sh-zoekopdracht en de config-paste.' },
+          { q: 'Welk e-mailadres koppelt de forumpost aan de WHOIS-registratie?', answer: ['v0idkoerier@mail.nm.lab'], hint: 'Hetzelfde adres staat op de forumkaart én de crt.sh/WHOIS-kaart.' },
+          { q: 'Welk domein registreerde de operator (uit crt.sh/WHOIS)?', answer: ['koerier-track.nm.lab'], hint: 'Kijk naar de crt.sh-zoekopdracht en de config-paste.' },
           { q: 'Welk wallet-adres is publiek aan de operator gelabeld?', answer: ['bc1qk0erierv0idtipjar000xmpl'], hint: 'Staat op de blockchain-explorer-kaart.' },
         ],
       },
       questions: [
         { q: 'Welke alias is in dit onderzoek de rode draad?', options: ['gamer123', 'v0idkoerier', 'DropZone', 'KoerierKit'], answer: 1, explain: 'v0idkoerier komt terug op het forum, in de WHOIS-registratie, op het wallet-label, in de social bio en in de metadata — dat is dezelfde persoon.' },
-        { q: 'Welk e-mailadres koppelt de forumpost hard aan de domeinregistratie?', answer: ['v0idkoerier@mail.jvt.lab'], hint: 'Hetzelfde adres staat op twee onafhankelijke kaarten.', explain: 'Een identiek, zeldzaam mailadres op twee losse bronnen is een van de sterkste koppelingen die je kunt vinden.' },
-        { q: 'Welke vlag staat in het UserComment-veld van de metadata van panel.png?', answer: ['JVT{alias_is_de_rode_draad}'], hint: 'Lees de metadata-kaart; de maker liet de tekst per ongeluk staan.', explain: 'In de metadata staat UserComment: JVT{alias_is_de_rode_draad} — metadata verraadt vaak de maker én meer.' },
-        { q: 'Decodeer de Base64-memo uit de Mastodon-post. Welke vlag komt eruit?', answer: ['JVT{pivot_via_hergebruik}'], encoded: true, hint: 'SlZUe3Bpdm90X3ZpYV9oZXJnZWJydWlrfQ== is Base64. Decodeer het.', explain: 'De Base64-string decodeert naar JVT{pivot_via_hergebruik}: precies wat je net deed — pivoten op een hergebruikt kenmerk.' },
+        { q: 'Welk e-mailadres koppelt de forumpost hard aan de domeinregistratie?', answer: ['v0idkoerier@mail.nm.lab'], hint: 'Hetzelfde adres staat op twee onafhankelijke kaarten.', explain: 'Een identiek, zeldzaam mailadres op twee losse bronnen is een van de sterkste koppelingen die je kunt vinden.' },
+        { q: 'Welke vlag staat in het UserComment-veld van de metadata van panel.png?', answer: ['NM{alias_is_de_rode_draad}'], hint: 'Lees de metadata-kaart; de maker liet de tekst per ongeluk staan.', explain: 'In de metadata staat UserComment: NM{alias_is_de_rode_draad} — metadata verraadt vaak de maker én meer.' },
+        { q: 'Decodeer de Base64-memo uit de Mastodon-post. Welke vlag komt eruit?', answer: ['NM{pivot_via_hergebruik}'], encoded: true, hint: 'Tk17cGl2b3RfdmlhX2hlcmdlYnJ1aWt9 is Base64. Decodeer het.', explain: 'De Base64-string decodeert naar NM{pivot_via_hergebruik}: precies wat je net deed — pivoten op een hergebruikt kenmerk.' },
       ],
     },
 
@@ -150,39 +150,39 @@ CS.registerRoom({
         <p>De operator stuurt zijn slachtoffers met phishingmails naar nep-pagina's. Uit de mailgateway heb je vijf URL's verzameld. Jouw taak: bepaal waar ze écht naartoe gaan, zodat je de juiste hosts kunt blokkeren. Je klikt nergens op — je leest de URL als tekst.</p>
 
         <h3>Zo lees je een URL</h3>
-        <pre><code>https://gebruiker@host.voorbeeld.jvt.lab:8443/pad?id=12
+        <pre><code>https://gebruiker@host.voorbeeld.nm.lab:8443/pad?id=12
 
 schema          https
 gebruikersdeel  gebruiker
-host            host.voorbeeld.jvt.lab
+host            host.voorbeeld.nm.lab
 poort           8443
 pad             /pad
 query           id=12</code></pre>
         <ul>
           <li>De <strong>host</strong> is waar je browser echt verbinding mee maakt. Alles vóór een <code>@</code> is een gebruikersdeel en wordt genegeerd. Bij <code>https://www.nederbank.nl@203.0.113.60/</code> ga je dus naar <code>203.0.113.60</code>, niet naar de bank. Dat heet de <strong>@-truc</strong>.</li>
-          <li>Een hostnaam lees je <strong>van rechts naar links</strong>. Bij <code>pakketpost.nl.koerier-track.jvt.lab</code> bepaalt het laatste stuk de eigenaar: het domein is <code>koerier-track.jvt.lab</code> (van de operator!). De merknaam vooraan is maar een verzonnen subdomein.</li>
+          <li>Een hostnaam lees je <strong>van rechts naar links</strong>. Bij <code>pakketpost.nl.koerier-track.nm.lab</code> bepaalt het laatste stuk de eigenaar: het domein is <code>koerier-track.nm.lab</code> (van de operator!). De merknaam vooraan is maar een verzonnen subdomein.</li>
           <li><strong>Punycode</strong> (<code>xn--</code>) codeert internationale tekens in een domeinnaam. Aanvallers gebruiken het voor lookalike-domeinen die bijna niet van echt te onderscheiden zijn (een homograafaanval).</li>
           <li>Een kaal <strong>IP-adres</strong> als host, <code>http</code> zonder <code>s</code>, of een vreemde <strong>poort</strong> zijn extra rode vlaggen.</li>
         </ul>
 
-        <p>Het lab ontleedt elke URL en toont de rode vlaggen. Let op: het eerste domein hoort bij <code>koerier-track.jvt.lab</code> — hetzelfde domein dat je in taak 2 in de WHOIS-registratie vond. De phishing en de operator hangen aan elkaar.</p>
+        <p>Het lab ontleedt elke URL en toont de rode vlaggen. Let op: het eerste domein hoort bij <code>koerier-track.nm.lab</code> — hetzelfde domein dat je in taak 2 in de WHOIS-registratie vond. De phishing en de operator hangen aan elkaar.</p>
 
         <div class="callout warn"><strong>Let op:</strong> klik nooit op een verdachte link "om even te kijken". Analyseer hem als tekst, zoals hier. Blokkeer meestal de hele <em>host</em>, want paden en parameters wisselt een aanvaller zo.</div>
       `,
       lab: {
         type: 'url',
         urls: [
-          'http://pakketpost.nl.koerier-track.jvt.lab/status?id=NL44',
+          'http://pakketpost.nl.koerier-track.nm.lab/status?id=NL44',
           'https://www.nederbank.nl@203.0.113.60/herstel',
-          'https://xn--pakketpst-l2a.jvt.lab/track',
+          'https://xn--pakketpst-l2a.nm.lab/track',
           'http://192.0.2.23:8088/koerier/afhalen',
-          'https://portaal.jvt.lab/klant',
+          'https://portaal.nm.lab/klant',
         ],
       },
       questions: [
         { q: 'Met welke host maakt de browser écht verbinding bij https://www.nederbank.nl@203.0.113.60/herstel?', answer: ['203.0.113.60'], hint: 'Alles vóór de @ is het gebruikersdeel en wordt genegeerd.', explain: 'Door de @-truc lijkt het een link naar de bank, maar de echte host is het IP-adres 203.0.113.60.' },
-        { q: 'Welke URL gebruikt punycode om op een bekend domein te lijken?', options: ['https://portaal.jvt.lab/klant', 'https://xn--pakketpst-l2a.jvt.lab/track', 'http://192.0.2.23:8088/koerier/afhalen', 'https://www.nederbank.nl@203.0.113.60/herstel'], answer: 1, explain: 'xn-- verraadt punycode: achter de schermen staat een teken dat op een gewone letter lijkt (homograafaanval).' },
-        { q: 'Onder welk geregistreerd domein valt http://pakketpost.nl.koerier-track.jvt.lab/status (lees van rechts naar links)?', answer: ['koerier-track.jvt.lab'], hint: 'Het laatste stuk vóór de map bepaalt de eigenaar; de merknaam vooraan is een subdomein.', explain: 'De host valt onder koerier-track.jvt.lab — het domein van de operator uit taak 2. "pakketpost.nl" is misleiding.' },
+        { q: 'Welke URL gebruikt punycode om op een bekend domein te lijken?', options: ['https://portaal.nm.lab/klant', 'https://xn--pakketpst-l2a.nm.lab/track', 'http://192.0.2.23:8088/koerier/afhalen', 'https://www.nederbank.nl@203.0.113.60/herstel'], answer: 1, explain: 'xn-- verraadt punycode: achter de schermen staat een teken dat op een gewone letter lijkt (homograafaanval).' },
+        { q: 'Onder welk geregistreerd domein valt http://pakketpost.nl.koerier-track.nm.lab/status (lees van rechts naar links)?', answer: ['koerier-track.nm.lab'], hint: 'Het laatste stuk vóór de map bepaalt de eigenaar; de merknaam vooraan is een subdomein.', explain: 'De host valt onder koerier-track.nm.lab — het domein van de operator uit taak 2. "pakketpost.nl" is misleiding.' },
         { q: 'Welke poort gebruikt de URL met het kale IP-adres 192.0.2.23?', answer: ['8088'], hint: 'Kijk naar het getal na de dubbele punt.', explain: 'Een ongebruikelijke poort op een kaal IP-adres via http is een sterke rode vlag.' },
       ],
     },
@@ -195,8 +195,8 @@ query           id=12</code></pre>
         <h3>Wat is wat?</h3>
         <ul>
           <li><strong>IPv4-adres</strong> — bijv. <code>198.51.100[.]77</code> (een documentatie-adres).</li>
-          <li><strong>Domein / URL</strong> — <code>koerier-track[.]jvt[.]lab</code>, <code>hxxps://panel[.]koerier-track[.]jvt[.]lab/login</code>.</li>
-          <li><strong>E-mailadres</strong> — <code>v0idkoerier[at]mail[.]jvt[.]lab</code> (ken je die nog uit taak 2?).</li>
+          <li><strong>Domein / URL</strong> — <code>koerier-track[.]nineminds[.]lab</code>, <code>hxxps://panel[.]koerier-track[.]nineminds[.]lab/login</code>.</li>
+          <li><strong>E-mailadres</strong> — <code>v0idkoerier[at]mail[.]nineminds[.]lab</code> (ken je die nog uit taak 2?).</li>
           <li><strong>Hashes</strong> — MD5 (32 hextekens) en SHA-256 (64 hextekens) van bestanden.</li>
           <li><strong>CVE</strong> — een kwetsbaarheid die de kit misbruikt.</li>
         </ul>
@@ -211,8 +211,8 @@ query           id=12</code></pre>
       questions: [
         { q: 'Hoeveel unieke IPv4-adressen staan er in de post?', answer: ['3', 'drie'], hint: 'Tel de adressen, maar reken een dubbel adres één keer.', explain: '198.51.100.77, 203.0.113.60 en 192.0.2.23. Het adres 198.51.100.77 staat er twee keer in (C2 én redirect), maar telt als één uniek adres.' },
         { q: 'Welk CVE-nummer noemt de post?', answer: ['CVE-2024-3400'], hint: 'Zoek naar CVE- in de tekst of de CVE-telling in het lab.', explain: 'De kit richt zich op ongepatchte gateways via CVE-2024-3400; patchen heeft dus hoge prioriteit.' },
-        { q: 'Welk e-mailadres in de post koppelt terug naar de operator uit taak 2?', answer: ['v0idkoerier@mail.jvt.lab'], hint: 'Refang het gedefangde adres ([at] en [.] terugzetten).', explain: 'Gerefangd is dat v0idkoerier@mail.jvt.lab — precies het adres uit de forumpost en de WHOIS-registratie.' },
-        { q: 'Wat is de zaakcode (vlag) bovenin de post?', answer: ['JVT{koerier_ontmaskerd}'], hint: 'Kijk in de eerste regels van de tekst in het lab.', explain: 'De zaakcode JVT{koerier_ontmaskerd} markeert dat je de operator aan zijn eigen infrastructuur hebt gekoppeld.' },
+        { q: 'Welk e-mailadres in de post koppelt terug naar de operator uit taak 2?', answer: ['v0idkoerier@mail.nm.lab'], hint: 'Refang het gedefangde adres ([at] en [.] terugzetten).', explain: 'Gerefangd is dat v0idkoerier@mail.nm.lab — precies het adres uit de forumpost en de WHOIS-registratie.' },
+        { q: 'Wat is de zaakcode (vlag) bovenin de post?', answer: ['NM{koerier_ontmaskerd}'], hint: 'Kijk in de eerste regels van de tekst in het lab.', explain: 'De zaakcode NM{koerier_ontmaskerd} markeert dat je de operator aan zijn eigen infrastructuur hebt gekoppeld.' },
       ],
     },
 
@@ -236,7 +236,7 @@ query           id=12</code></pre>
       lab: {
         type: 'connections',
         prompt: 'Verdeel de zestien sporen in vier groepen van vier: OSINT-bronnen, entiteitstypes, infrastructuur-vingerafdrukken en social-/communicatieplatforms.',
-        flag: 'JVT{zestien_sporen_gesorteerd}',
+        flag: 'NM{zestien_sporen_gesorteerd}',
         groups: [
           { name: 'OSINT-bronnen', items: ['crt.sh', 'WHOIS', 'Wayback Machine', 'Shodan'] },
           { name: 'Entiteitstypes', items: ['domein', 'wallet', 'alias', 'certificaat'] },
@@ -247,7 +247,7 @@ query           id=12</code></pre>
       questions: [
         { q: 'In welke groep hoort crt.sh?', options: ['Entiteitstypes', 'OSINT-bronnen', 'Infrastructuur-vingerafdrukken', 'Social-/communicatieplatforms'], answer: 1, explain: 'crt.sh is een doorzoekbare bron (de Certificate Transparency-logs). Het abstracte type "certificaat" hoort bij de entiteitstypes.' },
         { q: 'Een favicon-hash en een gedeeld Google Analytics-ID gebruik je vooral om wat te doen?', options: ['Een wachtwoord kraken', 'Verschillende servers of sites aan dezelfde eigenaar clusteren', 'Een foto geolokaliseren', 'Een e-mail versturen'], answer: 1, explain: 'Het zijn infrastructuur-vingerafdrukken: duikt dezelfde favicon-hash of tracking-ID op meerdere sites op, dan horen die waarschijnlijk bij dezelfde beheerder.' },
-        { q: 'Welke vlag verschijnt als je alle vier de groepen goed hebt?', answer: ['JVT{zestien_sporen_gesorteerd}'], hint: 'Los de puzzel in het lab op.', explain: 'Bij een volledige oplossing toont het lab JVT{zestien_sporen_gesorteerd}.' },
+        { q: 'Welke vlag verschijnt als je alle vier de groepen goed hebt?', answer: ['NM{zestien_sporen_gesorteerd}'], hint: 'Los de puzzel in het lab op.', explain: 'Bij een volledige oplossing toont het lab NM{zestien_sporen_gesorteerd}.' },
       ],
     },
 
@@ -295,7 +295,7 @@ query           id=12</code></pre>
         <h3>De juridische lijn (kort)</h3>
         <p>Als een <strong>opsporingsambtenaar</strong> stelselmatig informatie over iemand gaat inwinnen — structureel volgen, een profiel opbouwen — valt dat onder een bijzondere opsporingsbevoegdheid: <strong>art. 126j Sv</strong> (stelselmatige inwinning van informatie). Dat vereist toestemming en waarborgen. Een burger of leerling heeft die bevoegdheid <em>niet</em>. En de <strong>AVG</strong> geldt altijd: verzamel niet meer persoonsgegevens dan je voor je vraag nodig hebt (dataminimalisatie).</p>
 
-        <div class="callout danger"><strong>Oefen alleen fictief.</strong> Alle aliassen, domeinen en adressen in deze room zijn verzonnen (<code>.jvt.lab</code>, documentatie-IP's). Richt deze technieken nooit op een echt persoon zonder grondslag en bevoegdheid. De vaardigheid die telt is niet "zoveel mogelijk vinden", maar "het juiste vinden, kunnen bewijzen, en binnen de regels blijven".</div>
+        <div class="callout danger"><strong>Oefen alleen fictief.</strong> Alle aliassen, domeinen en adressen in deze room zijn verzonnen (<code>.nm.lab</code>, documentatie-IP's). Richt deze technieken nooit op een echt persoon zonder grondslag en bevoegdheid. De vaardigheid die telt is niet "zoveel mogelijk vinden", maar "het juiste vinden, kunnen bewijzen, en binnen de regels blijven".</div>
       `,
       questions: [
         { q: 'Wat is het verschil tussen toegestaan (passief) en niet-toegestaan optreden in dit onderzoek?', options: ['Er is geen verschil', 'Passief = openbare bronnen lezen en combineren; niet toegestaan = inloggen, infiltreren of met een nep-account uitlokken', 'Passief mag alleen \'s nachts', 'Alleen de politie mag googelen'], answer: 1, explain: 'Observeren wat openbaar is, mag. Zodra je inlogt, een slot forceert of iemand actief misleidt, is het geen OSINT meer.' },

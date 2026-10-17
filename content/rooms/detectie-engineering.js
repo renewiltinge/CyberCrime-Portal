@@ -33,29 +33,29 @@ Oct  4 02:31:40 srv-api02 sshd[2351]: Accepted publickey for deploy from 192.0.2
 
 // Sysmon-procesgebeurtenissen (EventID 1) voor het logs-lab (taak 4): drie fout-positieven via SCCM (CcmExec)
 // en één echte treffer: Word dat een verborgen PowerShell met -enc start. Base64 decodeert naar onschuldige tekst.
-const DE_SYSMON_LOG = `2026-10-02T07:58:11Z WS-FIN-03 Sysmon EventID=1 User=JVT\\a.bakker ParentImage=C:\\Windows\\explorer.exe Image=C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe CommandLine="chrome.exe"
+const DE_SYSMON_LOG = `2026-10-02T07:58:11Z WS-FIN-03 Sysmon EventID=1 User=NM\\a.bakker ParentImage=C:\\Windows\\explorer.exe Image=C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe CommandLine="chrome.exe"
 2026-10-02T08:00:04Z WS-HR-02 Sysmon EventID=1 User=NT AUTHORITY\\SYSTEM ParentImage=C:\\Windows\\CCM\\CcmExec.exe Image=C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe CommandLine="powershell.exe -NoLogo -NonInteractive -ExecutionPolicy Bypass -EncodedCommand VwByAGkAdABlAC0ATwB1AHQAcAB1AHQAIAAnAFMAQwBDAE0AIABjAG8AbQBwAGwAaQBhAG4AYwBlACAAYwBoAGUAYwBrACcA"
-2026-10-02T08:01:37Z WS-FIN-03 Sysmon EventID=1 User=JVT\\a.bakker ParentImage=C:\\Windows\\explorer.exe Image=C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe CommandLine="powershell.exe -NoProfile"
+2026-10-02T08:01:37Z WS-FIN-03 Sysmon EventID=1 User=NM\\a.bakker ParentImage=C:\\Windows\\explorer.exe Image=C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe CommandLine="powershell.exe -NoProfile"
 2026-10-02T08:03:12Z SRV-FS-01 Sysmon EventID=1 User=NT AUTHORITY\\SYSTEM ParentImage=C:\\Windows\\System32\\svchost.exe Image=C:\\Windows\\System32\\taskhostw.exe CommandLine="taskhostw.exe"
 2026-10-02T08:04:40Z WS-FIN-07 Sysmon EventID=1 User=NT AUTHORITY\\SYSTEM ParentImage=C:\\Windows\\CCM\\CcmExec.exe Image=C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe CommandLine="powershell.exe -NoLogo -enc VwByAGkAdABlAC0ATwB1AHQAcAB1AHQAIAAnAFMAQwBDAE0AIABjAG8AbQBwAGwAaQBhAG4AYwBlACAAYwBoAGUAYwBrACcA"
 2026-10-02T08:05:00Z SRV-FS-01 Sysmon EventID=1 User=NT AUTHORITY\\SYSTEM ParentImage=C:\\Windows\\System32\\svchost.exe Image=C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe CommandLine="powershell.exe -NoProfile -File C:\\Scripts\\backup_taak.ps1"
-2026-10-02T08:09:26Z WS-ICT-01 Sysmon EventID=1 User=JVT\\s.elmasri ParentImage=C:\\Windows\\explorer.exe Image=C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe CommandLine="powershell.exe Get-Content C:\\Temp\\log.txt | Out-File -Encoding utf8 C:\\Temp\\kopie.txt"
-2026-10-02T08:12:51Z WS-MKT-04 Sysmon EventID=1 User=JVT\\l.jansen ParentImage=C:\\Windows\\explorer.exe Image=C:\\Program Files\\Microsoft Office\\root\\Office16\\WINWORD.EXE CommandLine="WINWORD.EXE /n C:\\Users\\l.jansen\\Downloads\\Factuur_2026-117.docm"
-2026-10-02T08:12:58Z WS-MKT-04 Sysmon EventID=1 User=JVT\\l.jansen ParentImage=C:\\Program Files\\Microsoft Office\\root\\Office16\\WINWORD.EXE Image=C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe CommandLine="powershell.exe -nop -w hidden -enc VwByAGkAdABlAC0ATwB1AHQAcAB1AHQAIAAnAG8AZQBmAGUAbgBzAGEAbQBwAGwAZQAnAA==" soc_note=JVT{encoded_powershell_gevangen}
-2026-10-02T08:13:04Z WS-MKT-04 Sysmon EventID=1 User=JVT\\l.jansen ParentImage=C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe Image=C:\\Windows\\System32\\whoami.exe CommandLine="whoami.exe /all"
-2026-10-02T08:13:09Z WS-MKT-04 Sysmon EventID=1 User=JVT\\l.jansen ParentImage=C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe Image=C:\\Windows\\System32\\nslookup.exe CommandLine="nslookup update-check.jvt.lab"
-2026-10-02T08:15:33Z WS-HR-02 Sysmon EventID=1 User=JVT\\m.visser ParentImage=C:\\Windows\\explorer.exe Image=C:\\Program Files\\Microsoft Office\\root\\Office16\\OUTLOOK.EXE CommandLine="OUTLOOK.EXE"
+2026-10-02T08:09:26Z WS-ICT-01 Sysmon EventID=1 User=NM\\s.elmasri ParentImage=C:\\Windows\\explorer.exe Image=C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe CommandLine="powershell.exe Get-Content C:\\Temp\\log.txt | Out-File -Encoding utf8 C:\\Temp\\kopie.txt"
+2026-10-02T08:12:51Z WS-MKT-04 Sysmon EventID=1 User=NM\\l.jansen ParentImage=C:\\Windows\\explorer.exe Image=C:\\Program Files\\Microsoft Office\\root\\Office16\\WINWORD.EXE CommandLine="WINWORD.EXE /n C:\\Users\\l.jansen\\Downloads\\Factuur_2026-117.docm"
+2026-10-02T08:12:58Z WS-MKT-04 Sysmon EventID=1 User=NM\\l.jansen ParentImage=C:\\Program Files\\Microsoft Office\\root\\Office16\\WINWORD.EXE Image=C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe CommandLine="powershell.exe -nop -w hidden -enc VwByAGkAdABlAC0ATwB1AHQAcAB1AHQAIAAnAG8AZQBmAGUAbgBzAGEAbQBwAGwAZQAnAA==" soc_note=NM{encoded_powershell_gevangen}
+2026-10-02T08:13:04Z WS-MKT-04 Sysmon EventID=1 User=NM\\l.jansen ParentImage=C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe Image=C:\\Windows\\System32\\whoami.exe CommandLine="whoami.exe /all"
+2026-10-02T08:13:09Z WS-MKT-04 Sysmon EventID=1 User=NM\\l.jansen ParentImage=C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe Image=C:\\Windows\\System32\\nslookup.exe CommandLine="nslookup update-check.nm.lab"
+2026-10-02T08:15:33Z WS-HR-02 Sysmon EventID=1 User=NM\\m.visser ParentImage=C:\\Windows\\explorer.exe Image=C:\\Program Files\\Microsoft Office\\root\\Office16\\OUTLOOK.EXE CommandLine="OUTLOOK.EXE"
 2026-10-02T08:20:00Z WS-HR-11 Sysmon EventID=1 User=NT AUTHORITY\\SYSTEM ParentImage=C:\\Windows\\CCM\\CcmExec.exe Image=C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe CommandLine="powershell.exe -NonInteractive -EncodedCommand RwBlAHQALQBTAGUAcgB2AGkAYwBlACAAfAAgAE8AdQB0AC0ATgB1AGwAbAA="
-2026-10-02T08:22:47Z WS-ICT-01 Sysmon EventID=1 User=JVT\\s.elmasri ParentImage=C:\\Windows\\explorer.exe Image=C:\\Windows\\System32\\cmd.exe CommandLine="cmd.exe /c ipconfig /all"
-2026-10-02T08:25:10Z WS-FIN-03 Sysmon EventID=1 User=JVT\\a.bakker ParentImage=C:\\Windows\\explorer.exe Image=C:\\Program Files\\Microsoft Office\\root\\Office16\\EXCEL.EXE CommandLine="EXCEL.EXE C:\\Users\\a.bakker\\Documents\\begroting.xlsx"
+2026-10-02T08:22:47Z WS-ICT-01 Sysmon EventID=1 User=NM\\s.elmasri ParentImage=C:\\Windows\\explorer.exe Image=C:\\Windows\\System32\\cmd.exe CommandLine="cmd.exe /c ipconfig /all"
+2026-10-02T08:25:10Z WS-FIN-03 Sysmon EventID=1 User=NM\\a.bakker ParentImage=C:\\Windows\\explorer.exe Image=C:\\Program Files\\Microsoft Office\\root\\Office16\\EXCEL.EXE CommandLine="EXCEL.EXE C:\\Users\\a.bakker\\Documents\\begroting.xlsx"
 2026-10-02T08:30:02Z SRV-FS-01 Sysmon EventID=1 User=NT AUTHORITY\\SYSTEM ParentImage=C:\\Windows\\System32\\services.exe Image=C:\\ProgramData\\Microsoft\\Windows Defender\\Platform\\MsMpEng.exe CommandLine="MsMpEng.exe"
-2026-10-02T08:34:18Z WS-FIN-07 Sysmon EventID=1 User=JVT\\r.dijkstra ParentImage=C:\\Windows\\explorer.exe Image=C:\\Windows\\System32\\notepad.exe CommandLine="notepad.exe C:\\Users\\r.dijkstra\\Desktop\\todo.txt"
-2026-10-02T08:40:00Z WS-ICT-01 Sysmon EventID=1 User=JVT\\s.elmasri ParentImage=C:\\Windows\\explorer.exe Image=C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe CommandLine="powershell.exe Get-EventLog -LogName System -Newest 20"`;
+2026-10-02T08:34:18Z WS-FIN-07 Sysmon EventID=1 User=NM\\r.dijkstra ParentImage=C:\\Windows\\explorer.exe Image=C:\\Windows\\System32\\notepad.exe CommandLine="notepad.exe C:\\Users\\r.dijkstra\\Desktop\\todo.txt"
+2026-10-02T08:40:00Z WS-ICT-01 Sysmon EventID=1 User=NM\\s.elmasri ParentImage=C:\\Windows\\explorer.exe Image=C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe CommandLine="powershell.exe Get-EventLog -LogName System -Newest 20"`;
 
 // Webserverlog voor het regex-lab in de slottaak (taak 7): path-traversalpogingen, één geslaagde
 // (een geautoriseerde purple-team-test die zijn verzoek markeert) en één variant die het patroon mist (%5c).
 const DE_ACCESS_LOG = `192.0.2.51 - - [04/Oct/2026:10:02:11 +0200] "GET / HTTP/1.1" 200 2310 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Firefox/128.0"
-192.0.2.51 - - [04/Oct/2026:10:02:12 +0200] "GET /css/stijl.css HTTP/1.1" 200 1840 "https://portaal.jvt.lab/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Firefox/128.0"
+192.0.2.51 - - [04/Oct/2026:10:02:12 +0200] "GET /css/stijl.css HTTP/1.1" 200 1840 "https://portaal.nm.lab/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Firefox/128.0"
 198.51.100.9 - - [04/Oct/2026:10:03:40 +0200] "GET /zoeken?q=a..z HTTP/1.1" 200 4120 "-" "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5) Safari/605.1"
 192.0.2.77 - - [04/Oct/2026:10:04:40 +0200] "GET /blog/wat-is-nieuw... HTTP/1.1" 200 3880 "-" "Mozilla/5.0 (X11; Linux x86_64) Firefox/128.0"
 203.0.113.140 - - [04/Oct/2026:10:05:01 +0200] "GET /download?bestand=../../../../etc/passwd HTTP/1.1" 400 312 "-" "python-requests/2.32"
@@ -63,10 +63,10 @@ const DE_ACCESS_LOG = `192.0.2.51 - - [04/Oct/2026:10:02:11 +0200] "GET / HTTP/1
 203.0.113.140 - - [04/Oct/2026:10:05:03 +0200] "GET /static/%2e%2e/%2e%2e/%2e%2e/windows/win.ini HTTP/1.1" 404 512 "-" "python-requests/2.32"
 203.0.113.140 - - [04/Oct/2026:10:05:04 +0200] "GET /download?bestand=....//....//etc/passwd HTTP/1.1" 404 512 "-" "python-requests/2.32"
 203.0.113.140 - - [04/Oct/2026:10:05:05 +0200] "GET /img/..%5c..%5cboot.ini HTTP/1.1" 404 512 "-" "python-requests/2.32"
-192.0.2.51 - - [04/Oct/2026:10:06:14 +0200] "GET /download?bestand=handleiding.pdf HTTP/1.1" 200 88412 "https://portaal.jvt.lab/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Firefox/128.0"
+192.0.2.51 - - [04/Oct/2026:10:06:14 +0200] "GET /download?bestand=handleiding.pdf HTTP/1.1" 200 88412 "https://portaal.nm.lab/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Firefox/128.0"
 198.51.100.9 - - [04/Oct/2026:10:07:02 +0200] "GET /contact HTTP/1.1" 200 1990 "-" "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5) Safari/605.1"
-198.51.100.200 - - [04/Oct/2026:10:09:45 +0200] "GET /download?bestand=..%2F..%2Fconfig%2Fapp.ini HTTP/1.1" 200 742 "-" "Mozilla/5.0 (purple-team-test; JVT{detectie_als_code})"
-192.0.2.77 - - [04/Oct/2026:10:10:20 +0200] "POST /contact HTTP/1.1" 200 640 "https://portaal.jvt.lab/contact" "Mozilla/5.0 (X11; Linux x86_64) Firefox/128.0"
+198.51.100.200 - - [04/Oct/2026:10:09:45 +0200] "GET /download?bestand=..%2F..%2Fconfig%2Fapp.ini HTTP/1.1" 200 742 "-" "Mozilla/5.0 (purple-team-test; NM{detectie_als_code})"
+192.0.2.77 - - [04/Oct/2026:10:10:20 +0200] "POST /contact HTTP/1.1" 200 640 "https://portaal.nm.lab/contact" "Mozilla/5.0 (X11; Linux x86_64) Firefox/128.0"
 192.0.2.51 - - [04/Oct/2026:10:11:03 +0200] "GET /favicon.ico HTTP/1.1" 200 318 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Firefox/128.0"
 198.51.100.9 - - [04/Oct/2026:10:12:48 +0200] "GET /docs/release-notes HTTP/1.1" 200 2210 "-" "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5) Safari/605.1"`;
 
@@ -83,7 +83,7 @@ const DE_UPDATER_HEX =
 // Begin-YARA-regel: bewust te breed ("-enc" raakt ook "-Encoding").
 const DE_YARA_START = `rule Verdachte_PowerShell_Loader {
   meta:
-    auteur = "JVT Cyber Dojo"
+    auteur = "NineMinds Cyber Dojo"
     versie = "1 - startversie, nog niet getest"
   strings:
     $ps  = "powershell" nocase
@@ -264,7 +264,7 @@ CS.registerRoom({
 id: 7c1e2f9a-0d4b-4c55-9a61-2b8e0f3d1a77
 status: experimental
 description: PowerShell gestart met -EncodedCommand, vaak gebruikt om commando's te verbergen
-author: JVT Cyber Dojo
+author: NineMinds Cyber Dojo
 date: 2026-10-01
 tags:
   - attack.execution
@@ -355,7 +355,7 @@ level: medium</code></pre>
       content: `
         <p>Een Sigma-regel lezen is één ding, hem met de hand "draaien" op echte events laat je pas echt snappen wat hij doet.
         In het lab staan Sysmon-procesgebeurtenissen (EventID 1) van vier werkplekken en een fileserver van de fictieve
-        organisatie JVT, een ochtend lang. Jij speelt de SIEM en past de regel uit taak 3 stap voor stap toe.</p>
+        organisatie NineMinds, een ochtend lang. Jij speelt de SIEM en past de regel uit taak 3 stap voor stap toe.</p>
 
         <h3>Stap 1 — de selectie</h3>
         <p>Alle regels in deze log komen uit de juiste <em>logsource</em> (process_creation). De selectie op de opdrachtregel
@@ -390,14 +390,14 @@ level: medium</code></pre>
       `,
       lab: {
         type: 'logs',
-        title: 'Sysmon EventID 1 — JVT-werkplekken, 2 okt 2026',
+        title: 'Sysmon EventID 1 — NM-werkplekken, 2 okt 2026',
         lines: DE_SYSMON_LOG,
       },
       questions: [
         { q: 'Hoeveel regels raken de selectie / -(enc|encodedcommand|ec) /?', answer: ['4'], hint: 'Typ de regex inclusief schuine strepen in het filter en lees de teller af.', explain: 'Vier PowerShell-starts met een gecodeerd commando. De regel met -Encoding utf8 raakt niet dankzij de spaties.' },
         { q: 'Hoeveel van die treffers vallen weg door filter_sccm (ouderproces CcmExec.exe)?', answer: ['3'], hint: 'Filter op CcmExec en tel de regels met -enc of -EncodedCommand.', explain: 'Drie treffers op WS-HR-02, WS-FIN-07 en WS-HR-11 zijn gestart door SCCM: bekende false positives.' },
         { q: 'Op welke host staat de treffer die overblijft (de true positive)?', answer: ['WS-MKT-04', 'ws-mkt-04'], hint: 'Gebruik de lookahead-regex uit stap 2.', explain: 'Op WS-MKT-04 start WINWORD.EXE een verborgen PowerShell met -enc, gevolgd door whoami en nslookup.' },
-        { q: 'Wat is de vlag in de soc_note van de true positive?', answer: ['JVT{encoded_powershell_gevangen}'], hint: 'Lees het einde van de overgebleven regel.', explain: 'De analist markeerde de echte treffer: JVT{encoded_powershell_gevangen}.' },
+        { q: 'Wat is de vlag in de soc_note van de true positive?', answer: ['NM{encoded_powershell_gevangen}'], hint: 'Lees het einde van de overgebleven regel.', explain: 'De analist markeerde de echte treffer: NM{encoded_powershell_gevangen}.' },
       ],
     },
 
@@ -415,7 +415,7 @@ level: medium</code></pre>
           zoals Windows-programma's tekst vaak opslaan: elke letter gevolgd door een <code>00</code>-byte), <code>ascii</code>
           (gewone tekst, standaard) en <code>fullword</code> (alleen als los woord, niet midden in een ander woord).</li>
           <li>Hex: <code>{ 4D 5A ?? 00 }</code>, met <code>??</code> als joker voor één willekeurige byte.</li>
-          <li>Regex: <code>/https?:\\/\\/[a-z0-9.-]+\\.jvt\\.lab/</code>.</li>
+          <li>Regex: <code>/https?:\\/\\/[a-z0-9.-]+\\.nineminds\\.lab/</code>.</li>
           <li>Condition: <code>$a and $b</code>, <code>any of them</code>, <code>2 of them</code>, <code>$mz at 0</code>
           (precies aan het begin), <code>filesize &lt; 50KB</code>.</li>
         </ul>
@@ -432,7 +432,7 @@ level: medium</code></pre>
         </ol>
         <pre><code>rule Verdachte_PowerShell_Loader_v2 {
   meta:
-    auteur = "JVT Cyber Dojo"
+    auteur = "NineMinds Cyber Dojo"
     versie = "2 - fullword tegen -Encoding, wide voor exe-bestanden"
   strings:
     $ps   = "powershell" nocase
@@ -458,7 +458,7 @@ level: medium</code></pre>
         type: 'yara',
         rule: DE_YARA_START,
         files: [
-          { name: 'Factuur_2026-117.docm', text: '[Fictief oefensample - bevat geen werkende code]\nDocument: Factuur 2026-117 NederBouw B.V.\nMacro AutoOpen start: PowerShell -NoP -W Hidden -Enc VwByAGkAdABlAC0ATwB1AHQAcAB1AHQAIAAnAG8AZQBmAGUAbgBzAGEAbQBwAGwAZQAnAA==\nStage2-URL: http://cdn.factuur-update.jvt.lab/s2\nvlag: JVT{yara_raakt_de_loader}\n' },
+          { name: 'Factuur_2026-117.docm', text: '[Fictief oefensample - bevat geen werkende code]\nDocument: Factuur 2026-117 NederBouw B.V.\nMacro AutoOpen start: PowerShell -NoP -W Hidden -Enc VwByAGkAdABlAC0ATwB1AHQAcAB1AHQAIAAnAG8AZQBmAGUAbgBzAGEAbQBwAGwAZQAnAA==\nStage2-URL: http://cdn.factuur-update.nm.lab/s2\nvlag: NM{yara_raakt_de_loader}\n' },
           { name: 'backup_taak.ps1', text: '# Nachtelijke back-up - afdeling ICT\n# Gestart door Taakplanner: powershell.exe -NoProfile -File C:\\Scripts\\backup_taak.ps1\n$bron = "D:\\Data"\nGet-ChildItem $bron -Recurse | Measure-Object | Out-File -Encoding utf8 C:\\Logs\\backup.txt\n' },
           { name: 'notities_overleg.txt', text: 'Teamoverleg ICT 1 oktober\n- PowerShell-training op dinsdag\n- Nieuwe laptops uitrollen in week 42\n- Back-uptest plannen\n' },
           { name: 'vakantie_texel.jpg', hex: 'FF D8 FF E0 00 10 4A 46 49 46 00 01 01 01 00 48 00 48 00 00 FF DB 00 43 00 08 06 06 07 06 05 08 07 07 07 09 09 08 0A 0C 14 0D 0C 0B 0B 0C 19 12 13 0F FF D9' },
@@ -468,7 +468,7 @@ level: medium</code></pre>
       questions: [
         { q: 'Hoeveel bestanden raakt de startregel?', answer: ['2'], hint: 'Klik op scannen en tel de bestanden met een treffer.', explain: 'Factuur_2026-117.docm (PowerShell + -Enc) en backup_taak.ps1 (powershell + -Encoding).' },
         { q: 'Welk bestand is de fout-positief van de startregel?', answer: ['backup_taak.ps1', 'backup_taak'], hint: 'Welk bestand is een gewoon beheerscript? Kijk waar $enc raakt.', explain: '"-enc" nocase raakt het begin van "-Encoding utf8": een onschuldig back-upscript.' },
-        { q: 'Welke vlag staat in het kwaadaardige bestand dat de startregel terecht raakt?', answer: ['JVT{yara_raakt_de_loader}'], hint: 'Bekijk de inhoud van de .docm.', explain: 'De fictieve macrobijlage bevat JVT{yara_raakt_de_loader}.' },
+        { q: 'Welke vlag staat in het kwaadaardige bestand dat de startregel terecht raakt?', answer: ['NM{yara_raakt_de_loader}'], hint: 'Bekijk de inhoud van de .docm.', explain: 'De fictieve macrobijlage bevat NM{yara_raakt_de_loader}.' },
         { q: 'Welk bestand raakt de aangescherpte v2-regel extra, dat de startregel miste (een false negative)?', answer: ['updater.exe', 'updater'], hint: 'Welk bestand slaat zijn tekst op in UTF-16LE?', explain: 'updater.exe begint met MZ en bevat "PowerShell -enc" als wide-string. Zonder de wide-modifier zag de startregel dat niet.' },
       ],
     },
@@ -537,7 +537,7 @@ level: medium</code></pre>
     {
       title: 'Taak 7 — Slotopdracht: een detectie van begin tot eind',
       content: `
-        <p>Tijd om de hele cyclus zelf te doorlopen. Het team van het fictieve <code>portaal.jvt.lab</code> heeft een
+        <p>Tijd om de hele cyclus zelf te doorlopen. Het team van het fictieve <code>portaal.nm.lab</code> heeft een
         geautoriseerde purple-team-test laten uitvoeren. De opdracht aan jou als detectie-engineer: kunnen we
         <strong>path traversal</strong> zien? Bij path traversal probeert een aanvaller met <code>../</code> uit de
         bedoelde map te "klimmen" om bestanden als <code>/etc/passwd</code> of een configuratiebestand te lezen.</p>
@@ -586,7 +586,7 @@ level: medium</code></pre>
       questions: [
         { q: 'Hoeveel treffers geeft het startpatroon (vlaggen gi)?', answer: ['5'], hint: 'Lees de teller in het lab af.', explain: 'Vijf verzoeken bevatten ../ of een gecodeerde variant met / of %2f. De legitieme regels met puntjes raken niet.' },
         { q: 'Welke traversal-poging van 203.0.113.140 mist het startpatroon?', options: ['/img/..%5c..%5cboot.ini', '/download?bestand=....//....//etc/passwd', '/static/%2e%2e/%2e%2e/%2e%2e/windows/win.ini', '/download?bestand=..%2f..%2f..%2fetc%2fpasswd'], answer: 0, explain: '%5c is een gecodeerde backslash; het patroon kent alleen / en %2f als scheidingsteken. Een false negative om als testgeval vast te leggen.' },
-        { q: 'Wat is de vlag in het geslaagde (status 200) traversal-verzoek?', answer: ['JVT{detectie_als_code}'], hint: 'Breid het patroon uit met HTTP\\/1\\.1" 200 en lees de User-Agent van de treffer.', explain: 'Het verzoek van 198.51.100.200 naar ..%2F..%2Fconfig%2Fapp.ini gaf 200: JVT{detectie_als_code}.' },
+        { q: 'Wat is de vlag in het geslaagde (status 200) traversal-verzoek?', answer: ['NM{detectie_als_code}'], hint: 'Breid het patroon uit met HTTP\\/1\\.1" 200 en lees de User-Agent van de treffer.', explain: 'Het verzoek van 198.51.100.200 naar ..%2F..%2Fconfig%2Fapp.ini gaf 200: NM{detectie_als_code}.' },
         { q: 'Ik kan de levenscyclus hypothese, regel, testen, tunen en onderhouden zelf toepassen op een nieuwe detectie.', noAnswer: true },
       ],
     },

@@ -1,17 +1,17 @@
 /* Room: Schijf- en bestandssysteemforensie */
 
 // Hex-dump van verdacht.bin: een PNG-signature met een verstopte vlag in de ASCII (tEXt-chunk).
-// De vlag JVT{png_magic_bytes} staat als leesbare tekst tussen de bytes.
+// De vlag NM{png_magic_bytes} staat als leesbare tekst tussen de bytes.
 const PNG_HEX =
   '89 50 4E 47 0D 0A 1A 0A 00 00 00 0D 49 48 44 52 00 00 00 40 00 00 00 40 ' +
   '08 06 00 00 00 00 00 00 2C 74 45 58 74 43 6F 6D 6D 65 6E 74 00 76 65 72 ' +
-  '62 6F 72 67 65 6E 20 76 6C 61 67 3A 20 4A 56 54 7B 70 6E 67 5F 6D 61 67 ' +
+  '62 6F 72 67 65 6E 20 76 6C 61 67 3A 20 4E 4D 7B 70 6E 67 5F 6D 61 67 ' +
   '69 63 5F 62 79 74 65 73 7D 00 00 00 00 49 45 4E 44 AE 42 60 82';
 
 // Bestandssysteem voor het onderzoekslab in de laatste taak.
 const FORENSIE_FS = {
   '/cases/zaak-2026-0442/verdacht.bin':
-    '\x89PNG\r\n\x1a\n...(binaire beeldgegevens)...\nComment: verborgen vlag: JVT{png_magic_bytes}\n',
+    '\x89PNG\r\n\x1a\n...(binaire beeldgegevens)...\nComment: verborgen vlag: NM{png_magic_bytes}\n',
   '/cases/zaak-2026-0442/bewijs.dd': '...(forensische schijfkopie, 8 GB, afgekort)...\n',
   '/cases/zaak-2026-0442/chain-of-custody.txt':
     'Zaak 2026-0442 — Team Cybercrime\nInbeslagname: 02-10-2026 09:14\nWrite-blocker: Tableau T8u (SN 44102)\nImager: dd / dcfldd\nControle: sha256sum voor en na kopie\n',
@@ -205,7 +205,7 @@ CS.registerRoom({
       },
       questions: [
         { q: 'Welk bestandstype is verdacht.bin werkelijk, gezien de eerste bytes 89 50 4E 47?', options: ['Een PDF-document', 'Een PNG-afbeelding', 'Een Windows-EXE', 'Een ZIP-archief'], answer: 1, explain: '89 50 4E 47 (".PNG") is de signatuur van een PNG-afbeelding; de .bin-extensie was misleidend.' },
-        { q: 'Welke vlag staat verstopt in de ASCII-kolom van de hex-dump?', answer: ['JVT{png_magic_bytes}'], encoded: true, hint: 'Lees de rechterkolom; de vlag staat na "verborgen vlag:".', explain: 'In de ASCII-weergave is de tekst JVT{png_magic_bytes} leesbaar, ook al staat hij als losse bytes op de schijf.' },
+        { q: 'Welke vlag staat verstopt in de ASCII-kolom van de hex-dump?', answer: ['NM{png_magic_bytes}'], encoded: true, hint: 'Lees de rechterkolom; de vlag staat na "verborgen vlag:".', explain: 'In de ASCII-weergave is de tekst NM{png_magic_bytes} leesbaar, ook al staat hij als losse bytes op de schijf.' },
         { q: 'Welke magic bytes horen bij een PDF-document?', options: ['FF D8 FF', '50 4B 03 04', '25 50 44 46', '7F 45 4C 46'], answer: 2, explain: '25 50 44 46 is ASCII voor "%PDF", het begin van elk PDF-bestand.' },
       ],
     },
@@ -278,21 +278,21 @@ CS.registerRoom({
           'strings verdacht.bin': `PNG
 IHDR
 tEXtComment
-verborgen vlag: JVT{strings_onthult_sporen}
-Software: JVT CameraApp v2.1
+verborgen vlag: NM{strings_onthult_sporen}
+Software: NineMinds CameraApp v2.1
 Created with care op het NFI-oefenlab
 IEND`,
           'xxd verdacht.bin': `00000000: 8950 4e47 0d0a 1a0a 0000 000d 4948 4452  .PNG........IHDR
 00000010: 0000 0040 0000 0040 0806 0000 0000 0000  ...@...@........
 00000020: 2c74 4558 7443 6f6d 6d65 6e74 0076 6572  ,tEXtComment.ver
-00000030: 626f 7267 656e 2076 6c61 673a 204a 5654  borgen vlag: JVT`,
+00000030: 626f 7267 656e 2076 6c61 673a 204a 5654  borgen vlag: NineMinds`,
           'sha256sum bewijs.dd': 'ae3e49d8b680d40b2d626d96e037e4c72d30abde93ee581aa6c6544fe92fca11  bewijs.dd',
           'sha256sum verdacht.bin': '4fdbd68914075174b2282d75f6c47ae08d4b7b1627ea23b31537b0deb08e6669  verdacht.bin',
         },
       },
       questions: [
         { q: 'Wat meldt "file verdacht.bin" als werkelijk bestandstype?', answer: ['png', 'png image data', 'png image', 'een png'], hint: 'file kijkt naar de magic bytes, niet naar de extensie.', explain: 'file leest 89 50 4E 47 en rapporteert "PNG image data", ongeacht de .bin-extensie.' },
-        { q: 'Welke vlag vind je in de uitvoer van "strings verdacht.bin"?', answer: ['JVT{strings_onthult_sporen}'], hint: 'strings haalt alle leesbare tekst uit het bestand; lees de regels.', explain: 'strings toont de verstopte tekstregel met de vlag JVT{strings_onthult_sporen}.' },
+        { q: 'Welke vlag vind je in de uitvoer van "strings verdacht.bin"?', answer: ['NM{strings_onthult_sporen}'], hint: 'strings haalt alle leesbare tekst uit het bestand; lees de regels.', explain: 'strings toont de verstopte tekstregel met de vlag NM{strings_onthult_sporen}.' },
         { q: 'Welk commando bewijst dat de schijfkopie niet is veranderd sinds de inbeslagname?', answer: ['sha256sum bewijs.dd', 'sha256sum', 'sha256sum ./bewijs.dd'], hint: 'Een hash-commando over het .dd-bestand.', explain: 'sha256sum bewijs.dd berekent de vingerafdruk; die moet gelijk zijn aan de hash uit de chain of custody.' },
       ],
     },

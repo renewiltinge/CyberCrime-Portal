@@ -84,15 +84,15 @@ CS.registerRoom({
         <h3>De multi-decoder</h3>
         <p>In plaats van handmatig gokken laat je de <strong>multi-decoder</strong> het werk doen. Die herkent de vorm,
         probeert Base64 (en allerlei andere coderingen) en toont een "ketting" met het leesbare resultaat. De tool
-        herkent ook automatisch een vlag in het formaat <code>JVT{...}</code> en zet die bovenaan.</p>
+        herkent ook automatisch een vlag in het formaat <code>NM{...}</code> en zet die bovenaan.</p>
 
         <h3>Aan de slag</h3>
         <p>In het lab staat een Base64-string. Laat de multi-decoder hem afpellen en lees de vlag. Let op dat de string
         eindigt op <code>=</code> — een klassiek Base64-signaal.</p>
       `,
-      lab: { type: 'multidecode', input: 'SlZUe2Jhc2U2NF9iYXNpc30=' },
+      lab: { type: 'multidecode', input: 'Tk17YmFzZTY0X2Jhc2lzfQ==' },
       questions: [
-        { q: 'Laat de multi-decoder de Base64-string in het lab afpellen. Wat is de vlag?', answer: ['JVT{base64_basis}'], encoded: true, hint: 'De tool herkent Base64 vanzelf; klik de leesbare ketting aan.', explain: 'Base64 is in één stap terug te draaien — precies waarom het geen beveiliging is.' },
+        { q: 'Laat de multi-decoder de Base64-string in het lab afpellen. Wat is de vlag?', answer: ['NM{base64_basis}'], encoded: true, hint: 'De tool herkent Base64 vanzelf; klik de leesbare ketting aan.', explain: 'Base64 is in één stap terug te draaien — precies waarom het geen beveiliging is.' },
         { q: 'Welk teken gebruikt Base64 als opvulling (padding) aan het eind van een string?', answer: ['=', 'isgelijkteken', 'gelijkteken'], hint: 'Je ziet het soms één keer, soms twee keer, helemaal aan het eind.', explain: 'Het =-teken vult de laatste groep aan; het is een sterk herkenningspunt voor Base64.' },
         { q: 'Welke tekens horen NIET thuis in een standaard Base64-string?', options: ['Spaties en leestekens zoals ! en ?', 'De hoofdletters A-Z', 'De cijfers 0-9'], answer: 0, explain: 'Base64 gebruikt alleen A-Z, a-z, 0-9, + en /, plus = als padding.' },
       ],
@@ -132,10 +132,10 @@ CS.registerRoom({
         je de paren goed ziet). Bouw het recept <code>Hex decoderen</code> gevolgd door <code>Base64 decoderen</code>
         en lees de vlag die eruit rolt.</p>
       `,
-      lab: { type: 'cyberchef', input: '53 6c 5a 55 65 33 52 33 5a 57 56 66 62 47 46 6e 5a 57 35 39' },
+      lab: { type: 'cyberchef', input: '54 6b 31 37 64 48 64 6c 5a 56 39 73 59 57 64 6c 62 6e 30 3d' },
       questions: [
         { q: 'Welke bewerking zet je in CyberChef bovenaan (pas je als eerste toe) op deze string?', answer: ['Hex decoderen', 'hex decoderen', 'hex', 'van hex', 'from hex'], hint: 'De string bestaat uit paren van 0-9 en a-f; dat is de buitenste laag.', explain: 'Je pelt in omgekeerde volgorde af: eerst de hex eraf, dan komt de Base64 tevoorschijn.' },
-        { q: 'Bouw het recept Hex decoderen -> Base64 decoderen. Wat is de vlag?', answer: ['JVT{twee_lagen}'], encoded: true, hint: 'Na "Hex decoderen" zie je een Base64-string; zet daar "Base64 decoderen" onder.', explain: 'Twee omkeerbare lagen stapelen maakt data niet geheim — het is nog steeds alleen codering.' },
+        { q: 'Bouw het recept Hex decoderen -> Base64 decoderen. Wat is de vlag?', answer: ['NM{twee_lagen}'], encoded: true, hint: 'Na "Hex decoderen" zie je een Base64-string; zet daar "Base64 decoderen" onder.', explain: 'Twee omkeerbare lagen stapelen maakt data niet geheim — het is nog steeds alleen codering.' },
         { q: 'In welke volgorde pel je gelaagde codering af?', options: ['In omgekeerde volgorde van hoe het is opgebouwd — laatste erop, eerste eraf', 'Altijd eerst Base64, wat de volgorde ook was', 'De volgorde maakt niet uit, elk resultaat is goed'], answer: 0, explain: 'Coderen is een stapel: de laatst toegevoegde laag haal je als eerste weg.' },
       ],
     },
@@ -162,7 +162,7 @@ CS.registerRoom({
         <p>In deze opgave zit onder de Base32-laag niet meteen de vlag, maar nog een laag <strong>ROT13</strong>. ROT13
         is een Caesarcijfer dat elke letter 13 plaatsen opschuift; het is zijn eigen omkering, dus één keer toepassen
         draait het terug. Na het afpellen van Base32 zie je iets dat <em>bijna</em> op een vlag lijkt — maar de letters
-        kloppen niet. Bijvoorbeeld een stukje als <code>WIG{...}</code> in plaats van <code>JVT{...}</code>. Dat is het
+        kloppen niet. Bijvoorbeeld een stukje als <code>AZ{...}</code> in plaats van <code>NM{...}</code>. Dat is het
         signaal dat er nog een ROT13-laag overheen ligt.</p>
 
         <div class="callout info">
@@ -176,11 +176,11 @@ CS.registerRoom({
         <p>In het lab staat een Base32-string (alles hoofdletters en cijfers 2-7). Laat de multi-decoder hem afpellen;
         onder de Base32 vind je de ROT13-laag en daaronder de vlag.</p>
       `,
-      lab: { type: 'multidecode', input: 'K5EUO63FMJTV64LOMFPTGMT5' },
+      lab: { type: 'multidecode', input: 'IFNHWZLCM5PXC3TBL4ZTE7I' },
       questions: [
-        { q: 'Laat de multi-decoder de ketting Base32 -> ROT13 afpellen. Wat is de vlag?', answer: ['JVT{rot_dan_32}'], encoded: true, hint: 'Na Base32 lijkt de vlag verhaspeld; dat is de ROT13-laag. Volg de kandidaat met JVT{...}.', explain: 'De multi-decoder stapelt decoderingen tot er leesbare tekst (en een herkende vlag) uitkomt.' },
+        { q: 'Laat de multi-decoder de ketting Base32 -> ROT13 afpellen. Wat is de vlag?', answer: ['NM{rot_dan_32}'], encoded: true, hint: 'Na Base32 lijkt de vlag verhaspeld; dat is de ROT13-laag. Volg de kandidaat met NM{...}.', explain: 'De multi-decoder stapelt decoderingen tot er leesbare tekst (en een herkende vlag) uitkomt.' },
         { q: 'Waaraan herken je Base32 in plaats van Base64?', options: ['Alleen hoofdletters A-Z en de cijfers 2-7, geen kleine letters', 'Het bevat juist veel kleine letters en het cijfer 0', 'Het bestaat uitsluitend uit nullen en enen'], answer: 0, explain: 'De beperkte tekenset (A-Z, 2-7) is het duidelijkste kenmerk van Base32.' },
-        { q: 'Je pelt een laag af en krijgt WIG{...} in plaats van JVT{...}. Wat is je volgende stap?', options: ['ROT13 (of een andere Caesar-verschuiving) proberen; de vorm klopt maar de letters zijn verschoven', 'Concluderen dat er geen vlag is', 'De string nog een keer als Base64 decoderen'], answer: 0, explain: 'Een vlag met kloppende vorm maar verhaspelde letters wijst op een letterverschuiving zoals ROT13.' },
+        { q: 'Je pelt een laag af en krijgt AZ{...} in plaats van NM{...}. Wat is je volgende stap?', options: ['ROT13 (of een andere Caesar-verschuiving) proberen; de vorm klopt maar de letters zijn verschoven', 'Concluderen dat er geen vlag is', 'De string nog een keer als Base64 decoderen'], answer: 0, explain: 'Een vlag met kloppende vorm maar verhaspelde letters wijst op een letterverschuiving zoals ROT13.' },
       ],
     },
 
@@ -213,9 +213,9 @@ CS.registerRoom({
         <pre><code>.... . .-.. .-.. --- / .-- . .-. . .-.. -..</code></pre>
         <p>Noteer de twee woorden die daaruit komen (hoofdletters, met een spatie ertussen).</p>
       `,
-      lab: { type: 'multidecode', input: '01001010 01010110 01010100 01111011 01100010 01101001 01101110 01100001 01101001 01110010 01011111 01101100 01100101 01100101 01110011 01100010 01100001 01100001 01110010 01111101' },
+      lab: { type: 'multidecode', input: '01001110 01001101 01111011 01100010 01101001 01101110 01100001 01101001 01110010 01011111 01101100 01100101 01100101 01110011 01100010 01100001 01100001 01110010 01111101' },
       questions: [
-        { q: 'Zet de binaire string in het lab om naar tekst. Wat is de vlag?', answer: ['JVT{binair_leesbaar}'], encoded: true, hint: 'Elk groepje van 8 bits is één teken; de multi-decoder doet dit vanzelf.', explain: 'Binaire ASCII is gewoon codering: 8 bits per teken, zonder sleutel terug te lezen.' },
+        { q: 'Zet de binaire string in het lab om naar tekst. Wat is de vlag?', answer: ['NM{binair_leesbaar}'], encoded: true, hint: 'Elk groepje van 8 bits is één teken; de multi-decoder doet dit vanzelf.', explain: 'Binaire ASCII is gewoon codering: 8 bits per teken, zonder sleutel terug te lezen.' },
         { q: 'Decodeer de Morse-code uit de taak. Welke twee woorden komen eruit?', answer: ['HELLO WERELD', 'hello wereld'], hint: '.... = H, . = E, .-.. = L ... en de / is een woordscheiding.', explain: 'De code luidt HELLO WERELD; de schuine streep scheidt de twee woorden.' },
         { q: 'Uit hoeveel bits bestaat één teken in standaard (ASCII) binaire codering?', answer: ['8', 'acht', '8 bits'], hint: 'Eén byte.', explain: 'Eén teken = één byte = 8 bits; daarom is nette binaire tekst een veelvoud van 8 bits lang.' },
       ],

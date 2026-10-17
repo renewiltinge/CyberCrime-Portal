@@ -1,5 +1,5 @@
 /* ======================================================================
-   JVT Cyber Dojo — interactieve labs
+   NineMinds Cyber Dojo — interactieve labs
    Elke lab registreert zich via CS.registerLab(type, fn).
    fn(container, labConfig, ctx) bouwt de UI in container.
    ====================================================================== */
@@ -27,7 +27,7 @@
   CS.registerLab('terminal', function (container, cfg) {
     const isPwsh = cfg.shell === 'powershell';
     const user = cfg.user || 'student';
-    const host = cfg.host || 'jvt-lab';
+    const host = cfg.host || 'nm-lab';
     const home = cfg.home || '/home/' + user;
     let cwd = cfg.cwd || home;
     const denied = new Set(cfg.denied || []);
@@ -143,7 +143,7 @@
         case 'whoami': return { out: user };
         case 'id': return { out: 'uid=1000(' + user + ') gid=1000(' + user + ') groups=1000(' + user + ')' };
         case 'hostname': return { out: host };
-        case 'uname': return { out: hasFlag('-a') ? 'Linux ' + host + ' 6.1.0-jvt #1 SMP x86_64 GNU/Linux' : 'Linux' };
+        case 'uname': return { out: hasFlag('-a') ? 'Linux ' + host + ' 6.1.0-nineminds #1 SMP x86_64 GNU/Linux' : 'Linux' };
         case 'clear': out.innerHTML = ''; return { out: '' };
         case 'echo': return { out: args.join(' ').replace(/^["']|["']$/g, '') };
         case 'history': return { out: history.map((h, i) => '  ' + (i + 1) + '  ' + h).join('\n') };
@@ -585,11 +585,11 @@
     wrap.append(out);
 
     function shiftText(s, n) { return s.replace(/[a-z]/gi, (c) => { const b = c <= 'Z' ? 65 : 97; return String.fromCharCode((c.charCodeAt(0) - b + n) % 26 + b); }); }
-    // Nederlands/Engels-achtige score: veelvoorkomende letters, spaties en woorden, en JVT{
+    // Nederlands/Engels-achtige score: veelvoorkomende letters, spaties en woorden, en NM{
     function score(s) {
       const low = s.toLowerCase(); let sc = 0;
       for (const ch of low) { if (' etaoinshrdlu'.includes(ch)) sc += 2; else if (ch >= 'a' && ch <= 'z') sc += 0.3; else if (ch === ' ') sc += 1; else if (ch < ' ') sc -= 3; else sc -= 0.2; }
-      [' de ', ' het ', ' een ', ' en ', ' van ', ' the ', ' and ', 'jvt{', 'flag', 'wachtwoord', 'geheim'].forEach((w) => { if (low.includes(w)) sc += 25; });
+      [' de ', ' het ', ' een ', ' en ', ' van ', ' the ', ' and ', 'NM{', 'flag', 'wachtwoord', 'geheim'].forEach((w) => { if (low.includes(w)) sc += 25; });
       return sc;
     }
     function atbash(s) { return s.replace(/[a-z]/gi, (c) => { const b = c <= 'Z' ? 65 : 97; return String.fromCharCode(b + 25 - (c.charCodeAt(0) - b)); }); }
@@ -863,7 +863,7 @@
   //  SQL INJECTION
   // =====================================================================
   CS.registerLab('sqli', function (container, cfg) {
-    const flag = cfg.flag || 'JVT{sql_injectie}';
+    const flag = cfg.flag || 'NM{sql_injectie}';
     const users = [
       { id: 1, username: 'admin', password: 'Zomer!2026', role: 'admin' },
       { id: 2, username: 'jan', password: 'voetbal', role: 'user' },
@@ -1953,7 +1953,7 @@
     const DECODERS = [['Base64', tryB64], ['Base32', tryB32], ['Hex', tryHex], ['Binair', tryBin], ['URL', tryUrl], ['ROT13', tryRot13], ['Atbash', tryAtbash], ['Decimaal', tryDec], ['Morse', tryMorse], ['Omgekeerd', tryReverse]];
 
     function printable(s) { if (!s) return 0; let p = 0; for (const c of s) { const n = c.charCodeAt(0); if (n >= 32 && n <= 126) p++; else if (n === 9 || n === 10) p++; } return p / s.length; }
-    function score(s) { if (!s) return -1; let sc = printable(s) * 10; const low = s.toLowerCase(); for (const ch of low) { if (' etaoinshrd'.includes(ch)) sc += 0.4; } if (/jvt\{[a-z0-9_]*\}?/i.test(s)) sc += 100; [' de ', ' het ', ' een ', ' the ', 'flag', 'vlag', 'geheim'].forEach((w) => { if (low.includes(w)) sc += 8; }); if (printable(s) < 0.85) sc -= 20; return sc; }
+    function score(s) { if (!s) return -1; let sc = printable(s) * 10; const low = s.toLowerCase(); for (const ch of low) { if (' etaoinshrd'.includes(ch)) sc += 0.4; } if (/nineminds\{[a-z0-9_]*\}?/i.test(s)) sc += 100; [' de ', ' het ', ' een ', ' the ', 'flag', 'vlag', 'geheim'].forEach((w) => { if (low.includes(w)) sc += 8; }); if (printable(s) < 0.85) sc -= 20; return sc; }
 
     const wrap = el('div', { class: 'lab-pad' });
     wrap.append(el('label', { text: 'Invoer (gecodeerde tekst — ook meerlaags)' }));
@@ -1975,7 +1975,7 @@
     // Begrensde breedte-zoektocht: verken decodeer-lagen (dedup op resultaat) en
     // kies het beste eindresultaat — een vlag, anders de best leesbare tekst. Greedy
     // op score faalt als tussenlagen allemaal leesbaar-ASCII zijn (gelijke scores).
-    const hasFlag = (s) => /JVT\{[a-z0-9_]+\}/.test(s);
+    const hasFlag = (s) => /NM\{[a-z0-9_]+\}/.test(s);
     function searchChain(input) {
       const visited = new Set([input]);
       let best = null;
@@ -2014,7 +2014,7 @@
       if (!layer.length) box.append(el('div', { text: '(geen enkele decoder gaf iets zinnigs)' }));
       layer.forEach((r) => {
         const ln = el('div', { class: 'ln', style: 'cursor:pointer', onclick: () => { ta.value = r.out; render(); } });
-        ln.append(el('span', { class: 'n', style: 'width:64px', text: r.name }), el('span', { text: r.out.slice(0, 120), style: /JVT\{/.test(r.out) ? 'color:#8ec7ab' : '' }));
+        ln.append(el('span', { class: 'n', style: 'width:64px', text: r.name }), el('span', { text: r.out.slice(0, 120), style: /NM\{/.test(r.out) ? 'color:#8ec7ab' : '' }));
         box.append(ln);
       });
       out.append(box);

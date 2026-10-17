@@ -280,14 +280,14 @@ CS.registerRoom({
         zich op het cash-out-moment.</p>
 
         <div class="callout info">
-          <strong>Beloning — tussenvlag:</strong> je hebt het knelpunt doorzien. Noteer <code>JVT{kyc_is_het_knelpunt}</code>.
+          <strong>Beloning — tussenvlag:</strong> je hebt het knelpunt doorzien. Noteer <code>NM{kyc_is_het_knelpunt}</code>.
         </div>
       `,
       lab: {
         type: 'connections',
         title: 'Cryptowitwas-begrippen',
         prompt: 'Sleep 16 begrippen in vier groepen van vier. Elk begrip hoort bij precies één categorie.',
-        flag: 'JVT{grootboek_liegt_niet}',
+        flag: 'NM{grootboek_liegt_niet}',
         groups: [
           { name: 'Bouwstenen van een transactie', items: ['UTXO', 'Wallet-adres', 'Publiek grootboek', 'Private sleutel'] },
           { name: 'Verhullingstechnieken (layering)', items: ['Mixer/tumbler', 'CoinJoin', 'Peel chain', 'Chain-hopping'] },
@@ -299,8 +299,8 @@ CS.registerRoom({
         { q: 'Hoe heet de verplichting van een exchange om te weten wie zijn klant is (identiteit bewijzen)?', answer: ['KYC', 'kyc', 'know your customer'], hint: 'Drie letters; "Know Your ..."', explain: 'KYC (Know Your Customer): de klant moet zijn identiteit bewijzen, waardoor er een echte naam aan het spoor komt.' },
         { q: 'Welke Nederlandse wet verplicht een exchange om ongebruikelijke transacties te melden?', answer: ['Wwft', 'wwft', 'de wwft'], hint: 'Wet ter voorkoming van witwassen en financieren van terrorisme.', explain: 'De Wwft verplicht melden van ongebruikelijke transacties; samen met KYC maakt dat de exchange het knelpunt.' },
         { q: 'Waarom is de exchange het knelpunt waar de opsporing aangrijpt?', options: ['Omdat exchanges gratis zijn', 'Omdat crypto daar naar euro\'s gaat én er KYC/Wwft geldt, zodat de pseudonieme keten aan een echte identiteit wordt gekoppeld', 'Omdat de blockchain daar wordt gewist', 'Omdat mixers daar verboden zijn'], answer: 1, explain: 'De off-ramp koppelt het openbare spoor aan een KYC-identiteit; met een vordering krijgt de politie de naam.' },
-        { q: 'Welke vlag staat in de callout als beloning voor deze taak?', answer: ['JVT{kyc_is_het_knelpunt}'], hint: 'Lees de groene info-callout onderaan de uitleg.', explain: 'De beloningsvlag is JVT{kyc_is_het_knelpunt}.' },
-        { q: 'Los de verbanden-puzzel op. Welke vlag verschijnt als alle vier de groepen goed zijn?', answer: ['JVT{grootboek_liegt_niet}'], hint: 'Groepeer de 16 begrippen in vier groepen van vier; bij succes toont het lab de vlag.', explain: 'De connections-puzzel beloont je met JVT{grootboek_liegt_niet}.' },
+        { q: 'Welke vlag staat in de callout als beloning voor deze taak?', answer: ['NM{kyc_is_het_knelpunt}'], hint: 'Lees de groene info-callout onderaan de uitleg.', explain: 'De beloningsvlag is NM{kyc_is_het_knelpunt}.' },
+        { q: 'Los de verbanden-puzzel op. Welke vlag verschijnt als alle vier de groepen goed zijn?', answer: ['NM{grootboek_liegt_niet}'], hint: 'Groepeer de 16 begrippen in vier groepen van vier; bij succes toont het lab de vlag.', explain: 'De connections-puzzel beloont je met NM{grootboek_liegt_niet}.' },
       ],
     },
 
@@ -326,7 +326,7 @@ CS.registerRoom({
         <p>Zet hieronder de zes stappen van de operatie in de juiste volgorde. Lukt dat, dan heb je de zaak rond.</p>
 
         <div class="callout info">
-          <strong>Eindbeloning:</strong> wie de hele keten doorgrondt, verdient de hoofdvlag: <code>JVT{follow_the_money}</code>.
+          <strong>Eindbeloning:</strong> wie de hele keten doorgrondt, verdient de hoofdvlag: <code>NM{follow_the_money}</code>.
         </div>
 
         <h3>Ethiek en samenwerking</h3>
@@ -338,7 +338,7 @@ CS.registerRoom({
         type: 'ordering',
         title: 'Operatie Spookvracht — de tijdlijn',
         prompt: 'Zet de zes stappen van de witwasoperatie in de juiste volgorde (gebruik de tijdstempels uit taak 4).',
-        flag: 'JVT{volg_de_keten}',
+        flag: 'NM{volg_de_keten}',
         explain: 'De keten loopt: placement (09:02) → splitsen over mules (10:10) → chain-hop naar de tussenwallet (11:30) → alles samen in de mixer (12:20) → uitbetaling op de exchange (14:05) → KYC/Wwft koppelt een naam (integration).',
         items: [
           { id: 'a', label: '09:02 — VrachtVlot BV betaalt 4.0 BTC losgeld naar de ransom-wallet (placement)' },
@@ -353,8 +353,8 @@ CS.registerRoom({
       questions: [
         { q: 'Met welke gebeurtenis begint de tijdlijn van de operatie?', options: ['Met de uitbetaling op de exchange', 'Met de losgeldbetaling naar de ransom-wallet (placement)', 'Met de KYC-controle', 'Met de mixer'], answer: 1, explain: 'De operatie begint om 09:02 met de losgeldbetaling: de placement-fase.' },
         { q: 'Wat hoort in een forensisch rapport gescheiden te blijven?', options: ['Feit en interpretatie', 'Bedrag en tijd', 'Input en output', 'Euro en bitcoin'], answer: 0, explain: 'Feit (wat je in het grootboek ziet) en interpretatie (wat het betekent) hou je uit elkaar, zodat je conclusie controleerbaar blijft.' },
-        { q: 'Los de volgorde-puzzel op. Welke vlag verschijnt bij de juiste tijdlijn?', answer: ['JVT{volg_de_keten}'], hint: 'Zet de zes stappen op tijd; bij succes toont het lab de vlag.', explain: 'De ordening-puzzel beloont de juiste tijdlijn met JVT{volg_de_keten}.' },
-        { q: 'Welke hoofdvlag staat als eindbeloning in deze taak genoemd?', answer: ['JVT{follow_the_money}'], hint: 'Lees de info-callout "Eindbeloning".', explain: 'De hoofdvlag van de room is JVT{follow_the_money}.' },
+        { q: 'Los de volgorde-puzzel op. Welke vlag verschijnt bij de juiste tijdlijn?', answer: ['NM{volg_de_keten}'], hint: 'Zet de zes stappen op tijd; bij succes toont het lab de vlag.', explain: 'De ordening-puzzel beloont de juiste tijdlijn met NM{volg_de_keten}.' },
+        { q: 'Welke hoofdvlag staat als eindbeloning in deze taak genoemd?', answer: ['NM{follow_the_money}'], hint: 'Lees de info-callout "Eindbeloning".', explain: 'De hoofdvlag van de room is NM{follow_the_money}.' },
       ],
     },
   ],

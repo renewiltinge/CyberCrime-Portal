@@ -132,14 +132,14 @@ CS.registerRoom({
         Daar is MITRE ATT&amp;CK veel beter in, zoals je in de volgende taak ziet.</p>
 
         <div class="callout tip">
-          <strong>Goed bezig:</strong> je kent nu de zeven schakels. Beloning: <code>JVT{zeven_schakels_een_keten}</code>.
+          <strong>Goed bezig:</strong> je kent nu de zeven schakels. Beloning: <code>NM{zeven_schakels_een_keten}</code>.
         </div>
       `,
       questions: [
         { q: 'Hoeveel fasen (schakels) telt de Cyber Kill Chain?', answer: ['7', 'zeven'], hint: 'Van verkenning tot acties op het doel.', explain: 'Zeven: Reconnaissance, Weaponization, Delivery, Exploitation, Installation, Command and Control, Actions on Objectives.' },
         { q: 'In welke fase maakt de aanvaller zijn wapen klaar, bijvoorbeeld een kwaadaardig document met een exploit?', options: ['Reconnaissance', 'Weaponization', 'Delivery', 'Installation'], answer: 1, explain: 'Weaponization (bewapening) gebeurt bij de aanvaller zelf; als verdediger zie je er nog niets van.' },
         { q: 'Hoe heet de laatste fase, waarin de aanvaller zijn eigenlijke doel bereikt (zoals data stelen of versleutelen)?', answer: ['Actions on Objectives', 'actions on objectives', 'acties op het doel', 'acties op doel'], hint: 'De zevende schakel; in het Engels drie woorden.', explain: 'Actions on Objectives is de fase waarin de aanval zijn doel bereikt. De Kill Chain vat dit samen in één fase.' },
-        { q: 'Wat is de vlag die als beloning in deze taak staat?', answer: ['JVT{zeven_schakels_een_keten}'], hint: 'Kijk in de groene tip onderaan de taak.' },
+        { q: 'Wat is de vlag die als beloning in deze taak staat?', answer: ['NM{zeven_schakels_een_keten}'], hint: 'Kijk in de groene tip onderaan de taak.' },
       ],
     },
 
@@ -272,14 +272,14 @@ CS.registerRoom({
 
         <div class="callout tip">
           <strong>Onthoud:</strong> het Diamond Model draait om verbinden. Je pivoteert langs de randen van de ene
-          waarneming naar de volgende. Beloning: <code>JVT{pivot_langs_de_randen}</code>.
+          waarneming naar de volgende. Beloning: <code>NM{pivot_langs_de_randen}</code>.
         </div>
       `,
       questions: [
         { q: 'Hoeveel hoekpunten heeft het Diamond Model?', answer: ['4', 'vier'], hint: 'Het is een ruit.', explain: 'Vier: Adversary, Capability, Infrastructure en Victim.' },
         { q: 'Welke vier hoekpunten zijn het?', options: ['Adversary, Capability, Infrastructure, Victim', 'Reconnaissance, Delivery, Exploitation, Impact', 'Hashes, IP-adressen, Domeinen, TTP\'s', 'Tactiek, Techniek, Procedure, Tool'], answer: 0, explain: 'In elke gebeurtenis gebruikt een tegenstander een vermogen via infrastructuur tegen een slachtoffer.' },
         { q: 'Je ontdekt dat twee aparte incidenten hetzelfde C2-domein gebruiken. Wat doe je volgens het Diamond Model?', options: ['Pivoten langs de rand: via de gedeelde infrastructuur verbind je de zaken en kom je bij nieuwe slachtoffers of capabilities', 'De incidenten negeren omdat domeinen makkelijk te wisselen zijn', 'Alleen het domein blokkeren en stoppen', 'De twee zaken apart houden, want ze mogen nooit verbonden worden'], answer: 0, explain: 'Een gedeeld hoekpunt (hier Infrastructure) is een brug: je pivoteert langs de randen en bouwt een activity group.' },
-        { q: 'Welke vlag hoort bij deze taak over pivoten?', answer: ['JVT{pivot_langs_de_randen}'], hint: 'Kijk in de tip onderaan.' },
+        { q: 'Welke vlag hoort bij deze taak over pivoten?', answer: ['NM{pivot_langs_de_randen}'], hint: 'Kijk in de tip onderaan.' },
       ],
     },
 
@@ -386,7 +386,7 @@ CS.registerRoom({
         <div class="callout info">
           <strong>Waarneming (bekend):</strong> De aanvaller stuurt een nepfactuur met een kwaadaardige ZIP-bijlage
           (MD5 <code>3abad12a9579508025468c528c47a68c</code>) naar een medewerker. De mail komt binnen vanaf het account
-          <code>facturen[at]boos[.]jvt[.]lab</code> en wordt in de inbox afgeleverd.
+          <code>facturen[at]boos[.]nineminds[.]lab</code> en wordt in de inbox afgeleverd.
         </div>
 
         <h3>Dezelfde gebeurtenis, vier lenzen</h3>
@@ -409,7 +409,7 @@ CS.registerRoom({
 
         <p>Dit is de kern van threat intelligence-modellen: niet "welk model is het beste?", maar "welke bril geeft mij nu
         het antwoord dat ik nodig heb?". Noteer de laatste vlag als bewijs dat je de gebeurtenis door alle vier de modellen
-        kunt bekijken: <code>JVT{een_gebeurtenis_vier_lenzen}</code>.</p>
+        kunt bekijken: <code>NM{een_gebeurtenis_vier_lenzen}</code>.</p>
 
         <div class="callout tip">
           <strong>Wat je meeneemt:</strong> de Kill Chain geeft de fase, ATT&amp;CK het precieze gedrag, het Diamond
@@ -420,7 +420,7 @@ CS.registerRoom({
         { q: 'In welke fase van de Cyber Kill Chain hoort "de kwaadaardige bijlage wordt in de inbox afgeleverd"?', options: ['Reconnaissance', 'Weaponization', 'Delivery', 'Exploitation'], answer: 2, explain: 'De bezorging van het wapen aan het slachtoffer is de Delivery-fase. Pas als de medewerker de bijlage opent, begint Exploitation.' },
         { q: 'Welke ATT&CK-techniek-ID hoort bij deze gerichte phishingmail met bijlage?', answer: ['T1566.001', 'T1566'], hint: 'Spearphishing Attachment (of de overkoepelende techniek Phishing).', explain: 'T1566.001 Spearphishing Attachment; de overkoepelende techniek is T1566 Phishing. Beide goed.' },
         { q: 'In welk hoekpunt van het Diamond Model plaats je de kwaadaardige bijlage zelf (het middel waarmee de aanvaller zijn doel bereikt)?', options: ['Adversary', 'Capability', 'Infrastructure', 'Victim'], answer: 1, explain: 'De malware/bijlage is de Capability (het vermogen). Het mailaccount waarmee hij verstuurt, is Infrastructure.' },
-        { q: 'In de Pyramid of Pain: op welk niveau staat de MD5-hash van de bijlage?', answer: ['Hashwaarden', 'hashwaarden', 'hashes', 'hash', 'hashwaarde'], hint: 'Het allerlaagste niveau, het makkelijkst voor de aanvaller om te wisselen.', explain: 'Een bestandshash staat onderaan: snel te blokkeren, maar de aanvaller verandert hem zo. De vlag JVT{een_gebeurtenis_vier_lenzen} staat in de taaktekst.' },
+        { q: 'In de Pyramid of Pain: op welk niveau staat de MD5-hash van de bijlage?', answer: ['Hashwaarden', 'hashwaarden', 'hashes', 'hash', 'hashwaarde'], hint: 'Het allerlaagste niveau, het makkelijkst voor de aanvaller om te wisselen.', explain: 'Een bestandshash staat onderaan: snel te blokkeren, maar de aanvaller verandert hem zo. De vlag NM{een_gebeurtenis_vier_lenzen} staat in de taaktekst.' },
       ],
     },
   ],

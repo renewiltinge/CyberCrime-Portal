@@ -1,20 +1,20 @@
 /* Room: Threat intelligence & MITRE ATT&CK */
 
-const KOFFIEKAT_RAPPORT = `DREIGINGSRAPPORT JVT-CTI-2026-031 (TLP:AMBER)
+const KOFFIEKAT_RAPPORT = `DREIGINGSRAPPORT NM-CTI-2026-031 (TLP:AMBER)
 Onderwerp: campagne KOFFIEKAT tegen Nederlandse logistieke bedrijven
-Datum: 2026-09-28  Opgesteld door: JVT Threat Intelligence Team
-Rapportcode: JVT{koffiekat_iocs_verzameld}
+Datum: 2026-09-28  Opgesteld door: NineMinds Threat Intelligence Team
+Rapportcode: NM{koffiekat_iocs_verzameld}
 
 SAMENVATTING
 Sinds half september zien we phishingmails met een nepfactuur van "PakketPost Zakelijk".
-De mails komen van facturen[at]pakketpost-zakelijk[.]jvt[.]lab en bevatten een bijlage factuur_sep.zip.
+De mails komen van facturen[at]pakketpost-zakelijk[.]nineminds[.]lab en bevatten een bijlage factuur_sep.zip.
 In het archief zit een snelkoppeling die een PowerShell-loader start (loader.dll via rundll32.exe).
 Bij twee slachtoffers kwam de aanvaller eerst binnen via een ongepatchte NetScaler-gateway (CVE-2023-4966).
 
 INFRASTRUCTUUR
-Command-and-control (C2): update-koffie[.]jvt[.]lab
-Beacon-URL: hxxps://update-koffie[.]jvt[.]lab/api/beacon
-Payload-download: hxxps://cdn-koffiekat[.]jvt[.]lab/drop/stage2
+Command-and-control (C2): update-koffie[.]nineminds[.]lab
+Beacon-URL: hxxps://update-koffie[.]nineminds[.]lab/api/beacon
+Payload-download: hxxps://cdn-koffiekat[.]nineminds[.]lab/drop/stage2
 C2-IP-adressen: 203.0.113[.]88 en 203.0.113[.]91
 Scanverkeer vanaf: 198.51.100(.)7
 Exfiltratie naar: 192.0.2[.]14
@@ -36,20 +36,20 @@ ADVIES
 Blokkeer de indicatoren, patch de gateway en zoek in je logs naar het gedrag hierboven.
 `;
 
-const KOFFIEKAT_LOG = `2026-09-29 07:58:02  WS-LOG-12  Sysmon  EventID=1  ProcessCreate  Image=C:\\Windows\\explorer.exe  User=JVT\\s.bakker
-2026-09-29 08:14:31  MAIL-GW   Gateway  Delivered  From=facturen@pakketpost-zakelijk.jvt.lab  To=s.bakker@jvt.lab  Attachment=factuur_sep.zip  Verdict=clean
-2026-09-29 08:16:05  WS-LOG-12  Sysmon  EventID=1  ProcessCreate  Image=C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe  ParentImage=C:\\Windows\\explorer.exe  CommandLine="powershell.exe -w hidden -enc SQBFAFgAIAAoAE4AZQB3AC0ATwBiAGoAZQBjAHQA"  User=JVT\\s.bakker
-2026-09-29 08:16:09  WS-LOG-12  Sysmon  EventID=3  NetworkConnect  Image=powershell.exe  DestinationHostname=cdn-koffiekat.jvt.lab  DestinationIp=203.0.113.91  DestinationPort=443
+const KOFFIEKAT_LOG = `2026-09-29 07:58:02  WS-LOG-12  Sysmon  EventID=1  ProcessCreate  Image=C:\\Windows\\explorer.exe  User=NM\\s.bakker
+2026-09-29 08:14:31  MAIL-GW   Gateway  Delivered  From=facturen@pakketpost-zakelijk.nm.lab  To=s.bakker@nm.lab  Attachment=factuur_sep.zip  Verdict=clean
+2026-09-29 08:16:05  WS-LOG-12  Sysmon  EventID=1  ProcessCreate  Image=C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe  ParentImage=C:\\Windows\\explorer.exe  CommandLine="powershell.exe -w hidden -enc SQBFAFgAIAAoAE4AZQB3AC0ATwBiAGoAZQBjAHQA"  User=NM\\s.bakker
+2026-09-29 08:16:09  WS-LOG-12  Sysmon  EventID=3  NetworkConnect  Image=powershell.exe  DestinationHostname=cdn-koffiekat.nm.lab  DestinationIp=203.0.113.91  DestinationPort=443
 2026-09-29 08:16:14  WS-LOG-12  Sysmon  EventID=11  FileCreate  Image=powershell.exe  TargetFilename=C:\\Users\\s.bakker\\AppData\\Roaming\\loader.dll
 2026-09-29 08:16:20  WS-LOG-12  Sysmon  EventID=1  ProcessCreate  Image=C:\\Windows\\System32\\rundll32.exe  CommandLine="rundll32.exe C:\\Users\\s.bakker\\AppData\\Roaming\\loader.dll,Start"
 2026-09-29 08:17:02  WS-LOG-12  Sysmon  EventID=1  ProcessCreate  Image=C:\\Windows\\System32\\schtasks.exe  CommandLine="schtasks /create /tn KoffieUpdate /tr \\"rundll32.exe loader.dll,Start\\" /sc onlogon"
-2026-09-29 08:20:44  WS-LOG-12  Sysmon  EventID=3  NetworkConnect  Image=rundll32.exe  DestinationHostname=update-koffie.jvt.lab  DestinationIp=203.0.113.88  DestinationPort=443
+2026-09-29 08:20:44  WS-LOG-12  Sysmon  EventID=3  NetworkConnect  Image=rundll32.exe  DestinationHostname=update-koffie.nm.lab  DestinationIp=203.0.113.88  DestinationPort=443
 2026-09-29 08:25:10  WS-LOG-12  Sysmon  EventID=1  ProcessCreate  Image=C:\\Windows\\System32\\net.exe  CommandLine="net group \\"Domain Admins\\" /domain"
-2026-09-29 08:25:31  WS-LOG-12  Sysmon  EventID=1  ProcessCreate  Image=C:\\Windows\\System32\\nltest.exe  CommandLine="nltest /dclist:jvt.lab"
+2026-09-29 08:25:31  WS-LOG-12  Sysmon  EventID=1  ProcessCreate  Image=C:\\Windows\\System32\\nltest.exe  CommandLine="nltest /dclist:nm.lab"
 2026-09-29 08:31:47  WS-LOG-12  Sysmon  EventID=10  ProcessAccess  SourceImage=rundll32.exe  TargetImage=C:\\Windows\\System32\\lsass.exe  GrantedAccess=0x1010
-2026-09-29 08:32:00  WS-LOG-12  EDR     ALERT  Severity=HIGH  Detection=Credential.LsassAccess  Process=rundll32.exe  analyst-note=JVT{lsass_is_credential_access}
-2026-09-29 08:40:12  SRV-FS02   Security  EventID=4624  LogonType=10  TargetUser=JVT\\adm.vermeer  SourceIp=10.20.1.12
-2026-09-29 08:40:55  SRV-FS02   Sysmon  EventID=1  ProcessCreate  Image=C:\\Windows\\System32\\cmd.exe  User=JVT\\adm.vermeer
+2026-09-29 08:32:00  WS-LOG-12  EDR     ALERT  Severity=HIGH  Detection=Credential.LsassAccess  Process=rundll32.exe  analyst-note=NM{lsass_is_credential_access}
+2026-09-29 08:40:12  SRV-FS02   Security  EventID=4624  LogonType=10  TargetUser=NM\\adm.vermeer  SourceIp=10.20.1.12
+2026-09-29 08:40:55  SRV-FS02   Sysmon  EventID=1  ProcessCreate  Image=C:\\Windows\\System32\\cmd.exe  User=NM\\adm.vermeer
 2026-09-29 08:52:18  SRV-FS02   Sysmon  EventID=1  ProcessCreate  Image=C:\\Program Files\\7-Zip\\7z.exe  CommandLine="7z.exe a -pKoffie C:\\Temp\\archief.7z D:\\Shares\\Klanten"
 2026-09-29 09:05:40  SRV-FS02   Sysmon  EventID=3  NetworkConnect  Image=rundll32.exe  DestinationIp=192.0.2.14  DestinationPort=443  BytesSent=2147483648
 2026-09-29 09:30:01  SRV-FS02   Sysmon  EventID=1  ProcessCreate  Image=C:\\Windows\\System32\\vssadmin.exe  CommandLine="vssadmin.exe delete shadows /all /quiet"
@@ -155,7 +155,7 @@ CS.registerRoom({
           <tbody>
             <tr><td>Hashwaarden</td><td><code>3abad12a…</code> (MD5 van een bestand)</td><td>Triviaal: één bit wijzigen geeft een nieuwe hash</td></tr>
             <tr><td>IP-adressen</td><td><code>203.0.113.88</code></td><td>Makkelijk: nieuwe server huren</td></tr>
-            <tr><td>Domeinnamen</td><td><code>update-koffie.jvt.lab</code></td><td>Simpel: nieuw domein registreren</td></tr>
+            <tr><td>Domeinnamen</td><td><code>update-koffie.nm.lab</code></td><td>Simpel: nieuw domein registreren</td></tr>
             <tr><td>Netwerk-/hostartefacten</td><td>Een vaste User-Agent, een geplande taak met een vaste naam</td><td>Vervelend: tooling aanpassen</td></tr>
             <tr><td>Tools</td><td>Een specifieke loader of tool voor het dumpen van wachtwoorden</td><td>Uitdagend: nieuwe tools bouwen of kopen</td></tr>
             <tr><td><strong>TTP's</strong></td><td>"Leest LSASS uit en beweegt zijdelings via RDP"</td><td><strong>Zwaar</strong>: hele werkwijze omgooien</td></tr>
@@ -254,7 +254,7 @@ CS.registerRoom({
         { q: 'Hoeveel unieke IPv4-adressen staan er in het KOFFIEKAT-rapport?', answer: ['4', 'vier'], hint: 'Kijk naar de IPv4-telling in het lab, of tel zelf in de sectie INFRASTRUCTUUR. Een dubbel adres telt één keer.', explain: '203.0.113.88, 203.0.113.91, 198.51.100.7 en 192.0.2.14. Het adres 203.0.113.88 staat er twee keer in, maar telt als één unieke indicator.' },
         { q: 'Hoeveel SHA-256-hashes staan er in het rapport?', answer: ['3', 'drie'], hint: 'SHA-256 is 64 hex-tekens lang.', explain: 'loader.dll, stage2 en de versleutelaar hebben elk een SHA-256-hash.' },
         { q: 'Welk CVE-nummer noemt het rapport?', answer: ['CVE-2023-4966'], hint: 'Zoek naar CVE- in de tekst of de CVE-telling in het lab.', explain: 'De aanvaller kwam bij twee slachtoffers binnen via een ongepatchte NetScaler-gateway. Patchen heeft dus hoge prioriteit.' },
-        { q: 'Wat is de rapportcode (vlag) in de kop van het rapport?', answer: ['JVT{koffiekat_iocs_verzameld}'], hint: 'Kijk in de eerste regels van de tekst in het lab.' },
+        { q: 'Wat is de rapportcode (vlag) in de kop van het rapport?', answer: ['NM{koffiekat_iocs_verzameld}'], hint: 'Kijk in de eerste regels van de tekst in het lab.' },
       ],
     },
 
@@ -265,7 +265,7 @@ CS.registerRoom({
         tegenhouden. Maar delen moet <em>veilig</em> en met duidelijke afspraken.</p>
 
         <h3>Defangen: de tanden eruit</h3>
-        <p>Plak je <code>https://update-koffie.jvt.lab/api/beacon</code> in een mail of chat, dan maakt het programma
+        <p>Plak je <code>https://update-koffie.nm.lab/api/beacon</code> in een mail of chat, dan maakt het programma
         er vaak een klikbare link van, of haalt het automatisch een voorbeeld op. Dan heb je per ongeluk contact
         gemaakt met de server van de aanvaller. Daarom <strong>defang</strong> je indicatoren: je maakt ze onklikbaar,
         maar voor mensen nog leesbaar.</p>
@@ -273,9 +273,9 @@ CS.registerRoom({
           <thead><tr><th>Origineel</th><th>Gedefanged</th></tr></thead>
           <tbody>
             <tr><td><code>https://</code></td><td><code>hxxps://</code></td></tr>
-            <tr><td><code>update-koffie.jvt.lab</code></td><td><code>update-koffie[.]jvt[.]lab</code></td></tr>
+            <tr><td><code>update-koffie.nm.lab</code></td><td><code>update-koffie[.]nineminds[.]lab</code></td></tr>
             <tr><td><code>203.0.113.88</code></td><td><code>203.0.113[.]88</code></td></tr>
-            <tr><td><code>naam@domein.jvt.lab</code></td><td><code>naam[at]domein[.]jvt[.]lab</code></td></tr>
+            <tr><td><code>naam@domein.nm.lab</code></td><td><code>naam[at]domein[.]nineminds[.]lab</code></td></tr>
           </tbody>
         </table>
         <p>Het omgekeerde, <strong>refangen</strong>, doe je pas vlak voordat je een indicator in je SIEM of firewall
@@ -337,11 +337,11 @@ CS.registerRoom({
         juiste hosts kunt blokkeren en in je proxylogs kunt zoeken wie erop geklikt heeft.</p>
 
         <h3>Hoe lees je een URL?</h3>
-        <pre><code>https://gebruiker@host.voorbeeld.jvt.lab:8443/pad/pagina?id=12
+        <pre><code>https://gebruiker@host.voorbeeld.nm.lab:8443/pad/pagina?id=12
 
 schema          https
 gebruikersdeel  gebruiker
-host            host.voorbeeld.jvt.lab
+host            host.voorbeeld.nm.lab
 poort           8443
 pad             /pad/pagina
 query           id=12</code></pre>
@@ -350,7 +350,7 @@ query           id=12</code></pre>
           een gebruikersdeel en wordt genegeerd. Bij <code>https://www.nederbank.nl@203.0.113.45/</code> ga je dus
           naar <code>203.0.113.45</code>, niet naar de bank. Dat heet de <strong>@-truc</strong>.</li>
           <li>Een hostnaam lees je <strong>van rechts naar links</strong>. Bij
-          <code>pakketpost.nl.bezorging-status.jvt.lab</code> bepaalt het laatste stuk wie de eigenaar is. Het begin
+          <code>pakketpost.nl.bezorging-status.nm.lab</code> bepaalt het laatste stuk wie de eigenaar is. Het begin
           (<code>pakketpost.nl</code>) is maar een subdomein dat de aanvaller zelf heeft verzonnen.</li>
           <li><strong>Punycode</strong> (<code>xn--</code>) is de manier waarop internationale tekens in domeinnamen
           worden opgeslagen. Aanvallers gebruiken het voor lookalike-domeinen: een Cyrillische <code>е</code> ziet
@@ -377,17 +377,17 @@ query           id=12</code></pre>
         type: 'url',
         urls: [
           'https://www.nederbank.nl@203.0.113.45/inloggen',
-          'http://pakketpost.nl.bezorging-status.jvt.lab/track?code=NL8812',
-          'https://xn--nderbank-c8g.jvt.lab/verificatie',
+          'http://pakketpost.nl.bezorging-status.nm.lab/track?code=NL8812',
+          'https://xn--nderbank-c8g.nm.lab/verificatie',
           'http://198.51.100.23:8081/pakket/volgen',
-          'https://intranet.jvt.lab/rooster',
+          'https://intranet.nm.lab/rooster',
         ],
       },
       questions: [
         { q: 'Met welke host maakt de browser echt verbinding bij https://www.nederbank.nl@203.0.113.45/inloggen?', answer: ['203.0.113.45'], hint: 'Alles vóór de @ is het gebruikersdeel.', explain: 'Door de @-truc lijkt het een link naar de bank, maar de echte host is het IP-adres 203.0.113.45.' },
         { q: 'Welke poort gebruikt de URL met het IP-adres 198.51.100.23?', answer: ['8081'], hint: 'Kijk naar het getal na de dubbele punt.', explain: 'Een ongebruikelijke poort op een kaal IP-adres is een sterke rode vlag.' },
-        { q: 'Welke URL gebruikt punycode om op een bekend domein te lijken?', options: ['https://xn--nderbank-c8g.jvt.lab/verificatie', 'https://intranet.jvt.lab/rooster', 'http://198.51.100.23:8081/pakket/volgen', 'https://www.nederbank.nl@203.0.113.45/inloggen'], answer: 0, explain: 'xn-- verraadt punycode: achter de schermen staat een Cyrillisch teken dat op een Latijnse letter lijkt.' },
-        { q: 'Bij http://pakketpost.nl.bezorging-status.jvt.lab/track: wat is het echte probleem?', options: ['pakketpost.nl is slechts een subdomein van het domein van de aanvaller', 'De URL heeft een queryparameter', 'Het pad heet /track', 'Er is niets aan de hand, het is pakketpost.nl'], answer: 0, explain: 'Lees van rechts naar links: de host valt onder bezorging-status.jvt.lab. De merknaam vooraan is misleiding.' },
+        { q: 'Welke URL gebruikt punycode om op een bekend domein te lijken?', options: ['https://xn--nderbank-c8g.nm.lab/verificatie', 'https://intranet.nm.lab/rooster', 'http://198.51.100.23:8081/pakket/volgen', 'https://www.nederbank.nl@203.0.113.45/inloggen'], answer: 0, explain: 'xn-- verraadt punycode: achter de schermen staat een Cyrillisch teken dat op een Latijnse letter lijkt.' },
+        { q: 'Bij http://pakketpost.nl.bezorging-status.nm.lab/track: wat is het echte probleem?', options: ['pakketpost.nl is slechts een subdomein van het domein van de aanvaller', 'De URL heeft een queryparameter', 'Het pad heet /track', 'Er is niets aan de hand, het is pakketpost.nl'], answer: 0, explain: 'Lees van rechts naar links: de host valt onder bezorging-status.nm.lab. De merknaam vooraan is misleiding.' },
       ],
     },
 
@@ -518,7 +518,7 @@ query           id=12</code></pre>
         { q: 'De regel met schtasks /create ... /sc onlogon: welke tactiek is dat vooral?', options: ['Persistence', 'Exfiltration', 'Reconnaissance', 'Impact'], answer: 0, explain: 'Een geplande taak bij het aanmelden zorgt dat de loader na elke herstart terugkomt (T1053 Scheduled Task/Job).' },
         { q: 'rundll32.exe opent lsass.exe (Sysmon EventID 10). Welke tactiek hoort daarbij?', options: ['Discovery', 'Credential Access', 'Lateral Movement', 'Command and Control'], answer: 1, explain: 'LSASS bevat inloggegevens in het geheugen. Uitlezen is T1003 OS Credential Dumping, tactiek Credential Access.' },
         { q: 'Welke tactiek past bij vssadmin.exe delete shadows en het massaal hernoemen naar .koffie?', options: ['Impact', 'Initial Access', 'Execution', 'Collection'], answer: 0, explain: 'Schaduwkopieën wissen (T1490) en bestanden versleutelen (T1486) vallen onder Impact.' },
-        { q: 'Wat is de analistennotitie (vlag) bij de EDR-alert in de log?', answer: ['JVT{lsass_is_credential_access}'], hint: 'Filter in het lab op ALERT of op analyst-note.' },
+        { q: 'Wat is de analistennotitie (vlag) bij de EDR-alert in de log?', answer: ['NM{lsass_is_credential_access}'], hint: 'Filter in het lab op ALERT of op analyst-note.' },
       ],
     },
   ],

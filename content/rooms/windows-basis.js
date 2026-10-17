@@ -108,24 +108,24 @@ CS.registerRoom({
       lab: {
         type: 'terminal',
         shell: 'powershell',
-        user: 'student', host: 'JVT-PC01',
+        user: 'student', host: 'NM-PC01',
         motd: 'Windows PowerShell. Typ de cmdlets precies over (hoofdletters maken niet uit). Begin met: whoami',
         commands: {
-          'whoami': 'jvt-corp\\student',
-          'whoami /groups': 'GROEPSINFORMATIE\n-----------------\n\nGroepsnaam                                 Type             SID\n========================================== ================ ============\nEveryone                                   Bekende groep    S-1-1-0\nBUILTIN\\Users                              Alias            S-1-5-32-545\nBUILTIN\\Remote Desktop Users               Alias            S-1-5-32-555\nNT AUTHORITY\\Authenticated Users           Bekende groep    S-1-5-11\nJVT-CORP\\Domain Users                      Groep            S-1-5-21-...-513',
-          'Get-LocalUser': 'Name           Enabled Description\n----           ------- -----------\nAdministrator  True    Ingebouwd account voor het beheer van de computer\nDefaultAccount False   Een gebruikersaccount dat door het systeem wordt beheerd.\nGuest          False   Ingebouwd account voor gasttoegang tot de computer\nstudent        True    Standaardmedewerker\nsvc_backup     True    JVT{vreemd_lokaal_account} - recent aangemaakt, hoort hier niet',
+          'whoami': 'nineminds-corp\\student',
+          'whoami /groups': 'GROEPSINFORMATIE\n-----------------\n\nGroepsnaam                                 Type             SID\n========================================== ================ ============\nEveryone                                   Bekende groep    S-1-1-0\nBUILTIN\\Users                              Alias            S-1-5-32-545\nBUILTIN\\Remote Desktop Users               Alias            S-1-5-32-555\nNT AUTHORITY\\Authenticated Users           Bekende groep    S-1-5-11\nNM-CORP\\Domain Users                      Groep            S-1-5-21-...-513',
+          'Get-LocalUser': 'Name           Enabled Description\n----           ------- -----------\nAdministrator  True    Ingebouwd account voor het beheer van de computer\nDefaultAccount False   Een gebruikersaccount dat door het systeem wordt beheerd.\nGuest          False   Ingebouwd account voor gasttoegang tot de computer\nstudent        True    Standaardmedewerker\nsvc_backup     True    NM{vreemd_lokaal_account} - recent aangemaakt, hoort hier niet',
           'Get-Process': 'Handles  NPM(K)    PM(K)      WS(K)     CPU(s)     Id  SI ProcessName\n-------  ------    -----      -----     ------     --  -- -----------\n    312      18     4820      12044       1.23    980   1 explorer\n    145       9     2100       8800       0.45   1340   1 powershell\n    501      32    18840      45120       6.77   2210   1 chrome\n     88       6     1420       4960       0.08   3344   1 updater\n    210      14     3980      10220       0.90    744   1 svchost',
           'Get-Service': 'Status   Name               DisplayName\n------   ----               -----------\nRunning  Dnscache           DNS Client\nRunning  Spooler            Print Spooler\nRunning  LanmanServer       Server\nStopped  WinDefend          Microsoft Defender Antivirus Service\nRunning  wuauserv           Windows Update\nRunning  Themes             Themes',
           'Get-ChildItem C:\\Users\\student\\Desktop': '    Directory: C:\\Users\\student\\Desktop\n\nMode                 LastWriteTime         Length Name\n----                 -------------         ------ ----\n-a----         3-10-2026     09:41            182 notitie.txt\n-a----         3-10-2026     08:12         245760 jaarverslag.pdf\n-a----         2-10-2026     17:55             96 wachtwoorden.xlsx',
-          'Get-Content C:\\Users\\student\\Desktop\\notitie.txt': 'Herinnering: zet GEEN wachtwoorden op het bureaublad!\nVPN-code vernieuwen voor vrijdag.\nJVT{notitie_op_bureaublad}',
-          'Get-ItemProperty HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run': 'OneDrive       : "C:\\Users\\student\\AppData\\Local\\Microsoft\\OneDrive\\OneDrive.exe" /background\nSecurityHealth : C:\\Windows\\System32\\SecurityHealthSystray.exe\nUpdater        : C:\\Users\\student\\AppData\\Roaming\\JVT{run_key_is_persistentie}.exe\nPSPath         : Microsoft.PowerShell.Core\\Registry::HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\nPSChildName    : Run\nPSProvider     : Microsoft.PowerShell.Core\\Registry',
+          'Get-Content C:\\Users\\student\\Desktop\\notitie.txt': 'Herinnering: zet GEEN wachtwoorden op het bureaublad!\nVPN-code vernieuwen voor vrijdag.\nNM{notitie_op_bureaublad}',
+          'Get-ItemProperty HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run': 'OneDrive       : "C:\\Users\\student\\AppData\\Local\\Microsoft\\OneDrive\\OneDrive.exe" /background\nSecurityHealth : C:\\Windows\\System32\\SecurityHealthSystray.exe\nUpdater        : C:\\Users\\student\\AppData\\Roaming\\NM{run_key_is_persistentie}.exe\nPSPath         : Microsoft.PowerShell.Core\\Registry::HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\nPSChildName    : Run\nPSProvider     : Microsoft.PowerShell.Core\\Registry',
         },
       },
       questions: [
         { q: 'Welk werkwoord-zelfstandignaamwoord-patroon volgen alle PowerShell-cmdlets? Geef de cmdlet om processen te tonen.', answer: ['Get-Process', 'get-process'], hint: 'Werkwoord "Get" + zelfstandignaamwoord "Process".', explain: 'Cmdlets volgen Verb-Noun; Get-Process toont de lopende processen.' },
-        { q: 'Draai Get-LocalUser. Welke vlag staat in de beschrijving van het verdachte account?', answer: ['JVT{vreemd_lokaal_account}'], hint: 'Eén account is "recent aangemaakt en hoort hier niet".', explain: 'Het account svc_backup hoort er niet; zo\'n onbekend account kan door een aanvaller zijn aangemaakt.' },
-        { q: 'Lees notitie.txt op het bureaublad. Wat is de vlag?', answer: ['JVT{notitie_op_bureaublad}'], hint: 'Get-Content C:\\Users\\student\\Desktop\\notitie.txt', explain: 'Get-Content toont de inhoud van het bestand, inclusief de vlag.' },
-        { q: 'Bekijk de Run-key met Get-ItemProperty. Wat is de vlag in de verdachte opstartregel?', answer: ['JVT{run_key_is_persistentie}'], hint: 'Zoek de regel die naar AppData\\Roaming wijst, niet OneDrive of SecurityHealth.', explain: 'De "Updater" in AppData\\Roaming is een klassieke persistentietruc via een Run-key.' },
+        { q: 'Draai Get-LocalUser. Welke vlag staat in de beschrijving van het verdachte account?', answer: ['NM{vreemd_lokaal_account}'], hint: 'Eén account is "recent aangemaakt en hoort hier niet".', explain: 'Het account svc_backup hoort er niet; zo\'n onbekend account kan door een aanvaller zijn aangemaakt.' },
+        { q: 'Lees notitie.txt op het bureaublad. Wat is de vlag?', answer: ['NM{notitie_op_bureaublad}'], hint: 'Get-Content C:\\Users\\student\\Desktop\\notitie.txt', explain: 'Get-Content toont de inhoud van het bestand, inclusief de vlag.' },
+        { q: 'Bekijk de Run-key met Get-ItemProperty. Wat is de vlag in de verdachte opstartregel?', answer: ['NM{run_key_is_persistentie}'], hint: 'Zoek de regel die naar AppData\\Roaming wijst, niet OneDrive of SecurityHealth.', explain: 'De "Updater" in AppData\\Roaming is een klassieke persistentietruc via een Run-key.' },
       ],
     },
 
@@ -182,7 +182,7 @@ CS.registerRoom({
       `,
       lab: {
         type: 'logs',
-        title: 'Event Viewer — Security (JVT-PC01)',
+        title: 'Event Viewer — Security (NM-PC01)',
         lines: WIN_SECLOG,
       },
       questions: [
@@ -199,7 +199,7 @@ CS.registerRoom({
 
         <h3>De bouwstenen</h3>
         <ul>
-          <li><strong>Domein</strong> — een groep computers en gebruikers die samen worden beheerd, bijv. <code>jvt-corp.local</code>.</li>
+          <li><strong>Domein</strong> — een groep computers en gebruikers die samen worden beheerd, bijv. <code>nineminds-corp.local</code>.</li>
           <li><strong>Domaincontroller (DC)</strong> — de server die het domein draait: hij bewaart alle accounts en controleert aanmeldingen. Wie de DC beheerst, beheerst het netwerk.</li>
           <li><strong>Gebruikers, groepen en OU's</strong> — accounts worden in groepen gezet (bijv. "Verkoop") en geordend in <strong>Organizational Units</strong> (OU's), mappen om beleid op toe te passen.</li>
           <li><strong>Group Policy (GPO)</strong> — centrale instellingen die automatisch naar computers en gebruikers worden geduwd: wachtwoordregels, achtergronden, software, noem maar op.</li>

@@ -2,7 +2,7 @@
 
 // Bestandssysteem voor het praktijklab in taak 7: de fictieve webserver web01 van Brandpunt Koffie B.V.
 // met KoffieCMS 4.2.1, een map met beveiligingsadviezen en een configuratiebestand.
-// Vlaggen: JVT{advies_gelezen_versie_kwetsbaar} (advies) en JVT{workaround_eerst_dan_patchen} (configuratie).
+// Vlaggen: NM{advies_gelezen_versie_kwetsbaar} (advies) en NM{workaround_eerst_dan_patchen} (configuratie).
 const KWETS_FS = {
   '/home/student/LEESMIJ.txt': `OPDRACHT — web01 (Brandpunt Koffie B.V., fictief)
 =================================================
@@ -22,7 +22,7 @@ kassa02  | kassasysteem winkel    | BonenKassa 2.3      | retail     | JA
 test03   | testomgeving           | KoffieCMS 4.3.0     | IT         | nee
 Onderhoudsvenster web01: dinsdag 22:00-23:00
 `,
-  '/home/student/advies/JVT-SA-2026-009.txt': `JVT Security Advisory JVT-SA-2026-009 (FICTIEF)
+  '/home/student/advies/NM-SA-2026-009.txt': `NineMinds Security Advisory NM-SA-2026-009 (FICTIEF)
 Product   : BrouwMail
 Getroffen : 6.0.0 t/m 6.9.9
 Opgelost  : 7.0.0
@@ -31,7 +31,7 @@ Soort fout: CWE-79 (cross-site scripting) in de webmailinterface
 Misbruik  : niet waargenomen
 Advies    : upgrade naar 7.0.0 of hoger.
 `,
-  '/home/student/advies/JVT-SA-2026-014.txt': `JVT Security Advisory JVT-SA-2026-014 (FICTIEF)
+  '/home/student/advies/NM-SA-2026-014.txt': `NineMinds Security Advisory NM-SA-2026-014 (FICTIEF)
 =================================================
 Product    : KoffieCMS
 Getroffen  : 4.2.0 t/m 4.2.2
@@ -53,7 +53,7 @@ Zet in /etc/koffiecms/koffiecms.conf de optie import_api op uit
 en blokkeer /api/import in je webapplicatiefirewall (WAF).
 Let op: dit is een tijdelijke maatregel, geen vervanging van de patch.
 
-Controlecode voor wie dit advies volledig gelezen heeft: JVT{advies_gelezen_versie_kwetsbaar}
+Controlecode voor wie dit advies volledig gelezen heeft: NM{advies_gelezen_versie_kwetsbaar}
 `,
   '/opt/koffiecms/VERSION': 'KoffieCMS 4.2.1\n',
   '/opt/koffiecms/CHANGELOG.txt': `4.2.1 - bugfix: bestelbevestiging toonde verkeerde datum
@@ -65,7 +65,7 @@ site_naam = Brandpunt Koffie
 database = mysql://koffiecms@localhost/koffie
 debug = uit
 import_api = aan
-# import_api: zet op uit als noodmaatregel (zie JVT-SA-2026-014). Controlecode: JVT{workaround_eerst_dan_patchen}
+# import_api: zet op uit als noodmaatregel (zie NM-SA-2026-014). Controlecode: NM{workaround_eerst_dan_patchen}
 max_upload_mb = 20
 `,
   '/var/log/koffiecms/': null,
@@ -531,9 +531,9 @@ grep -r KoffieCMS advies</code></pre>
       },
       questions: [
         { q: 'Welke versie van KoffieCMS draait er op web01?', answer: ['4.2.1', 'koffiecms 4.2.1'], hint: 'cat /opt/koffiecms/VERSION', explain: 'web01 draait KoffieCMS 4.2.1, en dat valt binnen het getroffen bereik 4.2.0 t/m 4.2.2.' },
-        { q: 'In welke versie is het lek uit JVT-SA-2026-014 opgelost?', answer: ['4.2.3', 'koffiecms 4.2.3'], hint: 'Zoek de regel "Opgelost in" in het advies.', explain: 'Het lek is opgelost in 4.2.3; tot die update gebruik je de workaround.' },
-        { q: 'Welke controlecode (vlag) staat onderaan het advies over KoffieCMS?', answer: ['JVT{advies_gelezen_versie_kwetsbaar}'], hint: 'grep -r KoffieCMS advies, en dan cat op het juiste bestand.', explain: 'Je hebt het juiste advies gevonden en volledig gelezen.' },
-        { q: 'Welke vlag staat bij de instelling import_api in het configuratiebestand?', answer: ['JVT{workaround_eerst_dan_patchen}'], hint: 'grep import_api /etc/koffiecms/koffiecms.conf', explain: 'De workaround (import_api uit) koopt tijd, maar de echte oplossing blijft de update naar 4.2.3.' },
+        { q: 'In welke versie is het lek uit NM-SA-2026-014 opgelost?', answer: ['4.2.3', 'koffiecms 4.2.3'], hint: 'Zoek de regel "Opgelost in" in het advies.', explain: 'Het lek is opgelost in 4.2.3; tot die update gebruik je de workaround.' },
+        { q: 'Welke controlecode (vlag) staat onderaan het advies over KoffieCMS?', answer: ['NM{advies_gelezen_versie_kwetsbaar}'], hint: 'grep -r KoffieCMS advies, en dan cat op het juiste bestand.', explain: 'Je hebt het juiste advies gevonden en volledig gelezen.' },
+        { q: 'Welke vlag staat bij de instelling import_api in het configuratiebestand?', answer: ['NM{workaround_eerst_dan_patchen}'], hint: 'grep import_api /etc/koffiecms/koffiecms.conf', explain: 'De workaround (import_api uit) koopt tijd, maar de echte oplossing blijft de update naar 4.2.3.' },
       ],
     },
   ],

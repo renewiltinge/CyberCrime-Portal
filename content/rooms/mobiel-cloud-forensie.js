@@ -132,14 +132,14 @@ CS.registerRoom({
 69 63 68 74 3D 7A 69 65 20 6A 65 20 6F 6D 20 32
 33 3A 30 30 20 62 69 6A 20 64 65 20 6F 75 64 65
 20 6C 6F 6F 64 73 20 61 61 6E 20 64 65 20 4B 61
-64 65 0A 66 6C 61 67 3D 4A 56 54 7B 73 71 6C 69
+64 65 0A 66 6C 61 67 3D 4E 4D 7B 73 71 6C 69
 74 65 5F 62 65 77 61 61 72 74 5F 63 68 61 74 73
 7D 0A`,
       },
       questions: [
         { q: 'Welke tekstkop staat in de eerste bytes, en welk bestandstype is dit dus?', options: ['%PDF — een PDF', 'SQLite format 3 — een SQLite-database', 'PK — een ZIP-bestand', 'MZ — een Windows-programma'], answer: 1, explain: 'De eerste 16 bytes luiden "SQLite format 3" plus een nulbyte: de vaste signatuur van een SQLite-database.' },
         { q: 'Van wie naar wie is het chatbericht in de database?', answer: ['van daan naar mila', 'daan naar mila', 'daan, mila', 'daan naar mila'], hint: 'Lees de ASCII-kolom: van=... naar=...', explain: 'De database bevat van=Daan en naar=Mila — afzender en ontvanger van het bericht.' },
-        { q: 'Welke vlag staat achter flag= in de database?', answer: ['JVT{sqlite_bewaart_chats}'], encoded: true, hint: 'Lees de leesbare ASCII onderaan de hexdump.', explain: 'In de ASCII-kolom staat flag=JVT{sqlite_bewaart_chats}. Een SQLite-bestand bevat dus gewoon leesbare berichtinhoud.' },
+        { q: 'Welke vlag staat achter flag= in de database?', answer: ['NM{sqlite_bewaart_chats}'], encoded: true, hint: 'Lees de leesbare ASCII onderaan de hexdump.', explain: 'In de ASCII-kolom staat flag=NM{sqlite_bewaart_chats}. Een SQLite-bestand bevat dus gewoon leesbare berichtinhoud.' },
       ],
     },
 
@@ -216,7 +216,7 @@ CS.registerRoom({
 2026-09-12 22:11:38  account=mila@kletsapp.lab  gebeurtenis=login  status=ok  ip=192.168.1.24  locatie=Utrecht, NL  apparaat=iPhone (KletsApp 7.2)
 2026-09-14 03:47:51  account=mila@kletsapp.lab  gebeurtenis=login  status=ok  ip=203.0.113.88  locatie=Belgrado, RS  apparaat=onbekend (web)
 2026-09-14 03:48:10  account=mila@kletsapp.lab  gebeurtenis=wachtwoord_gewijzigd  status=ok  ip=203.0.113.88  locatie=Belgrado, RS  apparaat=onbekend (web)
-2026-09-14 03:49:27  account=mila@kletsapp.lab  gebeurtenis=export_chats  status=ok  ip=203.0.113.88  locatie=Belgrado, RS  notitie=JVT{verdachte_login_gevonden}
+2026-09-14 03:49:27  account=mila@kletsapp.lab  gebeurtenis=export_chats  status=ok  ip=203.0.113.88  locatie=Belgrado, RS  notitie=NM{verdachte_login_gevonden}
 2026-09-14 03:52:03  account=mila@kletsapp.lab  gebeurtenis=nieuw_apparaat_gekoppeld  status=ok  ip=203.0.113.88  locatie=Belgrado, RS  apparaat=web-sessie
 2026-09-14 08:05:12  account=mila@kletsapp.lab  gebeurtenis=login  status=mislukt  ip=192.168.1.24  locatie=Utrecht, NL  apparaat=iPhone (KletsApp 7.2)
 2026-09-14 08:05:29  account=mila@kletsapp.lab  gebeurtenis=login  status=mislukt  ip=192.168.1.24  locatie=Utrecht, NL  apparaat=iPhone (KletsApp 7.2)
@@ -226,7 +226,7 @@ CS.registerRoom({
       questions: [
         { q: 'Vanaf welk IP-adres kwam de verdachte login (vreemde locatie, raar tijdstip)?', answer: ['203.0.113.88'], hint: 'Filter op login en zoek de regel met locatie buiten NL rond 03:47.', explain: 'De login van 203.0.113.88 (Belgrado, RS) om 03:47 wijkt af van Mila\'s gewone patroon uit NL overdag.' },
         { q: 'Wat deed de aanvaller direct na de verdachte login? (noem één gebeurtenis)', answer: ['wachtwoord gewijzigd', 'wachtwoord_gewijzigd', 'wachtwoord wijzigen', 'export chats', 'export_chats', 'chats exporteren', 'nieuw apparaat gekoppeld'], hint: 'Filter op 203.0.113.88 en lees de regels eronder.', explain: 'Vanaf hetzelfde IP werd het wachtwoord gewijzigd, de chats geëxporteerd en een nieuw apparaat gekoppeld — klassieke accountovername.' },
-        { q: 'Welke vlag staat in de notitieregel bij de verdachte actie?', answer: ['JVT{verdachte_login_gevonden}'], hint: 'Filter op JVT of op notitie.', explain: 'Bij de export_chats-regel van het verdachte IP staat notitie=JVT{verdachte_login_gevonden}.' },
+        { q: 'Welke vlag staat in de notitieregel bij de verdachte actie?', answer: ['NM{verdachte_login_gevonden}'], hint: 'Filter op NM of op notitie.', explain: 'Bij de export_chats-regel van het verdachte IP staat notitie=NM{verdachte_login_gevonden}.' },
       ],
     },
 

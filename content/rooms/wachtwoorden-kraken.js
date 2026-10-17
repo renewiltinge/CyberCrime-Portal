@@ -163,7 +163,7 @@ CS.registerRoom({
         <h3>Je beloning</h3>
         <p>Heb je het wachtwoord gevonden? Mooi — dan heb je je eerste hash gekraakt. Als bewijs lever je deze vlag in:</p>
         <details><summary>Toon de vlag (pas openen nadat je het wachtwoord hebt gekraakt)</summary>
-          <p>Je verdiende vlag is <code>JVT{woordenlijst_kraakt_snel}</code>. Omdat MD5 een snelle hash is, was de hele
+          <p>Je verdiende vlag is <code>NM{woordenlijst_kraakt_snel}</code>. Omdat MD5 een snelle hash is, was de hele
           lijst in een fractie van een seconde doorlopen — onthoud dat gevoel als we het straks over trage hashes
           hebben.</p>
         </details>
@@ -178,7 +178,7 @@ CS.registerRoom({
       questions: [
         { q: 'Start de woordenlijstaanval. Welk wachtwoord hoort bij de hash?', answer: ['welkom'], hint: 'Laat de tool de hele lijst aflopen; één woord geeft precies dezelfde MD5.', explain: 'Het woord "welkom" heeft exact deze MD5-hash. Een klassieke dictionary-treffer.' },
         { q: 'Hoe heet de beroemde woordenlijst uit een oud datalek die vaak het startpunt is?', answer: ['rockyou', 'rockyou.txt'], hint: 'Vernoemd naar het bedrijf dat de wachtwoorden lekte.', explain: 'rockyou.txt bevat ruim 14 miljoen gelekte wachtwoorden en is het klassieke startpunt.' },
-        { q: 'Wat is de vlag die je verdient na het kraken?', answer: ['JVT{woordenlijst_kraakt_snel}'], hint: 'Hij staat in het inklapbare blok onderaan de taak.', explain: 'De vlag JVT{woordenlijst_kraakt_snel} bewijst je eerste geslaagde woordenlijstaanval.' },
+        { q: 'Wat is de vlag die je verdient na het kraken?', answer: ['NM{woordenlijst_kraakt_snel}'], hint: 'Hij staat in het inklapbare blok onderaan de taak.', explain: 'De vlag NM{woordenlijst_kraakt_snel} bewijst je eerste geslaagde woordenlijstaanval.' },
         { q: 'Waarom werkt een woordenlijstaanval zo vaak?', options: ['Omdat mensen voorspelbare wachtwoorden kiezen (namen, lek-woorden, "welkom")', 'Omdat hashes zwak zijn', 'Omdat de tool de hash terugrekent', 'Omdat alle wachtwoorden in rockyou staan'], answer: 0, explain: 'Mensen kiezen geen willekeur; een lijst van waarschijnlijke wachtwoorden pakt daarom een groot deel.' },
       ],
     },
@@ -221,7 +221,7 @@ CS.registerRoom({
 
         <h3>Je beloning</h3>
         <details><summary>Toon de vlag (pas openen nadat je het wachtwoord hebt gevonden)</summary>
-          <p>Je verdiende vlag: <code>JVT{regels_maken_varianten}</code>. Onthoud: een "sterk ogend" wachtwoord als
+          <p>Je verdiende vlag: <code>NM{regels_maken_varianten}</code>. Onthoud: een "sterk ogend" wachtwoord als
           <code>Zomer2024</code> is voor een kraaktool nauwelijks meer werk dan het kale woord <code>zomer</code>.</p>
         </details>
       `,
@@ -236,7 +236,7 @@ CS.registerRoom({
         { q: 'Welk wachtwoord hoort bij de hash in dit lab?', answer: ['zomer2024'], hint: 'Neem het basiswoord "zomer" en plak er met de jaartal-regel een jaar achter.', explain: 'zomer2024 ontstaat uit het basiswoord "zomer" plus de year-regel (1990-2026).' },
         { q: 'De digits-regel plakt welke reeks achter een woord?', options: ['0 tot en met 99', '1990 tot en met 2026', 'alleen het getal 1', 'een willekeurig getal'], answer: 0, explain: 'De digits-regel maakt woord+0 t/m woord+99; de year-regel doet woord+1990 t/m woord+2026.' },
         { q: 'Hoe heet het omzetten van letters naar lijkende tekens, zoals "e" naar "3" en "a" naar "4"?', answer: ['l33t', 'l33t-speak', 'leet', 'leetspeak', 'leet-speak'], hint: 'Spreek uit als "leet"; schrijf het zelf ook vaak met cijfers.', explain: 'l33t-speak vervangt letters door lijkende cijfers/tekens; een veelgebruikte mangling-regel.' },
-        { q: 'Wat is de vlag die je hier verdient?', answer: ['JVT{regels_maken_varianten}'], hint: 'Staat in het inklapbare blok onderaan.', explain: 'JVT{regels_maken_varianten} — regels maken uit één basiswoord vele realistische kandidaten.' },
+        { q: 'Wat is de vlag die je hier verdient?', answer: ['NM{regels_maken_varianten}'], hint: 'Staat in het inklapbare blok onderaan.', explain: 'NM{regels_maken_varianten} — regels maken uit één basiswoord vele realistische kandidaten.' },
       ],
     },
 
@@ -287,7 +287,7 @@ CS.registerRoom({
         was geen enkele mask-aanval meer haalbaar.</div>
 
         <details><summary>Toon de vlag (pas openen nadat je het wachtwoord hebt gekraakt)</summary>
-          <p>Je verdiende vlag: <code>JVT{masker_vindt_het_korte}</code>. Maskers maken brute force gericht — maar ze
+          <p>Je verdiende vlag: <code>NM{masker_vindt_het_korte}</code>. Maskers maken brute force gericht — maar ze
           verliezen het altijd van voldoende lengte.</p>
         </details>
       `,
@@ -302,7 +302,7 @@ CS.registerRoom({
         { q: 'Welk kort wachtwoord (3 tekens) hoort bij de hash?', answer: ['q7m'], hint: 'Masker ?l?d?l: kleine letter, cijfer, kleine letter.', explain: 'q7m past op het masker ?l?d?l en geeft exact deze MD5-hash.' },
         { q: 'Hoeveel kandidaten telt het masker ?l?d?l (a-z, 0-9, a-z)?', answer: ['6760', '6.760'], hint: 'Vermenigvuldig 26 × 10 × 26.', explain: '26 × 10 × 26 = 6.760 mogelijkheden — triviaal voor een computer.' },
         { q: 'Wat gebeurt er met de zoekruimte als je één teken aan een wachtwoord toevoegt?', options: ['Die wordt vermenigvuldigd met het aantal mogelijke tekens (exponentiële groei)', 'Die wordt verdubbeld', 'Die blijft gelijk', 'Die wordt met één opgeteld'], answer: 0, explain: 'Elk extra teken vermenigvuldigt het totaal met de grootte van de tekenklasse; vandaar de explosieve groei.' },
-        { q: 'Wat is de vlag die je hier verdient?', answer: ['JVT{masker_vindt_het_korte}'], hint: 'Staat in het inklapbare blok onderaan.', explain: 'JVT{masker_vindt_het_korte} — maskers kraken korte wachtwoorden, maar verliezen van lengte.' },
+        { q: 'Wat is de vlag die je hier verdient?', answer: ['NM{masker_vindt_het_korte}'], hint: 'Staat in het inklapbare blok onderaan.', explain: 'NM{masker_vindt_het_korte} — maskers kraken korte wachtwoorden, maar verliezen van lengte.' },
       ],
     },
 
@@ -349,7 +349,7 @@ CS.registerRoom({
         gaat hier niet werken.</p>
 
         <details><summary>Toon de vlag (pas openen nadat je de NTLM-hash hebt gekraakt)</summary>
-          <p>Je verdiende vlag: <code>JVT{ntlm_valt_net_zo_hard}</code>. Een zwak wachtwoord blijft zwak, of het nu als
+          <p>Je verdiende vlag: <code>NM{ntlm_valt_net_zo_hard}</code>. Een zwak wachtwoord blijft zwak, of het nu als
           MD5 of als NTLM is opgeslagen — alleen een trage, gesalte hash plus een sterk wachtwoord houdt stand.</p>
         </details>
       `,
@@ -364,7 +364,7 @@ CS.registerRoom({
         { q: 'Zet het algoritme op ntlm en kraak de hash. Welk wachtwoord is het?', answer: ['Wachtwoord1', 'wachtwoord1'], hint: 'Een klassiek Windows-wachtwoord: een woord met hoofdletter en een cijfer erachter.', explain: 'Wachtwoord1 is de NTLM-hash in dit lab; een typisch (zwak) Windows-wachtwoord.' },
         { q: 'Waarom maakt een salt rainbow tables nutteloos?', options: ['Omdat gelijke wachtwoorden tóch verschillende hashes krijgen, buiten de voorberekende tabel om', 'Omdat het wachtwoord erdoor langer wordt', 'Omdat de hash erdoor geheim wordt', 'Omdat salt het algoritme verandert'], answer: 0, explain: 'Door het unieke salt klopt geen enkele voorberekende tabel meer; de aanvaller moet per hash opnieuw gokken.' },
         { q: 'Een hash begint met "$6$". Welk type is dit?', options: ['sha512crypt (trage hash)', 'MD5', 'NTLM', 'SHA-1'], answer: 0, explain: 'Het prefix $6$ staat voor sha512crypt, een trage hash die je vaak in /etc/shadow ziet.' },
-        { q: 'Wat is de vlag die je hier verdient?', answer: ['JVT{ntlm_valt_net_zo_hard}'], hint: 'Staat in het inklapbare blok onderaan.', explain: 'JVT{ntlm_valt_net_zo_hard} — NTLM is snel en ongesalt, dus zwakke wachtwoorden vallen net zo makkelijk.' },
+        { q: 'Wat is de vlag die je hier verdient?', answer: ['NM{ntlm_valt_net_zo_hard}'], hint: 'Staat in het inklapbare blok onderaan.', explain: 'NM{ntlm_valt_net_zo_hard} — NTLM is snel en ongesalt, dus zwakke wachtwoorden vallen net zo makkelijk.' },
       ],
     },
 

@@ -5,7 +5,7 @@
  * publiceren.
  *
  * Gebruik:  node tools/build-artifact.js [uitvoerpad]
- * Standaard uitvoer: dist/jvt-cyber-dojo.html
+ * Standaard uitvoer: dist/nineminds-cyber-dojo.html
  *
  * Let op: dit bestand bevat GEEN <!doctype>/<html>/<head>/<body>, zodat het
  * ook direct als claude.ai-Artifact gepubliceerd kan worden (dat voegt zelf
@@ -17,7 +17,7 @@ const path = require('path');
 const vm = require('vm');
 
 const ROOT = path.join(__dirname, '..');
-const OUT = process.argv[2] || path.join(ROOT, 'dist', 'jvt-cyber-dojo.html');
+const OUT = process.argv[2] || path.join(ROOT, 'dist', 'nineminds-cyber-dojo.html');
 const ORDER = ['fundamenten', 'security-kern', 'offensief', 'defensief', 'forensie', 'intelligence', 'puzzels', 'eindopdracht'];
 
 const read = (p) => fs.readFileSync(path.join(ROOT, p), 'utf8');
@@ -41,7 +41,7 @@ const app = read('assets/js/app.js');
 const labs = read('assets/js/labs.js');
 const roomScripts = rooms.map((x) => '<script>\n' + safeJs(fs.readFileSync(path.join(dir, x.f), 'utf8')) + '\n</script>').join('\n');
 
-const html = `<title>JVT Cyber Dojo</title>
+const html = `<title>NineMinds Cyber Dojo</title>
 <style>
 ${css}
 </style>

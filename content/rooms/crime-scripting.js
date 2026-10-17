@@ -65,13 +65,13 @@ CS.registerRoom({
         <strong>Sporen:</strong> de klik in de webserverlogs, het bezochte domein, het tijdstip.</p>
 
         <p>Zie je het? Eén zinnetje wordt een rijke, onderzoekbare stap. Daarmee heb je de kern van crime scripting
-        te pakken: <strong>JVT{script_is_het_draaiboek}</strong>.</p>
+        te pakken: <strong>NM{script_is_het_draaiboek}</strong>.</p>
       `,
       questions: [
         { q: 'Welke criminoloog introduceerde crime scripting (in 1994)?', answer: ['Cornish', 'cornish', 'Derek Cornish'], hint: 'Zijn achternaam begint met een C.', explain: 'Derek Cornish beschreef in 1994 de misdaad als een proces van scènes: het crime script.' },
         { q: 'Welk van de zes velden is het meest waardevol voor de opsporing, omdat het aanknopingspunten voor onderzoek oplevert?', options: ['Handeling', 'Locatie', 'Sporen', 'Randvoorwaarden'], answer: 2, explain: 'Sporen (logs, domeinen, transacties) zijn precies de aanknopingspunten waarmee een onderzoeker begint.' },
         { q: 'Hoe heet in een crime script een handlanger of dienstverlener die de misdaad mogelijk maakt, zoals een bulletproof hoster of een geldezel?', answer: ['facilitator', 'facilitators'], hint: 'Engelse term; iemand die iets faciliteert/mogelijk maakt.', explain: 'Een facilitator is een actor die de misdaad faciliteert zonder per se de hoofddader te zijn.' },
-        { q: 'Wat is de vlag die de kern van crime scripting samenvat (zie het einde van de taak)?', answer: ['JVT{script_is_het_draaiboek}'], hint: 'Staat vetgedrukt onderaan de uitleg.', explain: 'Een crime script is niets anders dan het draaiboek van een misdaad, scène voor scène.' },
+        { q: 'Wat is de vlag die de kern van crime scripting samenvat (zie het einde van de taak)?', answer: ['NM{script_is_het_draaiboek}'], hint: 'Staat vetgedrukt onderaan de uitleg.', explain: 'Een crime script is niets anders dan het draaiboek van een misdaad, scène voor scène.' },
       ],
     },
 
@@ -286,13 +286,13 @@ CS.registerRoom({
         moet meewegen: duw je op één knop, dan kan de dader de druk elders zoeken.</p>
 
         <p>Onthoud deze vijf strategieën goed — ze vormen samen met de zes fasen straks de assen van je
-        interventiematrix. De vlag die je dit oplevert: <strong>JVT{vijf_knoppen_van_scp}</strong>.</p>
+        interventiematrix. De vlag die je dit oplevert: <strong>NM{vijf_knoppen_van_scp}</strong>.</p>
       `,
       questions: [
         { q: 'Welke van deze hoort NIET bij de vijf SCP-strategieën van Cornish & Clarke?', options: ['Inspanning verhogen', 'Risico verhogen', 'Daders opsluiten zonder proces', 'Excuses wegnemen'], answer: 2, explain: 'De vijf strategieën zijn: inspanning verhogen, risico verhogen, opbrengst verlagen, provocaties verminderen en excuses wegnemen.' },
         { q: 'Goede offline back-ups maken het betalen van losgeld zinloos. Welke SCP-strategie is dit vooral?', options: ['Inspanning verhogen', 'Opbrengst verlagen', 'Excuses wegnemen', 'Provocaties verminderen'], answer: 1, explain: 'Door de buit (afgedwongen losgeld) waardeloos te maken, verlaag je de opbrengst van de misdaad.' },
         { q: 'Multifactor-authenticatie (MFA) invoeren is vooral een voorbeeld van welke strategie?', answer: ['inspanning verhogen', 'de inspanning verhogen', 'increase the effort'], hint: 'Een gestolen wachtwoord is dan niet meer genoeg; de misdaad wordt moeilijker.', explain: 'MFA maakt de aanval moeilijker uit te voeren: dat is "inspanning verhogen".' },
-        { q: 'Wat is de vlag die de vijf strategieën samenvat (einde van de taak)?', answer: ['JVT{vijf_knoppen_van_scp}'], hint: 'Staat vetgedrukt onderaan.', explain: 'De vijf strategieën zijn de vijf knoppen van situationele criminaliteitspreventie.' },
+        { q: 'Wat is de vlag die de vijf strategieën samenvat (einde van de taak)?', answer: ['NM{vijf_knoppen_van_scp}'], hint: 'Staat vetgedrukt onderaan.', explain: 'De vijf strategieën zijn de vijf knoppen van situationele criminaliteitspreventie.' },
       ],
     },
 
@@ -346,7 +346,7 @@ CS.registerRoom({
         </div>
 
         <p>Tijd om het zelf te doen. In het lab hieronder werk je een phishing-fraude met geldezels uit in de zes fasen,
-        met per fase een interventie. Label je velden netjes. De beloning: <strong>JVT{fase_maal_strategie}</strong>.</p>
+        met per fase een interventie. Label je velden netjes. De beloning: <strong>NM{fase_maal_strategie}</strong>.</p>
       `,
       lab: {
         type: 'crimescript',
@@ -415,7 +415,7 @@ CS.registerRoom({
         { q: 'Wat vormen de twee assen van de interventiematrix?', options: ['Dader × slachtoffer', 'Fase (universeel script) × strategie (SCP)', 'Metascript × track', 'Bekend × aanname'], answer: 1, explain: 'De interventiematrix zet de fasen van het universele script tegen de vijf SCP-strategieën af.' },
         { q: 'Hoe label je een bewering die je (nog) niet hebt onderbouwd maar voorlopig voor waar aanneemt?', answer: ['aanname', 'een aanname'], hint: 'Niet bekend (feit) en niet afgeleid (conclusie), maar...', explain: 'Een aanname is onbewezen; label hem als zodanig zodat duidelijk is waar nog bewijs nodig is.' },
         { q: 'Waarom hoort bij elke maatregel in de matrix een eigenaar?', options: ['Een maatregel zonder eigenaar wordt zelden uitgevoerd, en cybercrime bestrijd je met meerdere partijen', 'Omdat de wet dat eist', 'Om de tabel langer te maken', 'Dat hoeft niet, het is optioneel'], answer: 0, explain: 'Zonder eigenaar blijft een maatregel een vrome wens; de matrix legt de verantwoordelijkheid bij de juiste partij.' },
-        { q: 'Wat is de vlag die je in deze taak verdient?', answer: ['JVT{fase_maal_strategie}'], hint: 'Staat vetgedrukt vlak voor het lab.', explain: 'De interventiematrix is fase maal strategie: JVT{fase_maal_strategie}.' },
+        { q: 'Wat is de vlag die je in deze taak verdient?', answer: ['NM{fase_maal_strategie}'], hint: 'Staat vetgedrukt vlak voor het lab.', explain: 'De interventiematrix is fase maal strategie: NM{fase_maal_strategie}.' },
       ],
     },
 

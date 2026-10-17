@@ -81,7 +81,7 @@ CS.registerRoom({
         dit aan".</p>
 
         <div class="callout tip">
-          <strong>Beloning:</strong> je eerste vlag voor deze room is <code>JVT{so_what_maakt_intel}</code>. Onthoud
+          <strong>Beloning:</strong> je eerste vlag voor deze room is <code>NM{so_what_maakt_intel}</code>. Onthoud
           waarom: data wordt pas intelligence als de "so what?" beantwoord is.
         </div>
       `,
@@ -89,7 +89,7 @@ CS.registerRoom({
         { q: 'In welke stap vertaal je de vraag van de opdrachtgever naar een concrete intelligence requirement?', options: ['Richten', 'Verzamelen', 'Verwerken', 'Verspreiden'], answer: 0, explain: 'Richten (direction) bepaalt wat je wilt weten; zonder die vraag verzamel je willekeurig.' },
         { q: 'Welk element verbindt alle stappen en stuurt de volgende ronde van de cyclus?', answer: ['feedback', 'terugkoppeling'], hint: 'Was het product bruikbaar? Wat miste de ontvanger?', explain: 'Feedback scherpt je requirements aan en maakt van de cyclus een kringloop in plaats van een eenmalige lijn.' },
         { q: 'Wat is de kern van de "so what?"-test?', options: ['Vragen welke handeling of beslissing dit feit oplevert voor de lezer', 'Zoveel mogelijk feiten toevoegen', 'Alleen technische details vermelden', 'De bron verzwijgen'], answer: 0, explain: 'Levert een feit geen handeling of beslissing op, dan is het ruis en haal je het weg.' },
-        { q: 'Wat is de vlag die als beloning in deze taak staat?', answer: ['JVT{so_what_maakt_intel}'], hint: 'Kijk in de groene tip onderaan de taak.' },
+        { q: 'Wat is de vlag die als beloning in deze taak staat?', answer: ['NM{so_what_maakt_intel}'], hint: 'Kijk in de groene tip onderaan de taak.' },
       ],
     },
 
@@ -253,7 +253,7 @@ CS.registerRoom({
 
         <div class="callout tip">
           <strong>Beloning:</strong> de tweede vlag van deze room vat het kernidee samen —
-          <code>JVT{bron_en_info_apart}</code>. Beoordeel bron en informatie altijd los van elkaar.
+          <code>NM{bron_en_info_apart}</code>. Beoordeel bron en informatie altijd los van elkaar.
         </div>
       `,
       lab: {
@@ -270,7 +270,7 @@ CS.registerRoom({
         { q: 'Wat meet de letterschaal A–F in de Admiralty Code?', options: ['De betrouwbaarheid (het trackrecord) van de bron', 'De geloofwaardigheid van de claim', 'De ernst van de aanval', 'De snelheid van de reactie'], answer: 0, explain: 'A–F gaat over de bron; het cijfer 1–6 gaat apart over de specifieke informatie.' },
         { q: 'Welke score hoort bij een geverifieerde, door een tweede bron bevestigde waarneming uit je eigen SIEM?', answer: ['A1', 'a1'], hint: 'Volledig betrouwbare bron + bevestigde info.', explain: 'Eigen geverifieerde telemetrie = A; bevestigd door een onafhankelijke bron = 1. Samen A1.' },
         { q: 'Een partner met een goed trackrecord meldt iets wat jij nog niet hebt kunnen bevestigen. Welke score past het best?', options: ['A1', 'B2', 'E4', 'F6'], answer: 1, explain: 'Betrouwbare bron (B), plausibele maar onbevestigde claim (2): B2. Verifieer voor je er zwaar op leunt.' },
-        { q: 'Wat is de vlag die hoort bij het kernidee van deze taak?', answer: ['JVT{bron_en_info_apart}'], hint: 'Staat in de groene tip onderaan.' },
+        { q: 'Wat is de vlag die hoort bij het kernidee van deze taak?', answer: ['NM{bron_en_info_apart}'], hint: 'Staat in de groene tip onderaan.' },
       ],
     },
 
@@ -380,7 +380,7 @@ CS.registerRoom({
         C/I/N, tel de inconsistenties en vergelijk met het expertoordeel. Welke hypothese houdt de minste I's over?</p>
 
         <div class="callout tip">
-          <strong>Beloning:</strong> de derde vlag vat de regel samen — <code>JVT{minste_i_wint}</code>. In ACH wint de
+          <strong>Beloning:</strong> de derde vlag vat de regel samen — <code>NM{minste_i_wint}</code>. In ACH wint de
           hypothese met de minste inconsistenties.
         </div>
       `,

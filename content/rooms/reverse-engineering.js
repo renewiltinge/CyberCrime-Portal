@@ -2,12 +2,12 @@
 
 // Hex-dump voor het hexviewer-lab (taak 2): een ELF-binary (magic 7F 45 4C 46) met
 // leesbare strings in de ASCII-kolom: een hardcoded sleutel (OpenSesam2026) en de
-// verstopte vlag JVT{hex_in_ascii}. Gegenereerd en gecontroleerd met Node.
+// verstopte vlag NM{hex_in_ascii}. Gegenereerd en gecontroleerd met Node.
 const CRACKME_HEX =
   '7F 45 4C 46 02 01 01 00 00 00 00 00 00 00 00 00 20 20 56 6F 65 72 20 64 65 20 73 6C ' +
   '65 75 74 65 6C 20 69 6E 3A 20 20 20 73 6C 65 75 74 65 6C 3D 4F 70 65 6E 53 65 73 61 ' +
   '6D 32 30 32 36 20 20 20 20 54 6F 65 67 61 6E 67 20 67 65 77 65 69 67 65 72 64 20 20 ' +
-  '20 20 76 6C 61 67 3D 4A 56 54 7B 68 65 78 5F 69 6E 5F 61 73 63 69 69 7D 20 20 00 00';
+  '20 20 76 6C 61 67 3D 4E 4D 7B 68 65 78 5F 69 6E 5F 61 73 63 69 69 7D 20 20 00 00';
 
 CS.registerRoom({
   id: 'reverse-engineering',
@@ -91,7 +91,7 @@ CS.registerRoom({
       questions: [
         { q: 'Wat voor bestand is crackme0.bin, gezien de eerste bytes 7F 45 4C 46?', options: ['Een Windows-executable (MZ)', 'Een ELF-binary (Linux-executable)', 'Een PNG-afbeelding', 'Een ZIP-archief'], answer: 1, explain: '7F 45 4C 46 is ".ELF", de magic bytes van een Linux-executable (ELF-formaat).' },
         { q: 'Welke hardcoded sleutel staat leesbaar in de ASCII-kolom (na "sleutel=")?', answer: ['OpenSesam2026', 'opensesam2026'], hint: 'Lees de rechterkolom; de programmeur liet de sleutel letterlijk in de binary staan.', explain: 'In de ASCII-weergave is sleutel=OpenSesam2026 leesbaar — een klassieke beginnersfout.' },
-        { q: 'Welke vlag staat verstopt in de ASCII-kolom (na "vlag=")?', answer: ['JVT{hex_in_ascii}'], encoded: true, hint: 'De vlag staat als losse bytes in het bestand, maar is in de ASCII-kolom gewoon te lezen.', explain: 'De bytes vormen in de ASCII-kolom de leesbare tekst JVT{hex_in_ascii}.' },
+        { q: 'Welke vlag staat verstopt in de ASCII-kolom (na "vlag=")?', answer: ['NM{hex_in_ascii}'], encoded: true, hint: 'De vlag staat als losse bytes in het bestand, maar is in de ASCII-kolom gewoon te lezen.', explain: 'De bytes vormen in de ASCII-kolom de leesbare tekst NM{hex_in_ascii}.' },
       ],
     },
 
@@ -131,14 +131,14 @@ CS.registerRoom({
   return sleutel.split('').reverse().join('') === '6202ojod';
 }`,
         check: (sleutel) => sleutel.split('').reverse().join('') === '6202ojod',
-        flag: 'JVT{omgekeerd_is_niet_veilig}',
+        flag: 'NM{omgekeerd_is_niet_veilig}',
         reveal: 'Toegang verleend! Je draaide de doelstring om en vond de sleutel. Omkeren is nooit een echte beveiliging.',
         hint: 'Draai de doelstring 6202ojod zelf om: lees hem van achter naar voren.',
       },
       questions: [
         { q: 'Wat is de algemene truc om een crackme te kraken?', options: ['Heel snel typen', 'De bewerkingen in de controle omkeren en zo terugrekenen naar de juiste invoer', 'Het programma verwijderen', 'De computer opnieuw opstarten'], answer: 1, explain: 'Je leest wat de controle met je invoer doet en draait die bewerkingen om naar de invoer die "waar" oplevert.' },
         { q: 'Kraak crackme 1. Welke sleutel geeft toegang?', answer: ['dojo2026'], hint: 'De doelstring is 6202ojod. Draai hem om.', explain: 'Omgekeerd is 6202ojod gelijk aan dojo2026 — dus dat is de sleutel.' },
-        { q: 'Welke vlag krijg je bij het kraken van crackme 1?', answer: ['JVT{omgekeerd_is_niet_veilig}'], hint: 'De vlag verschijnt in het lab zodra de juiste sleutel klopt.', explain: 'Bij succes toont het lab JVT{omgekeerd_is_niet_veilig}.' },
+        { q: 'Welke vlag krijg je bij het kraken van crackme 1?', answer: ['NM{omgekeerd_is_niet_veilig}'], hint: 'De vlag verschijnt in het lab zodra de juiste sleutel klopt.', explain: 'Bij succes toont het lab NM{omgekeerd_is_niet_veilig}.' },
       ],
     },
 
@@ -187,14 +187,14 @@ CS.registerRoom({
           for (let i = 0; i < sleutel.length; i++) som += sleutel.charCodeAt(i);
           return som === 876;
         },
-        flag: 'JVT{tekensom_gekraakt}',
+        flag: 'NM{tekensom_gekraakt}',
         reveal: 'Knap! Je rekende de twee ontbrekende tekens terug uit de checksom. Een som alleen is nooit genoeg beveiliging.',
         hint: 'De eerste 7 tekens "sleutel" zijn samen 766. Er blijft 110 over voor twee gelijke tekens: elk code 55.',
       },
       questions: [
         { q: 'Waarom is een checksom (som van tekencodes) op zichzelf een zwakke controle?', options: ['Omdat sommen altijd 0 zijn', 'Omdat veel verschillende teksten dezelfde som kunnen geven (niet uniek)', 'Omdat optellen te traag is', 'Omdat het alleen met cijfers werkt'], answer: 1, explain: 'Verschillende teksten delen vaak dezelfde som; daarom zijn extra eisen nodig om de sleutel uniek te maken.' },
         { q: 'Kraak crackme 2. Welke sleutel voldoet aan alle vier de eisen?', answer: ['sleutel77'], hint: 'Begin met "sleutel", twee gelijke eindtekens, totaalsom 876. De eerste 7 tekens zijn samen 766.', explain: 'Er blijft 110 over voor twee gelijke tekens (elk code 55 = "7"), dus sleutel77.' },
-        { q: 'Welke vlag hoort bij crackme 2?', answer: ['JVT{tekensom_gekraakt}'], hint: 'Die verschijnt in het lab na de juiste sleutel.', explain: 'Bij succes toont het lab JVT{tekensom_gekraakt}.' },
+        { q: 'Welke vlag hoort bij crackme 2?', answer: ['NM{tekensom_gekraakt}'], hint: 'Die verschijnt in het lab na de juiste sleutel.', explain: 'Bij succes toont het lab NM{tekensom_gekraakt}.' },
       ],
     },
 
@@ -228,14 +228,14 @@ CS.registerRoom({
   }).join(',') === doel;
 }`,
         check: (sleutel) => [...sleutel].map((c) => c.charCodeAt(0) ^ 0x2a).join(',') === '77,79,66,79,67,71,30,24',
-        flag: 'JVT{xor_terug_gedraaid}',
+        flag: 'NM{xor_terug_gedraaid}',
         reveal: 'Top! Je XOR\'de de bytes terug met 42. Omdat XOR zijn eigen omgekeerde is, was de "versleuteling" zo weer open.',
         hint: 'XOR elke doelbyte opnieuw met 42: 77^42=103 ("g"), 79^42=101 ("e"), ... Zet elke uitkomst om naar een teken.',
       },
       questions: [
         { q: 'Welke bijzondere eigenschap van XOR maakt het terugdraaien makkelijk?', options: ['XOR verdubbelt de waarde', 'XOR is zijn eigen omgekeerde: nog eens XOR met dezelfde sleutel geeft het origineel', 'XOR werkt alleen op nullen', 'XOR versleutelt onbreekbaar'], answer: 1, explain: '(x XOR k) XOR k = x, dus met dezelfde constante draai je XOR meteen terug.' },
         { q: 'Kraak crackme 3. Welke sleutel geeft toegang?', answer: ['geheim42'], hint: 'XOR elke doelbyte met 42 en zet om naar tekens: 77->g, 79->e, 66->h, ...', explain: 'De doelbytes ge-XOR\'d met 42 vormen de tekst geheim42.' },
-        { q: 'Welke vlag hoort bij crackme 3?', answer: ['JVT{xor_terug_gedraaid}'], hint: 'Die verschijnt na de juiste sleutel in het lab.', explain: 'Bij succes toont het lab JVT{xor_terug_gedraaid}.' },
+        { q: 'Welke vlag hoort bij crackme 3?', answer: ['NM{xor_terug_gedraaid}'], hint: 'Die verschijnt na de juiste sleutel in het lab.', explain: 'Bij succes toont het lab NM{xor_terug_gedraaid}.' },
       ],
     },
 
@@ -289,19 +289,19 @@ CS.registerRoom({
           if (delen.length !== 3) return false;
           const a = delen[0], b = delen[1], c = delen[2];
           if (a.length !== 4 || b.length !== 4 || c.length !== 4) return false;
-          if (a.split('').reverse().join('') !== '1TVJ') return false;
+          if (a.split('').reverse().join('') !== '10MN') return false;
           if (b.split('').map((ch) => String.fromCharCode(ch.charCodeAt(0) + 1)).join('') !== 's4w4') return false;
           if ([...c].map((ch) => ch.charCodeAt(0) ^ 0x10).join(',') !== '124,113,99,100') return false;
           return true;
         },
-        flag: 'JVT{meerdere_segmenten}',
+        flag: 'NM{meerdere_segmenten}',
         reveal: 'Meesterlijk! Je knipte een enge, gecombineerde controle op in drie losse puzzels en loste ze stuk voor stuk op.',
-        hint: 'A = 1TVJ omgekeerd. B = elk teken van s4w4 min 1. C = 124,113,99,100 elk XOR 16. Plak met koppeltekens: A-B-C.',
+        hint: 'A = 10MN omgekeerd. B = elk teken van s4w4 min 1. C = 124,113,99,100 elk XOR 16. Plak met koppeltekens: A-B-C.',
       },
       questions: [
         { q: 'Wat is de slimme aanpak bij een controle met meerdere segmenten?', options: ['Willekeurig gokken tot het lukt', 'Elk segment als een losse, bekende puzzel apart oplossen (verdeel en heers)', 'Alleen het eerste segment oplossen', 'De koppeltekens weglaten'], answer: 1, explain: 'Een gecombineerde controle valt uiteen in losse deelproblemen; los ze stuk voor stuk op en voeg ze samen.' },
-        { q: 'Kraak crackme 4. Welke volledige sleutel (A-B-C) geeft toegang?', answer: ['JVT1-r3v3-last'], hint: 'A = 1TVJ omgekeerd = JVT1. B = s4w4 elk teken -1 = r3v3. C = 124,113,99,100 elk XOR 16 = last.', explain: 'De segmenten JVT1, r3v3 en last voldoen elk aan hun eigen controle; samen: JVT1-r3v3-last.' },
-        { q: 'Welke vlag hoort bij crackme 4?', answer: ['JVT{meerdere_segmenten}'], hint: 'Die verschijnt na de juiste sleutel in het lab.', explain: 'Bij succes toont het lab JVT{meerdere_segmenten}.' },
+        { q: 'Kraak crackme 4. Welke volledige sleutel (A-B-C) geeft toegang?', answer: ['NM01-r3v3-last'], hint: 'A = 10MN omgekeerd = NM01. B = s4w4 elk teken -1 = r3v3. C = 124,113,99,100 elk XOR 16 = last.', explain: 'De segmenten NM01, r3v3 en last voldoen elk aan hun eigen controle; samen: NM01-r3v3-last.' },
+        { q: 'Welke vlag hoort bij crackme 4?', answer: ['NM{meerdere_segmenten}'], hint: 'Die verschijnt na de juiste sleutel in het lab.', explain: 'Bij succes toont het lab NM{meerdere_segmenten}.' },
       ],
     },
 

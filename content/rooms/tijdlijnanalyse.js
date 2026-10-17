@@ -5,7 +5,7 @@ const UTC = (d, t) => [`${d} ${t}`, `${d}T${t}Z`, `${d}T${t}`, `${d} ${t} UTC`, 
 
 // MFTECmd-achtige uitsnede van de $MFT van WS-LOG-12 voor het timestomping-lab (taak 4).
 // rclone.exe is getimestompt: $SI B/M/A = 2019-03-14 10:00:00.0000000, $FN B = 2026-10-01 08:46:14.
-// De vlag JVT{fn_verraadt_timestomping} staat in een bestandsnaam.
+// De vlag NM{fn_verraadt_timestomping} staat in een bestandsnaam.
 const MFT_LINES = `MFTECmd — uitsnede $MFT van WS-LOG-12 (tijden in UTC, 7 decimalen = 100-ns-resolutie)
 Entry  Attr  B (Born/Created)             M (Modified)                 A (Accessed)                 C (MFT Changed)              Pad
 41822  $SI   2026-09-28 07:41:09.3381027  2026-10-01 07:48:30.6610294  2026-10-01 07:48:30.6610294  2026-10-01 07:48:30.6610294  C:\\Users\\s.vermeulen\\Documents\\Planning_Q4.xlsx
@@ -18,8 +18,8 @@ Entry  Attr  B (Born/Created)             M (Modified)                 A (Access
 88211  $FN   2026-10-01 08:46:14.5123311  2026-10-01 08:46:14.5123311  2026-10-01 08:46:14.5123311  2026-10-01 08:46:14.5123311  C:\\ProgramData\\upd\\rclone.exe
 88213  $SI   2026-10-01 08:46:30.2210457  2026-10-01 08:46:30.4471209  2026-10-01 08:52:03.0904418  2026-10-01 08:46:30.4471209  C:\\ProgramData\\upd\\7za.exe
 88213  $FN   2026-10-01 08:46:30.2210457  2026-10-01 08:46:30.2210457  2026-10-01 08:46:30.2210457  2026-10-01 08:46:30.2210457  C:\\ProgramData\\upd\\7za.exe
-88215  $SI   2026-10-01 08:47:40.6630155  2026-10-01 08:47:40.6630155  2026-10-01 08:47:40.6630155  2026-10-01 08:47:40.6630155  C:\\ProgramData\\upd\\todo_JVT{fn_verraadt_timestomping}.txt
-88215  $FN   2026-10-01 08:47:40.6630155  2026-10-01 08:47:40.6630155  2026-10-01 08:47:40.6630155  2026-10-01 08:47:40.6630155  C:\\ProgramData\\upd\\todo_JVT{fn_verraadt_timestomping}.txt
+88215  $SI   2026-10-01 08:47:40.6630155  2026-10-01 08:47:40.6630155  2026-10-01 08:47:40.6630155  2026-10-01 08:47:40.6630155  C:\\ProgramData\\upd\\todo_NM{fn_verraadt_timestomping}.txt
+88215  $FN   2026-10-01 08:47:40.6630155  2026-10-01 08:47:40.6630155  2026-10-01 08:47:40.6630155  2026-10-01 08:47:40.6630155  C:\\ProgramData\\upd\\todo_NM{fn_verraadt_timestomping}.txt
 88219  $SI   2026-10-01 08:52:04.0127733  2026-10-01 08:58:41.5532018  2026-10-01 09:01:10.8890012  2026-10-01 08:58:41.5532018  C:\\ProgramData\\upd\\fin_q3.7z
 88219  $FN   2026-10-01 08:52:04.0127733  2026-10-01 08:52:04.0127733  2026-10-01 08:52:04.0127733  2026-10-01 08:52:04.0127733  C:\\ProgramData\\upd\\fin_q3.7z
 12044  $SI   2024-05-21 09:14:52.4410983  2024-05-21 09:14:52.4410983  2026-10-01 06:58:15.0021145  2024-05-21 09:14:52.4410983  C:\\Windows\\System32\\wevtutil.exe
@@ -28,7 +28,7 @@ Entry  Attr  B (Born/Created)             M (Modified)                 A (Access
 // Super-timeline van zaak 2026-131 (WS-LOG-12, 192.0.2.45). Alle tijden zijn al genormaliseerd naar UTC.
 // Verhaal: brute force via RDP -> aanmelding adm.backup 08:44:19 -> powershell -> rclone en 7za gedownload ->
 // rclone getimestompt -> financiële map ingepakt -> upload naar cloudvault -> logs gewist 09:25:19.
-// De vlag JVT{super_timeline_spoorzoeker} zit in de beschrijving van het rclone.conf-event.
+// De vlag NM{super_timeline_spoorzoeker} zit in de beschrijving van het rclone.conf-event.
 const TIMELINE_EVENTS = [
   { t: '2026-10-01 06:58:12', src: 'System', host: 'WS-LOG-12', desc: '6005 — Event Log-service gestart (systeem opgestart)' },
   { t: '2026-10-01 06:58:40', src: 'Defender', host: 'WS-LOG-12', desc: 'Handtekeningupdate geïnstalleerd (versie 1.419.212.0)' },
@@ -60,7 +60,7 @@ const TIMELINE_EVENTS = [
   { t: '2026-10-01 08:46:29', src: 'Proxy', host: 'WS-LOG-12', user: 'adm.backup', desc: 'GET https://dl.toolmirror.example/7za.exe — 200, 1,2 MB (198.51.100.66)' },
   { t: '2026-10-01 08:46:30', src: 'MFT', host: 'WS-LOG-12', user: 'adm.backup', desc: 'C:\\ProgramData\\upd\\7za.exe — aangemaakt (B)' },
   { t: '2026-10-01 08:47:02', src: 'UsnJrnl', host: 'WS-LOG-12', desc: 'rclone.exe — reden BASIC_INFO_CHANGE ($SI-tijden aangepast naar 2019-03-14 10:00:00)' },
-  { t: '2026-10-01 08:47:40', src: 'MFT', host: 'WS-LOG-12', user: 'adm.backup', desc: 'C:\\ProgramData\\upd\\rclone.conf — aangemaakt (342 bytes). Fragment: [cv] type = webdav, url = https://upload.cloudvault.example/, user = drop_JVT{super_timeline_spoorzoeker}' },
+  { t: '2026-10-01 08:47:40', src: 'MFT', host: 'WS-LOG-12', user: 'adm.backup', desc: 'C:\\ProgramData\\upd\\rclone.conf — aangemaakt (342 bytes). Fragment: [cv] type = webdav, url = https://upload.cloudvault.example/, user = drop_NM{super_timeline_spoorzoeker}' },
   { t: '2026-10-01 08:49:02', src: 'Browser', host: 'WS-LOG-12', user: 'adm.backup', desc: 'Edge-geschiedenis: https://cloudvault.example/login — "CloudVault — Inloggen"' },
   { t: '2026-10-01 08:51:30', src: 'JumpList', host: 'WS-LOG-12', user: 'adm.backup', desc: 'Verkenner-jumplist: \\\\FS01\\Finance\\Jaarcijfers geopend' },
   { t: '2026-10-01 08:52:03', src: 'Security', host: 'WS-LOG-12', user: 'adm.backup', desc: '4688 nieuw proces: C:\\ProgramData\\upd\\7za.exe a -mx9 -p**** C:\\ProgramData\\upd\\fin_q3.7z \\\\FS01\\Finance\\Jaarcijfers\\*' },
@@ -257,7 +257,7 @@ new Date(Number(133720000000000000n / 10000n - 11644473600000n)).toISOString()</
         { q: 'Welk bestand in de uitsnede is getimestompt? (alleen de bestandsnaam)', answer: ['rclone.exe', 'rclone', 'C:\\ProgramData\\upd\\rclone.exe'], hint: 'Zoek een $SI-regel waarvan de B-tijd vóór de $FN-tijd ligt en verdacht rond is.', explain: 'Bij rclone.exe staat $SI B op 2019-03-14 10:00:00.0000000, terwijl $FN B 2026-10-01 08:46:14 is: de $SI-tijden zijn vervalst.' },
         { q: 'Hoe laat (UTC) zijn de tijdstempels van dat bestand vermoedelijk aangepast, af te lezen aan de $SI C-tijd? (UU:MM:SS)', answer: ['08:47:02', '2026-10-01 08:47:02', '08:47:02.1184420'], hint: 'Kijk in de kolom C (MFT Changed) van de $SI-regel.', explain: 'Bij het stompen veranderde het MFT-record; de $SI C-tijd 08:47:02 verraadt het moment. Het USN-journaal bevestigt dat in de tijdlijn van taak 6.' },
         { q: 'Waarom vertrouw je bij twijfel eerder op $FN dan op $SI?', options: ['$FN wordt vaker bijgewerkt', '$FN is via normale Windows-API\'s niet aan te passen, $SI wel', '$FN staat altijd in lokale tijd', '$SI bestaat niet op NTFS'], answer: 1, explain: 'Gewone programma\'s en tools passen alleen $SI aan; $FN wordt door het besturingssysteem beheerd en blijft daardoor meestal intact.' },
-        { q: 'Welke vlag staat er in de $MFT-uitsnede?', answer: ['JVT{fn_verraadt_timestomping}'], hint: 'Filter op JVT; de vlag zit in een bestandsnaam in C:\\ProgramData\\upd.', explain: 'In de map van de aanvaller staat het bestand todo_JVT{fn_verraadt_timestomping}.txt.' },
+        { q: 'Welke vlag staat er in de $MFT-uitsnede?', answer: ['NM{fn_verraadt_timestomping}'], hint: 'Filter op NM; de vlag zit in een bestandsnaam in C:\\ProgramData\\upd.', explain: 'In de map van de aanvaller staat het bestand todo_NM{fn_verraadt_timestomping}.txt.' },
       ],
     },
 
@@ -336,7 +336,7 @@ psort.py -o l2tcsv --output-time-zone UTC -w zaak131.csv zaak131.plaso</code></p
         { q: 'Hoe laat (UTC) was de eerste GESLAAGDE aanmelding van de aanvaller? (UU:MM:SS)', answer: ['08:44:19', '2026-10-01 08:44:19', '2026-10-01T08:44:19Z', '08:44:19 utc'], hint: 'Filter op 4624 en kijk naar type 10 (RDP) vanaf een extern IP-adres.', explain: 'Na vijf mislukte pogingen (4625) slaagt om 08:44:19 UTC een RDP-aanmelding (4624 type 10) als adm.backup vanaf 203.0.113.77.' },
         { q: 'Welk programma werd als eerste uitgevoerd na die aanmelding?', answer: ['powershell.exe', 'powershell', 'windows powershell'], hint: 'Zoek de eerste 4688 of Prefetch-regel na 08:44:19.', explain: 'Om 08:45:37 start powershell.exe (4688, bevestigd door Prefetch). Daarmee werden rclone en 7za gedownload (User-Agent WindowsPowerShell).' },
         { q: 'Hoeveel minuten zaten er tussen de geslaagde RDP-aanmelding en het wissen van het Security-log (1102)?', answer: ['41', '41 minuten', '41 min'], hint: 'Van 08:44:19 tot het 1102-event.', explain: '08:44:19 → 09:25:19 is precies 41 minuten. In die tijd werd de data ingepakt en geüpload.' },
-        { q: 'Welke vlag staat in de beschrijving van een event?', answer: ['JVT{super_timeline_spoorzoeker}'], hint: 'Filter op JVT of bekijk de MFT-events in C:\\ProgramData\\upd.', explain: 'De vlag stond in het fragment van rclone.conf, de configuratie voor de upload naar upload.cloudvault.example.' },
+        { q: 'Welke vlag staat in de beschrijving van een event?', answer: ['NM{super_timeline_spoorzoeker}'], hint: 'Filter op NM of bekijk de MFT-events in C:\\ProgramData\\upd.', explain: 'De vlag stond in het fragment van rclone.conf, de configuratie voor de upload naar upload.cloudvault.example.' },
       ],
     },
 
