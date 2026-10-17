@@ -640,3 +640,20 @@ lab: {
 ```
 Toont de Received-keten van **onder (oorsprong) naar boven**, de From vs. Return-Path en gekleurde SPF/DKIM/DMARC-badges.
 `hops[0]` is de oorspronkelijke verzender (onderste regel). Leert spoofing betrappen.
+
+### `dnslog`: DNS-verkeer (tunneling & DGA)
+
+```js
+lab: {
+  type: 'dnslog', title: '...', scenario: '<intro>',
+  queries: [
+    { time: '02:11', name: 'k5e…lang….exfil.nm.lab', type: 'TXT', resp: 'OK' },       // tunneling
+    { time: '02:12', name: 'xk3f9q2v8.nm.lab', type: 'A', resp: 'NXDOMAIN' },          // DGA
+    { time: '02:13', name: 'mail.nm.lab', type: 'A', resp: 'OK' },                     // normaal
+  ],
+  ask: [ { q: 'Welk domein is het tunneling-kanaal?', answer: ['exfil.nm.lab'] } ],
+}
+```
+Toont het querylog (met ⚠️ bij TXT / lange subdomeinen / NXDOMAIN) en een samenvatting per domein (queries, TXT,
+NXDOMAIN, langste subdomein). Een domein met ≥3 TXT én een subdomein >24 tekens wordt als **tunneling** gemarkeerd; een
+hoge NXDOMAIN-telling wijst op een **DGA**. Groepeert op de laatste drie labels (geschikt voor `*.nm.lab`).

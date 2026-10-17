@@ -2842,6 +2842,50 @@
   });
 
   // =====================================================================
+  //  DNSLOG — DNS-verkeer: tunneling (data via DNS) & DGA herkennen
+  // =====================================================================
+  CS.registerLab('dnslog', function (container, cfg) {
+    const queries = (cfg.queries || []).slice();
+    const wrap = el('div', { class: 'lab-pad' });
+    if (cfg.scenario) wrap.append(el('div', { class: 'callout info', html: esc(cfg.scenario) }));
+    wrap.append(el('div', { class: 'found-note', html: 'DNS is bedoeld om namen op te zoeken, maar wordt misbruikt als <strong>stille uitgang</strong>. <strong>Tunneling</strong>: data wordt in lange subdomeinen (vaak <code>TXT</code>) naar één domein gesmokkeld. <strong>DGA</strong> (domain generation algorithm): malware vraagt veel <em>willekeurige</em> domeinen op om zijn C2 te vinden — de meeste bestaan niet (<code>NXDOMAIN</code>).' }));
+    // groepeer op registreerbaar domein (laatste 3 labels voor .nm.lab-achtige namen)
+    const parentOf = (n) => { const p = String(n).split('.'); return p.length >= 3 ? p.slice(-3).join('.') : n; };
+    const subOf = (n) => { const p = String(n).split('.'); return p.length >= 3 ? p.slice(0, -3).join('.') : ''; };
+    const groups = {};
+    queries.forEach((q) => { const par = parentOf(q.name); const g = groups[par] || (groups[par] = { par: par, n: 0, txt: 0, nx: 0, maxsub: 0 }); g.n++; if (/txt/i.test(q.type)) g.txt++; if (/nxdomain/i.test(q.resp || '')) g.nx++; g.maxsub = Math.max(g.maxsub, subOf(q.name).length); });
+    // querylog-tabel
+    wrap.append(el('label', { text: 'DNS-querylog' }));
+    const log = el('div', { class: 'logview', style: 'max-height:220px' });
+    queries.forEach((q, i) => {
+      const sl = subOf(q.name).length;
+      const susp = /txt/i.test(q.type) || sl > 24 || /nxdomain/i.test(q.resp || '');
+      const ln = el('div', { class: 'ln' });
+      ln.append(el('span', { class: 'n', text: String(i + 1) }),
+        el('span', { html: (susp ? '⚠️ ' : '') + '<code>' + esc(q.name) + '</code> <span style="color:#8ec7ab">' + esc(q.type || 'A') + '</span>' + (q.resp ? ' <span style="color:' + (/nxdomain/i.test(q.resp) ? 'var(--bad)' : 'var(--muted)') + '">' + esc(q.resp) + '</span>' : '') + (q.time ? ' <span style="color:#7f8db5">' + esc(q.time) + '</span>' : '') }));
+      log.append(ln);
+    });
+    wrap.append(log);
+    // per-domein-samenvatting
+    wrap.append(el('label', { text: 'Samenvatting per domein' }));
+    const tbl = el('table', { style: 'width:100%;font-size:.82rem;border-collapse:collapse' });
+    tbl.innerHTML = '<thead><tr style="text-align:left;color:var(--muted)">' + ['Domein', 'Queries', 'TXT', 'NXDOMAIN', 'Langste subdomein'].map((h) => '<th style="padding:4px 6px;border-bottom:1px solid var(--border)">' + h + '</th>').join('') + '</tr></thead>';
+    const tb = el('tbody');
+    Object.values(groups).sort((a, b) => b.n - a.n).forEach((g) => {
+      const tunnel = g.txt >= 3 && g.maxsub > 24;
+      const tr = el('tr', { style: 'border-bottom:1px solid var(--border)' + (tunnel ? ';background:rgba(240,110,110,.10)' : '') });
+      [esc(g.par) + (tunnel ? ' ⚠️' : ''), String(g.n), String(g.txt), String(g.nx), String(g.maxsub)].forEach((c) => tr.append(el('td', { style: 'padding:5px 6px', html: c })));
+      tb.append(tr);
+    });
+    tbl.append(tb);
+    wrap.append(tbl);
+    const nxTotal = queries.filter((q) => /nxdomain/i.test(q.resp || '')).length;
+    wrap.append(el('div', { class: 'lab-out', style: 'margin-top:8px', html: 'Totaal queries: <strong>' + queries.length + '</strong> · met NXDOMAIN: <strong>' + nxTotal + '</strong> (hoog = mogelijk DGA)' }));
+    puzzleAsk(wrap, cfg.ask);
+    container.append(shell('<b>DNS-log-analyse</b> — ' + esc(cfg.title || 'tunneling & DGA'), wrap, false));
+  });
+
+  // =====================================================================
   //  Encoding & hash helpers
   // =====================================================================
   function b64encode(s) { return btoa(unescape(encodeURIComponent(s))); }

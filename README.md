@@ -98,6 +98,8 @@ Word expert in geld- en datastromen — de rode draad van bijna elke cybercrimez
 1. **Witwassen & structurering** — de drie witwasfasen, smurfing betrappen onder de Wwft-meldgrens, de geldstroom volgen tot de cash-out en met ACH wegen wie erachter zit.
 2. **Netwerkstromen: beaconing & exfiltratie** — C2-beaconing (strak ritme) onderscheiden van data-exfiltratie (groot uitgaand volume), eerst via NetFlow en dan op pakketniveau.
 3. **E-mail forensics** — de Received-keten van onder naar boven lezen, spoofing betrappen met SPF/DKIM/DMARC, IOCs extraheren en een phishinglink ontleden.
+4. **DNS: de stille uitgang** — DNS-tunneling (data in lange subdomeinen, vaak TXT) en een DGA (veel NXDOMAIN) herkennen, detecteren en blokkeren.
+5. **Capstone: Operatie Spiegelstroom** — één zaak die alles samenbrengt: van BEC-phishing via exfiltratie tot witwassen, met een afsluitend BLUF-product.
 
 ### 🧩 Puzzels & uitdagingen
 Leren door te doen — veel plezier met oplosbare cybercrime-puzzels.
@@ -163,6 +165,7 @@ Alle labs draaien **volledig in je browser** — veilig, offline, zonder dat er 
 | 📡 **NetFlow-analyse** | Beaconing (strak ritme) en exfiltratie (groot uitgaand volume) in netwerkstromen betrappen. |
 | 💶 **Structurering-detector** | Smurfing herkennen: stortingen net onder de Wwft-meldgrens, met totaalbedrag en dagen. |
 | ✉️ **E-mailheader-analyse** | De Received-keten traceren en spoofing betrappen met From/Return-Path en SPF/DKIM/DMARC. |
+| 🌫️ **DNS-log-analyse** | DNS-tunneling (TXT + lange subdomeinen) en een DGA (veel NXDOMAIN) in een querylog herkennen. |
 
 Alle tools zijn ook los te gebruiken via de **🧰 Gereedschapskist** (knop op de startpagina, of `#/tools`) — handig voor je eigen, ethische oefeningen.
 
