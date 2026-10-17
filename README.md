@@ -68,6 +68,7 @@ Denken als een verdediger.
 4. **Threat intelligence & MITRE ATT&CK** — IOC's, de Pyramid of Pain, TLP en het ATT&CK-model.
 5. **Detectie-engineering** — detectieregels bouwen met regex, Sigma en YARA.
 6. **Detectie bouwen: van IOC naar regel** — zelf een detectieregel samenstellen en live tunen op true/false positives.
+7. **Ransomware: incident & onderhandeling** — een incidentsimulatie: isoleren, back-ups, omgaan met een afperser en de NIST-fasen op volgorde.
 
 ### 🕵️ Digitale forensie & opsporing
 De weg naar digitaal rechercheur — sporen vinden, veiligstellen en duiden.
@@ -94,6 +95,7 @@ Van fenomeen naar interventie: denken en werken als intelligence-analist.
 6. **Intelligenceproducten & interventieadvies** — strategisch/tactisch/operationeel, BLUF-schrijven en de STAR-methode.
 7. **Praktijkcase: de complete workflow** — één casus van tijdlijn t/m BLUF-product.
 8. **Werkblad** — alle technieken in één werkproces met een checklist.
+9. **OSINT-infrastructuur: ontmantel het netwerk** — infra clusteren op gedeelde kenmerken (favicon, analytics, JARM), de zeldzaamheidstoets toepassen en pivoteren naar een tweede dossier.
 
 ### 💧 Datastromen volgen
 Word expert in geld- en datastromen — de rode draad van bijna elke cybercrimezaak.
@@ -172,6 +174,8 @@ Alle labs draaien **volledig in je browser** — veilig, offline, zonder dat er 
 | 🌫️ **DNS-log-analyse** | DNS-tunneling (TXT + lange subdomeinen) en een DGA (veel NXDOMAIN) in een querylog herkennen. |
 | 📒 **Reconciliatie** | Bankafschrift en boekhouding naast elkaar leggen en de onverklaarde (fraude)post vinden. |
 | 🧰 **Detectieregel bouwen** | Zelf een detectieregel samenstellen en live testen op true/false positives tegen events. |
+| 🛰️ **Infrastructuur-fingerprinting** | Hosts clusteren op gedeelde kenmerken (favicon, analytics, JARM) met de zeldzaamheidstoets. |
+| 🎲 **Beslissimulatie** | Beslissingen nemen onder druk (incident response/onderhandeling) en de gevolgen zien. |
 
 Alle tools zijn ook los te gebruiken via de **🧰 Gereedschapskist** (knop op de startpagina, of `#/tools`) — handig voor je eigen, ethische oefeningen.
 

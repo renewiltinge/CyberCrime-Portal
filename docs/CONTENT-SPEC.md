@@ -685,3 +685,33 @@ lab: {
 De leerling bouwt voorwaarden (`field` + operator `is`/`bevat`/`>`/`<` + waarde), die met **EN** worden gecombineerd, en
 test live tegen de events. Toont TP/FP/FN/TN. Doel: alle `malicious:true` vangen zonder vals-positieven; dan verschijnt
 `flag`. Leert specificiteit (weinig FP) vs. dekking (weinig FN).
+
+### `fingerprint`: infrastructuur-OSINT (clusteren + zeldzaamheidstoets)
+
+```js
+lab: {
+  type: 'fingerprint', title: '...', scenario: '<intro>',
+  attrs: [ { key: 'favicon', label: 'Favicon-hash' }, { key: 'analytics', label: 'Analytics-ID' }, { key: 'jarm', label: 'JARM' } ],
+  hosts: [ { host: 'a.nm.lab', favicon: 'f7a1c9', analytics: 'UA-66613-7', jarm: '2ad2ad00' }, ... ],
+  ask: [ { q: 'Hoeveel hosts delen favicon f7a1c9?', answer: ['4'] } ],
+}
+```
+Klikbare tabel host × kenmerk. Klik een waarde → markeert alle hosts die hem delen en toont de telling met oordeel:
+uniek (c≤1), onderscheidend/clusterkenmerk (subset), of ruis (gedeeld door (vrijwel) alle hosts). Leert de
+zeldzaamheidstoets: een specifiek gedeeld kenmerk clustert, een default/generiek kenmerk is ruis.
+
+### `scenario`: gescoorde beslissimulatie (incident response/onderhandeling)
+
+```js
+lab: {
+  type: 'scenario', title: '...', scenario: '<intro>', pass: 5, flag: 'NM{...}',
+  steps: [
+    { situation: '<de situatie>', choices: [
+      { label: '<keuze>', good: true, feedback: '<waarom goed/fout>' }, ... ] },
+    ...
+  ],
+}
+```
+Lineaire reeks beslismomenten; bij elke keuze directe feedback (✓/✗) en daarna "Volgende". Telt goede keuzes; haalt de
+leerling ≥ `pass` (standaard = aantal stappen), dan verschijnt `flag`. Met een "Opnieuw"-knop. Reusable voor elke
+beslis-/onderhandelingsoefening.

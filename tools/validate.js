@@ -17,7 +17,8 @@ const LABS = ['terminal', 'cyberchef', 'hashcrack', 'password', 'phishing', 'log
   'hashid', 'cipher', 'crackme', 'multidecode', 'rainbow',
   'ach', 'crimescript', 'admiralty', 'probability', 'attackmap', 'pivot', 'bluf',
   'flow', 'ordering', 'regexgolf', 'osintpuzzle', 'connections', 'chaintrace',
-  'netflow', 'structuring', 'emailheader', 'dnslog', 'recon', 'detectrule'];
+  'netflow', 'structuring', 'emailheader', 'dnslog', 'recon', 'detectrule',
+  'fingerprint', 'scenario'];
 
 const args = process.argv.slice(2);
 const files = args.length

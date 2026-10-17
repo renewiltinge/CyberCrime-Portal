@@ -3002,6 +3002,109 @@
   });
 
   // =====================================================================
+  //  FINGERPRINT — infrastructuur-OSINT: cluster op gedeelde kenmerken
+  // =====================================================================
+  CS.registerLab('fingerprint', function (container, cfg) {
+    const hosts = (cfg.hosts || []).slice();
+    const attrs = cfg.attrs || []; // [{key, label}]
+    const counts = {};
+    attrs.forEach((a) => { counts[a.key] = {}; hosts.forEach((h) => { const v = h[a.key]; if (v != null && v !== '') counts[a.key][v] = (counts[a.key][v] || 0) + 1; }); });
+    const n = hosts.length;
+    let sel = null; // {key, value}
+    const wrap = el('div', { class: 'lab-pad' });
+    if (cfg.scenario) wrap.append(el('div', { class: 'callout info', html: esc(cfg.scenario) }));
+    wrap.append(el('div', { class: 'found-note', html: 'Klik een kenmerk aan om alle hosts te markeren die het delen. <strong>Zeldzaamheidstoets:</strong> een kenmerk dat maar 2–3 hosts delen is een sterke link; iets dat bijna iedereen deelt (een default-stack, een gedeelde hoster) is ruis.' }));
+    const info = el('div', { class: 'lab-out', style: 'min-height:40px' });
+    const tblWrap = el('div', { style: 'overflow-x:auto' });
+    const tbl = el('table', { style: 'width:100%;font-size:.8rem;border-collapse:collapse' });
+    function render() {
+      tbl.innerHTML = '';
+      const thead = el('tr', {}, [el('th', { style: 'text-align:left;padding:4px 6px;border-bottom:1px solid var(--border)', text: 'Host' })].concat(
+        attrs.map((a) => el('th', { style: 'text-align:left;padding:4px 6px;border-bottom:1px solid var(--border)', text: a.label || a.key }))));
+      tbl.append(el('thead', {}, thead));
+      const tb = el('tbody');
+      hosts.forEach((h) => {
+        const rowSel = sel && h[sel.key] === sel.value;
+        const tr = el('tr', { style: 'border-bottom:1px solid var(--border)' + (rowSel ? ';background:rgba(110,180,240,.12)' : '') });
+        tr.append(el('td', { style: 'padding:4px 6px;font-family:var(--mono)', html: '<code>' + esc(h.host) + '</code>' }));
+        attrs.forEach((a) => {
+          const v = h[a.key];
+          const isSel = sel && sel.key === a.key && sel.value === v;
+          const td = el('td', { style: 'padding:4px 6px;cursor:pointer' + (isSel ? ';background:rgba(110,180,240,.28);font-weight:700' : ''), html: v != null && v !== '' ? esc(String(v)) : '<span style="color:var(--faint)">—</span>', onclick: () => { sel = (v != null && v !== '') ? { key: a.key, value: v } : null; render(); } });
+          tr.append(td);
+        });
+        tb.append(tr);
+      });
+      tbl.append(tb);
+      info.innerHTML = '';
+      if (sel) {
+        const c = counts[sel.key][sel.value] || 0;
+        let rar;
+        if (c <= 1) rar = '⬜ uniek — (nog) geen link';
+        else if (c === n) rar = '🟩 iedereen deelt dit — ruis';
+        else if (c <= 3 || c <= Math.floor(n / 2)) rar = '🟥 onderscheidend — een clusterkenmerk';
+        else if (c >= Math.ceil(n * 0.7)) rar = '🟩 te algemeen — waarschijnlijk ruis';
+        else rar = '🟧 matig onderscheidend';
+        const lab = (attrs.find((a) => a.key === sel.key) || {}).label || sel.key;
+        info.append(el('div', { html: '<strong>' + esc(lab) + '</strong> = <code>' + esc(String(sel.value)) + '</code> → gedeeld door <strong>' + c + '</strong> van ' + n + ' hosts · ' + rar }));
+      } else { info.append(el('div', { class: 'found-note', text: 'Klik een kenmerk om te zien hoeveel hosts het delen.' })); }
+    }
+    render();
+    tblWrap.append(tbl);
+    wrap.append(tblWrap, info);
+    puzzleAsk(wrap, cfg.ask);
+    container.append(shell('<b>Infrastructuur-fingerprinting</b> — ' + esc(cfg.title || 'cluster op gedeelde kenmerken'), wrap, false));
+  });
+
+  // =====================================================================
+  //  SCENARIO — gescoorde beslissimulatie (incident response/onderhandeling)
+  // =====================================================================
+  CS.registerLab('scenario', function (container, cfg) {
+    const steps = cfg.steps || []; // [{situation, choices:[{label, good, feedback}]}]
+    const pass = cfg.pass != null ? cfg.pass : steps.length;
+    let idx = 0, good = 0, answered = 0;
+    const wrap = el('div', { class: 'lab-pad' });
+    if (cfg.scenario) wrap.append(el('div', { class: 'callout info', html: esc(cfg.scenario) }));
+    const progress = el('div', { class: 'found-note' });
+    const card = el('div', {});
+    wrap.append(progress, card);
+    function finish() {
+      card.innerHTML = '';
+      progress.textContent = '';
+      const ok = good >= pass;
+      card.append(el('div', { class: 'lab-out', html: '<strong>Afgerond.</strong> Goede beslissingen: <strong style="color:' + (ok ? 'var(--good)' : 'var(--warn)') + '">' + good + ' / ' + steps.length + '</strong>' + (ok ? ' — sterk gehandeld!' + (cfg.flag ? ' Vlag: <code>' + esc(cfg.flag) + '</code>' : '') : ' — haalbaar, maar een paar keuzes kunnen beter. Probeer het nog eens.') }));
+      card.append(el('button', { class: 'btn', style: 'margin-top:8px', text: '↺ Opnieuw', onclick: () => { idx = 0; good = 0; answered = 0; renderStep(); } }));
+    }
+    function renderStep() {
+      if (idx >= steps.length) { finish(); return; }
+      const s = steps[idx];
+      progress.textContent = 'Beslissing ' + (idx + 1) + ' van ' + steps.length + ' · ' + good + ' goed tot nu toe';
+      card.innerHTML = '';
+      card.append(el('div', { class: 'callout', style: 'border-left:3px solid var(--accent)', html: esc(s.situation) }));
+      const fb = el('div', { class: 'feedback', style: 'margin-top:6px' });
+      const btns = el('div', { style: 'display:flex;flex-direction:column;gap:6px;margin-top:8px' });
+      let chosen = false;
+      (s.choices || []).forEach((c) => {
+        const btn = el('button', { class: 'btn', style: 'text-align:left', text: c.label });
+        btn.addEventListener('click', () => {
+          if (chosen) return; chosen = true; answered++;
+          if (c.good) good++;
+          [...btns.children].forEach((b) => (b.disabled = true));
+          btn.style.borderColor = c.good ? 'var(--good)' : 'var(--bad)';
+          fb.className = 'feedback show ' + (c.good ? 'ok' : 'no');
+          fb.innerHTML = (c.good ? '✓ ' : '✗ ') + esc(c.feedback || (c.good ? 'Goede keuze.' : 'Dat kan beter.'));
+          const next = el('button', { class: 'btn primary', style: 'margin-top:8px', text: idx + 1 < steps.length ? 'Volgende →' : 'Afronden', onclick: () => { idx++; renderStep(); } });
+          card.append(next);
+        });
+        btns.append(btn);
+      });
+      card.append(btns, fb);
+    }
+    renderStep();
+    container.append(shell('<b>Beslissimulatie</b> — ' + esc(cfg.title || 'kies en zie de gevolgen'), wrap, false));
+  });
+
+  // =====================================================================
   //  Encoding & hash helpers
   // =====================================================================
   function b64encode(s) { return btoa(unescape(encodeURIComponent(s))); }
