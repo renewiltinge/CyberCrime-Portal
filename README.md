@@ -93,6 +93,12 @@ Van fenomeen naar interventie: denken en werken als intelligence-analist.
 7. **Praktijkcase: de complete workflow** — één casus van tijdlijn t/m BLUF-product.
 8. **Werkblad** — alle technieken in één werkproces met een checklist.
 
+### 💧 Datastromen volgen
+Word expert in geld- en datastromen — de rode draad van bijna elke cybercrimezaak.
+1. **Witwassen & structurering** — de drie witwasfasen, smurfing betrappen onder de Wwft-meldgrens, de geldstroom volgen tot de cash-out en met ACH wegen wie erachter zit.
+2. **Netwerkstromen: beaconing & exfiltratie** — C2-beaconing (strak ritme) onderscheiden van data-exfiltratie (groot uitgaand volume), eerst via NetFlow en dan op pakketniveau.
+3. **E-mail forensics** — de Received-keten van onder naar boven lezen, spoofing betrappen met SPF/DKIM/DMARC, IOCs extraheren en een phishinglink ontleden.
+
 ### 🧩 Puzzels & uitdagingen
 Leren door te doen — veel plezier met oplosbare cybercrime-puzzels.
 1. **Follow the money: cryptostromen volgen** — volg de buit door mules, mixers en exchanges.
@@ -153,6 +159,10 @@ Alle labs draaien **volledig in je browser** — veilig, offline, zonder dat er 
 | 🎯 **Regex-golf** | Eén patroon dat de kwaadaardige regels matcht en de goede mijdt. |
 | 🔎 **OSINT-puzzel** | Fictieve fragmenten correleren en het verband ontmaskeren. |
 | 🧩 **Verbanden** | 16 begrippen in 4 categorieën groeperen (Connections-stijl). |
+| ⛓️ **Blockchain-tracer** | Vuil geld door transacties volgen: common-input-clustering en taint-analyse (haircut). |
+| 📡 **NetFlow-analyse** | Beaconing (strak ritme) en exfiltratie (groot uitgaand volume) in netwerkstromen betrappen. |
+| 💶 **Structurering-detector** | Smurfing herkennen: stortingen net onder de Wwft-meldgrens, met totaalbedrag en dagen. |
+| ✉️ **E-mailheader-analyse** | De Received-keten traceren en spoofing betrappen met From/Return-Path en SPF/DKIM/DMARC. |
 
 Alle tools zijn ook los te gebruiken via de **🧰 Gereedschapskist** (knop op de startpagina, of `#/tools`) — handig voor je eigen, ethische oefeningen.
 

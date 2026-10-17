@@ -514,6 +514,7 @@ kbd {
     { id: 'defensief',     title: 'Defensief (blue team)',  icon: '🛡️', desc: 'Aanvallen detecteren in logs, reageren op incidenten (NIST) en systemen thuis en op het werk weerbaar maken.' },
     { id: 'forensie',      title: 'Digitale forensie & opsporing', icon: '🕵️', desc: 'De weg naar digitaal rechercheur: sporen veiligstellen, schijven, geheugen, netwerk en Windows-artefacten onderzoeken, OSINT en een echt forensisch onderzoek.' },
     { id: 'intelligence',  title: 'Cyber-intelligence & opsporing', icon: '🧠', desc: 'Van fenomeen naar interventie: het cybercrime-ecosysteem, crime scripting, de intelligencecyclus, threat-intel-modellen, infrastructuur-OSINT & pivoting, en gestructureerde analyse tot een BLUF-product.' },
+    { id: 'datastromen',   title: 'Datastromen volgen',        icon: '💧', desc: 'Word expert in geld- en datastromen: volg witwasconstructies en structurering, betrap beaconing en exfiltratie in netwerkverkeer, en traceer de herkomst van een e-mail. De rode draad van cybercrime: het geld en de data.' },
     { id: 'puzzels',       title: 'Puzzels & uitdagingen',  icon: '🧩', desc: 'Leren door te doen: volg geld- en datastromen, ontmasker operators met OSINT, groepeer en reconstrueer, en los een grote cybercrime-CTF op. Alle oefening, veel plezier.' },
     { id: 'eindopdracht',  title: 'Eindopdracht',           icon: '🏁', desc: 'Breng alles samen in een afsluitende mini-CTF. Bewijs aan jezelf wat je kunt.' },
   ];
@@ -599,6 +600,7 @@ kbd {
     { id: 'blueteam',    icon: '🛡️', name: 'Blue teamer', desc: 'Alle Defensief-rooms af', test: () => pathDone('defensief') },
     { id: 'forensics',   icon: '🕵️', name: 'Digitaal rechercheur', desc: 'Alle Forensie-rooms af', test: () => pathDone('forensie') },
     { id: 'analyst',     icon: '🧠', name: 'Intelligence-analist', desc: 'Alle Cyber-intelligence-rooms af', test: () => pathDone('intelligence') },
+    { id: 'tracer',      icon: '💧', name: 'Stromenvolger', desc: 'Alle Datastromen-rooms af', test: () => pathDone('datastromen') },
     { id: 'puzzler',     icon: '🧩', name: 'Puzzelmeester', desc: 'Alle Puzzels & uitdagingen af', test: () => pathDone('puzzels') },
     { id: 'arena10',     icon: '🎯', name: 'Scherpschutter', desc: 'Reeks van 10 in de Oefenarena', test: () => (STATE.bestStreak || 0) >= 10 },
     { id: 'hacker10',    icon: '💡', name: 'Doorzetter', desc: '10 rooms afgerond', test: () => ROOMS.filter(roomDone).length >= 10 },
@@ -1252,6 +1254,9 @@ kbd {
     { type: 'osintpuzzle', icon: '🔎', name: 'OSINT-puzzel', desc: 'Correleer fictieve fragmenten en ontmasker het verband.', cfg: { scenario: 'Drie fragmenten over verdachte "M". Welke draad verbindt ze?', records: [{ title: 'Hackforum-post', icon: '💬', lines: ['gebruiker: <b>n1ghtcrawl3r</b>', 'biedt loader-dienst aan', 'contact: nc_sales@mail.nm.lab'] }, { title: 'WHOIS (crt.sh)', icon: '📜', lines: ['domein: loader-shop.nm.lab', 'registrant-e-mail: nc_sales@mail.nm.lab'] }, { title: 'Wallet-tag', icon: '💰', lines: ['alias n1ghtcrawl3r gelinkt', 'aan wallet bc1qfictief…'] }], ask: [{ q: 'Welke gebruikersnaam/alias verbindt alle drie de bronnen?', answer: ['n1ghtcrawl3r'], hint: 'Zoek wat letterlijk terugkomt.' }, { q: 'Welk e-mailadres linkt de forumpost aan het domein?', answer: ['nc_sales@mail.nm.lab'], hint: 'Vergelijk contact en registrant.' }] } },
     { type: 'chaintrace', icon: '⛓️', name: 'Blockchain-tracer', desc: 'Volg vuil geld door transacties: common-input-clustering en taint-analyse.', cfg: { unit: 'BTC', scenario: 'Losgeld van 10 BTC gaat de keten in. Hoeveel bereikt de exchange?', labels: { D: 'Ransom-wallet', EX: 'Exchange Zuid', C: 'Schone handelaar' }, exchanges: ['EX'], origins: [{ addr: 'D', amount: 10 }, { addr: 'C', amount: 5, dirty: false }], txs: [{ inputs: ['D'], outputs: [{ addr: 'A', amount: 6 }, { addr: 'B', amount: 4 }], time: '10:00' }, { inputs: ['A'], outputs: [{ addr: 'EX', amount: 3 }, { addr: 'M', amount: 3 }], time: '11:00' }, { inputs: ['B', 'C'], outputs: [{ addr: 'EX', amount: 9 }], time: '12:00' }], ask: [{ q: 'Hoeveel vuil geld (BTC) bereikt de exchange?', answer: ['7'], hint: 'Lees de taint-kolom bij de exchange.' }] } },
     { type: 'connections', icon: '🧩', name: 'Verbanden', desc: 'Groepeer 16 begrippen in 4 categorieën — zoals NYT Connections, maar cyber.', cfg: { prompt: 'Vind de vier groepen van vier.', groups: [{ name: 'Hashtypes', items: ['MD5', 'SHA-256', 'NTLM', 'bcrypt'] }, { name: 'Cybercrime-rollen', items: ['IAB', 'Affiliate', 'Moneymule', 'Bulletproof hoster'] }, { name: 'ATT&CK-tactieken', items: ['Execution', 'Persistence', 'Exfiltration', 'Impact'] }, { name: 'OSINT-bronnen', items: ['crt.sh', 'Shodan', 'VirusTotal', 'abuse.ch'] }] } },
+    { type: 'netflow', icon: '📡', name: 'NetFlow-analyse', desc: 'Betrap beaconing (strak ritme) en exfiltratie (groot uitgaand volume) in netwerkstromen.', cfg: { title: 'demo-egress', scenario: 'Eén bestemming tikt als een klok, één slokt gigabytes op.', flows: [{ dst: '203.0.113.50', dstLabel: 'cdn-telemetry.nm.lab', port: 443, proto: 'tcp', conns: 480, intervalSec: 60, jitterPct: 4, bytesOut: 52000, bytesIn: 38000, note: 'klein, elke ~60s' }, { dst: '203.0.113.77', dstLabel: 'opslag-x9f3.nm.lab', port: 443, proto: 'tcp', conns: 3, bytesOut: 2100000000, bytesIn: 4200, note: 'nachtelijke uploads' }, { dst: '198.51.100.12', dstLabel: 'intranet.nm.lab', port: 443, proto: 'tcp', conns: 95, jitterPct: 58, bytesOut: 4200000, bytesIn: 31000000, note: 'normaal portaal' }], ask: [{ q: 'Welke bestemming is het C2-baken?', answer: ['cdn-telemetry.nm.lab', 'cdn-telemetry'], hint: 'Laagste jitter, veel kleine check-ins.' }, { q: 'Welke bestemming wijst op exfiltratie?', answer: ['opslag-x9f3.nm.lab', 'opslag-x9f3'], hint: 'Grootste uitgaande volume.' }] } },
+    { type: 'structuring', icon: '💶', name: 'Structurering-detector', desc: 'Betrap smurfing: meerdere stortingen net onder de meldgrens (Wwft).', cfg: { threshold: 10000, currency: '€', scenario: 'Twee katvangers storten net onder de grens.', tx: [{ date: '2026-03-02', who: 'M. de Groot', amount: 9800, kind: 'contant' }, { date: '2026-03-02', who: 'K. Visser', amount: 9500, kind: 'contant' }, { date: '2026-03-03', who: 'R. Bakker', amount: 250, kind: 'pin', note: 'normaal' }, { date: '2026-03-03', who: 'M. de Groot', amount: 9900, kind: 'contant' }, { date: '2026-03-04', who: 'K. Visser', amount: 12000, kind: 'overboeking', note: 'boven grens' }], ask: [{ q: 'Hoeveel stortingen passen in het smurf-patroon?', answer: ['3'], hint: 'Tel de gemarkeerde rijen.' }] } },
+    { type: 'emailheader', icon: '✉️', name: 'E-mailheader-analyse', desc: 'Traceer de echte herkomst via de Received-keten en betrap spoofing met SPF/DKIM/DMARC.', cfg: { title: 'demo-mail', from: 'Nederbank <beveiliging@nederbank.nl>', returnPath: 'retour@mail.boos.nm.lab', hops: [{ from: '[vervalst]', ip: '203.0.113.66', by: 'mail.boos.nm.lab', time: '09:58' }, { from: 'mail.boos.nm.lab', ip: '203.0.113.66', by: 'mx.nm.lab', time: '10:00' }], auth: { spf: 'fail', dkim: 'none', dmarc: 'fail' }, ask: [{ q: 'Wat is het oorspronkelijke verzend-IP?', answer: ['203.0.113.66'], hint: 'De onderste Received-regel.' }, { q: 'Is dit spoofing? (ja/nee)', answer: ['ja'], hint: 'Vergelijk From, Return-Path en SPF.' }] } },
     { type: 'password', icon: '🔑', name: 'Wachtwoord-analyse', desc: 'Live de sterkte en kraaktijd van een wachtwoord zien.', cfg: {} },
     { type: 'subnet', icon: '🧮', name: 'Subnet-calculator', desc: 'Subnetten uitrekenen en oefenvragen genereren.', cfg: {} },
     { type: 'hexviewer', icon: '🔢', name: 'Hex-viewer', desc: 'Rauwe bytes lezen: magic bytes en verstopte strings.', cfg: { filename: 'voorbeeld.bin', hex: '89 50 4E 47 0D 0A 1A 0A 4A 56 54 7B 68 65 78 5F 6B 69 6A 6B 65 72 7D' } },
@@ -4290,6 +4295,110 @@ kbd {
 
     puzzleAsk(wrap, cfg.ask);
     container.append(shell('<b>Blockchain-tracer</b> — ' + esc(cfg.title || 'cluster & taint'), wrap, false));
+  });
+
+  // =====================================================================
+  //  NETFLOW — netwerkstromen: beaconing & exfiltratie herkennen
+  // =====================================================================
+  CS.registerLab('netflow', function (container, cfg) {
+    const flows = (cfg.flows || []).slice();
+    const wrap = el('div', { class: 'lab-pad' });
+    if (cfg.scenario) wrap.append(el('div', { class: 'callout info', html: esc(cfg.scenario) }));
+    wrap.append(el('div', { class: 'found-note', html: 'Lees de flows als een rechercheur. <strong>Beaconing (C2)</strong> = een strak <em>ritme</em> (lage jitter) met kleine, gelijke pakketjes die telkens terugkeren. <strong>Exfiltratie</strong> = een groot <em>uitgaand</em> volume naar één bestemming. <strong>Normaal</strong> verkeer is onregelmatig en vooral inkomend.' }));
+    const mb = (n) => (n >= 1e9 ? (n / 1e9).toFixed(1) + ' GB' : n >= 1e6 ? (n / 1e6).toFixed(1) + ' MB' : n >= 1e3 ? (n / 1e3).toFixed(0) + ' kB' : n + ' B');
+    const ritme = (j) => j == null ? '—' : j <= 8 ? '🟥 zeer strak (' + j + '%)' : j <= 25 ? '🟧 regelmatig (' + j + '%)' : '🟩 grillig (' + j + '%)';
+    const tbl = el('table', { style: 'width:100%;font-size:.82rem;border-collapse:collapse;margin-top:8px' });
+    tbl.innerHTML = '<thead><tr style="text-align:left;color:var(--muted)">' +
+      ['Bestemming', 'Poort', 'Verb.', 'Interval', 'Jitter (ritme)', 'Uit', 'In'].map((h) => '<th style="padding:4px 6px;border-bottom:1px solid var(--border)">' + h + '</th>').join('') +
+      '</tr></thead>';
+    const tb = el('tbody');
+    flows.forEach((f) => {
+      const tr = el('tr', { style: 'border-bottom:1px solid var(--border)' });
+      const cells = [
+        '<code>' + esc(f.dstLabel || f.dst || '?') + '</code>' + (f.note ? '<br><span style="color:var(--muted);font-size:.78rem">' + esc(f.note) + '</span>' : ''),
+        esc(String(f.port != null ? f.port : '—')) + (f.proto ? '/' + esc(f.proto) : ''),
+        esc(String(f.conns != null ? f.conns : '—')),
+        f.intervalSec != null ? esc(String(f.intervalSec)) + ' s' : '—',
+        ritme(f.jitterPct),
+        '<strong style="color:var(--bad)">' + mb(+f.bytesOut || 0) + '</strong>',
+        mb(+f.bytesIn || 0),
+      ];
+      cells.forEach((c) => tr.append(el('td', { style: 'padding:5px 6px;vertical-align:top', html: c })));
+      tb.append(tr);
+    });
+    tbl.append(tb);
+    wrap.append(tbl);
+    puzzleAsk(wrap, cfg.ask);
+    container.append(shell('<b>NetFlow-analyse</b> — ' + esc(cfg.title || 'beaconing & exfiltratie'), wrap, false));
+  });
+
+  // =====================================================================
+  //  STRUCTURING — witwassen: smurfing/structurering onder de meldgrens
+  // =====================================================================
+  CS.registerLab('structuring', function (container, cfg) {
+    const thr = +cfg.threshold || 10000;
+    const cur = cfg.currency || '€';
+    const lo = cfg.bandLow != null ? cfg.bandLow : 0.8; // "net onder de grens" = [thr*lo, thr)
+    const tx = (cfg.tx || []).slice();
+    const fmt = (n) => cur + ' ' + Number(n).toLocaleString('nl-NL');
+    const wrap = el('div', { class: 'lab-pad' });
+    if (cfg.scenario) wrap.append(el('div', { class: 'callout info', html: esc(cfg.scenario) }));
+    wrap.append(el('div', { class: 'callout tip', html: '<strong>Structurering (smurfing)</strong> is het opknippen van één groot bedrag in meerdere stortingen <em>net onder</em> de meldgrens, om een melding te ontlopen. Onder de <strong>Wwft</strong> moeten instellingen ongebruikelijke transacties melden bij <strong>FIU-Nederland</strong>. Juist het patroon — veel bedragen vlak onder de grens — is het signaal, niet één losse storting.' }));
+    wrap.append(el('div', { class: 'found-note', html: 'Meldgrens in deze zaak: <strong>' + fmt(thr) + '</strong>. Gemarkeerd = een storting in de band <strong>' + fmt(Math.round(thr * lo)) + '</strong>–' + fmt(thr) + ' (net eronder).' }));
+    let flagged = 0, flaggedSum = 0;
+    const days = new Set();
+    const tbl = el('table', { style: 'width:100%;font-size:.82rem;border-collapse:collapse;margin-top:8px' });
+    tbl.innerHTML = '<thead><tr style="text-align:left;color:var(--muted)">' +
+      ['Datum', 'Rekeninghouder', 'Bedrag', 'Soort', 'Signaal'].map((h) => '<th style="padding:4px 6px;border-bottom:1px solid var(--border)">' + h + '</th>').join('') + '</tr></thead>';
+    const tb = el('tbody');
+    tx.forEach((t) => {
+      const amt = +t.amount || 0;
+      const isStruct = amt >= thr * lo && amt < thr;
+      if (isStruct) { flagged++; flaggedSum += amt; if (t.date) days.add(String(t.date).slice(0, 10)); }
+      const tr = el('tr', { style: 'border-bottom:1px solid var(--border)' + (isStruct ? ';background:rgba(240,110,110,.10)' : '') });
+      [
+        esc(t.date || ''),
+        esc(t.who || ''),
+        '<strong' + (isStruct ? ' style="color:var(--bad)"' : '') + '>' + fmt(amt) + '</strong>',
+        esc(t.kind || 'storting'),
+        isStruct ? '⚠️ net onder grens' : (amt >= thr ? '↑ boven grens (meldplichtig)' : ''),
+      ].forEach((c) => tr.append(el('td', { style: 'padding:5px 6px', html: c })));
+      tb.append(tr);
+    });
+    tbl.append(tb);
+    wrap.append(tbl);
+    wrap.append(el('div', { class: 'lab-out', style: 'margin-top:8px', html: 'Gemarkeerd: <strong>' + flagged + '</strong> stortingen · samen <strong>' + fmt(flaggedSum) + '</strong>' + (days.size ? ' · over <strong>' + days.size + '</strong> dag(en)' : '') }));
+    puzzleAsk(wrap, cfg.ask);
+    container.append(shell('<b>Structurering-detector</b> — ' + esc(cfg.title || 'smurfing onder de meldgrens'), wrap, false));
+  });
+
+  // =====================================================================
+  //  EMAILHEADER — e-mailherkomst traceren (Received-keten, SPF/DKIM/DMARC)
+  // =====================================================================
+  CS.registerLab('emailheader', function (container, cfg) {
+    const hops = (cfg.hops || []).slice(); // [0] = oorsprong, laatste = aflevering
+    const auth = cfg.auth || {};
+    const wrap = el('div', { class: 'lab-pad' });
+    if (cfg.scenario) wrap.append(el('div', { class: 'callout info', html: esc(cfg.scenario) }));
+    wrap.append(el('div', { class: 'found-note', html: 'Een e-mail verzamelt een <strong>Received</strong>-keten: elke mailserver plakt onderaan een regel. Lees van <em>onder</em> (de oorspronkelijke verzender) naar <em>boven</em> (jouw server). De <strong>From</strong> is vrij in te vullen; vergelijk hem met <strong>Return-Path</strong> en met <strong>SPF/DKIM/DMARC</strong> om spoofing te betrappen.' }));
+    wrap.append(el('div', { html: '<strong>From:</strong> <code>' + esc(cfg.from || '?') + '</code>' + (cfg.returnPath ? ' &nbsp; <strong>Return-Path:</strong> <code>' + esc(cfg.returnPath) + '</code>' : '') }));
+    // Received-ladder: toon van oorsprong (onder) naar aflevering (boven)
+    const ladder = el('div', { class: 'logview', style: 'margin-top:8px' });
+    hops.slice().reverse().forEach((h, i) => {
+      const isOrigin = i === hops.length - 1;
+      const ln = el('div', { class: 'ln' });
+      ln.append(el('span', { class: 'n', text: String(hops.length - i) }),
+        el('span', { html: 'van <strong>' + esc(h.from || '?') + '</strong>' + (h.ip ? ' <code>' + esc(h.ip) + '</code>' : '') + ' door <span style="color:var(--muted)">' + esc(h.by || '?') + '</span>' + (h.time ? ' <span style="color:#7f8db5">' + esc(h.time) + '</span>' : '') + (isOrigin ? ' <span style="color:var(--warn)">← oorsprong</span>' : '') }));
+      ladder.append(ln);
+    });
+    wrap.append(el('label', { text: 'Received-keten (onderste = oorspronkelijke verzender)' }), ladder);
+    // auth-resultaten
+    const authRow = el('div', { class: 'chip-row', style: 'margin-top:8px' });
+    const badge = (k, v) => { const ok = /pass/i.test(v); const bad = /fail|softfail|none/i.test(v); return el('span', { class: 'chip', style: 'cursor:default;color:' + (ok ? 'var(--good)' : bad ? 'var(--bad)' : 'var(--fg)'), html: k.toUpperCase() + ': ' + esc(v) }); };
+    ['spf', 'dkim', 'dmarc'].forEach((k) => { if (auth[k]) authRow.append(badge(k, auth[k])); });
+    if (authRow.childNodes.length) wrap.append(el('label', { text: 'Authenticatie-resultaten' }), authRow);
+    puzzleAsk(wrap, cfg.ask);
+    container.append(shell('<b>E-mailheader-analyse</b> — ' + esc(cfg.title || 'traceer de herkomst'), wrap, false));
   });
 
   // =====================================================================
@@ -21174,6 +21283,533 @@ CS.registerRoom({
     { title: 'Lockheed Martin — Cyber Kill Chain', url: 'https://www.lockheedmartin.com/en-us/capabilities/cyber/cyber-kill-chain.html' },
     { title: 'David Bianco — The Pyramid of Pain', url: 'https://detect-respond.blogspot.com/2013/03/the-pyramid-of-pain.html' },
     { title: 'NCSC — hulp, adviezen en dreigingsbeeld', url: 'https://www.ncsc.nl/' },
+  ],
+});
+
+</script>
+<script>
+/* Room: Datastromen — witwassen & structurering (smurfing, Wwft, follow-the-money) */
+
+// =======================================================================
+//  Alles in deze room is FICTIEF: verzonnen personen, rekeningen en
+//  bedragen. Je oefent de denkwijze van een financieel rechercheur.
+// =======================================================================
+
+// --- Structuring: stortingen rond de meldgrens (de kern) ---
+const WS_TX = [
+  { date: '2026-03-02', who: 'M. de Groot (katvanger)', amount: 9800, kind: 'contant', note: 'kantoor Amsterdam' },
+  { date: '2026-03-02', who: 'K. Visser (katvanger)', amount: 9500, kind: 'contant', note: 'kantoor Utrecht' },
+  { date: '2026-03-03', who: 'M. de Groot (katvanger)', amount: 9900, kind: 'contant', note: 'kantoor Den Haag' },
+  { date: '2026-03-03', who: 'R. Bakker', amount: 250, kind: 'pin', note: 'boodschappen (normaal)' },
+  { date: '2026-03-04', who: 'K. Visser (katvanger)', amount: 9700, kind: 'contant', note: 'kantoor Rotterdam' },
+  { date: '2026-03-04', who: 'S. el Amrani', amount: 1200, kind: 'overboeking', note: 'salaris (normaal)' },
+  { date: '2026-03-05', who: 'M. de Groot (katvanger)', amount: 9600, kind: 'contant', note: 'kantoor Eindhoven' },
+  { date: '2026-03-05', who: 'K. Visser (katvanger)', amount: 12000, kind: 'overboeking', note: 'boven de grens — hier geldt juist de meldplicht' },
+];
+
+// --- Flow: de gestructureerde buit (€48.500) wordt gelaagd en uitbetaald ---
+const WS_NODES = [
+  { id: 'g', type: 'mule', label: 'M. de Groot (katvanger)' },
+  { id: 'v', type: 'mule', label: 'K. Visser (katvanger)' },
+  { id: 'verz', type: 'account', label: 'Verzamelrekening (katvanger)' },
+  { id: 'wissel', type: 'exchange', label: 'Wisselkantoor Zuid' },
+  { id: 'buiten', type: 'cashout', label: 'Buitenlandse rekening (cash-out)' },
+];
+const WS_EDGES = [
+  { from: 'g', to: 'verz', amount: 29300, time: 'week 10', note: 'drie contante stortingen samengevoegd (9800+9900+9600)' },
+  { from: 'v', to: 'verz', amount: 19200, time: 'week 10', note: 'twee contante stortingen (9500+9700)' },
+  { from: 'verz', to: 'wissel', amount: 48000, time: 'week 11', note: 'katvanger houdt 500 achter (vergoeding)' },
+  { from: 'wissel', to: 'buiten', amount: 47500, time: 'week 11', note: 'wisselkantoor houdt 500 commissie; uitbetaling buitenland (cash-out)' },
+];
+
+// --- ACH: wie zit er achter de verzamelrekening? ---
+const WS_HYPOS = ['Georganiseerde witwasdienst (money mule-netwerk)', 'Eén losse fraudeur', 'Boekhoudfout bij de bank'];
+// expert-oordelen per hypothese: C=consistent, I=inconsistent, N=neutraal
+const WS_EVIDENCE = [
+  { text: 'Meerdere katvangers storten op dezelfde dagen net onder de meldgrens', expert: ['C', 'I', 'I'] },
+  { text: 'Stortingen in vijf verschillende steden op vier dagen', expert: ['C', 'I', 'I'] },
+  { text: 'Geld wordt direct gelaagd naar een wisselkantoor en het buitenland', expert: ['C', 'N', 'I'] },
+  { text: 'Katvangers houden een vaste vergoeding (500) achter', expert: ['C', 'I', 'I'] },
+  { text: 'De bedragen zijn exact en kloppen onderling', expert: ['C', 'C', 'I'] },
+];
+
+CS.registerRoom({
+  id: 'witwassen-structurering',
+  path: 'datastromen',
+  order: 1,
+  title: 'Witwassen & structurering',
+  icon: '💶',
+  difficulty: 'Gemiddeld',
+  minutes: 55,
+  summary: 'Volg het geld van crimineel naar schoon. Je leert de drie fasen van witwassen, betrapt structurering (smurfing) onder de Wwft-meldgrens, volgt de gelaagde geldstroom naar een cash-out in het buitenland, en weegt met ACH wie erachter zit — altijd met het juridische kader (Wwft, meldplicht, FIU-Nederland) voorop.',
+  objectives: [
+    'De drie fasen van witwassen (placement, layering, integration) herkennen en benoemen',
+    'Structurering (smurfing) herkennen: meerdere stortingen net onder de meldgrens',
+    'De Wwft-meldplicht en de rol van FIU-Nederland uitleggen',
+    'Een gelaagde geldstroom volgen tot de cash-out en het knelpunt aanwijzen',
+    'Met ACH afwegen welke hypothese over de daders het sterkst overeind blijft',
+  ],
+  terms: [
+    { term: 'Witwassen', def: 'Crimineel geld een schijnbaar legale herkomst geven, zodat het bruikbaar wordt zonder argwaan te wekken. Strafbaar via art. 420bis e.v. Sr.' },
+    { term: 'Placement', def: 'Fase 1: het criminele geld het financiële stelsel in brengen, bijvoorbeeld door contante stortingen.' },
+    { term: 'Layering', def: 'Fase 2: de herkomst versluieren met veel transacties, rekeningen en omzettingen (lagen aanbrengen).' },
+    { term: 'Integration', def: 'Fase 3: het gewassen geld terug laten komen als schijnbaar legaal bezit (vastgoed, een bedrijf, een "lening").' },
+    { term: 'Structurering (smurfing)', def: 'Eén groot bedrag opknippen in meerdere stortingen net onder de meldgrens om een melding te ontlopen. Zelf een strafbaar signaal.' },
+    { term: 'Katvanger / money mule', def: 'Iemand die zijn rekening of identiteit uitleent om geld door te sluizen, vaak tegen een kleine vergoeding.' },
+    { term: 'Wwft', def: 'Wet ter voorkoming van witwassen en financieren van terrorisme: verplicht instellingen tot cliëntenonderzoek en het melden van ongebruikelijke transacties.' },
+    { term: 'Meldgrens', def: 'Bedrag waarboven (of patroon waarbij) een transactie als ongebruikelijk geldt en gemeld moet worden. Hier als fictieve vuistregel € 10.000 voor contant.' },
+    { term: 'FIU-Nederland', def: 'Financial Intelligence Unit: ontvangt ongebruikelijke transacties, analyseert ze en kan ze "verdacht" verklaren voor de opsporing.' },
+    { term: 'Cash-out-knelpunt', def: 'De plek waar het gewassen geld het systeem verlaat (wisselkantoor, buitenlandse rekening); vaak het sterkste aangrijppunt voor opsporing.' },
+    { term: 'ACH', def: 'Analysis of Competing Hypotheses: hypothesen naast elkaar leggen en weerleggen; wat de minste inconsistenties heeft, blijft het sterkst.' },
+  ],
+  resources: [
+    { title: 'FIU-Nederland — ongebruikelijke transacties melden', url: 'https://www.fiu-nederland.nl/' },
+    { title: 'De Nederlandsche Bank — Wwft', url: 'https://www.dnb.nl/' },
+    { title: 'FATF — internationale standaarden tegen witwassen', url: 'https://www.fatf-gafi.org/' },
+    { title: 'Rijksoverheid — aanpak witwassen', url: 'https://www.rijksoverheid.nl/onderwerpen/financiele-sector/aanpak-witwassen-en-financieren-terrorisme' },
+  ],
+  tasks: [
+    {
+      title: 'Taak 1 — De drie fasen van witwassen',
+      content: `
+        <p>Crimineel geld is pas bruikbaar als niemand vraagt waar het vandaan komt. Dat "schoonmaken" heet
+        <strong>witwassen</strong>, en het verloopt klassiek in drie fasen.</p>
+        <ul>
+          <li><strong>Placement</strong> — het geld het systeem in brengen (bijvoorbeeld contant storten).</li>
+          <li><strong>Layering</strong> — lagen aanbrengen: veel transacties, rekeningen en omzettingen om het spoor te vertroebelen.</li>
+          <li><strong>Integration</strong> — het terug laten komen als schijnbaar legaal bezit (vastgoed, een bedrijf, een "lening aan jezelf").</li>
+        </ul>
+        <p>Als rechercheur draai je dit om: je begint bij een vreemde geldstroom en werkt terug naar de bron. De rode draad
+        van bijna elke cybercrimezaak is uiteindelijk <em>het geld</em>.</p>
+        <div class="callout warn"><strong>Alles fictief:</strong> de personen, rekeningen en bedragen zijn verzonnen.
+        De meldgrens van € 10.000 is hier een vuistregel om het patroon te oefenen, geen exacte wetsbepaling.</div>
+        <div class="callout tip"><strong>Beloning:</strong> onthoud de volgorde placement → layering → integration. Vlag:
+        <code>NM{volg_het_geld}</code>.</div>
+      `,
+      questions: [
+        { q: 'In welke volgorde verlopen de drie klassieke fasen van witwassen?', options: ['Placement → layering → integration', 'Integration → layering → placement', 'Layering → placement → integration', 'Placement → integration → layering'], answer: 0, explain: 'Eerst het geld erin (placement), dan versluieren (layering), dan het schijnbaar legaal terug laten komen (integration).' },
+        { q: 'Wat gebeurt er in de layering-fase?', options: ['De herkomst wordt versluierd met veel transacties, rekeningen en omzettingen', 'Het geld wordt voor het eerst contant gestort', 'Het geld wordt als legaal bezit geïntegreerd', 'Het geld wordt verbrand'], answer: 0, explain: 'Layering = lagen aanbrengen: hoe meer stappen, hoe lastiger het spoor terug te volgen is.' },
+        { q: 'Welk wetsartikel stelt witwassen strafbaar in Nederland?', options: ['Art. 420bis e.v. Sr', 'Art. 138ab Sr', 'Art. 350 Sr', 'Art. 326 Sr'], answer: 0, explain: 'Witwassen is strafbaar via art. 420bis en verder van het Wetboek van Strafrecht.' },
+        { q: 'Welke vlag staat als beloning in de tip-callout?', answer: ['NM{volg_het_geld}'], hint: 'Lees de tip-callout onderaan.', explain: 'De vlag is NM{volg_het_geld}.' },
+      ],
+    },
+    {
+      title: 'Taak 2 — Structurering betrappen (smurfing)',
+      content: `
+        <p>Banken en wisselkantoren moeten onder de <strong>Wwft</strong> ongebruikelijke transacties melden bij
+        <strong>FIU-Nederland</strong>. Witwassers weten dat, dus knippen ze één groot bedrag op in meerdere stortingen
+        <strong>net onder de meldgrens</strong>. Dat heet <strong>structurering</strong> of <em>smurfing</em> — en juist
+        dat patroon verraadt ze.</p>
+        <p>Hieronder zie je stortingen op de rekeningen van twee <strong>katvangers</strong>. Eén storting ligt juist
+        bóven de grens (daar geldt de meldplicht); de rest kruipt er net onder. Lees het patroon.</p>
+        <div class="callout tip"><strong>Beloning:</strong> herken je het smurf-patroon? Vlag:
+        <code>NM{net_onder_de_grens}</code>.</div>
+      `,
+      lab: {
+        type: 'structuring',
+        title: 'stortingen rond de meldgrens',
+        threshold: 10000,
+        currency: '€',
+        scenario: 'Zaak "Koekoek": twee katvangers storten in één week contant geld op meerdere kantoren. Zoek het structurering-patroon.',
+        tx: WS_TX,
+        ask: [
+          { q: 'Hoeveel stortingen passen in het structurering-patroon (net onder de grens)?', answer: ['5'], hint: 'Tel de gemarkeerde rijen.' },
+          { q: 'Wat is het totale gestructureerde bedrag (in euro, alleen het getal)?', answer: ['48500', '48.500', '€48500', '€ 48.500'], hint: '9800+9500+9900+9700+9600.' },
+          { q: 'Over hoeveel verschillende dagen werd er gestructureerd?', answer: ['4', 'vier'], hint: 'Kijk naar de datums van de gemarkeerde rijen.' },
+        ],
+      },
+      questions: [
+        { q: 'Wat is structurering (smurfing)?', options: ['Eén groot bedrag opknippen in stortingen net onder de meldgrens om een melding te ontlopen', 'Geld in het buitenland parkeren', 'Een rekening op een valse naam openen', 'Contant geld omwisselen voor crypto'], answer: 0, explain: 'Smurfing = bewust onder de grens blijven met veel kleine stortingen. Het patroon zelf is het signaal.' },
+        { q: 'Hoeveel stortingen passen in het structurering-patroon?', answer: ['5', 'vijf'], hint: 'De gemarkeerde rijen in het lab.', explain: 'Vijf stortingen (9800, 9500, 9900, 9700, 9600) liggen net onder de grens van € 10.000.' },
+        { q: 'Wat is het totale gestructureerde bedrag?', answer: ['48500', '48.500', '€ 48.500', '€48500'], hint: 'Tel de vijf gemarkeerde bedragen op.', explain: '9800 + 9500 + 9900 + 9700 + 9600 = € 48.500.' },
+        { q: 'De storting van € 12.000 valt juist bóven de grens. Wat betekent dat?', options: ['Daar geldt juist de meldplicht — die transactie hoort gemeld te worden', 'Die is per definitie legaal', 'Die telt mee als structurering', 'Die mag genegeerd worden'], answer: 0, explain: 'Boven de meldgrens geldt de meldplicht. Structurering is juist het vermijden daarvan door eronder te blijven.' },
+        { q: 'Bij welke instantie worden ongebruikelijke transacties gemeld?', answer: ['FIU-Nederland', 'fiu', 'fiu nederland', 'fiu-nederland'], hint: 'De Financial Intelligence Unit.', explain: 'FIU-Nederland ontvangt en analyseert ongebruikelijke transacties en kan ze verdacht verklaren.' },
+        { q: 'Welke vlag staat in de tip-callout van deze taak?', answer: ['NM{net_onder_de_grens}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{net_onder_de_grens}.' },
+      ],
+    },
+    {
+      title: 'Taak 3 — Volg de gelaagde geldstroom',
+      content: `
+        <p>De gestructureerde buit (€ 48.500) verdwijnt niet in een kluis — hij wordt <strong>gelaagd</strong>. De
+        katvangers sluizen het samen naar één <strong>verzamelrekening</strong>, die stuurt het door naar een
+        <strong>wisselkantoor</strong>, dat uiteindelijk uitbetaalt op een <strong>buitenlandse rekening</strong>. Onderweg
+        blijft er telkens een beetje "hangen" als vergoeding en commissie.</p>
+        <p>Volg de stroom in het lab: klik knopen aan, lees de transactietabel, en let op waar het geld het systeem
+        <em>verlaat</em> — dat is het cash-out-knelpunt waar de opsporing aangrijpt.</p>
+        <div class="callout tip"><strong>Beloning:</strong> vind de cash-out. Vlag: <code>NM{cash_out_knelpunt}</code>.</div>
+      `,
+      lab: {
+        type: 'flow',
+        title: 'de gelaagde geldstroom',
+        unit: '€',
+        scenario: 'De € 48.500 stroomt van twee katvangers via een verzamelrekening en een wisselkantoor naar het buitenland.',
+        nodes: WS_NODES,
+        edges: WS_EDGES,
+        ask: [
+          { q: 'Hoeveel komt er in totaal binnen op de verzamelrekening? (alleen het getal)', answer: ['48500', '48.500'], hint: 'Klik de verzamelrekening aan: tel beide inkomende stromen op.' },
+          { q: 'Hoeveel bereikt de buitenlandse rekening (de cash-out)?', answer: ['47500', '47.500'], hint: 'De laatste transactie in de tabel.' },
+          { q: 'Waar stroomt het geld het systeem uit?', answer: ['buitenlandse rekening', 'buiten', 'de buitenlandse rekening', 'buitenland'], hint: 'Het laatste knooppunt in de keten.' },
+        ],
+      },
+      questions: [
+        { q: 'Hoeveel komt er in totaal binnen op de verzamelrekening?', answer: ['48500', '48.500', '€ 48.500', '€48500'], hint: '29300 (de Groot) + 19200 (Visser).', explain: '€ 29.300 + € 19.200 = € 48.500 — exact de gestructureerde buit.' },
+        { q: 'Hoeveel geld bereikt uiteindelijk de buitenlandse rekening?', answer: ['47500', '47.500', '€ 47.500', '€47500'], hint: 'De cash-out in de laatste transactie.', explain: 'Na de aftrek bij de verzamelrekening en het wisselkantoor blijft € 47.500 over bij de cash-out.' },
+        { q: 'Hoeveel bleef er in totaal als vergoeding en commissie achter?', answer: ['1000', '1.000', '€ 1.000', '€1000'], hint: '48500 binnen, 47500 eruit.', explain: 'De katvanger hield 500 en het wisselkantoor 500: samen € 1.000 "kosten" van het witwassen.' },
+        { q: 'Welk knooppunt is het cash-out-knelpunt waar de opsporing aangrijpt?', options: ['De buitenlandse rekening / het wisselkantoor, waar het geld het systeem verlaat', 'De contante storting', 'De verzamelrekening', 'De pinbetaling van R. Bakker'], answer: 0, explain: 'De cash-out koppelt de stroom aan een concrete rekening en jurisdictie; daar grijp je aan met een vordering of rechtshulpverzoek.' },
+        { q: 'Welke witwasfase herken je in deze doorsluizing via meerdere rekeningen?', options: ['Layering', 'Placement', 'Integration', 'Geen van alle'], answer: 0, explain: 'Het doorsluizen via verzamelrekening en wisselkantoor is layering: lagen aanbrengen om de herkomst te versluieren.' },
+        { q: 'Welke vlag staat in de tip-callout van deze taak?', answer: ['NM{cash_out_knelpunt}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{cash_out_knelpunt}.' },
+      ],
+    },
+    {
+      title: 'Taak 4 — Wie zit erachter? (ACH)',
+      content: `
+        <p>Je hebt het patroon en de stroom. Nu de vraag die telt: <strong>wie</strong> zit achter de verzamelrekening?
+        Gok niet — gebruik <strong>Analysis of Competing Hypotheses (ACH)</strong>. Je legt de hypothesen naast elkaar en
+        toetst per bewijsstuk of het <em>past</em> (+) of juist <em>wringt</em> (−). De hypothese met de minste
+        inconsistenties blijft het sterkst overeind.</p>
+        <div class="callout tip"><strong>Beloning:</strong> kies de sterkste hypothese. Vlag:
+        <code>NM{minste_inconsistenties}</code>.</div>
+      `,
+      lab: {
+        type: 'ach',
+        title: 'wie zit achter de verzamelrekening?',
+        hypotheses: WS_HYPOS,
+        evidence: WS_EVIDENCE,
+      },
+      questions: [
+        { q: 'Welke hypothese blijft volgens de ACH-matrix het sterkst overeind?', options: ['Georganiseerde witwasdienst (money mule-netwerk)', 'Eén losse fraudeur', 'Boekhoudfout bij de bank', 'Niet te bepalen'], answer: 0, explain: 'De gecoördineerde stortingen in vijf steden, de vaste vergoedingen en de directe layering passen alleen bij een georganiseerd netwerk.' },
+        { q: 'Waarom is "boekhoudfout bij de bank" vrijwel uitgesloten?', options: ['Een fout verklaart geen gecoördineerde stortingen net onder de grens in vijf steden', 'Banken maken nooit fouten', 'Omdat het bedrag te klein is', 'Omdat er crypto in het spel is'], answer: 0, explain: 'Een fout is willekeurig; dit is juist een strak, doelbewust patroon — dat weerlegt de fouthypothese.' },
+        { q: 'Wat is de kern van ACH?', options: ['Hypothesen weerleggen; de hypothese met de minste inconsistenties wint', 'De eerste hypothese bevestigen', 'Zoveel mogelijk bewijs voor je favoriet verzamelen', 'Altijd de meest spannende verklaring kiezen'], answer: 0, explain: 'ACH draait om falsificeren: je zoekt bewijs dat hypothesen onderuithaalt, niet bevestigt (minder confirmation bias).' },
+        { q: 'Welke vlag staat in de tip-callout van deze taak?', answer: ['NM{minste_inconsistenties}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{minste_inconsistenties}.' },
+      ],
+    },
+  ],
+});
+
+</script>
+<script>
+/* Room: Datastromen — netwerkstromen: beaconing & exfiltratie opsporen */
+
+// =======================================================================
+//  Alles fictief: documentatie-IP's (RFC 5737), .nm.lab-domeinen en een
+//  verzonnen besmette werkplek. Je oefent het lezen van datastromen.
+// =======================================================================
+
+const NS_FLOWS = [
+  { dst: '203.0.113.50', dstLabel: 'cdn-telemetry.nm.lab', port: 443, proto: 'tcp', conns: 480, intervalSec: 60, jitterPct: 4, bytesOut: 52000, bytesIn: 38000, note: 'elke ~60s een klein, gelijkvormig check-in-berichtje' },
+  { dst: '203.0.113.77', dstLabel: 'opslag-x9f3.nm.lab', port: 443, proto: 'tcp', conns: 3, intervalSec: null, jitterPct: null, bytesOut: 2100000000, bytesIn: 4200, note: 'drie grote nachtelijke uploads' },
+  { dst: '203.0.113.9', dstLabel: 'updates.nm.lab', port: 443, proto: 'tcp', conns: 2, intervalSec: null, jitterPct: null, bytesOut: 1500000, bytesIn: 850000000, note: 'software-update (vooral inkomend)' },
+  { dst: '198.51.100.12', dstLabel: 'intranet.nm.lab', port: 443, proto: 'tcp', conns: 95, intervalSec: null, jitterPct: 58, bytesOut: 4200000, bytesIn: 31000000, note: 'intern portaal, grillig gebruik' },
+  { dst: '198.51.100.25', dstLabel: 'mail.nm.lab', port: 993, proto: 'tcp', conns: 40, intervalSec: null, jitterPct: 47, bytesOut: 900000, bytesIn: 12000000, note: 'IMAP-mail ophalen' },
+];
+
+const NS_PACKETS = [
+  { no: 1, time: '02:00:00', src: '10.0.0.23', dst: '203.0.113.50', proto: 'TLS', len: 220, info: 'Client Hello (SNI=cdn-telemetry.nm.lab)' },
+  { no: 2, time: '02:00:01', src: '203.0.113.50', dst: '10.0.0.23', proto: 'TLS', len: 190, info: 'Server Hello, Certificate' },
+  { no: 3, time: '02:00:01', src: '10.0.0.23', dst: '203.0.113.50', proto: 'TLS', len: 180, info: 'Application Data (check-in)', stream: 'GET /beacon?id=WRK-23 HTTP/1.1\nHost: cdn-telemetry.nm.lab\nUser-Agent: Mozilla/5.0\n\n(server) 204 No Content' },
+  { no: 4, time: '02:01:00', src: '10.0.0.23', dst: '203.0.113.50', proto: 'TLS', len: 182, info: 'Application Data (check-in)' },
+  { no: 5, time: '02:02:00', src: '10.0.0.23', dst: '203.0.113.50', proto: 'TLS', len: 179, info: 'Application Data (check-in)' },
+  { no: 6, time: '02:03:00', src: '10.0.0.23', dst: '203.0.113.50', proto: 'TLS', len: 181, info: 'Application Data (check-in)' },
+  { no: 7, time: '02:14:10', src: '10.0.0.23', dst: '203.0.113.77', proto: 'TLS', len: 1460, info: 'Application Data (grote upload)', stream: 'POST /upload/chunk-00 HTTP/1.1\nHost: opslag-x9f3.nm.lab\nContent-Length: 734003200\n\n[~700 MB binaire data: klantenbestand.7z]\nNM{exfil_in_de_stroom}' },
+  { no: 8, time: '02:41:52', src: '10.0.0.23', dst: '203.0.113.77', proto: 'TLS', len: 1460, info: 'Application Data (grote upload, chunk 2)' },
+  { no: 9, time: '03:09:33', src: '10.0.0.23', dst: '203.0.113.77', proto: 'TLS', len: 1460, info: 'Application Data (grote upload, chunk 3)' },
+  { no: 10, time: '08:12:04', src: '10.0.0.23', dst: '203.0.113.9', proto: 'TLS', len: 1460, info: 'Software-update downloaden (vooral inkomend)' },
+];
+
+CS.registerRoom({
+  id: 'netwerkstromen-analyse',
+  path: 'datastromen',
+  order: 2,
+  title: 'Netwerkstromen: beaconing & exfiltratie',
+  icon: '📡',
+  difficulty: 'Gemiddeld',
+  minutes: 50,
+  summary: 'Een besmette werkplek verraadt zich in het netwerkverkeer. Je leert beaconing (het ritmische check-in-signaal van malware naar zijn C2) onderscheiden van data-exfiltratie (een groot uitgaand volume) en van normaal verkeer, eerst via NetFlow-samenvattingen en daarna op pakketniveau. Je sluit af met de juiste eerste reactie.',
+  objectives: [
+    'Uitleggen wat beaconing is en hoe je het herkent aan ritme (lage jitter) en kleine, gelijkvormige pakketten',
+    'Data-exfiltratie herkennen aan een groot uitgaand volume naar één bestemming',
+    'Normaal verkeer (updates, mail, browsing) onderscheiden van kwaadaardig verkeer',
+    'Een NetFlow-overzicht en een pakketcapture lezen en combineren',
+    'De juiste eerste reactie op een besmette host bepalen (isoleren, IOC vastleggen)',
+  ],
+  terms: [
+    { term: 'NetFlow', def: 'Samenvatting van netwerkstromen: per verbinding wie met wie praatte, op welke poort, hoeveel bytes en hoe vaak — zonder de volledige inhoud.' },
+    { term: 'Egress-verkeer', def: 'Uitgaand verkeer, van binnen het netwerk naar buiten. Exfiltratie en C2-verkeer zitten hier.' },
+    { term: 'Beaconing', def: 'Het periodieke "ik leef nog"-signaal van malware naar zijn command-and-control (C2): regelmatig, klein en gelijkvormig.' },
+    { term: 'Jitter', def: 'De variatie in het tijdsinterval tussen beacons. Lage jitter = strak ritme (machine); hoge jitter = grillig (mens).' },
+    { term: 'C2 (command-and-control)', def: 'De server waarmee besmette machines contact houden voor opdrachten en om data af te geven.' },
+    { term: 'Exfiltratie', def: 'Het wegsluizen van data naar buiten, vaak als een groot uitgaand volume of in stilletjes opgeknipte brokken.' },
+    { term: 'IOC', def: 'Indicator of Compromise: een concreet spoor (IP, domein, hash) waarmee je dezelfde aanval elders herkent en blokkeert.' },
+    { term: 'ATT&CK T1071 / T1041', def: 'MITRE ATT&CK-technieken: Application Layer Protocol (C2-verkeer) en Exfiltration Over C2 Channel.' },
+  ],
+  resources: [
+    { title: 'MITRE ATT&CK — Command and Control (TA0011)', url: 'https://attack.mitre.org/tactics/TA0011/' },
+    { title: 'MITRE ATT&CK — Exfiltration (TA0010)', url: 'https://attack.mitre.org/tactics/TA0010/' },
+    { title: 'Wireshark — netwerkanalyse', url: 'https://www.wireshark.org/' },
+    { title: 'NCSC — Nationaal Cyber Security Centrum', url: 'https://www.ncsc.nl/' },
+  ],
+  tasks: [
+    {
+      title: 'Taak 1 — Beaconing, exfiltratie en normaal verkeer',
+      content: `
+        <p>Een besmette werkplek ziet er van buiten normaal uit, maar <em>praat</em> anders. In het netwerkverkeer vallen
+        twee signalen op.</p>
+        <ul>
+          <li><strong>Beaconing</strong> — malware meldt zich periodiek bij zijn <strong>C2</strong>: "ik leef nog, zijn er
+          opdrachten?". Dat verkeer is <em>regelmatig</em> (lage jitter), <em>klein</em> en <em>gelijkvormig</em>. Een mens
+          surft grillig; een machine tikt als een klok.</li>
+          <li><strong>Exfiltratie</strong> — op enig moment gaat de buit naar buiten: een <em>groot uitgaand volume</em> naar
+          één bestemming, vaak 's nachts of in opgeknipte brokken.</li>
+        </ul>
+        <p>De kunst is ze te scheiden van <strong>normaal</strong> verkeer: een software-update is juist vooral
+        <em>inkomend</em>, en browsen is grillig. Richt je op de <strong>egress</strong> (uitgaande) kant.</p>
+        <div class="callout warn"><strong>Alles fictief:</strong> IP's zijn documentatie-adressen (RFC 5737), domeinen
+        eindigen op <code>.nm.lab</code>. Je oefent het lezen van stromen, je volgt geen echte host.</div>
+        <div class="callout tip"><strong>Beloning:</strong> onthoud — ritme = C2, volume = exfil. Vlag:
+        <code>NM{ritme_of_volume}</code>.</div>
+      `,
+      questions: [
+        { q: 'Waaraan herken je beaconing het best?', options: ['Een regelmatig ritme (lage jitter) met kleine, gelijkvormige pakketten', 'Een eenmalige grote download', 'Veel inkomend verkeer van een updateserver', 'Grillig verkeer op willekeurige tijden'], answer: 0, explain: 'Beaconing is machineregelmaat: strak interval, klein en gelijkvormig. Dat onderscheidt het van menselijk verkeer.' },
+        { q: 'Waaraan herken je data-exfiltratie?', options: ['Een groot uitgaand (egress) volume naar één bestemming', 'Veel kleine inkomende pakketjes', 'Een lage jitter', 'DNS-verkeer naar de interne resolver'], answer: 0, explain: 'Exfiltratie is volume dat naar buiten gaat. Let op de verhouding uit/in per bestemming.' },
+        { q: 'Een software-update genereert vooral welk soort verkeer?', options: ['Inkomend (je downloadt veel, je stuurt weinig)', 'Uitgaand (je upload veel)', 'Een strak beacon-ritme', 'Geen enkel verkeer'], answer: 0, explain: 'Bij een update is het volume vooral inkomend; dat helpt je het te onderscheiden van exfiltratie.' },
+        { q: 'Welke vlag staat in de tip-callout?', answer: ['NM{ritme_of_volume}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{ritme_of_volume}.' },
+      ],
+    },
+    {
+      title: 'Taak 2 — Lees het NetFlow-overzicht',
+      content: `
+        <p>Hieronder staat een <strong>NetFlow</strong>-samenvatting van één werkplek over een nacht: per bestemming hoe
+        vaak er contact was, met welk interval en welke jitter, en hoeveel data er uit en in ging. Geen pakketinhoud — puur
+        de stromen. Vind het baken en de exfiltratie, en laat je niet afleiden door het normale verkeer.</p>
+        <div class="callout tip"><strong>Beloning:</strong> betrap beide. Vlag: <code>NM{baken_en_buit}</code>.</div>
+      `,
+      lab: {
+        type: 'netflow',
+        title: 'egress van werkplek WRK-23 (10.0.0.23), één nacht',
+        scenario: 'Eén bestemming tikt als een klok; één slokt gigabytes op; de rest is normaal. Welke is welke?',
+        flows: NS_FLOWS,
+        ask: [
+          { q: 'Welke bestemming is het C2-baken?', answer: ['cdn-telemetry.nm.lab', 'cdn-telemetry', '203.0.113.50'], hint: 'Strak ritme, lage jitter, honderden kleine check-ins.' },
+          { q: 'Welke bestemming wijst op data-exfiltratie?', answer: ['opslag-x9f3.nm.lab', 'opslag-x9f3', '203.0.113.77'], hint: 'Het grootste uitgaande volume.' },
+          { q: 'Met welk interval (in seconden) meldt het baken zich?', answer: ['60', '60s', '60 seconden'], hint: 'Lees de kolom "Interval" bij de baken-rij.' },
+        ],
+      },
+      questions: [
+        { q: 'Welke bestemming is het C2-baken?', answer: ['cdn-telemetry.nm.lab', 'cdn-telemetry', '203.0.113.50'], hint: 'Zoek de laagste jitter en de meeste kleine verbindingen.', explain: 'cdn-telemetry.nm.lab: 480 verbindingen, elke ~60s, jitter 4% — een klassiek beacon-ritme.' },
+        { q: 'Welke bestemming wijst op data-exfiltratie?', answer: ['opslag-x9f3.nm.lab', 'opslag-x9f3', '203.0.113.77'], hint: 'Kijk naar de kolom "Uit".', explain: 'opslag-x9f3.nm.lab ontving ~2,1 GB uitgaand in slechts drie verbindingen — dat is exfiltratie.' },
+        { q: 'Ongeveer hoeveel data lekte er weg naar de exfiltratie-bestemming?', answer: ['2.1 GB', '2.1', '2,1 GB', '2.1gb', '2,1'], hint: 'De kolom "Uit" bij opslag-x9f3.nm.lab.', explain: 'Ongeveer 2,1 GB ging uitgaand naar opslag-x9f3.nm.lab.' },
+        { q: 'Waarom is updates.nm.lab géén exfiltratie, ondanks het grote volume?', options: ['Omdat het volume vooral inkomend is (een download), niet uitgaand', 'Omdat het een .nm.lab-domein is', 'Omdat het overdag gebeurde', 'Omdat er maar twee verbindingen waren'], answer: 0, explain: 'Bij updates.nm.lab is het grote volume inkomend (850 MB in, 1,5 MB uit): een download, geen wegsluizing.' },
+        { q: 'Welke vlag staat in de tip-callout van deze taak?', answer: ['NM{baken_en_buit}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{baken_en_buit}.' },
+      ],
+    },
+    {
+      title: 'Taak 3 — Bevestig het op pakketniveau',
+      content: `
+        <p>NetFlow gaf je de verdenking; de <strong>pakketcapture</strong> levert het bewijs. Filter op de verdachte
+        bestemmingen en bekijk de inhoud. Let op de <strong>tijdstempels</strong> van de check-ins (het ritme wordt nu
+        zichtbaar) en volg de stream van de grote upload.</p>
+        <ul>
+          <li>Filter op <code>cdn-telemetry</code> of <code>203.0.113.50</code> en kijk naar de tijden van de check-ins.</li>
+          <li>Filter op <code>opslag-x9f3</code> of <code>203.0.113.77</code> en klik de grote upload aan; lees de stream.</li>
+        </ul>
+        <div class="callout tip"><strong>Beloning:</strong> de vlag zit verstopt in de stream van de exfiltratie-upload.
+        Vind hem: <code>NM{exfil_in_de_stroom}</code>.</div>
+      `,
+      lab: {
+        type: 'pcap',
+        title: 'capture-WRK-23.pcap',
+        packets: NS_PACKETS,
+      },
+      questions: [
+        { q: 'Met welk interval (in seconden) herhaalt het baken zijn check-in, te zien aan de tijdstempels?', answer: ['60', '60s', '60 seconden', '1 minuut'], hint: 'Kijk naar de tijden 02:00:00, 02:01:00, 02:02:00, 02:03:00.', explain: 'De check-ins staan precies 60 seconden uit elkaar — een strak beacon-ritme.' },
+        { q: 'Naar welke bestemming gaat de grote nachtelijke upload?', answer: ['opslag-x9f3.nm.lab', 'opslag-x9f3', '203.0.113.77'], hint: 'Filter op de grote uploads.', explain: 'De POST /upload-pakketten gaan naar opslag-x9f3.nm.lab (203.0.113.77).' },
+        { q: 'Wat werd er volgens de stream weggesluisd?', options: ['Een klantenbestand (klantenbestand.7z)', 'Een software-update', 'Een e-mail', 'Niets, het was leeg'], answer: 0, explain: 'De follow-stream toont een POST met ~700 MB "klantenbestand.7z" — de buit.' },
+        { q: 'Welke vlag zit verstopt in de stream van de exfiltratie-upload?', answer: ['NM{exfil_in_de_stroom}'], hint: 'Klik pakket 7 aan en lees de follow-stream.', explain: 'De vlag NM{exfil_in_de_stroom} staat onderaan de upload-stream.' },
+      ],
+    },
+    {
+      title: 'Taak 4 — Eerste reactie en IOCs',
+      content: `
+        <p>Je hebt beaconing én exfiltratie bevestigd. Nu telt snelheid en zorgvuldigheid tegelijk. De juiste eerste reactie
+        bij een besmette host is <strong>isoleren</strong> (van het netwerk halen, maar niet uitzetten — dan verlies je
+        geheugen en lopende verbindingen als bewijs), en de <strong>IOCs</strong> vastleggen zodat je dezelfde aanval elders
+        herkent en blokkeert.</p>
+        <p>De IOCs uit deze zaak: de C2 <code>cdn-telemetry.nm.lab</code> (203.0.113.50) en de exfil-bestemming
+        <code>opslag-x9f3.nm.lab</code> (203.0.113.77).</p>
+        <div class="callout tip"><strong>Beloning:</strong> isoleren, niet uitzetten. Vlag: <code>NM{isoleer_niet_uit}</code>.</div>
+      `,
+      questions: [
+        { q: 'Wat is de juiste eerste reactie op de besmette werkplek?', options: ['Isoleren van het netwerk, maar aan laten staan (geheugen en bewijs behouden)', 'Direct uitzetten', 'Niets doen en verder monitoren', 'De harde schijf meteen wissen'], answer: 0, explain: 'Isoleren stopt de schade; aan laten staan bewaart vluchtig bewijs (geheugen, verbindingen) voor forensie.' },
+        { q: 'Welke twee IOCs blokkeer je direct op de firewall/proxy?', options: ['cdn-telemetry.nm.lab (203.0.113.50) en opslag-x9f3.nm.lab (203.0.113.77)', 'updates.nm.lab en mail.nm.lab', 'intranet.nm.lab en mail.nm.lab', 'Alle .nm.lab-domeinen'], answer: 0, explain: 'De C2 en de exfil-bestemming zijn de kwaadaardige IOCs; de rest is legitiem verkeer dat je niet wilt blokkeren.' },
+        { q: 'Welke ATT&CK-tactiek hoort bij het beacon-verkeer naar de C2?', options: ['Command and Control (T1071)', 'Initial Access', 'Impact', 'Reconnaissance'], answer: 0, explain: 'Het ritmische C2-verkeer valt onder Command and Control (Application Layer Protocol, T1071).' },
+        { q: 'Welke vlag staat in de tip-callout van deze taak?', answer: ['NM{isoleer_niet_uit}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{isoleer_niet_uit}.' },
+      ],
+    },
+  ],
+});
+
+</script>
+<script>
+/* Room: Datastromen — e-mail forensics (Received-keten, SPF/DKIM/DMARC, IOCs) */
+
+// =======================================================================
+//  Alles fictief: de bank "Nederbank", documentatie-IP's (RFC 5737) en
+//  .nm.lab-domeinen zijn verzonnen. Je oefent het lezen van e-mailsporen.
+// =======================================================================
+
+const EF_HOPS = [
+  { from: '[vervalst / onbekend]', ip: '203.0.113.66', by: 'mail.boos.nm.lab', time: '09:58:02' },
+  { from: 'mail.boos.nm.lab', ip: '203.0.113.66', by: 'relay7.nm.lab', time: '09:59:11' },
+  { from: 'relay7.nm.lab', ip: '198.51.100.5', by: 'mx.nm.lab (ontvanger)', time: '10:00:03' },
+];
+
+const EF_IOC_TEXT = [
+  'Van: Nederbank Beveiliging <beveiliging@nederbank.nl>',
+  'Return-Path: retour@mail.boos.nm.lab',
+  'Ontvangen van 203.0.113.66 (mail.boos.nm.lab)',
+  'Onderwerp: Uw rekening is geblokkeerd — verifieer direct',
+  '',
+  'Geachte klant, uw rekening is tijdelijk geblokkeerd.',
+  'Verifieer binnen 24 uur via: https://nederbank.nl.verificatie-check.boos.nm.lab/inloggen',
+  'Tweede link (reserve): https://inlog-nederbank.boos.nm.lab/klant',
+  'Bijlage: rekening-verificatie.pdf.exe  (MD5: a3f1c0de9b7742e5aa10b4d8c6e2f9b1)',
+  'Na uitvoering meldt de malware zich bij C2 203.0.113.66 en secundair 198.51.100.40.',
+].join('\n');
+
+CS.registerRoom({
+  id: 'email-forensics',
+  path: 'datastromen',
+  order: 3,
+  title: 'E-mail forensics',
+  icon: '✉️',
+  difficulty: 'Gemiddeld',
+  minutes: 50,
+  summary: 'Een e-mail draagt zijn eigen reisverslag mee. Je leert de Received-keten van onder naar boven lezen om de echte verzender te vinden, ontmaskert spoofing met SPF/DKIM/DMARC en de Return-Path, haalt de IOCs uit het bericht en ontleedt de phishinglink die zich voordoet als je bank.',
+  objectives: [
+    'De Received-keten lezen en het oorspronkelijke verzend-IP bepalen',
+    'Spoofing herkennen door From, Return-Path en SPF/DKIM/DMARC te vergelijken',
+    'Uitleggen wat SPF, DKIM en DMARC controleren',
+    'IOCs (IP, domein, URL, e-mail, hash) uit een bericht halen en veilig defangen',
+    'Een phishing-URL ontleden en de misleiding in het domein aanwijzen',
+  ],
+  terms: [
+    { term: 'Header', def: 'De technische kop van een e-mail: afzender, ontvanger, onderwerp én het volledige reisverslag (Received-regels).' },
+    { term: 'Received-keten', def: 'Elke mailserver plakt onderaan een Received-regel. Lees van onder (oorspronkelijke verzender) naar boven (jouw server).' },
+    { term: 'From vs. Return-Path', def: 'From is de zichtbare afzender en vrij in te vullen; Return-Path is waar bounces heen gaan. Verschillen ze sterk, dan is spoofing waarschijnlijk.' },
+    { term: 'SPF', def: 'Sender Policy Framework: controleert of het verzendende IP namens dat domein mág versturen (via een DNS-record). Fail = verdacht.' },
+    { term: 'DKIM', def: 'DomainKeys Identified Mail: een digitale handtekening over de mail. Klopt de handtekening niet (of ontbreekt), dan is de afzender niet bewezen.' },
+    { term: 'DMARC', def: 'Beleid dat SPF/DKIM combineert met "alignment" (past het domein bij de From?) en zegt wat te doen bij een mismatch (afwijzen/quarantaine).' },
+    { term: 'Spoofing', def: 'Een afzender vervalsen zodat de mail van een vertrouwde partij lijkt te komen.' },
+    { term: 'IOC', def: 'Indicator of Compromise: een concreet spoor (IP, domein, URL, hash) om dezelfde aanval elders te herkennen en te blokkeren.' },
+    { term: 'Defangen', def: 'IOCs onschadelijk opschrijven (hxxp, 1[.]2[.]3[.]4) zodat niemand er per ongeluk op klikt bij het delen.' },
+    { term: 'Dubbele extensie', def: 'Een truc als rekening.pdf.exe: het lijkt een PDF, maar het is een uitvoerbaar bestand (.exe).' },
+  ],
+  resources: [
+    { title: 'Fraudehelpdesk — phishing herkennen en melden', url: 'https://www.fraudehelpdesk.nl/' },
+    { title: 'MXToolbox — e-mailheaders analyseren', url: 'https://mxtoolbox.com/EmailHeaders.aspx' },
+    { title: 'NCSC — phishing en e-mailbeveiliging', url: 'https://www.ncsc.nl/' },
+    { title: 'DMARC.org — uitleg SPF/DKIM/DMARC', url: 'https://dmarc.org/' },
+  ],
+  tasks: [
+    {
+      title: 'Taak 1 — De anatomie van een e-mail',
+      content: `
+        <p>De <strong>From</strong>-regel van een e-mail is als de afzender op een envelop: iedereen kan er invullen wat hij
+        wil. Gelukkig draagt elke mail een <em>reisverslag</em> mee: de <strong>Received</strong>-keten. Elke server die de
+        mail doorgeeft, plakt er onderaan een regel bij. Je leest de keten dus <strong>van onder naar boven</strong>: de
+        onderste regel is de oorspronkelijke verzender, de bovenste is jouw eigen server.</p>
+        <p>Om spoofing te betrappen vergelijk je drie dingen:</p>
+        <ul>
+          <li><strong>From vs. Return-Path</strong> — wijzen ze naar hetzelfde domein?</li>
+          <li><strong>SPF</strong> — mocht dit IP namens dat domein versturen?</li>
+          <li><strong>DKIM/DMARC</strong> — klopt de handtekening en past het domein bij de From?</li>
+        </ul>
+        <div class="callout warn"><strong>Alles fictief:</strong> "Nederbank", de IP's (RFC 5737) en de
+        <code>.nm.lab</code>-domeinen zijn verzonnen. Je oefent de methode.</div>
+        <div class="callout tip"><strong>Beloning:</strong> lees de Received-keten van onder naar boven. Vlag:
+        <code>NM{van_onder_naar_boven}</code>.</div>
+      `,
+      questions: [
+        { q: 'In welke richting lees je de Received-keten om de oorspronkelijke verzender te vinden?', options: ['Van onder naar boven (onderste = oorsprong)', 'Van boven naar onder (bovenste = oorsprong)', 'Alfabetisch', 'Dat maakt niet uit'], answer: 0, explain: 'Elke server plakt zijn regel onderaan; de onderste Received-regel is dus de oorspronkelijke verzender.' },
+        { q: 'Waarom is de From-regel alleen onvoldoende bewijs voor de afzender?', options: ['Omdat de From vrij in te vullen is en dus vervalst kan worden', 'Omdat de From versleuteld is', 'Omdat de From altijd klopt', 'Omdat de From door de ontvanger wordt ingevuld'], answer: 0, explain: 'From is cosmetisch; pas SPF/DKIM/DMARC en de Received-keten geven uitsluitsel.' },
+        { q: 'Wat controleert SPF?', options: ['Of het verzendende IP namens dat domein mag versturen', 'Of de mail een virus bevat', 'Of de ontvanger bestaat', 'Of de mail te groot is'], answer: 0, explain: 'SPF toetst via een DNS-record of dit IP een toegestane verzender is voor het From-domein.' },
+        { q: 'Welke vlag staat in de tip-callout?', answer: ['NM{van_onder_naar_boven}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{van_onder_naar_boven}.' },
+      ],
+    },
+    {
+      title: 'Taak 2 — Traceer de herkomst en betrap de spoofing',
+      content: `
+        <p>Hieronder staat de header van een alarmerende "bank"-mail. De <strong>From</strong> zegt
+        <code>beveiliging@nederbank.nl</code>, maar klopt dat? Lees de Received-keten van onder naar boven, vind het
+        oorspronkelijke verzend-IP, en vergelijk de From met de Return-Path en de authenticatie-resultaten.</p>
+        <div class="callout tip"><strong>Beloning:</strong> ontmasker de vervalsing. Vlag: <code>NM{afzender_vervalst}</code>.</div>
+      `,
+      lab: {
+        type: 'emailheader',
+        title: 'header van de "Nederbank"-mail',
+        scenario: 'De From zegt dat het de bank is. De keten, de Return-Path en SPF/DKIM/DMARC vertellen een ander verhaal.',
+        from: 'Nederbank Beveiliging <beveiliging@nederbank.nl>',
+        returnPath: 'retour@mail.boos.nm.lab',
+        hops: EF_HOPS,
+        auth: { spf: 'fail', dkim: 'none', dmarc: 'fail' },
+        ask: [
+          { q: 'Wat is het oorspronkelijke verzend-IP (onderste Received)?', answer: ['203.0.113.66'], hint: 'De onderste regel van de keten (de oorsprong).' },
+          { q: 'Slaagde de SPF-controle? (ja/nee)', answer: ['nee', 'nee, fail', 'fail', 'nee fail'], hint: 'Lees de authenticatie-badge.' },
+          { q: 'Is dit waarschijnlijk spoofing? (ja/nee)', answer: ['ja'], hint: 'Vergelijk From met Return-Path en de auth-resultaten.' },
+        ],
+      },
+      questions: [
+        { q: 'Wat is het oorspronkelijke verzend-IP van deze mail?', answer: ['203.0.113.66'], hint: 'De onderste Received-regel.', explain: 'De keten begint (onderaan) bij 203.0.113.66 via mail.boos.nm.lab — dat is de echte bron.' },
+        { q: 'Komt de From (nederbank.nl) overeen met de Return-Path?', options: ['Nee — de Return-Path wijst naar mail.boos.nm.lab', 'Ja, beide zijn nederbank.nl', 'Er is geen Return-Path', 'Dat kun je niet zien'], answer: 0, explain: 'From zegt nederbank.nl, maar bounces gaan naar boos.nm.lab: een duidelijk spoofing-signaal.' },
+        { q: 'Wat betekenen SPF=fail, DKIM=none en DMARC=fail samen?', options: ['De afzender is niet geauthenticeerd — de mail is vrijwel zeker vervalst', 'De mail is veilig en authentiek', 'De mail is alleen te groot', 'De ontvanger bestaat niet'], answer: 0, explain: 'Geen enkele authenticatie slaagt; gecombineerd met de Return-Path-mismatch is dit spoofing.' },
+        { q: 'Welk domein beheert de aanvaller werkelijk (het verzendende domein)?', answer: ['boos.nm.lab', 'mail.boos.nm.lab'], hint: 'Kijk naar de oorsprong en de Return-Path.', explain: 'De oorsprong en de Return-Path wijzen beide naar boos.nm.lab — het domein van de aanvaller.' },
+        { q: 'Welke vlag staat in de tip-callout van deze taak?', answer: ['NM{afzender_vervalst}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{afzender_vervalst}.' },
+      ],
+    },
+    {
+      title: 'Taak 3 — Haal de IOCs eruit',
+      content: `
+        <p>Nu je weet dat de mail kwaadaardig is, leg je de <strong>IOCs</strong> vast: de concrete sporen waarmee je
+        dezelfde aanval elders herkent en blokkeert. Plak de mail in de extractor en kijk wat eruit komt: IP's, domeinen,
+        URL's, e-mailadressen en de hash van de bijlage. Gebruik <strong>Defang</strong> voordat je ze deelt, zodat niemand
+        er per ongeluk op klikt.</p>
+        <div class="callout tip"><strong>Beloning:</strong> leg de sporen vast. Vlag: <code>NM{sporen_vastgelegd}</code>.</div>
+      `,
+      lab: {
+        type: 'ioc',
+        text: EF_IOC_TEXT,
+      },
+      questions: [
+        { q: 'Hoeveel unieke IPv4-adressen haalt de extractor uit het bericht?', answer: ['2', 'twee'], hint: 'Het C2-IP en een secundair IP.', explain: 'Twee: 203.0.113.66 (oorsprong/C2) en 198.51.100.40 (secundaire C2).' },
+        { q: 'Welke bijlagenaam verraadt met een dubbele extensie dat het geen PDF is?', answer: ['rekening-verificatie.pdf.exe', 'pdf.exe', '.pdf.exe'], hint: 'Let op wat er ná .pdf staat.', explain: 'rekening-verificatie.pdf.exe is een uitvoerbaar bestand (.exe) vermomd als PDF.' },
+        { q: 'Waarom defang je IOCs voordat je ze deelt?', options: ['Zodat niemand er per ongeluk op klikt of ze automatisch aanklikbaar worden', 'Om ze korter te maken', 'Om ze te versleutelen', 'Omdat het verplicht is bij de bank'], answer: 0, explain: 'Defangen (hxxp, 1[.]2[.]3[.]4) maakt een IOC onschadelijk om te delen in rapporten en chats.' },
+        { q: 'Welke vlag staat in de tip-callout van deze taak?', answer: ['NM{sporen_vastgelegd}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{sporen_vastgelegd}.' },
+      ],
+    },
+    {
+      title: 'Taak 4 — Ontleed de phishinglink',
+      content: `
+        <p>De verleiding zit in de link. Hij begint met <code>nederbank.nl</code> — maar waar komt hij écht uit? Het echte
+        domein staat altijd <strong>helemaal rechts</strong>, vlak vóór de eerste <code>/</code>. Alles daarvóór is subdomein
+        en kan van alles beweren. Ontleed de URL in het lab en wijs de misleiding aan.</p>
+        <div class="callout tip"><strong>Beloning:</strong> het merk in het subdomein is geen bewijs. Vlag:
+        <code>NM{kijk_naar_rechts}</code>.</div>
+      `,
+      lab: {
+        type: 'url',
+        urls: [
+          'https://nederbank.nl.verificatie-check.boos.nm.lab/inloggen',
+          'https://inlog-nederbank.boos.nm.lab/klant',
+        ],
+      },
+      questions: [
+        { q: 'Waar in een URL vind je het échte domein?', options: ['Helemaal rechts, vlak vóór het pad (de laatste labels vóór de eerste /)', 'Helemaal links, direct na https://', 'In het midden', 'In het pad na de /'], answer: 0, explain: 'Het geregistreerde domein staat rechts; alles links daarvan is subdomein en kan van alles beweren.' },
+        { q: 'Welk merk wordt in deze links nagebootst?', answer: ['nederbank', 'Nederbank'], hint: 'Het staat prominent in het subdomein.', explain: 'De links zetten "nederbank" in het subdomein om vertrouwen te wekken, maar het echte domein is boos.nm.lab.' },
+        { q: 'Is https://nederbank.nl.verificatie-check.boos.nm.lab/inloggen de echte site van de bank?', options: ['Nee — het echte domein is boos.nm.lab; "nederbank.nl" is hier slechts een subdomein', 'Ja, het begint met nederbank.nl', 'Ja, want het gebruikt https', 'Dat valt niet te bepalen'], answer: 0, explain: 'De punten misleiden: nederbank.nl staat vóór boos.nm.lab, dus het is een subdomein van boos.nm.lab — niet de bank.' },
+        { q: 'Waarom is "https" (het slotje) hier geen bewijs van echtheid?', options: ['Https versleutelt alleen de verbinding; ook phishingsites hebben een certificaat', 'Https betekent dat de site veilig is', 'Https controleert de eigenaar van het domein', 'Dat is het wel — https is altijd veilig'], answer: 0, explain: 'Een slotje zegt alleen dat de verbinding versleuteld is, niet wie de site beheert. Phishers gebruiken ook https.' },
+        { q: 'Welke vlag staat in de tip-callout van deze taak?', answer: ['NM{kijk_naar_rechts}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{kijk_naar_rechts}.' },
+      ],
+    },
   ],
 });
 

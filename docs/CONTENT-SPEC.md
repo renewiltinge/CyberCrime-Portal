@@ -10,7 +10,7 @@ laadt de bestanden als gewone `<script>`-tags, zodat het ook werkt door `index.h
 /* Room: Netwerken — de basis */
 CS.registerRoom({
   id: 'netwerken-basis',            // gelijk aan de bestandsnaam, kebab-case
-  path: 'fundamenten',              // 'fundamenten' | 'security-kern' | 'offensief' | 'defensief' | 'forensie' | 'intelligence' | 'puzzels' | 'eindopdracht'
+  path: 'fundamenten',              // 'fundamenten' | 'security-kern' | 'offensief' | 'defensief' | 'forensie' | 'intelligence' | 'datastromen' | 'puzzels' | 'eindopdracht'
   order: 2,                         // volgorde binnen het leerpad
   title: 'Netwerken: de basis',
   icon: '🌐',                       // één emoji
@@ -596,3 +596,47 @@ Rekent **taint** (haircut: welk deel van een adres uit de vuile bron komt) en **
 adressen die samen input zijn = één eigenaar) en toont beide, plus hoeveel vuil geld een exchange bereikt. Inputs
 besteden hun volledige saldo (vereenvoudigd UTXO). **De lab toont alle getallen, dus `ask`-antwoorden zijn afleidbaar;
 reken ze na.**
+
+### `netflow`: netwerkstromen (beaconing & exfiltratie)
+
+```js
+lab: {
+  type: 'netflow', title: 'egress WRK-23', scenario: '<intro>',
+  flows: [
+    { dst: '203.0.113.50', dstLabel: 'cdn-telemetry.nm.lab', port: 443, proto: 'tcp',
+      conns: 480, intervalSec: 60, jitterPct: 4, bytesOut: 52000, bytesIn: 38000, note: '...' },
+    // beaconing = lage jitterPct + veel kleine conns; exfil = hoge bytesOut
+  ],
+  ask: [ { q: 'Welke bestemming is het C2-baken?', answer: ['cdn-telemetry.nm.lab'] } ],
+}
+```
+Toont per bestemming een tabel met interval, jitter (🟥 ≤8% strak / 🟧 ≤25% / 🟩 grillig) en uit/in-volume (B/kB/MB/GB).
+Beaconing herken je aan lage jitter + kleine gelijkvormige pakketten; exfiltratie aan groot uitgaand volume.
+
+### `structuring`: witwassen/smurfing onder de meldgrens (Wwft)
+
+```js
+lab: {
+  type: 'structuring', title: '...', threshold: 10000, currency: '€', bandLow: 0.8, // band [threshold*bandLow, threshold)
+  scenario: '<intro>',
+  tx: [ { date: '2026-03-02', who: 'M. de Groot', amount: 9800, kind: 'contant', note: '...' }, ... ],
+  ask: [ { q: 'Hoeveel stortingen passen in het patroon?', answer: ['5'] } ],
+}
+```
+Markeert stortingen **net onder** de meldgrens (band `[threshold*bandLow, threshold)`, standaard 80–100%) en toont
+aantal, totaalbedrag en aantal dagen. Leert structurering (smurfing), de Wwft-meldplicht en FIU-Nederland. **Reken de
+`ask`-antwoorden na: de lab toont ze.**
+
+### `emailheader`: e-mailherkomst traceren (Received-keten, SPF/DKIM/DMARC)
+
+```js
+lab: {
+  type: 'emailheader', title: '...', scenario: '<intro>',
+  from: 'Naam <adres@domein>', returnPath: 'retour@...',
+  hops: [ { from: '[oorsprong]', ip: '203.0.113.66', by: 'mail.boos.nm.lab', time: '09:58' }, ... ], // [0] = oorsprong
+  auth: { spf: 'fail', dkim: 'none', dmarc: 'fail' },
+  ask: [ { q: 'Wat is het oorspronkelijke verzend-IP?', answer: ['203.0.113.66'] } ],
+}
+```
+Toont de Received-keten van **onder (oorsprong) naar boven**, de From vs. Return-Path en gekleurde SPF/DKIM/DMARC-badges.
+`hops[0]` is de oorspronkelijke verzender (onderste regel). Leert spoofing betrappen.

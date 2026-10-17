@@ -2738,6 +2738,110 @@
   });
 
   // =====================================================================
+  //  NETFLOW — netwerkstromen: beaconing & exfiltratie herkennen
+  // =====================================================================
+  CS.registerLab('netflow', function (container, cfg) {
+    const flows = (cfg.flows || []).slice();
+    const wrap = el('div', { class: 'lab-pad' });
+    if (cfg.scenario) wrap.append(el('div', { class: 'callout info', html: esc(cfg.scenario) }));
+    wrap.append(el('div', { class: 'found-note', html: 'Lees de flows als een rechercheur. <strong>Beaconing (C2)</strong> = een strak <em>ritme</em> (lage jitter) met kleine, gelijke pakketjes die telkens terugkeren. <strong>Exfiltratie</strong> = een groot <em>uitgaand</em> volume naar één bestemming. <strong>Normaal</strong> verkeer is onregelmatig en vooral inkomend.' }));
+    const mb = (n) => (n >= 1e9 ? (n / 1e9).toFixed(1) + ' GB' : n >= 1e6 ? (n / 1e6).toFixed(1) + ' MB' : n >= 1e3 ? (n / 1e3).toFixed(0) + ' kB' : n + ' B');
+    const ritme = (j) => j == null ? '—' : j <= 8 ? '🟥 zeer strak (' + j + '%)' : j <= 25 ? '🟧 regelmatig (' + j + '%)' : '🟩 grillig (' + j + '%)';
+    const tbl = el('table', { style: 'width:100%;font-size:.82rem;border-collapse:collapse;margin-top:8px' });
+    tbl.innerHTML = '<thead><tr style="text-align:left;color:var(--muted)">' +
+      ['Bestemming', 'Poort', 'Verb.', 'Interval', 'Jitter (ritme)', 'Uit', 'In'].map((h) => '<th style="padding:4px 6px;border-bottom:1px solid var(--border)">' + h + '</th>').join('') +
+      '</tr></thead>';
+    const tb = el('tbody');
+    flows.forEach((f) => {
+      const tr = el('tr', { style: 'border-bottom:1px solid var(--border)' });
+      const cells = [
+        '<code>' + esc(f.dstLabel || f.dst || '?') + '</code>' + (f.note ? '<br><span style="color:var(--muted);font-size:.78rem">' + esc(f.note) + '</span>' : ''),
+        esc(String(f.port != null ? f.port : '—')) + (f.proto ? '/' + esc(f.proto) : ''),
+        esc(String(f.conns != null ? f.conns : '—')),
+        f.intervalSec != null ? esc(String(f.intervalSec)) + ' s' : '—',
+        ritme(f.jitterPct),
+        '<strong style="color:var(--bad)">' + mb(+f.bytesOut || 0) + '</strong>',
+        mb(+f.bytesIn || 0),
+      ];
+      cells.forEach((c) => tr.append(el('td', { style: 'padding:5px 6px;vertical-align:top', html: c })));
+      tb.append(tr);
+    });
+    tbl.append(tb);
+    wrap.append(tbl);
+    puzzleAsk(wrap, cfg.ask);
+    container.append(shell('<b>NetFlow-analyse</b> — ' + esc(cfg.title || 'beaconing & exfiltratie'), wrap, false));
+  });
+
+  // =====================================================================
+  //  STRUCTURING — witwassen: smurfing/structurering onder de meldgrens
+  // =====================================================================
+  CS.registerLab('structuring', function (container, cfg) {
+    const thr = +cfg.threshold || 10000;
+    const cur = cfg.currency || '€';
+    const lo = cfg.bandLow != null ? cfg.bandLow : 0.8; // "net onder de grens" = [thr*lo, thr)
+    const tx = (cfg.tx || []).slice();
+    const fmt = (n) => cur + ' ' + Number(n).toLocaleString('nl-NL');
+    const wrap = el('div', { class: 'lab-pad' });
+    if (cfg.scenario) wrap.append(el('div', { class: 'callout info', html: esc(cfg.scenario) }));
+    wrap.append(el('div', { class: 'callout tip', html: '<strong>Structurering (smurfing)</strong> is het opknippen van één groot bedrag in meerdere stortingen <em>net onder</em> de meldgrens, om een melding te ontlopen. Onder de <strong>Wwft</strong> moeten instellingen ongebruikelijke transacties melden bij <strong>FIU-Nederland</strong>. Juist het patroon — veel bedragen vlak onder de grens — is het signaal, niet één losse storting.' }));
+    wrap.append(el('div', { class: 'found-note', html: 'Meldgrens in deze zaak: <strong>' + fmt(thr) + '</strong>. Gemarkeerd = een storting in de band <strong>' + fmt(Math.round(thr * lo)) + '</strong>–' + fmt(thr) + ' (net eronder).' }));
+    let flagged = 0, flaggedSum = 0;
+    const days = new Set();
+    const tbl = el('table', { style: 'width:100%;font-size:.82rem;border-collapse:collapse;margin-top:8px' });
+    tbl.innerHTML = '<thead><tr style="text-align:left;color:var(--muted)">' +
+      ['Datum', 'Rekeninghouder', 'Bedrag', 'Soort', 'Signaal'].map((h) => '<th style="padding:4px 6px;border-bottom:1px solid var(--border)">' + h + '</th>').join('') + '</tr></thead>';
+    const tb = el('tbody');
+    tx.forEach((t) => {
+      const amt = +t.amount || 0;
+      const isStruct = amt >= thr * lo && amt < thr;
+      if (isStruct) { flagged++; flaggedSum += amt; if (t.date) days.add(String(t.date).slice(0, 10)); }
+      const tr = el('tr', { style: 'border-bottom:1px solid var(--border)' + (isStruct ? ';background:rgba(240,110,110,.10)' : '') });
+      [
+        esc(t.date || ''),
+        esc(t.who || ''),
+        '<strong' + (isStruct ? ' style="color:var(--bad)"' : '') + '>' + fmt(amt) + '</strong>',
+        esc(t.kind || 'storting'),
+        isStruct ? '⚠️ net onder grens' : (amt >= thr ? '↑ boven grens (meldplichtig)' : ''),
+      ].forEach((c) => tr.append(el('td', { style: 'padding:5px 6px', html: c })));
+      tb.append(tr);
+    });
+    tbl.append(tb);
+    wrap.append(tbl);
+    wrap.append(el('div', { class: 'lab-out', style: 'margin-top:8px', html: 'Gemarkeerd: <strong>' + flagged + '</strong> stortingen · samen <strong>' + fmt(flaggedSum) + '</strong>' + (days.size ? ' · over <strong>' + days.size + '</strong> dag(en)' : '') }));
+    puzzleAsk(wrap, cfg.ask);
+    container.append(shell('<b>Structurering-detector</b> — ' + esc(cfg.title || 'smurfing onder de meldgrens'), wrap, false));
+  });
+
+  // =====================================================================
+  //  EMAILHEADER — e-mailherkomst traceren (Received-keten, SPF/DKIM/DMARC)
+  // =====================================================================
+  CS.registerLab('emailheader', function (container, cfg) {
+    const hops = (cfg.hops || []).slice(); // [0] = oorsprong, laatste = aflevering
+    const auth = cfg.auth || {};
+    const wrap = el('div', { class: 'lab-pad' });
+    if (cfg.scenario) wrap.append(el('div', { class: 'callout info', html: esc(cfg.scenario) }));
+    wrap.append(el('div', { class: 'found-note', html: 'Een e-mail verzamelt een <strong>Received</strong>-keten: elke mailserver plakt onderaan een regel. Lees van <em>onder</em> (de oorspronkelijke verzender) naar <em>boven</em> (jouw server). De <strong>From</strong> is vrij in te vullen; vergelijk hem met <strong>Return-Path</strong> en met <strong>SPF/DKIM/DMARC</strong> om spoofing te betrappen.' }));
+    wrap.append(el('div', { html: '<strong>From:</strong> <code>' + esc(cfg.from || '?') + '</code>' + (cfg.returnPath ? ' &nbsp; <strong>Return-Path:</strong> <code>' + esc(cfg.returnPath) + '</code>' : '') }));
+    // Received-ladder: toon van oorsprong (onder) naar aflevering (boven)
+    const ladder = el('div', { class: 'logview', style: 'margin-top:8px' });
+    hops.slice().reverse().forEach((h, i) => {
+      const isOrigin = i === hops.length - 1;
+      const ln = el('div', { class: 'ln' });
+      ln.append(el('span', { class: 'n', text: String(hops.length - i) }),
+        el('span', { html: 'van <strong>' + esc(h.from || '?') + '</strong>' + (h.ip ? ' <code>' + esc(h.ip) + '</code>' : '') + ' door <span style="color:var(--muted)">' + esc(h.by || '?') + '</span>' + (h.time ? ' <span style="color:#7f8db5">' + esc(h.time) + '</span>' : '') + (isOrigin ? ' <span style="color:var(--warn)">← oorsprong</span>' : '') }));
+      ladder.append(ln);
+    });
+    wrap.append(el('label', { text: 'Received-keten (onderste = oorspronkelijke verzender)' }), ladder);
+    // auth-resultaten
+    const authRow = el('div', { class: 'chip-row', style: 'margin-top:8px' });
+    const badge = (k, v) => { const ok = /pass/i.test(v); const bad = /fail|softfail|none/i.test(v); return el('span', { class: 'chip', style: 'cursor:default;color:' + (ok ? 'var(--good)' : bad ? 'var(--bad)' : 'var(--fg)'), html: k.toUpperCase() + ': ' + esc(v) }); };
+    ['spf', 'dkim', 'dmarc'].forEach((k) => { if (auth[k]) authRow.append(badge(k, auth[k])); });
+    if (authRow.childNodes.length) wrap.append(el('label', { text: 'Authenticatie-resultaten' }), authRow);
+    puzzleAsk(wrap, cfg.ask);
+    container.append(shell('<b>E-mailheader-analyse</b> — ' + esc(cfg.title || 'traceer de herkomst'), wrap, false));
+  });
+
+  // =====================================================================
   //  Encoding & hash helpers
   // =====================================================================
   function b64encode(s) { return btoa(unescape(encodeURIComponent(s))); }
