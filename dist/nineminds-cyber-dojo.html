@@ -9583,6 +9583,211 @@ CS.registerRoom({
 
 </script>
 <script>
+/* Room: Security-kern — SIM-swap & accountovername (aanval, simulatie, verdediging) */
+
+// =======================================================================
+//  Alles FICTIEF: verzonnen slachtoffer, provider en bedragen. Je oefent
+//  herkennen en verdedigen; er wordt niets echt aangevallen.
+// =======================================================================
+
+// --- Ordering: de SIM-swap-aanvalsketen ---
+const SS_STEPS = [
+  { id: '1', label: 'Aanvaller verzamelt persoonsgegevens (OSINT/datalek: naam, geboortedatum, telefoonnummer)' },
+  { id: '2', label: 'Belt de telecomprovider, doet zich voor als het slachtoffer en vraagt een nieuwe SIM / nummerbehoud' },
+  { id: '3', label: 'De provider porteert het nummer naar de SIM van de aanvaller' },
+  { id: '4', label: 'De telefoon van het slachtoffer verliest bereik; de aanvaller ontvangt nu de sms-codes' },
+  { id: '5', label: 'De aanvaller reset wachtwoorden via sms-OTP en neemt accounts over' },
+  { id: '6', label: 'Geld/crypto wordt weggesluisd vóór het slachtoffer het doorheeft' },
+];
+
+// --- Scenario: herkennen en reageren ---
+const SS_SCEN = [
+  {
+    situation: 'Midden op de dag valt je mobiele bereik weg ("Geen netwerk") en je krijgt een e-mail: "Je simkaart is gewijzigd." Wat doe je?',
+    choices: [
+      { label: 'Direct via een andere lijn je provider bellen om de SIM te blokkeren, en je bank bellen', good: true, feedback: 'Precies: dit is het signaal van een SIM-swap. Snelheid beperkt de schade; blokkeer de SIM en waarschuw de bank.' },
+      { label: 'Wachten tot het bereik vanzelf terugkomt', good: false, feedback: 'Terwijl je wacht, ontvangt de aanvaller jouw sms-codes en neemt hij accounts over. Niet wachten — handelen.' },
+      { label: 'Niets doen, het is vast een storing', good: false, feedback: 'Een "SIM gewijzigd"-mail plus plots geen bereik is zelden toeval. Behandel het als een aanval.' },
+    ],
+  },
+  {
+    situation: 'Welke vorm van 2FA is het veiligst tegen een SIM-swap?',
+    choices: [
+      { label: 'Een authenticator-app of een hardware-sleutel (FIDO2/passkey)', good: true, feedback: 'Juist: die zitten aan je apparaat/sleutel vast, niet aan een overdraagbaar telefoonnummer.' },
+      { label: 'Sms-OTP (code per sms)', good: false, feedback: 'Juist dát is het doelwit van een SIM-swap: wie je nummer kaapt, ontvangt de sms-codes.' },
+      { label: 'E-mail-OTP', good: false, feedback: 'Als je e-mail óók met sms-2FA beveiligd is, valt die net zo hard. App/hardware is sterker.' },
+    ],
+  },
+  {
+    situation: 'Hoe maak je een SIM-swap vooraf moeilijker?',
+    choices: [
+      { label: 'Een port-out-pin/poortblokkade bij je provider instellen en je nummer minder publiek delen', good: true, feedback: 'Goed: een extra geheim bij de provider en minder blootgestelde gegevens verkleinen de kans sterk.' },
+      { label: 'Je telefoonnummer juist overal als 2FA gebruiken', good: false, feedback: 'Dan maak je het nummer tot een kroonjuweel én een single point of failure. Minder, niet meer.' },
+      { label: 'Niets — dit overkomt alleen beroemdheden', good: false, feedback: 'SIM-swap treft ook gewone mensen met crypto of toegang. Onderschat het niet.' },
+    ],
+  },
+  {
+    situation: 'Ondanks alles blijkt je crypto-account geplunderd. Wat is je eerste stap?',
+    choices: [
+      { label: 'Melden bij de exchange en de politie, laten bevriezen wat kan en al het bewijs bewaren', good: true, feedback: 'Precies: snel melden vergroot de kans op bevriezen; bewaar e-mails, tijdstippen en transactie-ID\'s.' },
+      { label: 'Zelf proberen de hacker op te sporen en te confronteren', good: false, feedback: 'Eigenrichting is onverstandig en riskant. Laat het aan de exchange en de opsporing.' },
+      { label: 'Afwachten of het geld vanzelf terugkomt', good: false, feedback: 'Elke minuut telt bij bevriezen/terughalen. Direct melden.' },
+    ],
+  },
+  {
+    situation: 'Waarom is sms-2FA fundamenteel zwakker dan een app of hardware-sleutel?',
+    choices: [
+      { label: 'Het telefoonnummer is overdraagbaar en los van jou; wie het nummer kaapt, kaapt de codes', good: true, feedback: 'Precies: de beveiliging hangt aan een nummer dat een provider kan verplaatsen — buiten jouw controle.' },
+      { label: 'Omdat sms traag aankomt', good: false, feedback: 'Snelheid is het punt niet; overdraagbaarheid van het nummer wel.' },
+      { label: 'Omdat sms geld kost', good: false, feedback: 'Kosten zijn irrelevant; het risico zit in de overdraagbaarheid van het nummer.' },
+    ],
+  },
+];
+
+// --- Flow: het geld na de accountovername ---
+const SS_NODES = [
+  { id: 'acct', type: 'account', label: 'Gekaapte rekening/wallet' },
+  { id: 'ex', type: 'exchange', label: 'Crypto-exchange' },
+  { id: 'mix', type: 'mixer', label: "Mixer" },
+  { id: 'cash', type: 'cashout', label: 'Cash-out' },
+];
+const SS_EDGES = [
+  { from: 'acct', to: 'ex', amount: 15000, time: '13:05', note: 'direct na overname leeggehaald' },
+  { from: 'ex', to: 'mix', amount: 14700, time: '13:20', note: 'exchange-fee 300' },
+  { from: 'mix', to: 'cash', amount: 14300, time: '14:00', note: 'mixer houdt 400; cash-out' },
+];
+
+CS.registerRoom({
+  id: 'simswap-aanval',
+  path: 'security-kern',
+  order: 9,
+  title: 'SIM-swap & accountovername',
+  icon: '📱',
+  difficulty: 'Gemiddeld',
+  minutes: 45,
+  summary: 'Je telefoonnummer is vaker de sleutel tot je leven dan je denkt — en dat is precies het probleem. Je leert hoe een SIM-swap werkt (het nummer kapen om sms-codes te onderscheppen), waarom sms-2FA daardoor zwak is, en wat je doet om het te voorkomen én als het je toch overkomt. Met de aanvalsketen, een beslissimulatie en het geldspoor erna.',
+  objectives: [
+    'Uitleggen hoe een SIM-swap werkt en waarom sms-2FA er kwetsbaar voor is',
+    'De SIM-swap-aanvalsketen op volgorde zetten',
+    'De signalen herkennen en de juiste eerste reactie kiezen',
+    'Sterkere 2FA (authenticator/hardware/passkey) en port-out-bescherming benoemen',
+    'Het geldspoor na een accountovername volgen tot de cash-out',
+  ],
+  terms: [
+    { term: 'SIM-swap', def: 'Een aanvaller laat (via social engineering bij de provider) jouw telefoonnummer naar zijn eigen SIM overzetten, zodat hij jouw sms en oproepen ontvangt.' },
+    { term: '2FA / MFA', def: 'Tweestaps-/meervoudige verificatie: een tweede factor bovenop je wachtwoord.' },
+    { term: 'sms-OTP', def: 'Een eenmalige code per sms. Zwak tegen SIM-swap omdat de code naar het (overdraagbare) nummer gaat.' },
+    { term: 'Authenticator-app', def: 'Een app (TOTP) die codes op je apparaat genereert — niet gekoppeld aan je telefoonnummer.' },
+    { term: 'FIDO2 / passkey', def: 'Een hardware- of apparaatgebonden sleutel; sterk tegen phishing én SIM-swap.' },
+    { term: 'Port-out-pin', def: 'Een extra geheime code bij je provider die voorkomt dat je nummer zomaar wordt overgezet.' },
+    { term: 'Accountovername (ATO)', def: 'Account Takeover: de aanvaller neemt met gekaapte codes je accounts over en haalt waarde weg.' },
+    { term: 'Single point of failure', def: 'Eén zwakke schakel die, als hij valt, alles meeneemt — zoals je telefoonnummer als het overal je 2FA is.' },
+  ],
+  resources: [
+    { title: 'NCSC — veilig inloggen en MFA', url: 'https://www.ncsc.nl/' },
+    { title: 'FIDO Alliance — passkeys', url: 'https://fidoalliance.org/' },
+    { title: 'Fraudehelpdesk — simswap en accountovername', url: 'https://www.fraudehelpdesk.nl/' },
+    { title: 'Politie — fraude en identiteitsfraude', url: 'https://www.politie.nl/informatie/fraude.html' },
+  ],
+  tasks: [
+    {
+      title: 'Taak 1 — Je nummer als sleutel',
+      content: `
+        <p>Zonder dat je het doorhebt, is je <strong>telefoonnummer</strong> vaak de hoofdsleutel tot je leven geworden:
+        je bank, je e-mail, je crypto, je sociale media — allemaal sturen ze een <strong>sms-code</strong> als je inlogt of
+        een wachtwoord reset. Een <strong>SIM-swap</strong> draait precies die sleutel om: de aanvaller laat (met social
+        engineering bij de telecomprovider) jouw nummer naar <em>zijn</em> SIM overzetten. Vanaf dat moment krijgt híj je
+        sms-codes — en jij geen bereik meer.</p>
+        <p>De les is hard maar simpel: <strong>sms-2FA is zwak</strong>, omdat het aan een <em>overdraagbaar</em> nummer hangt
+        in plaats van aan jóú. Een authenticator-app of een hardware-sleutel (passkey/FIDO2) zit vast aan je apparaat en is
+        daardoor veel sterker.</p>
+        <div class="callout warn"><strong>Alles fictief:</strong> het slachtoffer, de provider en de bedragen zijn verzonnen
+        oefenmateriaal.</div>
+        <div class="callout tip"><strong>Beloning:</strong> je nummer is overdraagbaar, jij niet. Vlag: <code>NM{nummer_is_geen_identiteit}</code>.</div>
+      `,
+      questions: [
+        { q: 'Wat gebeurt er bij een SIM-swap?', options: ['Je telefoonnummer wordt naar de SIM van de aanvaller overgezet, zodat hij je sms-codes ontvangt', 'Je telefoon wordt gehackt met malware', 'Je simkaart gaat fysiek stuk', 'Je wachtwoord wordt geraden'], answer: 0, explain: 'De aanvaller kaapt het nummer via de provider; daarna ontvangt hij alle sms — inclusief je 2FA-codes.' },
+        { q: 'Waarom is sms-2FA zwak tegen een SIM-swap?', options: ['De code gaat naar een overdraagbaar nummer, niet naar jou persoonlijk', 'Omdat sms te traag is', 'Omdat sms geld kost', 'Dat is het niet, sms is het veiligst'], answer: 0, explain: 'De beveiliging hangt aan een nummer dat een provider kan verplaatsen — buiten jouw controle.' },
+        { q: 'Welke 2FA is sterker?', options: ['Een authenticator-app of hardware-sleutel (passkey/FIDO2)', 'Sms-OTP', 'Een beveiligingsvraag', 'Je geboortedatum'], answer: 0, explain: 'Apparaat-/sleutelgebonden factoren zijn niet te kapen via een telefoonnummer.' },
+        { q: 'Welke vlag staat in de tip-callout?', answer: ['NM{nummer_is_geen_identiteit}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{nummer_is_geen_identiteit}.' },
+      ],
+    },
+    {
+      title: 'Taak 2 — De aanvalsketen',
+      content: `
+        <p>Een SIM-swap is een keten van stappen. Zet ze op volgorde, van de voorbereiding tot de cash-out. Als je de keten
+        kent, zie je ook waar je hem kunt breken (en waar de provider dat kan).</p>
+        <div class="callout tip"><strong>Beloning:</strong> ken de keten, breek de keten. Vlag: <code>NM{swap_keten_compleet}</code>.</div>
+      `,
+      lab: {
+        type: 'ordering',
+        title: 'de SIM-swap-aanvalsketen',
+        prompt: 'Zet de zes stappen op volgorde, van gegevens verzamelen tot het wegsluizen van geld.',
+        items: SS_STEPS,
+        correct: ['1', '2', '3', '4', '5', '6'],
+        flag: 'NM{swap_keten_compleet}',
+        explain: 'Gegevens verzamelen → provider bellen → nummer porteren → sms onderscheppen → accounts overnemen → cash-out.',
+      },
+      questions: [
+        { q: 'Wat is de eerste stap?', options: ['Persoonsgegevens verzamelen om geloofwaardig over te komen bij de provider', 'Het geld wegsluizen', 'Het nummer porteren', 'Een account overnemen'], answer: 0, explain: 'Met jouw gegevens klinkt de aanvaller overtuigend bij de helpdesk van de provider.' },
+        { q: 'Waar ligt de cruciale schakel die de provider kan beschermen?', options: ['Het porteren van het nummer: strengere identiteitscontrole en een port-out-pin', 'Het wegsluizen van geld', 'Het verzamelen van gegevens', 'Niets, de provider kan niets doen'], answer: 0, explain: 'Als het porteren niet zonder sterke verificatie kan, valt de hele keten stil.' },
+        { q: 'Wat merkt het slachtoffer als teken?', options: ['Plots geen mobiel bereik meer (en soms een "SIM gewijzigd"-bericht)', 'Een snellere telefoon', 'Meer opslagruimte', 'Niets, nooit'], answer: 0, explain: 'Zodra het nummer is verhuisd, verliest jouw toestel bereik — een belangrijk vroeg signaal.' },
+        { q: 'Welke vlag hoort bij de juiste volgorde?', answer: ['NM{swap_keten_compleet}'], hint: 'Verschijnt bij de juiste volgorde / staat in de tip-callout.', explain: 'De vlag is NM{swap_keten_compleet}.' },
+      ],
+    },
+    {
+      title: 'Taak 3 — Herkennen en reageren',
+      content: `
+        <p>Nu jij. Loop door de vijf beslismomenten: van het eerste signaal tot de nasleep en de preventie. Kies telkens de
+        verstandigste optie; je krijgt direct feedback. Vier van de vijf goed = je hebt het onder controle.</p>
+        <div class="callout tip"><strong>Beloning:</strong> snel en koel reageren. Vlag: <code>NM{bereik_weg_alarm_aan}</code>.</div>
+      `,
+      lab: {
+        type: 'scenario',
+        title: 'SIM-swap — herkennen, reageren, voorkomen',
+        scenario: 'Vijf beslismomenten rond een SIM-swap. Kies verstandig.',
+        steps: SS_SCEN,
+        pass: 4,
+        flag: 'NM{bereik_weg_alarm_aan}',
+      },
+      questions: [
+        { q: 'Je verliest plots bereik én krijgt een "SIM gewijzigd"-mail. Eerste actie?', options: ['Via een andere lijn je provider bellen om te blokkeren en je bank waarschuwen', 'Wachten tot het bereik terugkomt', 'Niets doen', 'Je telefoon opnieuw opstarten en afwachten'], answer: 0, explain: 'Dit is het klassieke SIM-swap-signaal; blokkeren en waarschuwen beperkt de schade.' },
+        { q: 'Hoe maak je een SIM-swap vooraf moeilijker?', options: ['Een port-out-pin instellen en je nummer minder publiek delen', 'Je nummer overal als 2FA gebruiken', 'Een langer wachtwoord', 'Niets, het is onvermijdelijk'], answer: 0, explain: 'Een extra geheim bij de provider en minder blootgestelde gegevens verkleinen de kans sterk.' },
+        { q: 'Je account is geplunderd. Wat doe je eerst?', options: ['Melden bij exchange/bank en politie, bevriezen wat kan, bewijs bewaren', 'Zelf de hacker opsporen', 'Afwachten', 'Je account verwijderen'], answer: 0, explain: 'Snel melden vergroot de kans op bevriezen; bewaar bewijs voor de opsporing.' },
+        { q: 'Welke vlag hoort bij een goede afhandeling?', answer: ['NM{bereik_weg_alarm_aan}'], hint: 'Verschijnt bij ≥4/5 goed / staat in de tip-callout.', explain: 'De vlag is NM{bereik_weg_alarm_aan}.' },
+      ],
+    },
+    {
+      title: 'Taak 4 — Volg het geld',
+      content: `
+        <p>Na de overname telt elke minuut. Volg het geldspoor in het lab: van de gekaapte rekening via een exchange en een
+        mixer naar de cash-out. Zie je waarom zo snel mogelijk melden (om te bevriezen) het verschil maakt?</p>
+        <div class="callout tip"><strong>Beloning:</strong> snelheid tegen de cash-out. Vlag: <code>NM{elke_minuut_telt}</code>.</div>
+      `,
+      lab: {
+        type: 'flow',
+        title: 'het geld na de accountovername',
+        unit: '€',
+        scenario: 'De gekaapte rekening wordt direct leeggehaald richting een exchange, mixer en cash-out.',
+        nodes: SS_NODES,
+        edges: SS_EDGES,
+        ask: [
+          { q: 'Hoeveel euro komt uiteindelijk bij de cash-out aan? (alleen het getal)', answer: ['14300', '14.300'], hint: 'De laatste transactie.' },
+          { q: 'Waar werd het geld als eerste heen gesluisd?', answer: ['exchange', 'crypto-exchange', 'de exchange'], hint: 'Het eerste knooppunt na de rekening.' },
+        ],
+      },
+      questions: [
+        { q: 'Hoeveel euro bereikt de cash-out?', answer: ['14300', '14.300', '€ 14.300', '€14300'], hint: 'Na exchange- en mixerkosten.', explain: 'Na € 300 + € 400 kosten blijft € 14.300 over bij de cash-out.' },
+        { q: 'Waarom is direct melden cruciaal?', options: ['Zolang het geld nog op de exchange staat, kan het soms bevroren worden', 'Omdat de exchange anders sluit', 'Omdat de rente oploopt', 'Dat maakt niet uit'], answer: 0, explain: 'Hoe eerder je meldt, hoe groter de kans dat de exchange de tegoeden bevriest vóór de cash-out.' },
+        { q: 'Welke les over 2FA neem je mee uit deze hele room?', options: ['Gebruik app/hardware-2FA i.p.v. sms, en bescherm je nummer bij de provider', 'Gebruik overal hetzelfde wachtwoord', 'Deel je nummer vaker', 'Zet 2FA helemaal uit'], answer: 0, explain: 'Sterkere, niet-nummergebonden 2FA plus port-out-bescherming haalt de kern van SIM-swap weg.' },
+        { q: 'Welke vlag staat in de tip-callout van deze taak?', answer: ['NM{elke_minuut_telt}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{elke_minuut_telt}.' },
+      ],
+    },
+  ],
+});
+
+</script>
+<script>
 /* Room: OWASP Top 10 (editie 2025) */
 CS.registerRoom({
   id: 'owasp-top-10',
@@ -22672,6 +22877,192 @@ CS.registerRoom({
         { q: 'Mag je, om het bewijs rond te krijgen, inloggen op het verlaten account van de vendor?', options: ['Nee — dat is computervredebreuk (art. 138ab Sr), ook bij een crimineel', 'Ja, als het account zwak beveiligd is', 'Ja, voor onderzoek mag alles', 'Alleen \'s nachts'], answer: 0, explain: 'Ongeautoriseerde toegang is strafbaar, ongeacht wie de eigenaar is. Blijf bij open bronnen.' },
         { q: 'Aan wie lever je je bevindingen?', options: ['Aan het bevoegde gezag (politie/OM); je doet niet aan eigenrichting', 'Je publiceert ze op sociale media', 'Je confronteert de verdachte zelf', 'Je verkoopt ze'], answer: 0, explain: 'OSINT-bevindingen horen bij de opsporing; doxen of zelf confronteren is onverantwoord en vaak onrechtmatig.' },
         { q: 'Welke vlag staat in de tip-callout van deze taak?', answer: ['NM{lead_niet_oordeel}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{lead_niet_oordeel}.' },
+      ],
+    },
+  ],
+});
+
+</script>
+<script>
+/* Room: Intelligence — carding & de fraude-economie (rollen, markten, geldstroom) */
+
+// =======================================================================
+//  Alles FICTIEF en EDUCATIEF: deze room legt de criminele economie en de
+//  verdediging uit. Geen handleiding om fraude te plegen — de nadruk ligt
+//  op herkennen, volgen en tegenhouden.
+// =======================================================================
+
+// --- Connections: begrijp de economie in vier categorieën ---
+const CA_GROUPS = [
+  { name: 'Rollen in de keten', items: ['Carder', 'Vendor (dataverkoper)', 'Reshipping mule', 'Cash-out specialist'] },
+  { name: 'Soorten kaartdata', items: ['Dump (magneetspoor)', 'CVV (nummer + code)', 'Fullz (volledig profiel)', 'BIN (uitgevende bank)'] },
+  { name: 'Hoe kaartdata wordt verkregen', items: ['Skimming (pinautomaat)', 'Magecart (webshop-skim)', 'Phishing', 'Groot datalek'] },
+  { name: 'Cash-out-methoden', items: ['Giftcards kopen', 'Reshipping van goederen', 'Doorverkopen met korting', 'Omzetten in crypto'] },
+];
+
+// --- Flow: de waarde-erosie van gestolen kaart tot cash ---
+const CA_NODES = [
+  { id: 'card', type: 'victim', label: 'Gestolen kaart (€ 2.000 limiet)' },
+  { id: 'merch', type: 'merchant', label: 'Online winkel (goederen besteld)' },
+  { id: 'mule', type: 'mule', label: 'Reshipping mule' },
+  { id: 'resale', type: 'service', label: 'Doorverkoop-kanaal' },
+  { id: 'cash', type: 'cashout', label: 'Cash-out' },
+];
+const CA_EDGES = [
+  { from: 'card', to: 'merch', amount: 2000, time: 'dag 1', note: 'voor € 2.000 aan goederen besteld met de gestolen kaart' },
+  { from: 'merch', to: 'mule', amount: 2000, time: 'dag 3', note: 'goederen verzonden naar een reshipping-adres' },
+  { from: 'mule', to: 'resale', amount: 2000, time: 'dag 5', note: 'mule stuurt door naar het doorverkoop-kanaal' },
+  { from: 'resale', to: 'cash', amount: 1400, time: 'dag 8', note: 'doorverkocht voor ~70%: € 1.400 cash' },
+];
+
+CS.registerRoom({
+  id: 'carding-economie',
+  path: 'intelligence',
+  order: 11,
+  title: 'Carding & de fraude-economie',
+  icon: '💳',
+  difficulty: 'Gemiddeld',
+  minutes: 55,
+  summary: 'Achter één frauduleuze afschrijving zit een hele economie. Je leert de rollen (carder, dataverkoper, reshipping mule, cash-out), de soorten gestolen kaartdata en hoe ze worden verkregen, je ontleedt het carding-"crime script", en je volgt hoe gestolen waarde onderweg erodeert tot cash. Afsluitend: de techniek en gewoontes die carding tegenhouden. Educatief en defensief — geen handleiding.',
+  objectives: [
+    'De rollen in de carding-economie benoemen en aan elkaar relateren',
+    'Soorten kaartdata (dump, CVV, fullz, BIN) en verwervingsmethoden onderscheiden',
+    'Het carding-delict als crime script ontleden en de zwakste schakel kiezen',
+    'De waarde-erosie van gestolen kaart tot cash-out volgen',
+    'De verdediging benoemen: EMV-chip, 3-D Secure, tokenisatie en fraudemonitoring',
+  ],
+  terms: [
+    { term: 'Carding', def: 'Het frauduleus gebruiken van gestolen betaalkaartgegevens om goederen, giftcards of geld te verkrijgen.' },
+    { term: 'Dump', def: 'De data van de magneetstrip van een kaart (track 1/2), waarmee een fysieke kaart kan worden nagemaakt.' },
+    { term: 'CVV', def: 'In carding-jargon: kaartnummer + vervaldatum + CVV-code, genoeg voor online aankopen (card-not-present).' },
+    { term: 'Fullz', def: 'Een volledig profiel van een slachtoffer (naam, adres, geboortedatum, kaart, soms BSN) — meer waard dan losse kaartdata.' },
+    { term: 'BIN', def: 'Bank Identification Number: de eerste cijfers die de uitgevende bank/kaartsoort verraden; carders filteren hierop.' },
+    { term: 'Reshipping mule', def: 'Iemand die (vaak misleid) met gestolen kaarten gekochte goederen ontvangt en doorstuurt, om het echte adres te verbergen.' },
+    { term: 'Magecart', def: 'Kwaadaardige scripts die in een webshop-afrekenpagina kaartgegevens meelezen (digitale skimming).' },
+    { term: 'EMV-chip', def: 'De chip op je kaart; maakt het klonen van de magneetstrip waardeloos voor betalingen aan de terminal.' },
+    { term: '3-D Secure', def: 'Extra verificatie (bijv. een push in je bank-app) bij online betalen, tegen card-not-present-fraude.' },
+    { term: 'Tokenisatie', def: 'Het kaartnummer vervangen door een token (bijv. in Apple/Google Pay), zodat de echte gegevens nooit bij de winkel komen.' },
+  ],
+  resources: [
+    { title: 'Europol — payment fraud', url: 'https://www.europol.europa.eu/' },
+    { title: 'Krebs on Security — carding en skimming', url: 'https://krebsonsecurity.com/' },
+    { title: 'PCI Security Standards Council', url: 'https://www.pcisecuritystandards.org/' },
+    { title: 'Betaalvereniging Nederland — veilig betalen', url: 'https://www.betaalvereniging.nl/' },
+  ],
+  tasks: [
+    {
+      title: 'Taak 1 — Een hele economie achter één afschrijving',
+      content: `
+        <p>Een frauduleuze afschrijving op je rekening lijkt één gebeurtenis, maar erachter zit een hele
+        <strong>arbeidsdeling</strong>. De een steelt de data (via skimming, een webshop-skim of een datalek), de ander
+        <strong>verkoopt</strong> hem op een markt, een <strong>carder</strong> koopt en gebruikt hem, een
+        <strong>reshipping mule</strong> verbergt het echte adres, en een <strong>cash-out specialist</strong> maakt er
+        bruikbaar geld van. Net als een legale economie: specialisatie maakt het efficiënt — en kwetsbaar op de knooppunten.</p>
+        <p>Deze room is <strong>educatief en defensief</strong>. Je leert de economie herkennen, volgen en tegenhouden —
+        niet hoe je hem gebruikt. Juist omdat je de keten begrijpt, zie je waar hij breekt.</p>
+        <div class="callout warn"><strong>Alles fictief en educatief:</strong> geen handleiding om fraude te plegen; de nadruk
+        ligt op begrijpen en verdedigen.</div>
+        <div class="callout tip"><strong>Beloning:</strong> achter één afschrijving zit een keten. Vlag: <code>NM{een_keten_van_specialisten}</code>.</div>
+      `,
+      questions: [
+        { q: 'Wat kenmerkt de carding-economie?', options: ['Arbeidsdeling: gespecialiseerde rollen die samen de keten vormen', 'Eén persoon doet alles alleen', 'Het is volledig geautomatiseerd zonder mensen', 'Er is geen geld mee gemoeid'], answer: 0, explain: 'Specialisatie (stelen, verkopen, carden, reshippen, cash-out) maakt het efficiënt — en biedt aangrijppunten.' },
+        { q: 'Wat doet een reshipping mule?', options: ['Ontvangt met gestolen kaarten gekochte goederen en stuurt ze door, om het echte adres te verbergen', 'Steelt de kaartdata', 'Maakt de website', 'Beheert de bank'], answer: 0, explain: 'De mule zet een tussenstap tussen de koop en de echte bestemming — vaak zonder te beseffen dat het fraude is.' },
+        { q: 'Waarom is deze room defensief ingestoken?', options: ['Om de keten te leren herkennen en tegenhouden, niet om hem te gebruiken', 'Omdat carding legaal is', 'Omdat het niet voorkomt', 'Dat is het niet'], answer: 0, explain: 'Inzicht in de economie dient opsporing en verdediging; het is geen operationele handleiding.' },
+        { q: 'Welke vlag staat in de tip-callout?', answer: ['NM{een_keten_van_specialisten}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{een_keten_van_specialisten}.' },
+      ],
+    },
+    {
+      title: 'Taak 2 — De bouwstenen van de economie',
+      content: `
+        <p>Om de keten te volgen moet je de taal kennen. Groepeer de zestien begrippen in vier categorieën: de
+        <strong>rollen</strong>, de soorten <strong>kaartdata</strong>, hoe die data wordt <strong>verkregen</strong>, en de
+        <strong>cash-out-methoden</strong>.</p>
+        <div class="callout tip"><strong>Beloning:</strong> ken de taal van de economie. Vlag: <code>NM{taal_van_de_economie}</code>.</div>
+      `,
+      lab: {
+        type: 'connections',
+        title: 'begrippen → categorie',
+        prompt: 'Vind de vier groepen van vier: rollen, kaartdata, verwerving en cash-out.',
+        groups: CA_GROUPS,
+      },
+      questions: [
+        { q: 'Wat is het verschil tussen een "dump" en een "CVV"?', options: ['Een dump is magneetstripdata (fysiek klonen); een CVV is nummer+code voor online (card-not-present)', 'Ze zijn hetzelfde', 'Een dump is een wachtwoord', 'Een CVV is een bank'], answer: 0, explain: 'Een dump dient voor fysieke kaarten aan terminals; een CVV voor online betalingen.' },
+        { q: 'Wat is een BIN?', options: ['Het Bank Identification Number: de eerste cijfers die bank/kaartsoort verraden', 'Een reshipping-adres', 'Een soort mule', 'Een cash-out-methode'], answer: 0, explain: 'Carders filteren op BIN om kaarten van bepaalde banken/landen te selecteren.' },
+        { q: 'Wat is Magecart?', options: ['Kwaadaardige scripts die kaartgegevens meelezen op een webshop-afrekenpagina', 'Een legale betaalmethode', 'Een reshipping-dienst', 'Een type giftcard'], answer: 0, explain: 'Magecart is digitale skimming: de data wordt bij het afrekenen online afgetapt.' },
+        { q: 'Welke vlag staat in de tip-callout van deze taak?', answer: ['NM{taal_van_de_economie}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{taal_van_de_economie}.' },
+      ],
+    },
+    {
+      title: 'Taak 3 — Het carding-crime-script',
+      content: `
+        <p>Ontleed carding als een <strong>crime script</strong>: per fase wie wat doet, met welke middelen, waar, onder welke
+        randvoorwaarden en welke sporen het nalaat — én een <strong>interventie</strong> die de keten in die fase breekt. Vul
+        de fasen in; met "Toon een voorbeelduitwerking" vergelijk je achteraf.</p>
+        <div class="callout tip"><strong>Beloning:</strong> elke fase heeft een zwakke plek. Vlag: <code>NM{elke_fase_een_interventie}</code>.</div>
+      `,
+      lab: {
+        type: 'crimescript',
+        title: 'carding van data tot cash',
+        scenario: 'Een carder koopt gestolen kaartdata, bestelt goederen, laat ze via een reshipping mule doorsturen en verkoopt ze door voor cash.',
+        phases: ['1 · Voorbereiding (data kopen)', '2 · Toegang (kaart gebruiken)', '3 · Uitvoering (bestellen)', '4 · Buit veiligstellen (reshipping)', '5 · Na afloop (sporen)', '6 · Cash-out (doorverkoop)'],
+        model: '<ul><li><strong>Voorbereiding:</strong> carder koopt CVV/fullz op een shop, filtert op BIN. Interventie: shops verstoren, BIN-monitoring bij banken.</li><li><strong>Toegang:</strong> kaart testen met een kleine aankoop. Interventie: 3-D Secure, anomaliedetectie op testbetalingen.</li><li><strong>Uitvoering:</strong> dure, courante goederen bestellen. Interventie: fraudescoring, verzendadres ≠ factuuradres markeren.</li><li><strong>Reshipping:</strong> mule ontvangt en stuurt door. Interventie: mules herkennen/voorlichten, adrespatronen detecteren.</li><li><strong>Sporen:</strong> wegwerp-e-mail, VPN, gemengde betaling. Interventie: device-fingerprinting, correlatie over bestellingen.</li><li><strong>Cash-out:</strong> doorverkopen voor ~70%. Interventie: marktplaatsmonitoring, chargeback-processen.</li></ul>',
+      },
+      questions: [
+        { q: 'Wat levert een crime script op voor de verdediging?', options: ['Per fase een aangrijppunt (interventie) om de keten te breken', 'Een handleiding om zelf te carden', 'Een lijst met slachtoffers', 'Niets bruikbaars'], answer: 0, explain: 'Door het delict in fasen te ontleden, zie je in elke fase een mogelijke interventie.' },
+        { q: 'Welke interventie past bij de "toegang/kaart testen"-fase?', options: ['3-D Secure en anomaliedetectie op kleine testbetalingen', 'Een reshipping mule inhuren', 'De giftcards doorverkopen', 'Niets'], answer: 0, explain: 'Carders testen vaak eerst met een klein bedrag; extra verificatie en detectie daarop breekt de keten vroeg.' },
+        { q: 'Waarom is het verzendadres ≠ factuuradres een nuttig signaal?', options: ['Het wijst vaak op reshipping/fraude en kan een bestelling laten markeren', 'Het betekent altijd een cadeau', 'Het is irrelevant', 'Het versnelt de levering'], answer: 0, explain: 'Afwijkende adressen zijn een klassiek fraudesignaal dat fraudescoring meeweegt.' },
+        { q: 'Welke vlag staat in de tip-callout van deze taak?', answer: ['NM{elke_fase_een_interventie}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{elke_fase_een_interventie}.' },
+      ],
+    },
+    {
+      title: 'Taak 4 — De waarde erodeert',
+      content: `
+        <p>Crimineel verdiende waarde lekt weg onderweg. Volg in het lab hoe € 2.000 "gestolen limiet" via goederen, een
+        reshipping mule en een doorverkoop-kanaal eindigt als een veel kleiner bedrag cash. Die erosie (en de vele
+        tussenschakels) is precies waar opsporing en fraudepreventie kunnen aangrijpen.</p>
+        <div class="callout tip"><strong>Beloning:</strong> gestolen waarde smelt tot cash. Vlag: <code>NM{waarde_smelt_tot_cash}</code>.</div>
+      `,
+      lab: {
+        type: 'flow',
+        title: 'van gestolen kaart tot cash',
+        unit: '€',
+        scenario: 'De waarde van een gestolen kaart (€ 2.000) erodeert via goederen en doorverkoop tot cash.',
+        nodes: CA_NODES,
+        edges: CA_EDGES,
+        ask: [
+          { q: 'Hoeveel cash houdt de fraudeur netto over van € 2.000 gestolen waarde? (alleen het getal)', answer: ['1400', '1.400'], hint: 'De laatste transactie (doorverkoop ~70%).' },
+          { q: 'Welke schakel verbergt het echte afleveradres?', answer: ['reshipping mule', 'mule', 'de reshipping mule'], hint: 'Het knooppunt tussen de winkel en de doorverkoop.' },
+        ],
+      },
+      questions: [
+        { q: 'Hoeveel cash levert € 2.000 gestolen waarde netto op?', answer: ['1400', '1.400', '€ 1.400', '€1400'], hint: 'Doorverkoop voor ~70%.', explain: 'Door de doorverkoop tegen ~70% blijft ongeveer € 1.400 cash over — de rest is "verlies".' },
+        { q: 'Waarom is de waarde-erosie nuttig voor de verdediging?', options: ['De vele tussenschakels en de erosie bieden aangrijppunten om te detecteren en te onderbreken', 'Omdat het de fraudeur rijker maakt', 'Omdat het niets uitmaakt', 'Omdat het de kaart herstelt'], answer: 0, explain: 'Elke schakel (merchant, mule, doorverkoop) is een plek waar monitoring of een chargeback kan ingrijpen.' },
+        { q: 'Welke rol maakt cashen van goederen mogelijk zonder het echte adres te tonen?', options: ['De reshipping mule', 'De uitgevende bank', 'De kaarthouder', 'De webshop'], answer: 0, explain: 'De mule ontvangt en stuurt door, zodat het eindadres van de fraudeur verborgen blijft.' },
+        { q: 'Welke vlag staat in de tip-callout van deze taak?', answer: ['NM{waarde_smelt_tot_cash}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{waarde_smelt_tot_cash}.' },
+      ],
+    },
+    {
+      title: 'Taak 5 — De verdediging',
+      content: `
+        <p>De economie klinkt geolied, maar de verdediging is de afgelopen jaren sterk verbeterd — en dat zie je in de cijfers.
+        De belangrijkste lagen:</p>
+        <ul>
+          <li><strong>EMV-chip</strong> maakt het klonen van de magneetstrip waardeloos aan de terminal.</li>
+          <li><strong>3-D Secure</strong> voegt bij online betalen een extra verificatie toe (push in je bank-app) tegen
+          card-not-present-fraude.</li>
+          <li><strong>Tokenisatie</strong> (Apple/Google Pay) zorgt dat je echte kaartnummer nooit bij de winkel komt.</li>
+          <li><strong>Fraudemonitoring</strong> scoort transacties op anomalieën (afwijkend bedrag, land, adres) en blokkeert
+          of vraagt om verificatie.</li>
+          <li>Als consument: <strong>controleer je afschriften</strong>, gebruik <strong>virtuele/wegwerpkaarten</strong> voor
+          online, en meld fraude meteen (chargeback).</li>
+        </ul>
+        <div class="callout tip"><strong>Beloning:</strong> chip, 3-D Secure en tokenisatie samen. Vlag: <code>NM{lagen_breken_de_keten}</code>.</div>
+      `,
+      questions: [
+        { q: 'Wat maakt een gekloonde magneetstrip waardeloos aan de terminal?', options: ['De EMV-chip', 'Een langer wachtwoord', 'Een snellere kassa', 'Een giftcard'], answer: 0, explain: 'EMV-chiptransacties zijn niet te reproduceren uit magneetstripdata, dus klonen loont niet meer.' },
+        { q: 'Wat doet 3-D Secure?', options: ['Voegt bij online betalen een extra verificatie toe (bijv. push in de bank-app)', 'Versnelt de levering', 'Vervangt je pincode', 'Maakt kaarten gratis'], answer: 0, explain: '3-D Secure vraagt een tweede bevestiging, wat card-not-present-fraude sterk bemoeilijkt.' },
+        { q: 'Waarom helpt tokenisatie (Apple/Google Pay)?', options: ['Je echte kaartnummer komt nooit bij de winkel; een gelekt token is nutteloos', 'Het maakt betalen langzamer maar veiliger', 'Het verhoogt je limiet', 'Het is hetzelfde als een magneetstrip'], answer: 0, explain: 'De winkel krijgt alleen een token; lekt dat, dan is er geen bruikbaar kaartnummer gestolen.' },
+        { q: 'Welke vlag staat in de tip-callout van deze taak?', answer: ['NM{lagen_breken_de_keten}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{lagen_breken_de_keten}.' },
       ],
     },
   ],

@@ -50,6 +50,7 @@ De bouwstenen van beveiliging.
 6. **Rainbow tables & waarom salt wint** — precomputatie, salt, peper en trage hashes.
 7. **Fraudevormen herkennen** — helpdesk-, marktplaats-, investerings- en CEO-/spoofingfraude herkennen, het crime script ontleden en de geldstroom volgen.
 8. **CEO-fraude: de onderhandeling onder druk** — een BEC-simulatie: de spoofmail controleren, de druk en geheimhouding weerstaan en de betaalcontroles borgen.
+9. **SIM-swap & accountovername** — hoe het nummer-kapen sms-2FA breekt, de aanvalsketen, een beslissimulatie en sterkere 2FA.
 
 ### ⚔️ Offensief (red team)
 Denken als een aanvaller — altijd in een veilig lab.
@@ -98,6 +99,7 @@ Van fenomeen naar interventie: denken en werken als intelligence-analist.
 8. **Werkblad** — alle technieken in één werkproces met een checklist.
 9. **OSINT-infrastructuur: ontmantel het netwerk** — infra clusteren op gedeelde kenmerken (favicon, analytics, JARM), de zeldzaamheidstoets toepassen en pivoteren naar een tweede dossier.
 10. **Dark-web vendor OSINT** — een vendor attribueren via OPSEC-fouten (alias, PGP, bitcoin, schrijfstijl), pivoteren naar een echte-identiteit-lead en bronnen wegen — strikt lawful.
+11. **Carding & de fraude-economie** — de rollen, kaartdata en markten achter kaartfraude, het crime script en de waarde-erosie tot cash, plus de verdediging.
 
 ### 💧 Datastromen volgen
 Word expert in geld- en datastromen — de rode draad van bijna elke cybercrimezaak.
