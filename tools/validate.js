@@ -91,8 +91,16 @@ function hashOf(algo, s) {
 }
 
 const seenIds = new Set();
+const globalDecls = {}; // naam -> [bestanden] : top-level const/let/var/function (botst in de browser-globalscope)
 for (const file of files) {
   const rel = path.relative(ROOT, file);
+  try {
+    const src = fs.readFileSync(file, 'utf8');
+    const re = /^(?:const|let|var|function)\s+([A-Za-z_$][\w$]*)/gm;
+    const seenHere = new Set();
+    let mm;
+    while ((mm = re.exec(src))) { const nm = mm[1]; if (seenHere.has(nm)) continue; seenHere.add(nm); (globalDecls[nm] = globalDecls[nm] || []).push(path.basename(file)); }
+  } catch (e) { /* lezen mislukt; de parser hieronder meldt het wel */ }
   console.log(`• ${rel}`);
   const rooms = [];
   const sandbox = { CS: { registerRoom: (r) => rooms.push(r) }, console };
@@ -185,6 +193,13 @@ for (const file of files) {
   }));
   console.log(`    ${r.tasks.length} taken, ${qCount} vragen`);
 }
+
+// Cross-file: top-level declaraties die in meer dan één bestand voorkomen botsen
+// in de globale scope van de browser (alle rooms laden als losse <script>).
+Object.keys(globalDecls).forEach((nm) => {
+  const fs2 = globalDecls[nm];
+  if (fs2.length > 1) { errors++; console.log(`  ✗ top-level naam "${nm}" is in meerdere bestanden gedeclareerd (botst in de browser): ${fs2.join(', ')} — hernoem of maak uniek per room`); }
+});
 
 console.log(`\n${files.length} bestand(en), ${errors} fout(en), ${warnings} waarschuwing(en)`);
 process.exit(errors ? 1 : 0);

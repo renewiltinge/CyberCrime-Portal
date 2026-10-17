@@ -23180,6 +23180,1355 @@ CS.registerRoom({
 
 </script>
 <script>
+/* Room: Casus — bankhelpdeskfraude (vishing, spoofing & money mules) */
+
+// --- De fictieve geldstroom van de casus (alle partijen/bedragen zijn verzonnen) ---
+const CASUS_NODES = [
+  { id: 'v', type: 'victim', label: 'Slachtoffer (mevr. De Boer)' },
+  { id: 'd', type: 'mule', label: "Katvanger 'Dennis'" },
+  { id: 'p', type: 'mule', label: "Katvanger 'Priya'" },
+  { id: 'c', type: 'account', label: 'Verzamelrekening (katvanger-ronselaar)' },
+  { id: 'co', type: 'cashout', label: 'Cash-out: geldautomaat + crypto' },
+];
+
+const CASUS_EDGES = [
+  { from: 'v', to: 'd', amount: 8000, time: '20:15', note: '1e overboeking naar de "veilige kluisrekening"' },
+  { from: 'v', to: 'p', amount: 7000, time: '20:40', note: '2e overboeking (daglimiet "voor de zekerheid" verhoogd)' },
+  { from: 'd', to: 'c', amount: 7600, time: '20:50', note: "Dennis houdt EUR 400 provisie; sluist de rest door" },
+  { from: 'p', to: 'c', amount: 6650, time: '21:05', note: "Priya houdt EUR 350 provisie; sluist de rest door" },
+  { from: 'c', to: 'co', amount: 14000, time: '21:30', note: 'verzamelrekening houdt EUR 250; rest wordt opgenomen/omgezet (cash-out)' },
+];
+
+CS.registerRoom({
+  id: 'bank-helpdeskfraude',
+  path: 'puzzels',
+  order: 6,
+  title: 'Casus: bankhelpdeskfraude',
+  icon: '☎️',
+  difficulty: 'Gemiddeld',
+  minutes: 60,
+  summary: 'Een telefoontje van "de bank", een vervalst nummer in het schermpje en spaargeld dat binnen een uur weg is via katvangers. Je ontrafelt één samenhangende casus: van de eerste belletje-truc tot de cash-out, en je leert hoe je de zet herkent en stopt.',
+  objectives: [
+    'Uitleggen wat vishing, (nummer)spoofing en social engineering zijn, met echte NL-context',
+    'De overtuigingsprincipes van Cialdini (autoriteit, urgentie, schaarste, vertrouwen) herkennen in een gesprek',
+    'De rode vlaggen van een bijbehorend phishing-bericht op afzender, taal en links benoemen',
+    'De stappen van de oplichting reconstrueren en de geldstroom via money mules narekenen tot de cash-out',
+    'Een kort, bruikbaar waarschuwings-/adviesproduct schrijven (conclusie eerst)',
+    'Weten wat je doet (en vooral niet doet) als slachtoffer: bank bellen, melden, aangifte',
+  ],
+  tasks: [
+    {
+      title: 'Taak 1 — De casus: een telefoontje van "de bank"',
+      content: `
+        <p>Het is dinsdagavond kwart over acht. De telefoon van <strong>mevrouw De Boer</strong> rinkelt. In het schermpje
+        staat keurig <strong>"NederBank"</strong> — precies de naam die er ook staat als haar echte bank belt. Aan de lijn:
+        een rustige, behulpzame "medewerker van de fraudedesk". Er zou een verdachte afschrijving zijn. Of ze even wil
+        meewerken om haar spaargeld <em>in veiligheid te brengen</em>. Een uur later is 15.000 euro verdwenen.</p>
+
+        <div class="callout warn"><strong>Alles fictief:</strong> NederBank, mevrouw De Boer en de katvangers "Dennis" en
+        "Priya" zijn verzonnen voor deze oefening. De <em>werkwijze</em> is echter heel realistisch — dit type fraude heet
+        <strong>bankhelpdeskfraude</strong> en komt in Nederland veel voor.</div>
+
+        <h3>Drie begrippen die je nodig hebt</h3>
+        <ul>
+          <li><strong>Social engineering</strong> — niet de techniek hacken, maar de <em>mens</em> manipuleren. De oplichter
+          kraakt geen rekening; hij praat het slachtoffer zelf naar de overboekknop.</li>
+          <li><strong>Vishing</strong> (voice phishing) — phishing via de <strong>telefoon</strong>. Geen mail of sms, maar
+          een stem die je stap voor stap meeneemt. Een stem klinkt persoonlijk en betrouwbaar, en je kunt hem niet rustig
+          teruglezen zoals een mail.</li>
+          <li><strong>(Nummer)spoofing</strong> — het <strong>vervalsen van de beller-ID</strong>. Via internettelefonie is
+          het weggeefnummer vrij in te stellen, dus kan er "NederBank" of zelfs het echte 0800-nummer in je scherm staan,
+          terwijl de oproep van een oplichter komt. <em>Het nummer in je scherm is geen bewijs.</em></li>
+        </ul>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 580 90" role="img" aria-label="Keten van het telefoontje tot de cash-out">
+            <rect x="6" y="30" width="120" height="34" rx="6" stroke="var(--accent)" fill="none" />
+            <text x="66" y="51" fill="currentColor" font-size="13" text-anchor="middle">Spoof-belletje</text>
+            <rect x="166" y="30" width="120" height="34" rx="6" stroke="currentColor" fill="none" />
+            <text x="226" y="51" fill="currentColor" font-size="13" text-anchor="middle">Overboeking</text>
+            <rect x="326" y="30" width="120" height="34" rx="6" stroke="currentColor" fill="none" />
+            <text x="386" y="51" fill="currentColor" font-size="13" text-anchor="middle">Money mules</text>
+            <rect x="466" y="30" width="108" height="34" rx="6" stroke="var(--bad)" fill="none" />
+            <text x="520" y="51" fill="currentColor" font-size="13" text-anchor="middle">Cash-out</text>
+            <line x1="126" y1="47" x2="166" y2="47" stroke="currentColor" />
+            <line x1="286" y1="47" x2="326" y2="47" stroke="currentColor" />
+            <line x1="446" y1="47" x2="466" y2="47" stroke="currentColor" />
+          </svg>
+          <figcaption>De hele casus in één lijn: een vervalst belletje leidt tot een overboeking, die via katvangers bij de cash-out verdwijnt.</figcaption>
+        </figure>
+
+        <p>De belangrijkste les zit in één zin, en die is in Nederland letterlijk een voorlichtingscampagne geweest:</p>
+
+        <div class="callout danger"><strong>Onthoud:</strong> een bank vraagt je <strong>nooit</strong> om je pincode, je
+        volledige inlogcode of om geld over te boeken naar een "veilige rekening". Een echte medewerker komt ook nooit je
+        pinpas ophalen. Noteer de kernvlag: <code>JVT{bank_belt_nooit_om_je_pincode}</code>.</div>
+      `,
+      questions: [
+        { q: 'Phishing via de telefoon, waarbij een "medewerker" je aan de lijn praat, heet:', answer: ['vishing'], hint: 'Voice + phishing.', explain: 'Vishing = voice phishing: de oplichter werkt via een telefoongesprek.' },
+        { q: 'In het schermpje staat "NederBank" of zelfs het echte 0800-nummer. Wat is hier aan de hand?', options: ['Dan is het zeker de echte bank', 'Nummerspoofing: de beller-ID is vervalst en zegt dus niets', 'De telefoon is gehackt', 'Dat kan technisch niet'], answer: 1, explain: 'Via spoofing is het weergegeven nummer vrij in te stellen. Het nummer in je scherm is geen bewijs van wie er belt.' },
+        { q: 'Bankhelpdeskfraude valt vooral de ... aan.', options: ['firewall van de bank', 'app van de bank', 'mens (het slachtoffer zelf)', 'geldautomaat'], answer: 2, explain: 'Het is social engineering: het slachtoffer wordt zelf naar de overboeking gepraat.' },
+        { q: 'Welke kernvlag staat in de rode callout?', answer: ['JVT{bank_belt_nooit_om_je_pincode}'], hint: 'Lees de danger-callout onderaan.', explain: 'De kernboodschap en -vlag: JVT{bank_belt_nooit_om_je_pincode}.' },
+      ],
+    },
+
+    {
+      title: 'Taak 2 — De knoppen waarop ze drukken: Cialdini',
+      content: `
+        <p>Waarom trapt iemand hierin? Niet omdat het slachtoffer dom is — maar omdat de oplichter heel gericht op normale,
+        menselijke reflexen drukt. Psycholoog <strong>Robert Cialdini</strong> beschreef een paar van die
+        <strong>overtuigingsprincipes</strong>. In een vishing-gesprek hoor je ze bijna allemaal langskomen.</p>
+
+        <table>
+          <thead><tr><th>Principe</th><th>Wat de "medewerker" zegt</th><th>Waarom het werkt</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Autoriteit</strong></td><td>"U spreekt met de fraudedesk van NederBank."</td><td>We gehoorzamen gezag en twijfelen niet aan een "officiële" instantie.</td></tr>
+            <tr><td><strong>Urgentie</strong></td><td>"Er wordt NU geld afgeschreven, we moeten direct handelen."</td><td>Tijdsdruk schakelt je nadenken uit; je handelt vóór je checkt.</td></tr>
+            <tr><td><strong>Schaarste</strong></td><td>"Dit tijdslot om te redden sluit over een paar minuten."</td><td>Iets wat bijna "op" of "voorbij" is, voelt kostbaarder en dwingender.</td></tr>
+            <tr><td><strong>Vertrouwen / sympathie</strong></td><td>"Ik help u er samen doorheen, blijft u maar rustig aan de lijn."</td><td>Een vriendelijke, geduldige stem bouwt een band; je wilt de aardige helper niet teleurstellen.</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout info"><strong>Nog twee tangen uit de doos.</strong> Vaak komt er <strong>geheimhouding</strong>
+        bij ("vertel dit aan niemand, ook niet aan de balie, want we onderzoeken intern een lek") en
+        <strong>consistentie</strong> ("u wilt uw geld toch beschermen? Dan is deze stap logisch"). Geheimhouding is
+        misschien wel de gevaarlijkste: ze knipt precies de persoon weg die de truc zou doorzien — een kind, een buurvrouw,
+        de echte baliemedewerker.</div>
+
+        <div class="callout tip"><strong>Tegengif:</strong> elk van deze knoppen werkt alleen onder druk en in het moment.
+        Het tegengif is dus simpel: <strong>ophangen, zelf terugbellen</strong> via een nummer dat je zélf opzoekt (achterop
+        je pas of in de app), en het er met iemand over hebben. Wie één minuut rust pakt, prikt het verhaal meestal meteen
+        door. Beloning voor dit inzicht: <code>JVT{autoriteit_opent_deuren}</code>.</div>
+
+        <h3>Mini-oefening: benoem het principe</h3>
+        <p>In het gesprek met mevrouw De Boer vielen deze zinnen. Koppel ze straks in de vragen aan het juiste principe.</p>
+        <ul>
+          <li>"U spreekt met de officiële fraudedesk." → autoriteit</li>
+          <li>"Er loopt op dit moment een afschrijving, we hebben geen tijd te verliezen." → urgentie</li>
+          <li>"Zegt u er tegen niemand iets over, ook niet bij de balie." → geheimhouding</li>
+        </ul>
+      `,
+      questions: [
+        { q: '"U spreekt met de officiële fraudedesk van de bank." Welk Cialdini-principe is dit?', answer: ['autoriteit'], hint: 'Gezag, een officiële instantie.', explain: 'Autoriteit: we gehoorzamen een bron die gezag uitstraalt en twijfelen minder snel.' },
+        { q: '"We moeten NU handelen, anders bent u uw geld kwijt." Dat is vooral een beroep op:', options: ['sympathie', 'urgentie', 'schaarste', 'autoriteit'], answer: 1, explain: 'Urgentie/tijdsdruk zorgt dat je handelt vóór je nadenkt of verifieert.' },
+        { q: 'Welk middel gebruikt de oplichter om te voorkomen dat je het bij een ander checkt?', answer: ['geheimhouding', 'geheim houden', 'zwijgen'], hint: '"Vertel dit aan niemand."', explain: 'Geheimhouding knipt de persoon weg die de truc zou doorzien — een grote rode vlag.' },
+        { q: 'Wat is het beste tegengif tegen al deze druk-knoppen?', options: ['Snel meewerken zodat het voorbij is', 'Ophangen en zelf terugbellen via een nummer dat je zelf opzoekt', 'Het nummer in je scherm terugbellen', 'Je pincode doorgeven zodat ze het kunnen oplossen'], answer: 1, explain: 'Rust nemen, ophangen en via een eigen, opgezocht kanaal verifiëren breekt de hele truc.' },
+        { q: 'Welke beloningsvlag staat in de tip-callout?', answer: ['JVT{autoriteit_opent_deuren}'], hint: 'Lees de groene tip-callout.', explain: 'De beloningsvlag is JVT{autoriteit_opent_deuren}.' },
+      ],
+    },
+
+    {
+      title: 'Taak 3 — Het bijbehorende phishing-bericht',
+      content: `
+        <p>Een vishing-aanval komt zelden alleen. Vaak gaat er een <strong>smishing</strong> (phishing-sms) of phishingmail
+        aan vooraf of achteraan, om het slachtoffer "warm" te maken of om een nep-inlogpagina te laten invullen. Hieronder
+        staat de inbox van mevrouw De Boer rond het telefoontje. <strong>Klik op alles wat verdacht is</strong> — afzender,
+        onderwerp, zinsdelen, links — en beoordeel per bericht of het phishing of legitiem is.</p>
+
+        <div class="callout tip"><strong>Waar je op let:</strong> het domein <em>achter</em> de afzendernaam (staat er echt
+        <code>nederbank.nl</code>?), de echte bestemming van een link, tijdsdruk en dreiging, een onpersoonlijke aanhef, en
+        elk verzoek om codes, pincode of een "veilige rekening".</div>
+
+        <h3>De inbox</h3>
+        <p>Let vooral op het domein achter de knoppen en adressen; de naam voor het adres mag namelijk van alles zijn.</p>
+
+        <div class="callout tip"><strong>Beloning:</strong> wie afzender, link en dreiging doorprikt, verdient de vlag <code>JVT{herken_de_spoof}</code>.</div>
+      `,
+      lab: {
+        type: 'phishing',
+        emails: [
+          {
+            phishing: true,
+            fromName: 'NederBank Alert',
+            from: 'melding@nederbank-sms.info',
+            to: 'mevr.deboer@voorbeeld.nl',
+            subject: 'Nieuw apparaat gekoppeld aan uw rekening — was u dit?',
+            date: 'di 14 okt 2026 20:03',
+            flags: {
+              from: 'Het domein is nederbank-sms.info, niet nederbank.nl. De echte bank mailt niet vanaf zo\'n adres.',
+              subject: 'Een onverwachte "waarschuwing" die je wil laten schrikken en snel laten klikken.',
+            },
+            body: [
+              [{ text: 'Geachte klant,', flag: 'Onpersoonlijke aanhef — je bank kent je naam.' }],
+              [{ text: 'Er is zojuist een nieuw apparaat gekoppeld aan uw NederBank-rekening. Als u dit niet was, moet u ' }, { text: 'binnen 10 minuten', flag: 'Tijdsdruk om je te laten handelen vóór je nadenkt.' }, { text: ' uw toegang blokkeren.' }],
+              [{ text: 'Blokkeer nu mijn rekening', link: 'http://nederbank.nl.beveilig-login.ru/blokkeren', flag: 'De echte bestemming is beveilig-login.ru (een .ru-domein). "nederbank.nl" staat er alleen als subdomein om je te misleiden.' }],
+              [{ text: 'Onze fraudedesk belt u mogelijk om u te ', flag: null }, { text: 'helpen; houd uw inlogcodes bij de hand', flag: 'De bank vraagt NOOIT om je codes en kondigt geen "hulp-telefoontje" aan om je op het gesprek voor te bereiden.' }, { text: '.' }],
+            ],
+          },
+          {
+            phishing: true,
+            fromName: 'NederBank Fraudedesk',
+            from: 'fraudedesk@nederbank-verificatie.info',
+            to: 'mevr.deboer@voorbeeld.nl',
+            subject: 'ACTIE VEREIST: breng uw saldo in veiligheid',
+            date: 'di 14 okt 2026 20:35',
+            flags: {
+              from: 'Weer een nep-domein (nederbank-verificatie.info). Een echte fraudedesk mailt niet vanaf zoiets.',
+              subject: 'Hoofdletters, dreiging en haast ("ACTIE VEREIST") zijn klassieke drukmiddelen.',
+            },
+            body: [
+              [{ text: 'Zoals zojuist telefonisch besproken: om uw spaargeld te beschermen dient u het over te maken naar onze ' }, { text: 'veilige kluisrekening', flag: 'Een "veilige kluisrekening" bestaat niet. Dit is altijd een rekening van een money mule.' }, { text: '.' }],
+              [{ text: 'Rekeningnummer en instructies vindt u via onderstaande knop. ' }, { text: 'Deel dit met niemand', flag: 'Geheimhouding vragen is een grote rode vlag — zo voorkomt de oplichter dat je het checkt.' }, { text: ', ook niet met uw bankfiliaal.' }],
+              [{ text: 'Open de beveiligde instructies', link: 'http://kluis-nederbank.secure-verify.top/overboeken', flag: 'Het echte domein is secure-verify.top, geen nederbank.nl.' }],
+            ],
+          },
+          {
+            phishing: false,
+            fromName: 'NederBank',
+            from: 'noreply@nederbank.nl',
+            to: 'mevr.deboer@voorbeeld.nl',
+            subject: 'Zo herkent u babbeltrucs — wij bellen nooit om uw pincode',
+            date: 'ma 13 okt 2026 10:00',
+            body: [
+              [{ text: 'Beste klant, oplichters doen zich soms voor als medewerker van de bank. Onthoud: wij vragen u nooit om uw pincode of volledige inlogcode, en wij vragen u nooit geld over te maken naar een andere rekening.' }],
+              [{ text: 'U hoeft op deze mail niets te doen en wij vragen u nergens om in te loggen. Twijfelt u over een telefoontje? Hang op en bel ons zelf via het nummer achter op uw pas of via de officiële app.' }],
+              [{ text: 'Meer tips vindt u door zelf naar nederbank.nl te gaan en te zoeken op "veilig bankieren".' }],
+            ],
+          },
+        ],
+      },
+      questions: [
+        { q: 'In het eerste bericht: wat is het échte hoofddomein waar de knop "Blokkeer nu mijn rekening" naartoe leidt? (de laatste twee delen vóór het pad)', answer: ['beveilig-login.ru'], hint: 'Lees de hele link. "nederbank.nl" staat er alleen als subdomein; het echte domein zijn de laatste twee delen.', explain: 'Het hoofddomein is beveilig-login.ru. Alles ervoor (nederbank.nl.) is maar een subdomein om je te misleiden.' },
+        { q: 'Het tweede bericht vraagt om geld naar een "veilige kluisrekening". Wat is zo\'n rekening in werkelijkheid?', options: ['Een extra spaarrekening van de bank', 'Een rekening van een money mule (katvanger)', 'Een kluis bij de Nederlandsche Bank', 'Een beveiligde crypto-wallet van de bank'], answer: 1, explain: 'Een "veilige kluisrekening" bestaat niet; het is altijd de rekening van een katvanger waar jouw geld verdwijnt.' },
+        { q: 'Welk bericht was legitiem?', options: ['Het eerste (nieuw apparaat)', 'Het tweede (actie vereist)', 'Het derde (babbeltrucs-tip van nederbank.nl)', 'Geen van alle'], answer: 2, explain: 'Alleen het derde komt van nederbank.nl, vraagt nergens om in te loggen en kondigt geen actie aan.' },
+        { q: 'Je hebt de rode vlaggen doorzien. Noteer de beloningsvlag uit de inbox-opdracht: JVT{herken_de_spoof}.', answer: ['JVT{herken_de_spoof}'], hint: 'Staat in de vraagtekst hierboven.', explain: 'Wie afzender, link en dreiging doorprikt, verdient JVT{herken_de_spoof}.' },
+      ],
+    },
+
+    {
+      title: 'Taak 4 — Reconstrueer de oplichting',
+      content: `
+        <p>Je hebt het telefoontje, de psychologie en het phishing-bericht gezien. Zet nu de hele oplichting op een rij —
+        van het allereerste contact tot de cash-out. Een goede reconstructie helpt de recherche én maakt pijnlijk zichtbaar
+        waar het slachtoffer had kunnen uitstappen.</p>
+
+        <div class="callout info"><strong>Zo doe je het:</strong> schuif de stappen in de logische volgorde. Denk vanuit de
+        oplichter: eerst voorbereiden en vertrouwen winnen, dan de overboeking afdwingen, en pas daarna het geld
+        wegsluizen en opnemen.</div>
+
+        <p>Los de volgorde-puzzel hieronder op. Lukt dat, dan heb je de zaak in kaart.</p>
+      `,
+      lab: {
+        type: 'ordering',
+        title: 'Van belletje tot cash-out',
+        prompt: 'Zet de zeven stappen van de bankhelpdeskfraude in de juiste volgorde (van eerste contact tot cash-out).',
+        flag: 'JVT{van_belletje_tot_cashout}',
+        explain: 'De oplichter bereidt voor (nummer spoofen), belt met gezag en urgentie, bouwt het "veilige kluisrekening"-verhaal op, laat het slachtoffer overboeken naar katvangers, die sluizen door naar een verzamelrekening, en ten slotte wordt het geld opgenomen/omgezet (cash-out).',
+        items: [
+          { id: 'a', label: 'Oplichter bereidt de aanval voor en stelt de beller-ID in op "NederBank" (spoofing)' },
+          { id: 'b', label: 'De telefoon rinkelt: in het scherm staat "NederBank", het echte nummer wordt nagebootst' },
+          { id: 'c', label: '"Medewerker fraudedesk" meldt een verdachte afschrijving en bouwt autoriteit + urgentie op' },
+          { id: 'd', label: 'Het slachtoffer moet het spaargeld "in veiligheid brengen" op een veilige kluisrekening' },
+          { id: 'e', label: 'Het slachtoffer boekt het geld over naar de rekeningen van katvangers Dennis en Priya' },
+          { id: 'f', label: 'De katvangers sluizen het geld meteen door naar een verzamelrekening' },
+          { id: 'g', label: 'Het geld wordt opgenomen bij de geldautomaat en omgezet in crypto (cash-out)' },
+        ],
+        correct: ['a', 'b', 'c', 'd', 'e', 'f', 'g'],
+      },
+      questions: [
+        { q: 'Met welke stap begint de oplichting?', options: ['Met de overboeking', 'Met het voorbereiden en spoofen van het nummer', 'Met de cash-out', 'Met de verzamelrekening'], answer: 1, explain: 'Eerst bereidt de oplichter de aanval voor en stelt hij de beller-ID in; pas daarna rinkelt de telefoon.' },
+        { q: 'Vlak voordat de overboeking plaatsvindt, bouwt de oplichter welk verhaal op?', options: ['Dat je een prijs hebt gewonnen', 'Dat je geld "in veiligheid" moet brengen op een veilige kluisrekening', 'Dat je een pakket moet betalen', 'Dat je software moet installeren'], answer: 1, explain: 'Het "veilige kluisrekening"-verhaal is de kern van bankhelpdeskfraude.' },
+        { q: 'Los de volgorde-puzzel op. Welke vlag verschijnt bij de juiste reconstructie?', answer: ['JVT{van_belletje_tot_cashout}'], hint: 'Zet de zeven stappen goed; bij succes toont het lab de vlag.', explain: 'De juiste tijdlijn beloont je met JVT{van_belletje_tot_cashout}.' },
+      ],
+    },
+
+    {
+      title: 'Taak 5 — Follow the money: het geld via de mules',
+      content: `
+        <p>Zodra het slachtoffer op "overboeken" heeft gedrukt, begint de race. Het geld landt op rekeningen van
+        <strong>money mules</strong> (katvangers): mensen die hun bankrekening uitlenen of verkopen, soms uit geldnood, soms
+        geronseld met de belofte van "snel verdienen". Zij houden een provisie en sluizen de rest razendsnel door, zodat de
+        bank het niet meer kan terughalen en het spoor vertroebelt.</p>
+
+        <div class="callout warn"><strong>Alles fictief:</strong> de bedragen en rekeningen hieronder zijn verzonnen. Je
+        oefent de denkwijze "follow the money", je volgt geen echte mensen.</div>
+
+        <h3>Zo lees je het lab</h3>
+        <ul>
+          <li><strong>Klik een knoop</strong> (bijv. de verzamelrekening) om te zien wat erin en eruit gaat, en het saldo.</li>
+          <li><strong>Lees de transactietabel</strong>: elke regel is één overboeking met bedrag, tijd en notitie.</li>
+          <li><strong>Reken na.</strong> Komt een knoop van twee kanten geld binnen? Tel op. De "provisie" die een katvanger
+          achterhoudt, is het verschil tussen wat binnenkomt en wat weer uitgaat (het saldo van die knoop).</li>
+        </ul>
+
+        <p>Volg zo het geld van mevrouw De Boer tot aan het cash-out-punt — de plek waar het contant of in crypto verdwijnt.</p>
+      `,
+      lab: {
+        type: 'flow',
+        title: 'Casus De Boer — het geld volgen',
+        unit: '€',
+        scenario: 'Mevrouw De Boer boekte in twee keer haar spaargeld over. Volg de stroom via de katvangers Dennis en Priya en de verzamelrekening tot de cash-out. Reken de bedragen per knoop na.',
+        nodes: CASUS_NODES,
+        edges: CASUS_EDGES,
+        ask: [
+          { q: 'Hoeveel euro boekt mevrouw De Boer in totaal over? (tel beide overboekingen op)', answer: ['15000', '15.000', '€15000', '€15.000'], hint: 'De eerste twee transacties: 8000 + 7000.' },
+          { q: 'Hoeveel provisie houdt katvanger "Dennis" voor zichzelf? (het saldo van zijn knoop)', answer: ['400', '€400'], hint: 'Dennis krijgt 8000 binnen en stuurt 7600 door. Het verschil blijft hangen.' },
+          { q: 'Hoeveel euro komt er in totaal binnen op de verzamelrekening? (tel beide inkomende stromen op)', answer: ['14250', '14.250', '€14250', '€14.250'], hint: 'Dennis brengt 7600, Priya brengt 6650. Klik de verzamelrekening-knoop voor het totaal.' },
+          { q: 'Hoeveel euro wordt uiteindelijk bij het cash-out-punt opgenomen/omgezet?', answer: ['14000', '14.000', '€14000', '€14.000'], hint: 'De laatste transactie: van de verzamelrekening naar de cash-out.' },
+        ],
+      },
+      questions: [
+        { q: 'Hoeveel euro boekte mevrouw De Boer in totaal over?', answer: ['15000', '15.000'], hint: 'Tel de twee overboekingen op: 8000 + 7000.', explain: '8000 + 7000 = 15.000 euro ging in twee keer naar de katvangers.' },
+        { q: 'Hoeveel euro komt er in totaal binnen op de verzamelrekening?', answer: ['14250', '14.250'], hint: '7600 (van Dennis) + 6650 (van Priya).', explain: '7600 + 6650 = 14.250 euro landt op de verzamelrekening.' },
+        { q: 'Hoeveel euro bereikt uiteindelijk het cash-out-punt?', answer: ['14000', '14.000'], hint: 'De verzamelrekening houdt 250 in en sluist de rest door.', explain: 'De verzamelrekening kreeg 14.250 binnen, hield 250 en boekte 14.000 euro door naar de cash-out.' },
+        { q: 'Hoe heet iemand die zijn bankrekening uitleent/verkoopt zodat crimineel geld erdoorheen kan stromen?', answer: ['money mule', 'katvanger', 'mule'], hint: 'Nederlands: "katvanger".', explain: 'Een money mule of katvanger leent zijn rekening uit; dat is strafbaar en gedupeerden zijn vaak jongeren.' },
+      ],
+    },
+
+    {
+      title: 'Taak 6 — Schrijf een waarschuwing (conclusie eerst)',
+      content: `
+        <p>Een onderzoek is pas nuttig als anderen er iets aan hebben. Schrijf daarom een kort
+        <strong>waarschuwings-/adviesproduct</strong> waarmee bijvoorbeeld een wijkagent, een bankfiliaal of een
+        buurtapp-beheerder morgen mensen kan behoeden. De kunst is de <strong>BLUF</strong>-stijl: <em>Bottom Line Up
+        Front</em> — je <strong>conclusie en je advies staan bovenaan</strong>, niet pas aan het eind.</p>
+
+        <div class="callout tip"><strong>Rubric (waar het lab op toetst):</strong> conclusie bovenaan, concrete adviezen met
+        een <em>eigenaar</em> (wie moet wat doen), korter dan de brontekst, en onzekerheid apart benoemd. Gebruik
+        waarschijnlijkheidstaal ("waarschijnlijk", "zeer waarschijnlijk") in plaats van stellige zekerheden waar je het niet
+        zeker weet.</div>
+
+        <p>Hieronder staat de chronologische casus als bron. Herschrijf hem naar een kort product. Er staat een
+        voorbeelduitwerking klaar, maar probeer het eerst zelf.</p>
+      `,
+      lab: {
+        type: 'bluf',
+        source: 'Op dinsdag 14 oktober om 20.03 ontving mevrouw De Boer een mail van "NederBank Alert" over een nieuw gekoppeld apparaat. Om 20.10 werd zij gebeld; in haar scherm stond "NederBank". De beller noemde zich medewerker van de fraudedesk, meldde een verdachte afschrijving en drong aan op snelheid. Hij vroeg haar het spaargeld "in veiligheid te brengen" op een veilige kluisrekening en benadrukte dat zij hierover met niemand mocht praten. Om 20.15 boekte zij 8.000 euro over en om 20.40, nadat de "medewerker" haar hielp de daglimiet te verhogen, nog eens 7.000 euro, naar twee onbekende rekeningen. Die rekeningen bleken van katvangers; het geld werd binnen een uur doorgesluisd naar een verzamelrekening en vervolgens opgenomen en deels omgezet in crypto. In totaal is 15.000 euro verdwenen; ongeveer 14.000 euro bereikte het cash-out-punt.',
+        model: '<p><strong>BLUF:</strong> Mevrouw De Boer is slachtoffer van bankhelpdeskfraude (vishing met nummerspoofing). Zij boekte na een vervalst "bank"-telefoontje 15.000 euro over naar katvangerrekeningen; naar schatting 14.000 euro bereikte de cash-out. Directe actie is nodig om schade te beperken en herhaling bij anderen te voorkomen.</p><p><strong>Adviezen (met eigenaar):</strong></p><ul><li><em>Slachtoffer:</em> bel direct de echte bank (nummer achter op de pas) om de overboekingen te laten blokkeren/terughalen; doe aangifte bij de politie en meld bij de Fraudehelpdesk.</li><li><em>Bank:</em> onderzoek en bevries de ontvangende rekeningen; waarschuw via de eigen kanalen dat zij nooit om pincode/codes vraagt.</li><li><em>Wijkagent/buurtbeheerder:</em> deel een korte waarschuwing: "de bank belt nooit om je pincode of om geld naar een veilige rekening te boeken — hang op en bel zelf terug."</li></ul><p><strong>Onzekerheid:</strong> het exact teruggehaalde bedrag is nog onbekend; de identiteit achter de cash-out is waarschijnlijk (nog) niet vastgesteld.</p>',
+      },
+      questions: [
+        { q: 'Wat betekent BLUF in een adviesproduct?', answer: ['bottom line up front', 'conclusie eerst', 'conclusie bovenaan'], hint: 'Bottom Line Up Front.', explain: 'BLUF = Bottom Line Up Front: je zet je conclusie en advies bovenaan, niet pas aan het eind.' },
+        { q: 'Welk element hoort volgens de rubric bij elk advies te staan?', options: ['Een datum', 'Een eigenaar (wie moet het doen)', 'Een paginanummer', 'Een handtekening'], answer: 1, explain: 'Een bruikbaar advies benoemt wie het moet uitvoeren — de eigenaar.' },
+        { q: 'Ik heb mijn eigen waarschuwing geschreven en tegen de rubric getoetst.', noAnswer: true },
+      ],
+    },
+
+    {
+      title: 'Taak 7 — Preventie & wat te doen als slachtoffer',
+      content: `
+        <p>De beste verdediging is simpel, maar vergt dat je hem kent vóórdat je gebeld wordt. Onthoud de reflex:
+        <strong>ophangen, zelf terugbellen, erover praten</strong>.</p>
+
+        <h3>Preventie — zo trap je er niet in</h3>
+        <ul>
+          <li>De bank vraagt <strong>nooit</strong> om je pincode, volledige inlogcode, of om geld over te maken naar een
+          "veilige rekening". Komt zo'n verzoek: het is per definitie oplichting.</li>
+          <li>Het <strong>nummer in je scherm is geen bewijs</strong> (spoofing). Vertrouw er niet op, ook niet als het het
+          echte 0800-nummer lijkt.</li>
+          <li>Voelt het dringend of geheim? Dat is juist het alarm. <strong>Hang op</strong> en bel de bank terug via het
+          nummer achter op je pas of in de officiële app — nooit via de gegevens uit het gesprek of bericht.</li>
+          <li>Laat je niet opjagen en overleg gerust met een familielid of de balie. Een echte bank vindt dat prima.</li>
+          <li>Leen of verkoop <strong>nooit</strong> je bankrekening of pas. Een money mule/katvanger zijn is strafbaar — ook
+          als je "alleen maar" je rekening uitleende.</li>
+        </ul>
+
+        <h3>Al slachtoffer? Doe dit meteen (snelheid beperkt de schade)</h3>
+        <ol>
+          <li><strong>Bel direct je bank</strong> (nummer achter op je pas) en laat de overboeking blokkeren/terughalen en je
+          rekening beveiligen. Hoe sneller, hoe groter de kans dat geld nog tegengehouden wordt.</li>
+          <li><strong>Doe aangifte bij de politie</strong> via politie.nl of 0900-8844; bij direct gevaar 112.</li>
+          <li><strong>Meld het bij de Fraudehelpdesk</strong> (0800-nummer, kosteloos). Melden helpt anderen: trends en
+          nummers worden gedeeld en slachtoffers krijgen advies.</li>
+          <li><strong>Bewaar bewijs:</strong> het telefoonnummer, de tijdstippen, screenshots van berichten en de
+          overboekingen. Dat helpt bank en politie enorm.</li>
+          <li><strong>Wees mild voor jezelf.</strong> Deze oplichters zijn professioneel en spelen op paniek. Schaamte houdt
+          mensen tegen om te melden — en juist melden beperkt de schade voor jou en anderen.</li>
+        </ol>
+
+        <div class="callout info"><strong>Melden = helpen.</strong> Noteer de laatste vlag als je weet waar een slachtoffer
+        in Nederland terechtkan: <code>JVT{melden_bij_fraudehelpdesk}</code>.</div>
+
+        <div class="callout warn"><strong>Let op de nummers:</strong> een echte bank en de Fraudehelpdesk gebruiken
+        <strong>gratis 0800-nummers</strong>. Een <strong>0900-nummer</strong> (betaald) in een "bank"-bericht is juist
+        verdacht. Zoek officiële nummers altijd zélf op, typ ze niet over uit het bericht.</div>
+      `,
+      questions: [
+        { q: 'Je wordt gebeld door "de bank" die vraagt geld naar een veilige rekening te boeken. Wat doe je?', options: ['Snel overboeken zodat je geld veilig is', 'Je pincode doorgeven zodat zij het regelen', 'Ophangen en zelf de bank terugbellen via het nummer achter op je pas', 'Het nummer uit het scherm terugbellen'], answer: 2, explain: 'Ophangen en via een eigen, opgezocht kanaal verifiëren. De bank vraagt dit nooit.' },
+        { q: 'Je hebt zojuist geld overgemaakt na zo\'n telefoontje. Wat is de eerste stap?', answer: ['bank bellen', 'direct de bank bellen', 'de bank bellen'], hint: 'Zorg dat de overboeking nog geblokkeerd/teruggehaald kan worden.', explain: 'Bel meteen je echte bank (nummer achter op je pas) om te blokkeren; daarna aangifte en melden.' },
+        { q: 'Bij welke instantie meld je dit type fraude (naast je bank en de politie)?', answer: ['fraudehelpdesk', 'de fraudehelpdesk'], hint: 'Een landelijk meldpunt met een gratis 0800-nummer.', explain: 'De Fraudehelpdesk is het landelijke meldpunt; melden helpt ook anderen.' },
+        { q: 'Welk soort telefoonnummer in een "bank"-bericht is juist verdacht?', options: ['Een gratis 0800-nummer', 'Een betaald 0900-nummer', 'Het alarmnummer 112', 'Een mobiel 06-nummer van een familielid'], answer: 1, explain: 'Echte banken en de Fraudehelpdesk gebruiken gratis 0800-nummers; een 0900-nummer is een rode vlag.' },
+        { q: 'Welke vlag staat in de laatste info-callout?', answer: ['JVT{melden_bij_fraudehelpdesk}'], hint: 'Lees de info-callout over melden.', explain: 'De afsluitende vlag is JVT{melden_bij_fraudehelpdesk}.' },
+      ],
+    },
+  ],
+  terms: [
+    { term: 'Bankhelpdeskfraude', def: 'Oplichting waarbij iemand zich voordoet als bankmedewerker (vaak telefonisch) en je overhaalt geld over te maken of codes te geven.' },
+    { term: 'Vishing', def: 'Voice phishing: phishing via de telefoon, waarbij een "medewerker" je live manipuleert.' },
+    { term: 'Spoofing (nummerspoofing)', def: 'Het vervalsen van de beller-ID, zodat er een vertrouwde naam of het echte nummer in je scherm staat terwijl een oplichter belt.' },
+    { term: 'Smishing', def: 'Phishing via sms, vaak als opwarmer of bevestiging rond een vishing-telefoontje.' },
+    { term: 'Social engineering', def: 'Mensen manipuleren om iets te doen (klikken, betalen, codes geven) in plaats van techniek te hacken.' },
+    { term: 'Overtuigingsprincipes (Cialdini)', def: 'Vaste psychologische hefbomen zoals autoriteit, urgentie, schaarste en vertrouwen waarmee een oplichter je overhaalt.' },
+    { term: 'Veilige kluisrekening', def: 'Een verzonnen "veilige rekening" waar je je geld heen zou moeten boeken; in werkelijkheid altijd de rekening van een katvanger.' },
+    { term: 'Money mule / katvanger', def: 'Iemand die zijn bankrekening uitleent of verkoopt zodat crimineel geld erdoorheen stroomt; strafbaar.' },
+    { term: 'Daglimiet', def: 'De maximale som die je per dag kunt overboeken; oplichters laten het slachtoffer dit verhogen om meer te kunnen wegsluizen.' },
+    { term: 'Cash-out', def: 'Het moment waarop het gestolen geld contant wordt opgenomen of omgezet (bijv. in crypto) en het spoor eindigt.' },
+    { term: 'Fraudehelpdesk', def: 'Het landelijke Nederlandse meldpunt voor fraude en oplichting; melden helpt slachtoffers en waarschuwt anderen.' },
+    { term: 'BLUF', def: 'Bottom Line Up Front: een schrijfstijl waarbij de conclusie en het advies bovenaan staan.' },
+  ],
+  resources: [
+    { title: 'Fraudehelpdesk — melden en advies bij oplichting', url: 'https://www.fraudehelpdesk.nl/' },
+    { title: 'Politie — aangifte doen van fraude', url: 'https://www.politie.nl/' },
+    { title: 'Veilig internetten — babbeltrucs en phishing herkennen', url: 'https://veiliginternetten.nl/' },
+    { title: 'Betaalvereniging Nederland — veilig bankieren', url: 'https://www.betaalvereniging.nl/' },
+  ],
+});
+
+</script>
+<script>
+/* Room: Casus botnet-takedown — van bot tot gecoördineerde actie */
+
+// --- pcap: C2-beaconing van bot WS-MARKETING-09 (10.0.9.33) ---
+// DGA-misses -> botmodule-download bij drop-server -> HTTP-beaconing naar C2 -> exfil over C2.
+const PCAP_BOTNET = [
+  { no: 1, time: '0.000', src: '10.0.9.33', dst: '10.0.9.1', proto: 'DNS', len: 84, info: 'Standaardquery A q7x2k9fz1a.jvt.lab (willekeurig?)' },
+  { no: 2, time: '0.013', src: '10.0.9.1', dst: '10.0.9.33', proto: 'DNS', len: 84, info: 'Antwoord: NXDOMAIN (bestaat niet)' },
+  { no: 3, time: '0.260', src: '10.0.9.33', dst: '10.0.9.1', proto: 'DNS', len: 86, info: 'Standaardquery A m4p8r2wd9c.jvt.lab (willekeurig?)' },
+  { no: 4, time: '0.274', src: '10.0.9.1', dst: '10.0.9.33', proto: 'DNS', len: 86, info: 'Antwoord: NXDOMAIN (bestaat niet)' },
+  { no: 5, time: '0.540', src: '10.0.9.33', dst: '10.0.9.1', proto: 'DNS', len: 80, info: 'Standaardquery A cdn-schim.jvt.lab' },
+  { no: 6, time: '0.556', src: '10.0.9.1', dst: '10.0.9.33', proto: 'DNS', len: 96, info: 'Antwoord A cdn-schim.jvt.lab = 198.51.100.77' },
+  { no: 7, time: '0.610', src: '10.0.9.33', dst: '198.51.100.77', proto: 'TCP', len: 74, info: '50112 -> 80 [SYN]' },
+  { no: 8, time: '0.622', src: '198.51.100.77', dst: '10.0.9.33', proto: 'TCP', len: 74, info: '80 -> 50112 [SYN, ACK]' },
+  {
+    no: 9, time: '0.660', src: '10.0.9.33', dst: '198.51.100.77', proto: 'HTTP', len: 332,
+    info: 'GET /modules/core.bin HTTP/1.1',
+    stream: `GET /modules/core.bin HTTP/1.1
+Host: cdn-schim.jvt.lab
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
+Accept: */*
+
+HTTP/1.1 200 OK
+Server: nginx
+Content-Type: application/octet-stream
+Content-Length: 3904
+X-Build: schimnet-core-v3
+
+MZ......(binaire botmodule core.bin, 3.904 bytes)
+
+Analist: de loader die al op de machine stond, haalt hier de ECHTE botmodule
+op (ingress tool transfer). Pas daarna gaat de bot zelf praten met zijn C2.`,
+  },
+  { no: 10, time: '0.910', src: '198.51.100.77', dst: '10.0.9.33', proto: 'HTTP', len: 4212, info: 'HTTP/1.1 200 OK (application/octet-stream, 3.904 bytes)' },
+  { no: 11, time: '6.000', src: '10.0.9.33', dst: '10.0.9.1', proto: 'DNS', len: 80, info: 'Standaardquery A schim-sync.jvt.lab' },
+  { no: 12, time: '6.016', src: '10.0.9.1', dst: '10.0.9.33', proto: 'DNS', len: 96, info: 'Antwoord A schim-sync.jvt.lab = 203.0.113.50' },
+  { no: 13, time: '6.060', src: '10.0.9.33', dst: '203.0.113.50', proto: 'TCP', len: 74, info: '50140 -> 80 [SYN]' },
+  { no: 14, time: '6.072', src: '203.0.113.50', dst: '10.0.9.33', proto: 'TCP', len: 74, info: '80 -> 50140 [SYN, ACK]' },
+  {
+    no: 15, time: '6.110', src: '10.0.9.33', dst: '203.0.113.50', proto: 'HTTP', len: 268,
+    info: 'POST /gate.php HTTP/1.1 (check-in)',
+    stream: `C2-baken — gereconstrueerde check-in naar 203.0.113.50 (host schim-sync.jvt.lab)
+
+>> POST /gate.php HTTP/1.1
+>> Host: schim-sync.jvt.lab
+>> User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
+>> Cookie: botid=SCHIM-7F3A
+>> Content-Length: 22
+>>
+>> id=SCHIM-7F3A&task=poll
+<< HTTP/1.1 200 OK
+<< Server: nginx
+<< Content-Length: 41
+<<
+<< sleep=45; note=JVT{c2_fluistert}
+
+Analist: elke ~45 seconden exact dezelfde kleine POST naar hetzelfde IP.
+Dat strakke ritme is "beaconing": de bot vraagt zijn command-and-control-
+server om nieuwe opdrachten. In de server-respons staat de knipoog-vlag.`,
+  },
+  { no: 16, time: '6.270', src: '203.0.113.50', dst: '10.0.9.33', proto: 'HTTP', len: 180, info: 'HTTP/1.1 200 OK (sleep=45)' },
+  { no: 17, time: '51.112', src: '10.0.9.33', dst: '203.0.113.50', proto: 'HTTP', len: 268, info: 'POST /gate.php HTTP/1.1 (check-in)' },
+  { no: 18, time: '51.270', src: '203.0.113.50', dst: '10.0.9.33', proto: 'HTTP', len: 180, info: 'HTTP/1.1 200 OK (sleep=45)' },
+  { no: 19, time: '63.400', src: '10.0.9.33', dst: '10.0.50.10', proto: 'HTTP', len: 410, info: 'GET /intranet HTTP/1.1 (normaal verkeer)' },
+  { no: 20, time: '96.113', src: '10.0.9.33', dst: '203.0.113.50', proto: 'HTTP', len: 268, info: 'POST /gate.php HTTP/1.1 (check-in)' },
+  { no: 21, time: '96.271', src: '203.0.113.50', dst: '10.0.9.33', proto: 'HTTP', len: 180, info: 'HTTP/1.1 200 OK (taak=stuur_buit)' },
+  { no: 22, time: '141.120', src: '10.0.9.33', dst: '203.0.113.50', proto: 'HTTP', len: 5120, info: 'POST /gate.php HTTP/1.1 (upload 4.8 KB!) — buit over C2-kanaal' },
+  { no: 23, time: '141.460', src: '203.0.113.50', dst: '10.0.9.33', proto: 'HTTP', len: 150, info: 'HTTP/1.1 200 OK (ontvangen)' },
+  { no: 24, time: '186.114', src: '10.0.9.33', dst: '203.0.113.50', proto: 'HTTP', len: 268, info: 'POST /gate.php HTTP/1.1 (check-in)' },
+];
+
+CS.registerRoom({
+  id: 'botnet-takedown',
+  path: 'puzzels',
+  order: 7,
+  title: 'Casus: botnet-takedown',
+  icon: '🤖',
+  difficulty: 'Moeilijk',
+  minutes: 70,
+  summary: 'Eén samenhangende casus: je ontrafelt het fictieve botnet SchimNet van bot tot operator, mapt het gedrag op MITRE ATT&CK, koppelt de C2-infrastructuur via een pivot en zet de stappen van een gecoördineerde takedown (zoals Operatie Endgame, hoog-over) op een rij.',
+  objectives: [
+    'Uitleggen wat een botnet is en de rollen van bot, loader, C2-server en operator benoemen',
+    'C2-beaconing van een bot in een pcap herkennen en een verstopte vlag in een stream vinden',
+    'Aanvalsgedrag van een botnet koppelen aan de juiste MITRE ATT&CK-technieken',
+    'De C2-infrastructuur van twee clusters koppelen met een pivot en de zeldzaamheid van een gedeeld kenmerk toetsen',
+    'De vaste stappen van een botnet-takedown op de juiste volgorde zetten: identificeren, in kaart brengen, juridische basis, sinkholen/seizen, notificeren',
+    'De rol van opsporing en partners (Europol, NCSC, hostingproviders) bij sinkholing en slachtoffernotificatie uitleggen',
+  ],
+  tasks: [
+    {
+      title: 'Taak 1 — Wat is een botnet?',
+      content: `
+        <p>Welkom bij de fictieve <strong>Operatie Spookzwerm</strong>. Analisten zien al weken dat besmette computers
+        bij allerlei Nederlandse bedrijven op hetzelfde ritme "naar huis bellen". Vermoeden: ze zijn allemaal onderdeel
+        van hetzelfde <strong>botnet</strong>, dat we voor dit onderzoek <strong>SchimNet</strong> noemen. In deze room
+        pel je de zaak laag voor laag af — van één besmette pc tot de operator — en eindig je bij een gecoördineerde
+        <strong>takedown</strong>.</p>
+
+        <h3>De analogie van het zombieleger</h3>
+        <p>Een botnet is een <em>leger van gekaapte computers</em>. Elke besmette machine (een <strong>bot</strong> of
+        "zombie") doet gewoon zijn werk voor de eigenaar, maar luistert stiekem óók naar een vreemde baas. Die baas, de
+        <strong>operator</strong> (ook wel <em>botherder</em>), stuurt via één kanaal opdrachten naar duizenden bots
+        tegelijk: verstuur spam, voer een DDoS-aanval uit, of steel wachtwoorden. Eén commando, duizenden handen.</p>
+
+        <h3>De onderdelen op een rij</h3>
+        <ul>
+          <li><strong>Bot (zombie):</strong> de besmette computer die opdrachten uitvoert.</li>
+          <li><strong>Loader (dropper):</strong> het eerste kleine stukje malware dat binnenkomt en vervolgens de
+          echte botmodule ophaalt en installeert. Bij Operatie Endgame (2024) draaide het juist om zulke loaders.</li>
+          <li><strong>C2-server (command-and-control):</strong> de centrale server waarmee de bots contact houden om
+          opdrachten op te halen en buit af te leveren.</li>
+          <li><strong>Operator / botherder:</strong> de crimineel (of groep) die het botnet beheert en verhuurt.</li>
+        </ul>
+
+        <h3>Twee begrippen die je in deze zaak tegenkomt</h3>
+        <p><strong>Sinkholing</strong> is de belangrijkste verstoringstechniek. Opsporing neemt de C2-domeinnaam over en
+        wijst die naar een eigen, onschadelijke server (de "sinkhole"). De bots blijven inchecken, maar krijgen geen
+        opdrachten meer — en de sinkhole ziet precies welke IP-adressen besmet zijn. Zo weet je wie je moet waarschuwen.</p>
+        <p>Om sinkholing lastiger te maken gebruiken sommige botnets een <strong>DGA</strong> (domain generation
+        algorithm): de bot verzint elke dag honderden willekeurig ogende domeinnamen en probeert ze één voor één, tot er
+        eentje "leeft". De operator hoeft er maar één vooruit te registreren. In de pcap in taak 2 zie je de bot zulke
+        willekeurige namen aftikken voordat hij een werkend C2-domein vindt.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 440 180" role="img" aria-label="Botnet: bots praten met C2, operator stuurt opdrachten">
+            <rect x="20" y="30" width="70" height="30" rx="4" fill="var(--surface-2)" stroke="currentColor"/>
+            <rect x="20" y="75" width="70" height="30" rx="4" fill="var(--surface-2)" stroke="currentColor"/>
+            <rect x="20" y="120" width="70" height="30" rx="4" fill="var(--surface-2)" stroke="currentColor"/>
+            <text x="55" y="49" text-anchor="middle" fill="currentColor" font-size="13">bot</text>
+            <text x="55" y="94" text-anchor="middle" fill="currentColor" font-size="13">bot</text>
+            <text x="55" y="139" text-anchor="middle" fill="currentColor" font-size="13">bot</text>
+            <rect x="195" y="72" width="80" height="36" rx="4" fill="var(--accent-soft)" stroke="currentColor"/>
+            <text x="235" y="94" text-anchor="middle" fill="currentColor" font-size="13">C2-server</text>
+            <rect x="360" y="72" width="70" height="36" rx="4" fill="var(--surface-2)" stroke="currentColor"/>
+            <text x="395" y="94" text-anchor="middle" fill="currentColor" font-size="13">operator</text>
+            <line x1="90" y1="45" x2="195" y2="86" stroke="currentColor"/>
+            <line x1="90" y1="90" x2="195" y2="90" stroke="currentColor"/>
+            <line x1="90" y1="135" x2="195" y2="94" stroke="currentColor"/>
+            <line x1="275" y1="90" x2="360" y2="90" stroke="currentColor"/>
+          </svg>
+          <figcaption>De bots checken in bij de C2-server; de operator stuurt daar zijn opdrachten naartoe. Verbreek je
+          de C2 (sinkholing of inbeslagname), dan valt het hele leger stil.</figcaption>
+        </figure>
+
+        <div class="callout info">
+          <strong>Alles fictief:</strong> alle namen, domeinen (<code>*.jvt.lab</code>) en adressen
+          (<code>10.x</code>, <code>203.0.113.x</code>, <code>198.51.100.x</code>, <code>192.0.2.x</code> — officiële
+          documentatiebereiken) in deze room zijn verzonnen. Je oefent in een afgeschermd lab, niet op echte
+          infrastructuur.
+        </div>
+      `,
+      questions: [
+        { q: 'Hoe heet één besmette computer die deel uitmaakt van een botnet?', options: ['Een bot (zombie)', 'Een loader', 'Een sinkhole', 'Een operator'], answer: 0, explain: 'Elke gekaapte machine is een bot, ook wel zombie genoemd; samen vormen ze het botnet.' },
+        { q: 'Hoe heet de centrale server waarmee de bots contact houden om opdrachten op te halen?', answer: ['C2', 'c2', 'command-and-control', 'command and control', 'C2-server'], hint: 'Command-and-...', explain: 'De command-and-control-server (C2) is het hart van het botnet; verstoor je die, dan valt het leger stil.' },
+        { q: 'Wat doet een botnet-operator met sinkholing lastiger maken door elke dag honderden willekeurige domeinnamen te verzinnen?', answer: ['DGA', 'dga', 'domain generation algorithm'], hint: 'Drie letters; een algoritme dat domeinnamen genereert.', explain: 'Een DGA (domain generation algorithm) genereert telkens nieuwe domeinen, zodat je niet met één blokkade klaar bent.' },
+        { q: 'Wat is sinkholing?', options: ['Het C2-domein overnemen en naar een onschadelijke server wijzen', 'Alle bots tegelijk versleutelen', 'De loader opnieuw verspreiden', 'Een bot handmatig opnieuw installeren'], answer: 0, explain: 'Bij sinkholing blijven de bots inchecken bij een gecontroleerde server die geen opdrachten geeft en wél de besmette IP-adressen registreert.' },
+      ],
+    },
+
+    {
+      title: 'Taak 2 — pcap: het baken van een bot',
+      content: `
+        <p>Eerste bewijs. Je krijgt een pcap van werkstation <code>WS-MARKETING-09</code> (<code>10.0.9.33</code>), dat
+        zich vreemd gedraagt. Vind het bewijs dat deze machine een bot van SchimNet is: zoek het moment dat de
+        <strong>botmodule</strong> wordt opgehaald en het <strong>C2-baken</strong> dat daarna op een vast ritme
+        "naar huis belt".</p>
+
+        <h3>Wat je verwacht te zien</h3>
+        <ol>
+          <li><strong>DGA-missers:</strong> bovenaan probeert de bot een paar willekeurig ogende domeinen
+          (<code>q7x2k9fz1a.jvt.lab</code>, ...). Die bestaan niet: het antwoord is <code>NXDOMAIN</code>. Dat is het
+          DGA-gedrag uit taak 1.</li>
+          <li><strong>Botmodule ophalen:</strong> daarna haalt de loader de echte bot op met een
+          <code>GET /modules/core.bin</code> bij de drop-server <code>cdn-schim.jvt.lab</code>
+          (<code>198.51.100.77</code>). Open de "Follow stream" om die download te lezen.</li>
+          <li><strong>C2-beaconing:</strong> vervolgens doet de bot elke ~45 seconden een kleine, bijna even grote
+          <code>POST /gate.php</code> naar hetzelfde externe IP. Dat strakke ritme is het baken. In de server-respons
+          van de eerste check-in staat een vlag verstopt.</li>
+          <li><strong>Buit over het C2-kanaal:</strong> één POST springt eruit qua grootte (ruim 5 KB). Daar stuurt de
+          bot buit terug via hetzelfde kanaal.</li>
+        </ol>
+
+        <div class="callout tip">
+          <strong>Tip:</strong> filter op <code>http</code> of op <code>ip.addr==203.0.113.50</code> om alleen het
+          C2-verkeer over te houden. Let op de <em>tijd</em> (vast interval) en de <em>len</em> (vaste grootte): mensen
+          surfen grillig, een bot tikt als een klok. Codering is trouwens geen encryptie — alles hier staat gewoon in
+          platte HTTP.
+        </div>
+      `,
+      lab: { type: 'pcap', title: 'spookzwerm-ws09.pcap', packets: PCAP_BOTNET },
+      questions: [
+        { q: 'Naar welk extern IP-adres bakent de bot elke ~45 seconden (de C2-server)?', answer: ['203.0.113.50'], hint: 'Welk extern IP keert met dezelfde pakketlengte (268) op een vast interval terug?', explain: 'Alle check-ins van 10.0.9.33 gaan via POST /gate.php naar 203.0.113.50 (schim-sync.jvt.lab).' },
+        { q: 'Welke vlag staat in de server-respons van de C2-check-in (Follow stream)?', answer: ['JVT{c2_fluistert}'], encoded: true, hint: 'Open Follow stream op de eerste POST /gate.php en lees de note= in het 200 OK-antwoord.', explain: 'De C2 antwoordt met sleep=45; note=JVT{c2_fluistert}.' },
+        { q: 'Welk antwoord krijgen de eerste twee willekeurig ogende domeinen (het DGA-gedrag)?', answer: ['NXDOMAIN', 'nxdomain'], hint: 'Het DNS-antwoord dat zegt dat een domein niet bestaat.', explain: 'q7x2k9fz1a.jvt.lab en m4p8r2wd9c.jvt.lab leveren NXDOMAIN op; de bot tikt DGA-domeinen af tot er een leeft.' },
+        { q: 'Waaraan herken je C2-beaconing in de pakketlijst, ook zonder de inhoud te lezen?', options: ['Aan het vaste interval en de vaste, kleine pakketgrootte naar hetzelfde IP', 'Aan heel veel verschillende bestemmingen', 'Aan één enkele grote download', 'Aan een lege pakketlijst'], answer: 0, explain: 'Een regelmatig interval met constante grootte naar één extern IP is de klassieke signatuur van beaconing.' },
+      ],
+    },
+
+    {
+      title: 'Taak 3 — Het gedrag mappen op MITRE ATT&CK',
+      content: `
+        <p>Je hebt nu waarnemingen van één bot. Om het gedrag van SchimNet te kunnen vergelijken en delen, vertaal je
+        elke waarneming naar de gemeenschappelijke taal: een <strong>MITRE ATT&amp;CK</strong>-techniek met een vast ID
+        (zoals <code>T1071</code>). Zo kun je straks precies zeggen welke stappen het botnet zet en waar je detectie moet
+        afdekken.</p>
+
+        <h3>Korte opfrisser</h3>
+        <ul>
+          <li>Een <strong>tactiek</strong> is het doel (waarom), bijvoorbeeld <em>Command and Control</em>.</li>
+          <li>Een <strong>techniek</strong> is de manier (hoe), bijvoorbeeld <em>Application Layer Protocol</em>
+          (<code>T1071</code>) — contact houden via gewoon web-verkeer.</li>
+          <li>Een techniek met een punt erachter is een <strong>sub-techniek</strong>, bijvoorbeeld
+          <code>T1059.001</code> (PowerShell) onder <code>T1059</code>.</li>
+        </ul>
+
+        <h3>Opdracht</h3>
+        <p>In het lab staan zes waarnemingen uit de SchimNet-casus. Kies bij elke waarneming de juiste techniek uit de
+        ingebouwde bank. Denk aan de keten van een botnet: eerst binnenkomen, dan de bot ophalen, dan contact houden,
+        blijven staan, opdrachten uitvoeren en buit terugsturen.</p>
+
+        <div class="callout tip">
+          <strong>Tip:</strong> let op het sleutelwoord in elke waarneming. "Haalt op bij een drop-server" wijst op het
+          binnenhalen van gereedschap; "checkt elke 45 seconden in via HTTP-POSTs" wijst op het C2-kanaal; "schrijft
+          zichzelf in de Run-sleutel" is een klassieke autostart-truc.
+        </div>
+
+        <p>Map je alle zes waarnemingen correct, dan verdien je de vlag <code>JVT{zwerm_in_kaart}</code> — je hebt het
+        gedrag van de zwerm volledig in kaart.</p>
+      `,
+      lab: {
+        type: 'attackmap',
+        items: [
+          { desc: 'Het slachtoffer opent de bijlage factuur-herinnering.zip uit een spammail; daarin zit een snelkoppeling die de loader start.', code: 'T1566.001', explain: 'Spearphishing Attachment (Initial Access): een kwaadaardige bijlage is nog steeds de nummer-1-manier waarop botnet-loaders binnenkomen.' },
+          { desc: 'De loader haalt de eigenlijke botmodule core.bin op bij cdn-schim.jvt.lab en zet hem op schijf.', code: 'T1105', explain: 'Ingress Tool Transfer (Command and Control): extra gereedschap of modules binnenhalen vanaf een externe server — precies wat je in de pcap zag.' },
+          { desc: 'De bot checkt elke 45 seconden in bij schim-sync.jvt.lab via gewone HTTP-POSTs om opdrachten op te halen.', code: 'T1071', explain: 'Application Layer Protocol (Command and Control): C2-verkeer verstoppen in normaal ogend web-verkeer (HTTP) — het baken uit taak 2.' },
+          { desc: 'De bot schrijft zichzelf in de Windows Run-sleutel zodat hij na elke herstart automatisch opnieuw start.', code: 'T1547', explain: 'Boot or Logon Autostart Execution (Persistence): via een Run-sleutel blijft de bot ook na een herstart actief.' },
+          { desc: 'De operator stuurt via het botnet een verborgen, Base64-gecodeerde opdracht: powershell.exe -w hidden -enc <base64>.', code: 'T1059.001', explain: 'PowerShell (Execution): met -enc wordt de opdracht in Base64 verhuld en verborgen uitgevoerd.' },
+          { desc: 'Buitgemaakte inloggegevens worden via dezelfde gate.php-POSTs teruggestuurd naar de C2-server (de grote upload in de pcap).', code: 'T1041', explain: 'Exfiltration Over C2 Channel (Exfiltration): data weglekken via precies hetzelfde kanaal waarover de bot al praat, zodat het niet opvalt.' },
+        ],
+      },
+      questions: [
+        { q: 'Welk techniek-ID past bij "de bot checkt elke 45 seconden in via HTTP-POSTs naar de C2"?', answer: ['T1071'], hint: 'Application Layer Protocol, tactiek Command and Control.', explain: 'T1071 (Application Layer Protocol): C2-verkeer verstopt in normaal web-verkeer.' },
+        { q: 'Welk techniek-ID hoort bij het ophalen van de botmodule core.bin bij de drop-server?', answer: ['T1105'], hint: 'Ingress Tool ...', explain: 'T1105 (Ingress Tool Transfer): extra gereedschap binnenhalen vanaf een externe server.' },
+        { q: 'De bot zet zichzelf in de Windows Run-sleutel. Welke techniek is dat?', options: ['T1547 Boot or Logon Autostart Execution', 'T1486 Data Encrypted for Impact', 'T1110 Brute Force', 'T1190 Exploit Public-Facing Application'], answer: 0, explain: 'T1547 (Boot or Logon Autostart Execution, tactiek Persistence): via autostart blijft de bot na een herstart draaien.' },
+        { q: 'Welke vlag verdien je door alle zes waarnemingen juist te mappen?', answer: ['JVT{zwerm_in_kaart}'], hint: 'Staat als beloning in de tekst van deze taak.', explain: 'Alle zes correct gekoppeld levert JVT{zwerm_in_kaart} op.' },
+      ],
+    },
+
+    {
+      title: 'Taak 4 — Pivot: de C2-infrastructuur koppelen',
+      content: `
+        <p>Eén bot en één C2-server zijn niet genoeg voor een takedown. Je wilt weten hoe <em>groot</em> SchimNet is en of
+        een tweede, net ontdekte C2-cluster bij dezelfde operator hoort. Daarvoor <strong>pivoteer</strong> je: je begint
+        bij een bekend kenmerk en springt via relaties (met tijd en herkomst) naar nieuwe kenmerken.</p>
+
+        <h3>De twee clusters</h3>
+        <ul>
+          <li><strong>Cluster Alpha:</strong> de C2 die je al kent, <code>schim-sync.jvt.lab</code> op
+          <code>203.0.113.50</code>.</li>
+          <li><strong>Cluster Bravo:</strong> een pas opgedoken C2, <code>update-knoop.jvt.lab</code> op een <em>ander</em>
+          IP (<code>198.51.100.90</code>). Is dit toeval, of dezelfde baas?</li>
+        </ul>
+
+        <h3>Toets de zeldzaamheid</h3>
+        <p>De IP-adressen verschillen, dus daarop vind je geen brug. Maar beide domeinen presenteren volgens
+        <strong>certificate transparency</strong> (crt.sh) <em>hetzelfde</em> TLS-certificaat <code>A1B2C3D4</code>. Een
+        hergebruikt certificaat is <strong>zeldzaam</strong> en dus sterk bewijs. Pas op voor een valse brug: beide IP's
+        horen bij dezelfde hostingprovider (<code>AS64500</code>), maar dat delen duizenden onschuldige sites ook — niet
+        zeldzaam, dus geen bewijs.</p>
+
+        <div class="callout tip">
+          <strong>Tip:</strong> klik in het lab vanaf Cluster Alpha door tot je bij het certificaat komt, en kijk welk
+          ander domein datzelfde certificaat presenteert. Vul dat gedeelde kenmerk in als antwoord op de brugvraag.
+        </div>
+
+        <p>Pas je de zeldzaamheidstoets juist toe — kies het certificaat, niet de hoster — dan verdien je de vlag
+        <code>JVT{cert_bruggt_de_zwerm}</code>.</p>
+      `,
+      lab: {
+        type: 'pivot',
+        title: 'SchimNet — Cluster Alpha vs. Cluster Bravo',
+        scenario: 'Cluster Alpha is de bekende C2 van SchimNet. Cluster Bravo is net opgedoken. Horen ze bij dezelfde operator? Pivoteer langs de relaties en toets de zeldzaamheid van elk gedeeld kenmerk.',
+        entities: [
+          { id: 'dA', type: 'domain', label: 'schim-sync.jvt.lab' },
+          { id: 'ipA', type: 'ip', label: '203.0.113.50' },
+          { id: 'dB', type: 'domain', label: 'update-knoop.jvt.lab' },
+          { id: 'ipB', type: 'ip', label: '198.51.100.90' },
+          { id: 'cert', type: 'cert', label: 'A1B2C3D4' },
+          { id: 'wal', type: 'wallet', label: 'bc1qfictiefschim' },
+          { id: 'mail', type: 'email', label: 'beheer@schim-sync.jvt.lab' },
+          { id: 'asn', type: 'asn', label: 'AS64500 FictiefHost' },
+        ],
+        edges: [
+          { from: 'dA', to: 'ipA', rel: 'resolvet naar', time: '2026-01', source: 'passive DNS' },
+          { from: 'dA', to: 'cert', rel: 'presenteert cert', time: '2026-01', source: 'crt.sh' },
+          { from: 'dA', to: 'mail', rel: 'WHOIS-contact', time: '2026-01', source: 'WHOIS' },
+          { from: 'dA', to: 'wal', rel: 'verhuur-betaaladres', time: '2026-01', source: 'rapport' },
+          { from: 'dB', to: 'ipB', rel: 'resolvet naar', time: '2026-02', source: 'passive DNS' },
+          { from: 'dB', to: 'cert', rel: 'presenteert cert', time: '2026-02', source: 'crt.sh' },
+          { from: 'ipA', to: 'asn', rel: 'hoort bij (hosting)', time: '2026-01', source: 'RIPEstat' },
+          { from: 'ipB', to: 'asn', rel: 'hoort bij (hosting)', time: '2026-02', source: 'RIPEstat' },
+        ],
+        goal: 'Welk kenmerk verbindt Cluster Alpha en Cluster Bravo van het botnet? (typ het label of het type)',
+        bridge: ['A1B2C3D4', 'cert', 'certificaat'],
+      },
+      questions: [
+        { q: 'Welk zeldzaam kenmerk bruggt Cluster Alpha en Cluster Bravo?', answer: ['certificaat', 'cert', 'A1B2C3D4', 'het certificaat', 'tls-certificaat'], hint: 'Hetzelfde kenmerk staat in crt.sh bij beide domeinen; de IP-adressen verschillen juist.', explain: 'Beide C2-domeinen presenteren hetzelfde TLS-certificaat A1B2C3D4. Hergebruik van een certificaat is zeldzaam, dus een sterke brug tussen de clusters.' },
+        { q: 'Beide C2-IP\'s horen bij dezelfde hostingprovider (AS64500). Waarom is dat geen sterke brug?', options: ['Omdat heel veel onschuldige sites dezelfde hoster delen — het kenmerk is niet zeldzaam', 'Omdat ASN-nummers altijd nep zijn', 'Omdat hosting niets met IP-adressen te maken heeft', 'Dat is juist wél de sterkste brug'], answer: 0, explain: 'Een gedeelde hoster is te algemeen om iets te bewijzen; de zeldzaamheidstoets bepaalt of een gedeeld kenmerk echt bewijs is.' },
+        { q: 'Welke vlag verdien je door de zeldzaamheidstoets juist toe te passen?', answer: ['JVT{cert_bruggt_de_zwerm}'], hint: 'Staat als beloning in de tekst van deze taak.', explain: 'Kies het zeldzame dwarsverband (het certificaat), niet het toevallige (de hoster): JVT{cert_bruggt_de_zwerm}.' },
+      ],
+    },
+
+    {
+      title: 'Taak 5 — De takedown: de stappen op een rij',
+      content: `
+        <p>Je weet nu hoe SchimNet werkt en hoe groot het is. Tijd voor de climax: een gecoördineerde
+        <strong>takedown</strong>, in de geest van <strong>Operatie Endgame</strong> (2024, hoog-over): een
+        internationale actie waarbij opsporingsdiensten de keten rond botnet-loaders en droppers in één klap
+        verstoorden. Zo'n operatie volgt een vaste volgorde, want één verkeerde stap en de operator wist alles of vlucht.</p>
+
+        <h3>De vijf kernstappen (plus nazorg)</h3>
+        <ol>
+          <li><strong>Identificeren.</strong> Analyseer samples en verkeer; stel de C2-domeinen, de IP's en het
+          DGA-algoritme vast. (Dat deed je in taak 2 tot en met 4.)</li>
+          <li><strong>In kaart brengen.</strong> Meet de volledige infrastructuur en de omvang van de zwerm: hoeveel bots,
+          welke C2-clusters, wie is de operator? Soms infiltreert men het beheerpaneel of doet men een
+          sinkhole-test om bots te tellen.</li>
+          <li><strong>Juridische basis.</strong> Niets gebeurt zonder recht: de officier van justitie en de
+          rechter-commissaris machtigen de actie, en internationaal wordt afgestemd via <strong>Europol</strong> en
+          <strong>Eurojust</strong> (rechtshulp, want servers staan vaak in het buitenland).</li>
+          <li><strong>Sinkholen &amp; seizen.</strong> Op één gecoördineerd moment neem je de C2-domeinen over
+          (sinkholing) en neem je de servers in beslag (seize). Alles tegelijk, zodat de operator niet kan uitwijken.</li>
+          <li><strong>Slachtoffers notificeren.</strong> De sinkhole ziet welke IP-adressen nog inchecken. Die lijst gaat
+          via het <strong>NCSC</strong> en nationale CERT's naar de getroffen organisaties, zodat zij kunnen opschonen.</li>
+          <li><strong>Nazorg.</strong> Slachtoffers verwijderen de bot, indicatoren worden gedeeld, en je blijft
+          monitoren op een heropleving (de operator probeert soms een nieuw botnet op te bouwen).</li>
+        </ol>
+
+        <div class="callout warn">
+          <strong>Waarom de volgorde telt:</strong> zet je de sinkhole te vroeg (vóór je alles in kaart hebt), dan weet de
+          operator dat je er bent en verdwijnt het bewijs. Doe je de seize zonder juridische basis, dan is het bewijs
+          onbruikbaar in de rechtszaal. En zonder de notificatie-stap blijven duizenden slachtoffers besmet.
+        </div>
+
+        <p>Zet in het lab de stappen in de juiste volgorde. Klopt het, dan verschijnt de vlag
+        <code>JVT{keten_doorgeknipt}</code>.</p>
+      `,
+      lab: {
+        type: 'ordering',
+        title: 'Operatie Spookzwerm — de takedown',
+        prompt: 'Zet de stappen van de botnet-takedown in de juiste volgorde (gebruik de uitleg uit de taaktekst).',
+        flag: 'JVT{keten_doorgeknipt}',
+        explain: 'De vaste keten loopt: identificeren -> in kaart brengen -> juridische basis -> sinkholen & seizen -> slachtoffers notificeren -> nazorg. Te vroeg sinkholen verraadt je; seizen zonder recht maakt het bewijs onbruikbaar; zonder notificatie blijven slachtoffers besmet.',
+        items: [
+          { id: 'a', label: 'Identificeren — samples en C2-verkeer analyseren; de C2-domeinen, IP\'s en het DGA vaststellen' },
+          { id: 'b', label: 'In kaart brengen — de hele infrastructuur en de omvang van de zwerm meten (sinkhole-test, infiltratie van het beheerpaneel)' },
+          { id: 'c', label: 'Juridische basis — officier van justitie en rechter-commissaris machtigen; internationaal afstemmen via Europol/Eurojust' },
+          { id: 'd', label: 'Sinkholen & seizen — op één gecoördineerd moment de C2-domeinen overnemen en de servers in beslag nemen' },
+          { id: 'e', label: 'Slachtoffers notificeren — besmette IP-adressen uit de sinkhole via NCSC en CERT\'s naar de getroffenen sturen' },
+          { id: 'f', label: 'Nazorg — slachtoffers laten opschonen, indicatoren publiceren en monitoren op een heropleving' },
+        ],
+        correct: ['a', 'b', 'c', 'd', 'e', 'f'],
+      },
+      questions: [
+        { q: 'Welke stap komt direct vóór het notificeren van de slachtoffers?', options: ['Sinkholen & seizen', 'Identificeren', 'Nazorg', 'In kaart brengen'], answer: 0, explain: 'Pas na het sinkholen ziet de sinkhole welke IP-adressen besmet zijn; die lijst gebruik je daarna om te notificeren.' },
+        { q: 'Waarom moet de juridische basis geregeld zijn vóór de seize?', options: ['Anders is het in beslag genomen bewijs onbruikbaar in de rechtszaal', 'Omdat sinkholing anders niet werkt', 'Omdat de bots anders geen opdrachten meer krijgen', 'Dat hoeft helemaal niet'], answer: 0, explain: 'Zonder machtiging (officier van justitie, rechter-commissaris, internationale rechtshulp) houdt het bewijs geen stand.' },
+        { q: 'Welke vlag verschijnt als de volgorde klopt?', answer: ['JVT{keten_doorgeknipt}'], hint: 'Verschijnt in het ordering-lab bij de juiste volgorde.', explain: 'De juiste keten levert JVT{keten_doorgeknipt} op.' },
+      ],
+    },
+
+    {
+      title: 'Taak 6 — Connections: breng de begrippen samen',
+      content: `
+        <p>Je hebt in deze casus veel begrippen gezien: onderdelen van een botnet, manieren waarop bots met hun C2 praten,
+        acties tijdens een takedown en de partners die meehelpen. Tijd om ze te ordenen. In het lab staan zestien
+        begrippen; verdeel ze in <strong>vier groepen van vier</strong>. Elk begrip hoort bij precies één groep.</p>
+
+        <h3>De vier categorieën</h3>
+        <ul>
+          <li><strong>Onderdelen van een botnet</strong> — de bouwstenen van de zwerm zelf.</li>
+          <li><strong>C2-kanalen &amp; -technieken</strong> — manieren waarop bots hun C2 vinden of mee praten.</li>
+          <li><strong>Acties bij een takedown</strong> — wat opsporing doet om het botnet te verstoren.</li>
+          <li><strong>Partners bij een takedown</strong> — wie meewerkt aan de operatie.</li>
+        </ul>
+
+        <div class="callout tip">
+          <strong>Tip:</strong> twijfel je tussen twee groepen? Vraag je af <em>wie</em> het begrip gebruikt. Een
+          <em>bot</em> gebruikt een C2-kanaal (DGA, beaconing); <em>opsporing</em> voert een takedown-actie uit
+          (sinkholing, inbeslagname). Zo valt elk begrip op zijn plek.
+        </div>
+
+        <p>Alle zestien juist gegroepeerd levert de vlag <code>JVT{zestien_op_een_rij}</code> op.</p>
+      `,
+      lab: {
+        type: 'connections',
+        title: 'Botnet & takedown — zestien begrippen',
+        prompt: 'Sleep de zestien begrippen in vier groepen van vier. Elk begrip hoort bij precies één categorie.',
+        flag: 'JVT{zestien_op_een_rij}',
+        groups: [
+          { name: 'Onderdelen van een botnet', items: ['Bot (zombie)', 'Loader', 'C2-server', 'Botherder (operator)'] },
+          { name: 'C2-kanalen & -technieken', items: ['HTTP-beaconing', 'DGA', 'Fast-flux DNS', 'IRC-kanaal'] },
+          { name: 'Acties bij een takedown', items: ['Sinkholing', 'Inbeslagname (seize)', 'Domein-overname', 'Slachtoffernotificatie'] },
+          { name: 'Partners bij een takedown', items: ['Europol', 'NCSC', 'Hostingprovider', 'Rechter-commissaris'] },
+        ],
+      },
+      questions: [
+        { q: 'In welke categorie hoort "Sinkholing"?', options: ['Acties bij een takedown', 'Onderdelen van een botnet', 'C2-kanalen & -technieken', 'Partners bij een takedown'], answer: 0, explain: 'Sinkholing is iets wat opsporing dóét om het botnet te verstoren — een takedown-actie, geen kanaal van de bot.' },
+        { q: 'Welk begrip is een C2-kanaal/-techniek en geen onderdeel of takedown-actie?', options: ['Fast-flux DNS', 'Loader', 'Inbeslagname', 'Europol'], answer: 0, explain: 'Fast-flux DNS wisselt razendsnel van IP om de C2 moeilijk te blokkeren — een C2-techniek. Een loader is een botnet-onderdeel, inbeslagname een actie en Europol een partner.' },
+        { q: 'Welke vlag verschijnt als alle vier de groepen kloppen?', answer: ['JVT{zestien_op_een_rij}'], hint: 'Verschijnt in het connections-lab bij vier goede groepen.', explain: 'Vier correcte groepen van vier leveren JVT{zestien_op_een_rij} op.' },
+      ],
+    },
+
+    {
+      title: 'Taak 7 — Opsporing, partners en de nazorg',
+      content: `
+        <p>Een botnet-takedown is nooit het werk van één partij. Juist omdat bots, C2-servers, operators en slachtoffers
+        over de hele wereld verspreid zitten, draait alles om <strong>samenwerking</strong>. We sluiten de casus af met de
+        vraag: wie doet wat, en wat gebeurt er ná de klap?</p>
+
+        <h3>Wie werkt mee?</h3>
+        <ul>
+          <li><strong>Europol</strong> (met het EC3, het European Cybercrime Centre) en <strong>Eurojust</strong>
+          coördineren internationale acties: ze brengen politiediensten uit meerdere landen samen en regelen de
+          rechtshulp die nodig is om servers in het buitenland in beslag te nemen.</li>
+          <li>De <strong>Politie</strong> (in Nederland het Team High Tech Crime) en het <strong>Openbaar Ministerie</strong>
+          doen het opsporingswerk en leveren de juridische basis (officier van justitie, rechter-commissaris).</li>
+          <li><strong>Hostingproviders en domeinregistrars</strong> zijn onmisbaar: zij voeren de sinkhole en de
+          inbeslagname technisch uit op hun eigen infrastructuur.</li>
+          <li>Het <strong>NCSC</strong> (Nationaal Cyber Security Centrum) en sectorale CERT's verspreiden de lijst met
+          besmette IP-adressen en waarschuwen de getroffen organisaties. Ook private securitybedrijven leveren vaak
+          analyses en sinkhole-capaciteit.</li>
+        </ul>
+
+        <h3>Sinkholing en notificatie: het stille werk</h3>
+        <p>Het spectaculaire moment is de seize, maar de echte winst zit in de <strong>sinkhole</strong> daarna. Zolang die
+        draait, checken besmette machines in bij een onschadelijke server in plaats van bij de operator. Elk inkomend
+        IP-adres is een <strong>slachtoffer dat gewaarschuwd kan worden</strong>. Via het NCSC en de CERT's krijgen
+        bedrijven en burgers bericht: "jouw apparaat is besmet, schoon het op". Soms gebeurt dat via de
+        internetprovider. Zonder deze notificatie zou het botnet technisch dood zijn, maar zouden de bots besmet blijven.</p>
+
+        <h3>En daarna?</h3>
+        <p>Een takedown is zelden het definitieve einde. Operators proberen soms een nieuw botnet op te bouwen, dus
+        monitoren blijft nodig. En naast <em>verstoren</em> bestaan er andere interventies: strafrechtelijk vervolgen,
+        preventie, of een alternatief traject voor jonge first-offenders. Het sterkst is vaak de combinatie: de
+        infrastructuur verstoren én de mensen erachter aanpakken én de slachtoffers helpen.</p>
+
+        <div class="callout info">
+          <strong>Melden loont:</strong> gratis decryptie- en opschoontools worden gebundeld in publiek-private
+          initiatieven, en wie zelf slachtoffer is, kan terecht bij de Politie en het NCSC. Hoe meer organisaties hun
+          waarnemingen delen, hoe sneller het volgende botnet in kaart is.
+        </div>
+
+        <p>Goed gedaan: je hebt de casus SchimNet van één besmette pc tot een gecoördineerde takedown doorlopen — met
+        pcap-analyse, ATT&amp;CK-mapping, een infrastructuur-pivot en de vaste stappen van een operatie.</p>
+      `,
+      questions: [
+        { q: 'Welke Europese organisatie coördineert internationale cybercrime-takedowns en brengt politiediensten samen?', answer: ['Europol', 'europol'], hint: 'Met het EC3, het European Cybercrime Centre.', explain: 'Europol (met Eurojust voor de rechtshulp) coördineert operaties zoals Endgame tussen meerdere landen.' },
+        { q: 'Waarom is de sinkhole ná de seize zo belangrijk voor de slachtoffers?', options: ['Elk IP-adres dat incheckt is een besmette machine die gewaarschuwd kan worden', 'Omdat de operator dan zijn geld terugkrijgt', 'Omdat de bots er sneller van worden', 'Dat is helemaal niet belangrijk'], answer: 0, explain: 'De sinkhole vangt de check-ins op; die IP-lijst gaat via NCSC en CERT\'s naar de getroffenen zodat zij kunnen opschonen.' },
+        { q: 'Welke Nederlandse organisatie verspreidt de lijst met besmette IP-adressen en waarschuwt getroffen organisaties?', answer: ['NCSC', 'ncsc', 'nationaal cyber security centrum'], hint: 'Het Nationaal Cyber Security Centrum.', explain: 'Het NCSC en sectorale CERT\'s zorgen voor de slachtoffernotificatie na een takedown.' },
+        { q: 'Ik begrijp dat een takedown samenwerking vraagt (opsporing, Europol, hostingproviders, NCSC) en dat de notificatie van slachtoffers onmisbaar is.', noAnswer: true },
+      ],
+    },
+  ],
+  terms: [
+    { term: 'Botnet', def: 'Een netwerk van gekaapte computers (bots) die centraal worden aangestuurd door één operator.' },
+    { term: 'Bot (zombie)', def: 'Eén besmette computer die stiekem opdrachten van de operator uitvoert.' },
+    { term: 'Loader (dropper)', def: 'Het eerste kleine stukje malware dat binnenkomt en vervolgens de echte botmodule ophaalt en installeert.' },
+    { term: 'C2 (command-and-control)', def: 'De centrale server waarmee bots contact houden om opdrachten op te halen en buit af te leveren.' },
+    { term: 'Operator (botherder)', def: 'De crimineel of groep die het botnet beheert, aanstuurt en vaak verhuurt.' },
+    { term: 'Beaconing', def: 'Het regelmatig "inchecken" van een bot bij zijn C2; herkenbaar aan een vast interval en vaste pakketgrootte.' },
+    { term: 'DGA (domain generation algorithm)', def: 'Algoritme dat elke dag veel willekeurige domeinnamen genereert, zodat de C2 niet met één blokkade te stoppen is.' },
+    { term: 'Fast-flux DNS', def: 'Techniek waarbij een domein razendsnel van IP-adres wisselt om de C2-infrastructuur moeilijk te blokkeren.' },
+    { term: 'Sinkholing', def: 'Het C2-domein overnemen en naar een onschadelijke, gecontroleerde server wijzen; de bots checken in maar krijgen geen opdrachten.' },
+    { term: 'Takedown', def: 'Een gecoördineerde actie om een botnet te verstoren: identificeren, in kaart brengen, juridische basis, sinkholen/seizen en slachtoffers notificeren.' },
+    { term: 'Seize (inbeslagname)', def: 'Het juridisch in beslag nemen van de C2-servers en infrastructuur, meestal gelijktijdig met de sinkhole.' },
+    { term: 'Slachtoffernotificatie', def: 'De getroffen organisaties waarschuwen met de besmette IP-adressen uit de sinkhole, via NCSC en CERT\'s.' },
+  ],
+  resources: [
+    { title: 'Europol — operaties tegen malware en botnets', url: 'https://www.europol.europa.eu/' },
+    { title: 'MITRE ATT&CK — technieken en tactieken', url: 'https://attack.mitre.org/' },
+    { title: 'abuse.ch — trackers voor botnet-C2 (o.a. Feodo Tracker)', url: 'https://abuse.ch/' },
+    { title: 'NCSC — Nationaal Cyber Security Centrum', url: 'https://www.ncsc.nl/' },
+  ],
+});
+
+</script>
+<script>
+/* Room: Casus — het cryptomixer-onderzoek (taint, CoinJoin, attributie) */
+
+// =======================================================================
+//  Alles in deze room is FICTIEF: documentatie-IP's (RFC 5737), .jvt.lab-
+//  domeinen en verzonnen wallets/bedrijven. Je oefent de denkwijze.
+// =======================================================================
+
+// --- Chaintrace: de vereenvoudigde UTXO-keten (de kern van de casus) ---
+// Vuile bron (losgeld) 6 BTC + schone mixer-liquiditeit 6 BTC -> 50% taint.
+const KETEN_LABELS = {
+  RW: 'Losgeld-wallet (vuil)',
+  CL: 'Schone mixer-liquiditeit',
+  HOP_A: 'Hop-wallet A',
+  HOP_B: 'Hop-wallet B',
+  MIX_IN: 'Mixer-deposit',
+  OUT1: 'Mixer-uitbetaling 1',
+  OUT2: 'Mixer-uitbetaling 2',
+  EX: 'Exchange-account (cash-out)',
+};
+const KETEN_ORIGINS = [
+  { addr: 'RW', amount: 6 },               // losgeld: 100% vuil
+  { addr: 'CL', amount: 6, dirty: false }, // schone liquiditeit van de mixer: 0% vuil
+];
+const KETEN_TXS = [
+  { inputs: ['RW'], outputs: [{ addr: 'HOP_A', amount: 4 }, { addr: 'HOP_B', amount: 2 }], time: '10:00' },
+  { inputs: ['HOP_A', 'HOP_B'], outputs: [{ addr: 'MIX_IN', amount: 6 }], time: '11:00' },
+  { inputs: ['MIX_IN', 'CL'], outputs: [{ addr: 'OUT1', amount: 6 }, { addr: 'OUT2', amount: 6 }], time: '12:00' },
+  { inputs: ['OUT1'], outputs: [{ addr: 'EX', amount: 6 }], time: '13:00' },
+];
+
+// --- Flow: dezelfde operatie op hoog niveau, mét kosten ---
+const FLOW_NODES = [
+  { id: 'v', type: 'victim', label: 'Zuidwaard Zorggroep (slachtoffer)' },
+  { id: 'rw', type: 'wallet', label: 'Losgeld-wallet (aanvaller)' },
+  { id: 'h1', type: 'wallet', label: 'Hop-wallet A' },
+  { id: 'h2', type: 'wallet', label: 'Hop-wallet B' },
+  { id: 'mix', type: 'mixer', label: "Mixer 'CoinMenger'" },
+  { id: 'ex', type: 'exchange', label: "Exchange 'EuroMunt' (cash-out)" },
+];
+const FLOW_EDGES = [
+  { from: 'v', to: 'rw', amount: 6.0, time: '09:40', note: 'losgeldbetaling na ransomware (placement)' },
+  { from: 'rw', to: 'h1', amount: 4.0, time: '10:00', note: 'splitsing 1 (layering)' },
+  { from: 'rw', to: 'h2', amount: 2.0, time: '10:02', note: 'splitsing 2 (layering)' },
+  { from: 'h1', to: 'mix', amount: 3.95, time: '10:40', note: 'hop-wallet houdt 0.05 commissie' },
+  { from: 'h2', to: 'mix', amount: 1.95, time: '10:45', note: 'hop-wallet houdt 0.05 commissie' },
+  { from: 'mix', to: 'ex', amount: 5.80, time: '12:30', note: 'mixer houdt 0.10; uitbetaling op exchange-account (cash-out)' },
+];
+
+// --- Pivot: twee zaken verbonden door één hergebruikt certificaat (INTEL-REF) ---
+const CMX_ENTITIES = [
+  { id: 'dA', type: 'domain', label: 'betaal-controle.jvt.lab' },
+  { id: 'ipA', type: 'ip', label: '203.0.113.10' },
+  { id: 'dB', type: 'domain', label: 'inlog-verificatie.jvt.lab' },
+  { id: 'ipB', type: 'ip', label: '198.51.100.20' },
+  { id: 'cert', type: 'cert', label: 'A1B2C3D4' },
+  { id: 'wal', type: 'wallet', label: 'bc1qfictief0alpha' },
+  { id: 'mail', type: 'email', label: 'beheer@betaal-controle.jvt.lab' },
+];
+const CMX_EDGES = [
+  { from: 'dA', to: 'ipA', rel: 'resolvet naar', time: '2026-01', source: 'passive DNS' },
+  { from: 'dA', to: 'cert', rel: 'presenteert cert', time: '2026-01', source: 'crt.sh' },
+  { from: 'dA', to: 'mail', rel: 'WHOIS-contact', time: '2026-01', source: 'WHOIS' },
+  { from: 'dA', to: 'wal', rel: 'losgeld-adres', time: '2026-01', source: 'rapport' },
+  { from: 'dB', to: 'ipB', rel: 'resolvet naar', time: '2026-02', source: 'passive DNS' },
+  { from: 'dB', to: 'cert', rel: 'presenteert cert', time: '2026-02', source: 'crt.sh' },
+];
+
+CS.registerRoom({
+  id: 'cryptomixer-onderzoek',
+  path: 'puzzels',
+  order: 8,
+  title: 'Casus: het cryptomixer-onderzoek',
+  icon: '⛓️',
+  difficulty: 'Moeilijk',
+  minutes: 75,
+  summary: 'Eén samenhangende, fictieve casus: zorggroep Zuidwaard betaalt losgeld, de aanvaller wast het via een CoinJoin-mixer en betaalt uit bij een exchange. Jij traceert de taint met de haircut-methode, ziet waarom een mixer het vuil verdunt maar niet wist, koppelt de zaak via certificate transparency aan een tweede zaak, weegt de attributie met ACH en levert een BLUF-product.',
+  objectives: [
+    'Taint en de haircut-methode uitleggen en narekenen op een transactieketen',
+    'Uitleggen hoe een mixer/CoinJoin de taint verdunt maar niet wist, en hoe de common-input-heuristiek bij een mixer juist een vals cluster oplevert',
+    'De vuile fractie tot aan een exchange volgen en de cash-out als knelpunt aanwijzen',
+    'Twee zaken aan elkaar koppelen via een hergebruikt TLS-certificaat (certificate transparency)',
+    'Attributie afwegen met ACH en de unieke hypothese met de minste inconsistenties kiezen',
+    'Een BLUF-intelligenceproduct schrijven met conclusie eerst en een eigenaar per advies',
+  ],
+  terms: [
+    { term: 'Taint', def: 'De mate waarin het geld op een adres oorspronkelijk uit een vuile (criminele) bron komt, uitgedrukt als bedrag en als percentage van het saldo.' },
+    { term: 'Haircut-methode', def: 'Manier om taint te verdelen: bij elke transactie krijgt elke output dezelfde vuile fractie als het gemiddelde van de inputs (vuil / totaal in).' },
+    { term: 'Mixer/tumbler', def: 'Dienst die crypto van veel gebruikers vermengt en door elkaar uitbetaalt om de directe link tussen in- en uitgang te verbergen.' },
+    { term: 'CoinJoin', def: 'Een mixvorm zonder centrale dienst: meerdere partijen tekenen samen één grote transactie, zodat niet duidelijk is welke input bij welke output hoort.' },
+    { term: 'Taint-verdunning', def: 'Het effect dat schone liquiditeit bijmengen het vuile percentage verlaagt (6 vuil + 6 schoon = 50%) zonder het vuile bedrag te laten verdwijnen.' },
+    { term: 'Common-input-heuristiek', def: 'Vuistregel: adressen die samen als input in één transactie zitten, horen waarschijnlijk bij dezelfde eigenaar — behalve bij CoinJoin, waar vreemden bewust samen tekenen.' },
+    { term: 'Clustering', def: 'Het samentrekken van losse adressen tot één entiteit/eigenaar op basis van heuristieken zoals common-input.' },
+    { term: 'Exchange (cash-out-knelpunt)', def: 'De cryptobeurs waar crypto naar euro\'s gaat; door KYC/Wwft hangt daar een echte identiteit aan het spoor, dus daar grijpt de opsporing aan.' },
+    { term: 'Certificate transparency', def: 'Openbare logs van uitgegeven TLS-certificaten (bijv. via crt.sh), waarmee je een hergebruikt certificaat over meerdere domeinen terugvindt.' },
+    { term: 'Zeldzaamheidstoets', def: 'De vraag of een gedeeld kenmerk zeldzaam genoeg is om een echte link te zijn: een hergebruikt certificaat zegt meer dan een gedeelde hostingprovider.' },
+    { term: 'ACH', def: 'Analysis of Competing Hypotheses: je legt hypothesen naast elkaar en weerlegt ze; de hypothese met de minste inconsistenties blijft het sterkst overeind.' },
+    { term: 'BLUF', def: 'Bottom Line Up Front: de conclusie en het advies staan bovenaan, de onderbouwing eronder.' },
+  ],
+  resources: [
+    { title: 'Chainalysis — blockchain-analyse en crypto-onderzoek', url: 'https://www.chainalysis.com/' },
+    { title: 'Elliptic — crypto-forensics en risicobronnen', url: 'https://www.elliptic.co/' },
+    { title: 'Bitcoin-wiki — CoinJoin (mixen zonder centrale dienst)', url: 'https://en.bitcoin.it/wiki/CoinJoin' },
+    { title: 'NCSC — Nationaal Cyber Security Centrum', url: 'https://www.ncsc.nl/' },
+  ],
+  tasks: [
+    {
+      title: 'Taak 1 — De casus en de taint',
+      content: `
+        <p>Welkom bij een echte rechercheklus in zakformaat. Zorggroep <strong>Zuidwaard</strong> (fictief) werd getroffen
+        door ransomware en betaalde onder druk <strong>6,0 BTC</strong> losgeld. Het geld verdween razendsnel door een
+        reeks wallets en een <strong>mixer</strong>, en dook later op bij een <strong>exchange</strong>. Jouw opdracht:
+        volg het geld, bewijs hoeveel ervan "vuil" is als het de beurs bereikt, koppel de zaak aan een tweede dossier en
+        lever een kort, bruikbaar product.</p>
+
+        <div class="callout warn"><strong>Alles fictief:</strong> Zuidwaard, de wallets, de mixer "CoinMenger" en de
+        exchange "EuroMunt" zijn verzonnen. De IP-adressen zijn documentatie-adressen en de domeinen eindigen op
+        <code>.jvt.lab</code>. Je volgt geen echte mensen; je oefent de methode.</div>
+
+        <h3>Wat is "taint"?</h3>
+        <p>Op de blockchain is elke munt gelijk, maar voor een onderzoeker niet. <strong>Taint</strong> (letterlijk:
+        "besmetting") is de mate waarin het geld op een adres oorspronkelijk uit een <em>vuile</em> bron komt — hier: de
+        losgeld-wallet. Taint druk je uit als een <strong>bedrag</strong> (bijvoorbeeld 3 BTC vuil) én als een
+        <strong>percentage</strong> van het saldo (bijvoorbeeld 50%).</p>
+
+        <h3>De haircut-methode</h3>
+        <p>Hoe verdeel je taint als vuil en schoon geld in één transactie samenkomen? De meest gebruikte regel is de
+        <strong>haircut-methode</strong>. Het idee is eerlijk delen: elke output van een transactie krijgt dezelfde vuile
+        fractie als het <em>gemiddelde</em> van alle inputs samen.</p>
+
+        <div class="callout info"><strong>De formule:</strong> vuile fractie van een transactie =
+        <code>(vuil bedrag in de inputs) / (totaal bedrag in de inputs)</code>. Elke output erft die fractie. Komt er
+        6 BTC vuil en 6 BTC schoon binnen (samen 12), dan is de fractie 6/12 = <strong>0,5</strong>, dus elke output is
+        voor 50% vuil.</div>
+
+        <h3>De analogie van de verfpot</h3>
+        <p>Denk aan een liter rode verf (het vuile geld) die je uitgiet in een emmer met een liter witte verf (schone
+        liquiditeit). Je krijgt twee liter <strong>roze</strong> verf. Het rood is niet verdwenen — het zit nog steeds in
+        de emmer, alleen verdund. Giet je de helft van die roze verf in een nieuwe pot, dan neemt die pot precies de helft
+        van het rood mee. Zo werkt taint: <strong>verdunnen is niet wissen</strong>. Precies die eigenschap gaan we
+        narekenen.</p>
+
+        <div class="callout tip"><strong>Startschot:</strong> als bewijs dat je de zaak oppakt, krijg je de eerste
+        aanwijzing cadeau. De rest verdien je onderweg.</div>
+      `,
+      questions: [
+        { q: 'Wat is "taint" van een adres?', options: ['Het aantal transacties van een adres', 'De mate waarin het geld op dat adres oorspronkelijk uit een vuile bron komt', 'De fee die je betaalt', 'Het wachtwoord van de wallet'], answer: 1, explain: 'Taint is de besmetting: welk deel van het saldo uit de criminele bron stamt, als bedrag en als percentage.' },
+        { q: 'Een transactie krijgt 6 BTC vuil en 6 BTC schoon binnen. Welke vuile fractie geeft de haircut-methode aan elke output?', answer: ['0.5', '0,5', '50%', '50', '0.50'], hint: 'Vuil gedeeld door totaal: 6 / (6+6).', explain: '6 / 12 = 0,5. Elke output erft 50% taint.' },
+        { q: 'Waar staat de haircut-regel voor?', options: ['Elke output erft de gemiddelde vuile fractie van de inputs', 'De eerste output is 100% vuil, de rest schoon', 'Taint verdwijnt na één transactie', 'Alleen de grootste output is vuil'], answer: 0, explain: 'Haircut verdeelt de taint evenredig: elke output krijgt dezelfde fractie als het inputgemiddelde.' },
+        { q: 'Volgens de verfpot-analogie: verdwijnt het vuile geld door het te verdunnen met schoon geld?', options: ['Nee, het wordt alleen verdund — het vuile bedrag blijft bestaan', 'Ja, het rood verdwijnt helemaal', 'Ja, maar alleen bij een mixer', 'Dat hangt af van de fee'], answer: 0, explain: 'Verdunnen verlaagt het percentage, maar het vuile bedrag blijft in het mengsel aanwezig.' },
+      ],
+    },
+
+    {
+      title: 'Taak 2 — Mixers, CoinJoin en het valse cluster',
+      content: `
+        <p>De aanvaller stuurde het losgeld niet rechtstreeks naar de beurs. Dat zou te makkelijk te volgen zijn. In
+        plaats daarvan ging het door een <strong>mixer</strong>. Je moet begrijpen wat zo'n mixer doet met taint én met
+        de heuristieken van de analist, want juist daar zit de truc van deze casus.</p>
+
+        <h3>Mixer en CoinJoin</h3>
+        <p>Een <strong>mixer</strong> (of tumbler) gooit de crypto van veel gebruikers op één hoop en betaalt door elkaar
+        weer uit. Een variant zonder centrale dienst is <strong>CoinJoin</strong>: meerdere partijen tekenen
+        <em>samen</em> één grote transactie. Je stopt er vuil geld in samen met de <strong>schone liquiditeit</strong> van
+        andere gebruikers, en je krijgt outputs terug die op papier niet meer één-op-één aan je inleg hangen.</p>
+
+        <h3>Verdunnen is niet wissen</h3>
+        <p>De haircut-methode laat zien waarom een mixer geen wondermiddel is. Meng 6 BTC vuil met 6 BTC schone
+        liquiditeit, dan zakt het vuile <em>percentage</em> naar 50%. Maar het vuile <em>bedrag</em> — 6 BTC, verdeeld over
+        de outputs — is er nog steeds. Een analist die de haircut narekent, ziet dus nog altijd precies hoeveel vuil geld
+        er bij de uiteindelijke exchange aankomt. De mixer koopt verwarring, geen onzichtbaarheid.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 560 150" role="img" aria-label="Vuil en schoon geld mengen in een mixer">
+            <rect x="8" y="20" width="150" height="34" rx="6" stroke="var(--bad)" fill="none" />
+            <text x="83" y="42" fill="currentColor" font-size="13" text-anchor="middle">6 BTC vuil</text>
+            <rect x="8" y="96" width="150" height="34" rx="6" stroke="var(--good)" fill="none" />
+            <text x="83" y="118" fill="currentColor" font-size="13" text-anchor="middle">6 BTC schoon</text>
+            <rect x="220" y="58" width="120" height="34" rx="6" stroke="var(--accent)" fill="none" />
+            <text x="280" y="80" fill="currentColor" font-size="13" text-anchor="middle">mixer (50%)</text>
+            <rect x="402" y="58" width="150" height="34" rx="6" stroke="currentColor" fill="none" />
+            <text x="477" y="80" fill="currentColor" font-size="13" text-anchor="middle">uit: elk 50% vuil</text>
+            <line x1="158" y1="37" x2="220" y2="68" stroke="currentColor" />
+            <line x1="158" y1="113" x2="220" y2="82" stroke="currentColor" />
+            <line x1="340" y1="75" x2="402" y2="75" stroke="currentColor" />
+          </svg>
+          <figcaption>Schoon bijmengen verlaagt het percentage, maar de 6 BTC vuil blijft in het mengsel.</figcaption>
+        </figure>
+
+        <h3>De common-input-heuristiek — en haar valkuil</h3>
+        <p>Analisten koppelen adressen aan één eigenaar met de <strong>common-input-heuristiek</strong>: adressen die
+        <em>samen</em> als input in één transactie zitten, horen waarschijnlijk bij dezelfde persoon (want die moest ze
+        allemaal ondertekenen). Dat werkt prima bij gewone transacties. Maar bij een <strong>CoinJoin tekenen vreemden
+        juist bewust samen</strong>. De heuristiek trekt dan ten onrechte de mixer-deposit van de aanvaller en de schone
+        liquiditeit van een onschuldige gebruiker in <em>één</em> cluster. Dat is een <strong>vals cluster</strong>: een
+        klassieke valkuil die je moet herkennen, anders beschuldig je de verkeerde.</p>
+
+        <div class="callout info"><strong>Beloning — tussenvlag:</strong> je snapt nu dat een mixer het vuil verdunt maar
+        niet wist. Noteer <code>JVT{taint_verdunt_maar_wist_niet}</code>.</div>
+      `,
+      questions: [
+        { q: 'Wat gebeurt er met het vuile BEDRAG als je 6 BTC vuil met 6 BTC schoon mengt?', options: ['Het blijft 6 BTC vuil, alleen het percentage zakt naar 50%', 'Het verdwijnt helemaal', 'Het verdubbelt naar 12 BTC vuil', 'Het wordt 0 BTC'], answer: 0, explain: 'Het percentage zakt (50%), maar het vuile bedrag van 6 BTC blijft in de outputs aanwezig.' },
+        { q: 'Waarom levert de common-input-heuristiek bij een CoinJoin een vals cluster op?', options: ['Omdat vreemden daar bewust samen één transactie tekenen, terwijl de heuristiek aanneemt dat co-inputs één eigenaar hebben', 'Omdat CoinJoin de blockchain wist', 'Omdat mixers geen inputs hebben', 'Omdat de fee te hoog is'], answer: 0, explain: 'CoinJoin breekt de aanname "co-inputs = één eigenaar"; de deposit en de schone liquiditeit worden dan onterecht samengeklonterd.' },
+        { q: 'Hoe heet een mixvorm zonder centrale dienst waarbij meerdere partijen samen één transactie tekenen?', answer: ['CoinJoin', 'coinjoin', 'coin join'], hint: 'Munten "samenvoegen" in één transactie.', explain: 'CoinJoin: meerdere partijen ondertekenen samen één transactie, zodat in- en outputs niet meer één-op-één koppelen.' },
+        { q: 'Welke vlag staat als beloning in de info-callout van deze taak?', answer: ['JVT{taint_verdunt_maar_wist_niet}'], hint: 'Lees de info-callout onderaan de uitleg.', explain: 'De tussenvlag is JVT{taint_verdunt_maar_wist_niet}.' },
+      ],
+    },
+
+    {
+      title: 'Taak 3 — Tracer de keten: taint narekenen',
+      content: `
+        <p>Tijd om de tracer open te trekken. Hieronder staat de <strong>on-chain keten</strong> van de zaak-Zuidwaard in
+        een vereenvoudigd UTXO-model: elke input besteedt zijn volledige saldo, en voor de helderheid laten we hier even de
+        kosten (fees) weg — die komen in de volgende taak terug. De tracer rekent voor jou de <strong>taint</strong>
+        (haircut) en de <strong>clusters</strong> (common-input) uit. Jouw taak is om die getallen te lezen, te snappen en
+        na te rekenen.</p>
+
+        <h3>De keten in woorden</h3>
+        <ul>
+          <li>De <strong>losgeld-wallet</strong> (6 BTC, 100% vuil) splitst het geld over <strong>hop-wallet A</strong>
+          (4) en <strong>hop-wallet B</strong> (2) — layering.</li>
+          <li>A en B worden <strong>samen</strong> uitgegeven naar de <strong>mixer-deposit</strong> (6). Let op: dit is
+          een echt common-input-cluster — A en B horen bij dezelfde eigenaar (de aanvaller).</li>
+          <li>In de mixer komt de deposit (6, vuil) samen met <strong>6 BTC schone liquiditeit</strong> (dirty:false) in
+          één CoinJoin-transactie, die uitbetaalt naar <strong>uitbetaling 1</strong> (6) en <strong>uitbetaling 2</strong>
+          (6). Hier verdunt de taint naar 50%.</li>
+          <li><strong>Uitbetaling 1</strong> gaat door naar het <strong>exchange-account</strong> (6) — de cash-out.</li>
+        </ul>
+
+        <h3>Wat je in het lab moet aflezen</h3>
+        <p>Open het adres-overzicht en de callout onderaan. Reken mee met de haircut:</p>
+        <ul>
+          <li>De mixtransactie heeft 6 vuil + 6 schoon = 12 binnen, fractie <strong>0,5</strong>. Beide uitbetalingen van
+          6 BTC zijn dus <strong>50%</strong> vuil (3 BTC taint elk).</li>
+          <li>Uitbetaling 1 (6 BTC, 3 vuil) gaat één-op-één naar de exchange. Dus de exchange ontvangt een saldo van 6 BTC
+          waarvan <strong>3 BTC vuil</strong> is — en dat is precies wat de tracer onderaan meldt.</li>
+          <li>Kijk ook naar het aantal <strong>clusters</strong> dat de tracer vindt: één is echt (de hop-wallets van de
+          aanvaller), één is het <em>valse</em> cluster uit de CoinJoin (deposit samen met schone liquiditeit).</li>
+        </ul>
+
+        <div class="callout tip"><strong>Beloning:</strong> reken je de haircut goed na, dan verdien je de vlag
+        <code>JVT{haircut_wijst_de_weg}</code> — want de haircut wijst, ondanks de mixer, nog altijd de weg naar het vuile
+        geld bij de cash-out.</div>
+
+        <div class="callout warn"><strong>Let op het valse cluster:</strong> de tracer meldt een cluster met de schone
+        liquiditeit erin. Dat is de CoinJoin-valkuil uit taak 2 — niet de onschuldige gebruiker beschuldigen, wél de
+        taint-fractie volgen.</div>
+      `,
+      lab: {
+        type: 'chaintrace',
+        title: 'Zaak-Zuidwaard — de witwasketen',
+        unit: 'BTC',
+        scenario: 'De losgeld-wallet (6 BTC vuil) wast via twee hop-wallets en een CoinJoin-mixer (met 6 BTC schone liquiditeit) uit bij een exchange. Reken de taint (haircut) na en let op het valse cluster bij de mixer.',
+        labels: KETEN_LABELS,
+        exchanges: ['EX'],
+        origins: KETEN_ORIGINS,
+        txs: KETEN_TXS,
+        ask: [
+          { q: 'Hoeveel vuil geld (taint) bereikt de exchange? (lees de callout onderaan)', answer: ['3', '3.0', '3,0', '3 btc', '3.0 btc'], hint: 'Uitbetaling 1 is 50% van 6 BTC vuil en gaat één-op-één naar de exchange.' },
+          { q: 'Wat is het taint-percentage op het exchange-account? (lees de taint-tabel)', answer: ['50%', '50', '50 %', '50.0%'], hint: '6 vuil + 6 schoon = 12 in de mix, fractie 6/12.' },
+          { q: 'Hoeveel clusters (common-input-heuristiek) vindt de tracer in totaal?', answer: ['2', 'twee'], hint: 'Klik de clusters-sectie open: één echt cluster (de hop-wallets) en één vals cluster (de CoinJoin).' },
+        ],
+      },
+      questions: [
+        { q: 'Hoeveel BTC vuil geld bereikt de exchange volgens de tracer?', answer: ['3', '3.0', '3,0', '3 btc'], hint: 'Staat in de callout "Vuil geld dat een exchange bereikt".', explain: 'Uitbetaling 1 (6 BTC, 50% vuil = 3 BTC) gaat naar de exchange: 3 BTC taint bij de cash-out.' },
+        { q: 'Wat is de taint op het exchange-account in procenten?', answer: ['50%', '50', '50 %'], hint: 'Lees de kolom Taint in het adres-overzicht.', explain: 'De mix verdunde 6 vuil + 6 schoon tot 50%, en die fractie reist mee naar de exchange.' },
+        { q: 'De tracer meldt een cluster waarin de schone mixer-liquiditeit zit. Wat is dat?', options: ['Een vals cluster door de CoinJoin (de common-input-heuristiek faalt hier)', 'Bewijs dat de liquiditeit-eigenaar de dader is', 'Een rekenfout van de tracer', 'Het echte cluster van de aanvaller'], answer: 0, explain: 'CoinJoin laat vreemden samen tekenen; de heuristiek klontert dan onterecht de deposit en de schone liquiditeit samen.' },
+        { q: 'Welke vlag hoort bij het goed narekenen van de haircut?', answer: ['JVT{haircut_wijst_de_weg}'], hint: 'Staat in de tip-callout van deze taak.', explain: 'De vlag is JVT{haircut_wijst_de_weg}: de haircut wijst ondanks de mixer de weg naar het vuile geld.' },
+      ],
+    },
+
+    {
+      title: 'Taak 4 — De geldstroom op hoog niveau',
+      content: `
+        <p>De tracer uit taak 3 liet de kosten even weg om de taint zuiver te houden. In het echte dossier hield elke
+        schakel natuurlijk een <strong>commissie</strong> in. In deze taak bekijk je dezelfde operatie op hoog niveau,
+        <em>mét</em> fees, en reken je de bedragen na. Dit is de klassieke "follow the money"-blik: tel per knoop op wat
+        erin komt en wat eruit gaat; het verschil is wat die knoop voor zichzelf hield.</p>
+
+        <h3>Zo lees je het lab</h3>
+        <ul>
+          <li><strong>Klik een knoop</strong> (bijvoorbeeld de mixer) om in- en uitgaand verkeer en het saldo te zien.</li>
+          <li><strong>Lees de transactietabel</strong>: elke regel is één overboeking met bedrag, tijd en notitie.</li>
+          <li><strong>Reken na.</strong> De mixer ontvangt van hop-wallet A én hop-wallet B — tel beide stromen op. Het
+          verschil tussen wat de mixer binnenkrijgt en weer uitbetaalt, is de mixer-fee.</li>
+        </ul>
+
+        <p>Volg zo het geld van de losgeldbetaling (6,0 BTC) tot het <strong>cash-out-punt</strong>: de exchange
+        "EuroMunt". Dáár, waar crypto naar euro's gaat en KYC/Wwft geldt, hangt opeens een echte identiteit aan het
+        spoor — het knelpunt waar de opsporing aangrijpt.</p>
+
+        <div class="callout info"><strong>Tip bij het rekenen:</strong> hop-wallet A krijgt 4,0 en stuurt 3,95 door
+        (0,05 commissie), hop-wallet B krijgt 2,0 en stuurt 1,95 door. De mixer ontvangt dus 3,95 + 1,95 en houdt daarna
+        zelf nog 0,10 in.</div>
+      `,
+      lab: {
+        type: 'flow',
+        title: 'Zaak-Zuidwaard — follow the money (met kosten)',
+        unit: 'BTC',
+        scenario: 'Zuidwaard betaalde 6.0 BTC losgeld. Volg de stroom door de hop-wallets en de mixer tot de exchange. Reken de bedragen per knoop na; let op de commissies.',
+        nodes: FLOW_NODES,
+        edges: FLOW_EDGES,
+        ask: [
+          { q: 'Hoeveel BTC betaalde Zuidwaard Zorggroep als losgeld?', answer: ['6', '6.0', '6,0', '6 btc', '6.0 btc'], hint: 'De eerste regel: van het slachtoffer naar de losgeld-wallet.' },
+          { q: 'Hoeveel BTC komt er in totaal binnen bij de mixer "CoinMenger"? (tel beide stromen op)', answer: ['5.9', '5,9', '5.90', '5.9 btc', '5.90 btc'], hint: 'Hop-wallet A brengt 3.95, hop-wallet B brengt 1.95. Klik de mixer-knoop voor het totaal.' },
+          { q: 'Hoeveel BTC bereikt uiteindelijk de exchange "EuroMunt" (de cash-out)?', answer: ['5.8', '5,8', '5.80', '5.8 btc', '5.80 btc'], hint: 'De laatste transactie: de mixer houdt 0.10 in en betaalt de rest uit.' },
+          { q: 'Welke knoop is het cash-out-knelpunt waar de opsporing aangrijpt (KYC/Wwft)?', answer: ['exchange', 'de exchange', 'euromunt', 'exchange euromunt', 'de exchange euromunt'], hint: 'De plek waar crypto naar euro\'s gaat en identiteitscontrole plaatsvindt.' },
+        ],
+      },
+      questions: [
+        { q: 'Hoeveel BTC komt er in totaal binnen bij de mixer "CoinMenger"?', answer: ['5.9', '5,9', '5.90', '5.9 btc'], hint: '3.95 (van hop A) + 1.95 (van hop B).', explain: '3.95 + 1.95 = 5.9 BTC komt de mixer binnen.' },
+        { q: 'Hoeveel BTC bereikt de exchange "EuroMunt"?', answer: ['5.8', '5,8', '5.80', '5.8 btc'], hint: 'De mixer kreeg 5.9 binnen en hield 0.10 in.', explain: 'De mixer betaalt 5.9 − 0.10 = 5.8 BTC uit op het exchange-account.' },
+        { q: 'Hoeveel commissie hield hop-wallet A voor zichzelf achter?', answer: ['0.05', '0,05'], hint: 'Binnen 4.0, doorgestuurd 3.95.', explain: '4.0 − 3.95 = 0.05 BTC bleef als commissie hangen (het saldo van die knoop).' },
+        { q: 'Waarom is de exchange het knelpunt waar de opsporing aangrijpt?', options: ['Omdat crypto daar naar euro\'s gaat én KYC/Wwft geldt, zodat de pseudonieme keten aan een echte identiteit wordt gekoppeld', 'Omdat de exchange de blockchain kan wissen', 'Omdat mixers daar verboden zijn', 'Omdat de fee daar het hoogst is'], answer: 0, explain: 'De off-ramp koppelt het openbare spoor aan een KYC-identiteit; met een vordering krijgt de politie de naam.' },
+      ],
+    },
+
+    {
+      title: 'Taak 5 — Pivoten: koppel de zaak via het certificaat',
+      content: `
+        <p>De losgeld-wallet en de phishinginfrastructuur waarmee Zuidwaard werd binnengedrongen, laten sporen na. Met
+        <strong>pivoten</strong> spring je van het ene kenmerk naar het andere — domein &rarr; IP &rarr; certificaat
+        &rarr; e-mail &rarr; wallet — om verborgen verbanden tussen zaken te vinden. Je doet dit <strong>passief</strong>:
+        open bronnen (WHOIS, passive DNS, certificate transparency via crt.sh), nooit de infrastructuur van de verdachte
+        zelf benaderen (opsec).</p>
+
+        <h3>Twee zaken, één dwarsverband</h3>
+        <p>In het lab staan twee fictieve phishingzaken. <strong>Zaak Alpha</strong> (<code>betaal-controle.jvt.lab</code>)
+        is de infrastructuur rond de aanval op Zuidwaard; daar hangt ook de losgeld-wallet <code>bc1qfictief0alpha</code>
+        aan vast. <strong>Zaak Bravo</strong> (<code>inlog-verificatie.jvt.lab</code>) is een losse phishingzaak van een
+        ander team. De IP-adressen verschillen (<code>203.0.113.10</code> vs. <code>198.51.100.20</code>), dus op het
+        eerste gezicht lijken ze niet verbonden.</p>
+
+        <h3>De zeldzaamheidstoets</h3>
+        <p>Pivoteer door de entiteiten aan te klikken en let op <strong>tijd</strong> en <strong>herkomst</strong> bij elke
+        relatie. Je vindt één kenmerk dat in beide zaken terugkomt: hetzelfde <strong>TLS-certificaat</strong>
+        (<code>A1B2C3D4</code>), gevonden in de certificate-transparency-logs van crt.sh. Een hergebruikt certificaat is
+        <strong>zeldzaam</strong> genoeg om een echte link te zijn: dezelfde fingerprint op twee los lijkende domeinen
+        wijst sterk op dezelfde hand. Dat is de kern van de zeldzaamheidstoets — <em>hoe zeldzamer het gedeelde kenmerk,
+        hoe sterker de link</em>. Een gedeelde hostingprovider zou veel te algemeen zijn.</p>
+
+        <div class="callout tip"><strong>Beloning:</strong> herken je dat het certificaat de twee zaken bruggt, dan
+        verdien je de vlag <code>JVT{cert_bruggt_de_zaken}</code>.</div>
+
+        <div class="callout warn"><strong>Blijf kritisch (bekend/afgeleid/aanname):</strong> "beide domeinen presenteren
+        certificaat A1B2C3D4" is <em>bekend</em>. "Dezelfde actor beheert beide" is <em>afgeleid</em>. "Het is dezelfde
+        persoon als in een zaak van vorig jaar" zou een <em>aanname</em> zijn tot je meer zeldzame overlap vindt.</div>
+      `,
+      lab: {
+        type: 'pivot',
+        title: 'Zaak Alpha (Zuidwaard-phishing) vs. Zaak Bravo',
+        scenario: 'Zaak Alpha hoort bij de aanval op Zuidwaard (met de losgeld-wallet). Zaak Bravo is een losse phishingzaak. Wat verbindt ze? Toets de zeldzaamheid van elk gedeeld kenmerk.',
+        entities: CMX_ENTITIES,
+        edges: CMX_EDGES,
+        goal: 'Welk kenmerk verbindt Zaak Alpha en Zaak Bravo? (typ het label of het type)',
+        bridge: ['A1B2C3D4', 'cert', 'certificaat'],
+      },
+      questions: [
+        { q: 'Welk zeldzaam kenmerk bruggt Zaak Alpha en Zaak Bravo?', answer: ['certificaat', 'cert', 'A1B2C3D4', 'a1b2c3d4', 'het certificaat', 'tls-certificaat'], hint: 'Hetzelfde kenmerk staat in crt.sh bij beide domeinen; de IP-adressen verschillen juist.', explain: 'Beide domeinen presenteren hetzelfde TLS-certificaat A1B2C3D4 (bekend). Een hergebruikt certificaat is zeldzaam, dus een sterke brug.' },
+        { q: 'Via welke openbare bron vind je een hergebruikt TLS-certificaat terug?', options: ['Certificate transparency (crt.sh)', 'De blockchain', 'Het telefoonboek', 'De firewall-logs van het slachtoffer'], answer: 0, explain: 'Certificate transparency-logs (zoals crt.sh) bevatten alle uitgegeven certificaten; zo vind je hergebruik over domeinen.' },
+        { q: 'Waarom is een hergebruikt certificaat een sterkere brug dan een gedeelde hostingprovider?', options: ['Omdat een gedeeld certificaat zeldzaam is en een gedeelde hoster veel te algemeen', 'Omdat certificaten nooit worden hergebruikt', 'Omdat hosting niets met domeinen te maken heeft', 'Dat is het niet — de hoster is sterker'], answer: 0, explain: 'De zeldzaamheidstoets: hoe zeldzamer het gedeelde kenmerk, hoe sterker het bewijs.' },
+        { q: 'Welke vlag verdien je door de zaken via het certificaat te koppelen?', answer: ['JVT{cert_bruggt_de_zaken}'], hint: 'Staat in de tip-callout van deze taak.', explain: 'De vlag is JVT{cert_bruggt_de_zaken}.' },
+      ],
+    },
+
+    {
+      title: 'Taak 6 — Attributie met ACH',
+      content: `
+        <p>Je weet nu <em>hoe</em> het geld liep en dat twee zaken samenhangen. De lastigste vraag komt nu: <strong>wie
+        beheert de cash-out-infrastructuur</strong> die het losgeld via de mixer naar de exchange bracht? Attributie is
+        gevaarlijk terrein. Je gebruikt <strong>Analysis of Competing Hypotheses (ACH)</strong>: je zet de hypothesen
+        naast elkaar en je <em>weerlegt</em> ze. De hypothese met de <strong>minste inconsistenties (I)</strong> blijft het
+        sterkst overeind — je zoekt tegenspraak, geen bevestiging.</p>
+
+        <h3>Drie hypothesen</h3>
+        <p>In het lab staan drie hypothesen: een <strong>professionele witwasdienst</strong> (cash-out-as-a-service die
+        voor meerdere bendes wast), de <strong>ransomware-affiliate zelf</strong>, en een <strong>niet-betrokken
+        exchange-klant</strong> (toeval / vals spoor). Vul de matrix in met C (consistent), I (inconsistent) of N
+        (neutraal), tel de inconsistenties en vergelijk daarna met het expertoordeel.</p>
+
+        <h3>Let op het niet-diagnostische bewijs</h3>
+        <p>Eén waarneming — "de mixer mengt schone liquiditeit bij, de taint zakt naar 50%" — is bij <em>alle drie</em> de
+        hypothesen consistent. Die helpt je dus niet kiezen; het is <strong>niet-diagnostisch</strong>. Het lab markeert
+        zulke rijen. Richt je op het bewijs dat de hypothesen juist uit elkaar trekt: het terugkerende cash-out-cluster
+        over drie zaken, de vaste 10%-commissie, de forumadvertentie en de batching wijzen samen één kant op.</p>
+
+        <p>Reken mee: in het expertoordeel houdt de <strong>professionele witwasdienst</strong> als enige <strong>0</strong>
+        inconsistenties over; de affiliate en de exchange-klant houden er elk 3 over. Er is dus één <em>unieke</em>
+        duidelijke winnaar. Dat de witwasdienst het sterkst staat, is <em>afgeleid</em>; een specifieke naam of groep
+        aanwijzen puur omdat ze dezelfde mixer gebruiken, zou een <em>aanname</em> (en de tool=actor-valkuil) zijn.</p>
+
+        <div class="callout danger"><strong>Verantwoord attribueren:</strong> schrijf nooit "het is persoon X" als je dat
+        niet kunt onderbouwen. Schrijf: "de waarnemingen passen het best bij een professionele cash-out-dienst (afgeleid);
+        een specifieke beheerder kunnen we op dit moment niet met zekerheid aanwijzen (aanname)."</div>
+      `,
+      lab: {
+        type: 'ach',
+        question: 'Wie beheert de cash-out-infrastructuur die het losgeld van Zuidwaard via de mixer naar de exchange bracht?',
+        hypotheses: ['Professionele witwasdienst (cash-out-as-a-service voor meerdere bendes)', 'De ransomware-affiliate zelf (wast eigen buit)', 'Een niet-betrokken exchange-klant (toeval / vals spoor)'],
+        evidence: [
+          { text: 'Hetzelfde mixer-uitbetaalcluster komt terug in drie losstaande ransomwarezaken van verschillende groepen.', expert: ['C', 'I', 'I'] },
+          { text: 'Het cash-out-cluster houdt telkens een vaste commissie van circa 10% in en betaalt de rest door naar de opdrachtgever.', expert: ['C', 'I', 'N'] },
+          { text: 'De mixer mengt aantoonbaar schone liquiditeit van niet-criminele herkomst bij; de taint zakt naar 50%.', expert: ['C', 'C', 'C'] },
+          { text: 'Op een crimineel forum wordt een "cash-out service" geadverteerd met exact dit commissietarief en deze werkwijze.', expert: ['C', 'I', 'I'] },
+          { text: 'De uitbetalingen gebeuren in vaste blokken op gezette tijden, los van wanneer het losgeld binnenkwam (batching van meerdere klanten).', expert: ['C', 'N', 'N'] },
+          { text: 'Het exchange-account staat op naam van een katvanger zonder enige relatie tot Zuidwaard.', expert: ['C', 'C', 'I'] },
+        ],
+      },
+      questions: [
+        { q: 'Welke hypothese houdt in het expertoordeel als enige de minste inconsistenties over?', options: ['Professionele witwasdienst (cash-out-as-a-service)', 'De ransomware-affiliate zelf', 'Een niet-betrokken exchange-klant', 'Ze eindigen gelijk'], answer: 0, explain: 'De witwasdienst houdt 0 inconsistenties over, de andere twee elk 3. De witwasdienst is de unieke winnaar.' },
+        { q: 'De waarneming "de mixer mengt schone liquiditeit bij" is consistent met alle drie de hypothesen. Hoe heet zulk bewijs?', options: ['Niet-diagnostisch', 'Doorslaggevend', 'Een vals spoor', 'Een aanname'], answer: 0, explain: 'Bewijs dat overal past, helpt je niet kiezen: het is niet-diagnostisch. Het lab markeert die rij.' },
+        { q: 'Welke letter tel je in ACH om de zwakste hypothesen weg te strepen?', answer: ['I', 'i', 'inconsistent', 'inconsistenties'], hint: 'Je weerlegt, je bevestigt niet.', explain: 'Je telt de inconsistenties (I); de hypothese met de minste I\'s blijft het sterkst overeind.' },
+        { q: 'Mag je de operatie aan één specifieke persoon toeschrijven puur omdat dezelfde mixer is gebruikt?', options: ['Nee — gedeelde tooling is een aanwijzing, geen identiteitsbewijs (tool is niet gelijk aan actor)', 'Ja, de mixer bepaalt de dader', 'Ja, maar alleen bij een hoog losgeld', 'Alleen als de taint boven de 50% ligt'], answer: 0, explain: 'De tool=actor-valkuil: dezelfde dienst of mixer zegt iets over de werkwijze, niet over de identiteit.' },
+      ],
+    },
+
+    {
+      title: 'Taak 7 — Het BLUF-eindproduct',
+      content: `
+        <p>Je hebt alles: de taint-trace, de geldstroom met kosten, de certificaat-pivot en de attributie. Nu lever je het
+        <strong>intelligenceproduct</strong>. De ontvanger (de rechercheleider, een officier van justitie, de CISO van
+        Zuidwaard) heeft geen tijd voor een chronologisch verhaal. Daarom schrijf je <strong>BLUF</strong>: <em>Bottom
+        Line Up Front</em> — de conclusie en het advies staan <strong>bovenaan</strong>, de onderbouwing eronder.</p>
+
+        <h3>Wat een goed BLUF-product bevat</h3>
+        <ul>
+          <li>De <strong>kernboodschap eerst</strong>: wat is er gebeurd en wat moet er nu gebeuren.</li>
+          <li><strong>Waarschijnlijkheidstaal</strong> ("waarschijnlijk", "zeer waarschijnlijk") in plaats van vage
+          woorden.</li>
+          <li>Een <strong>eigenaar per advies</strong>: wie doet wat, en wanneer.</li>
+          <li><strong>Onzekerheid apart</strong> benoemd, met de labels bekend/afgeleid/aanname.</li>
+          <li><strong>Beknopter</strong> dan de bron: schrappen is een vak.</li>
+        </ul>
+
+        <h3>De kern van deze zaak</h3>
+        <p>Het sterkste, meest bruikbare inzicht is het <strong>knelpunt</strong>: ondanks de mixer bereikt
+        <strong>3 BTC vuil</strong> (50% van 6 BTC) het exchange-account. Juist dáár — bij de cash-out met KYC/Wwft —
+        krijgt de opsporing grip. Dat zet je bovenaan, met een concreet advies (een vordering aan de exchange) en een
+        eigenaar.</p>
+
+        <p>In het lab staat het chronologische bronmateriaal. Herschrijf het naar een BLUF-product: conclusie eerst,
+        waarschijnlijkheidstaal, een eigenaar per advies en de onzekerheid apart. Toets daarna tegen de rubric (een
+        heuristische checklist, geen AI-oordeel) en vergelijk met het modelantwoord.</p>
+
+        <div class="callout tip"><strong>Slotvlag:</strong> rond je de zaak af met een echt BLUF-product dat de cash-out
+        als aangrijppunt benoemt, dan verdien je de laatste vlag: <code>JVT{cash_out_is_het_knelpunt}</code>.</div>
+
+        <div class="callout danger"><strong>Nooit blind betalen, en denk aan privacy:</strong> losgeld betalen financiert
+        de volgende aanval en geeft geen garantie. Deel indicatoren onder het juiste TLP-label en haal persoonsgegevens
+        eruit voordat je ze deelt — de AVG geldt ook voor je responsteam. Blockchain-onderzoek voor opsporing gebeurt door
+        Politie en FIOD onder juridische waarborgen (zoals een vordering aan de exchange).</div>
+      `,
+      lab: {
+        type: 'bluf',
+        source: 'Op 18 september betaalde zorggroep Zuidwaard 6,0 BTC losgeld na een ransomware-aanval. De losgeld-wallet splitste het geld over twee hop-wallets (4,0 en 2,0 BTC), die het samen naar een mixer-deposit stuurden. In de mixer werd de 6 BTC vuile deposit vermengd met circa 6 BTC schone liquiditeit in een CoinJoin-transactie; de taint zakte daardoor naar 50%. Eén mixer-uitbetaling van 6 BTC ging door naar een exchange-account bij EuroMunt; volgens de haircut-methode is daarvan 3 BTC vuil. In het hoge-niveau-overzicht (met commissies) bereikte uiteindelijk 5,8 BTC de exchange. Een hergebruikt TLS-certificaat (A1B2C3D4), gevonden in crt.sh, verbindt de phishinginfrastructuur van deze zaak met een tweede, losse phishingzaak. Uit de ACH blijkt dat de cash-out-infrastructuur het best past bij een professionele witwasdienst (cash-out-as-a-service): hetzelfde uitbetaalcluster, een vaste commissie van circa 10% en batching komen in meerdere zaken terug. Een specifieke beheerder is niet met zekerheid aan te wijzen, want dezelfde mixer wordt door veel partijen gebruikt.',
+        model: 'BEOORDELING (BLUF): Het losgeld van Zuidwaard (6,0 BTC) is via twee hop-wallets en een CoinJoin-mixer witgewassen; ondanks de mixer bereikt zeer waarschijnlijk 3 BTC vuil geld (50% taint) een exchange-account bij EuroMunt. Dat exchange-account is het knelpunt: daar kunnen we met een vordering een echte identiteit aan het spoor koppelen.\n\nADVIES (met eigenaar):\n1. Vordering aan exchange EuroMunt op het ontvangende account (KYC-gegevens, uitbetaalrekening) — eigenaar: opsporing, met spoed.\n2. Losgeld-wallet en het cash-out-cluster blijvend monitoren; het certificaat A1B2C3D4 delen met het team van de tweede zaak — eigenaar: analyse/intel.\n3. Zuidwaard: niet betalen, offline back-ups verifiëren, MFA afdwingen — eigenaar: CISO.\n\nONDERBOUWING: bekend = de keten en de bedragen uit de tracer (6 BTC losgeld, 50% taint na de mix, 3 BTC vuil bij de exchange, 5,8 BTC na kosten). Afgeleid = een professionele cash-out-dienst (ACH: als enige 0 inconsistenties) en één actor achter beide phishingzaken (hergebruikt certificaat). Aanname te vermijden: een specifieke beheerder aanwijzen puur op basis van de gedeelde mixer (tool is niet gelijk aan actor).',
+      },
+      questions: [
+        { q: 'Wat hoort in een BLUF-product bovenaan te staan?', options: ['De conclusie en het advies (de kernboodschap)', 'De volledige chronologie', 'De lijst met alle transactie-ID\'s', 'De namen van alle analisten'], answer: 0, explain: 'BLUF = Bottom Line Up Front: eerst de conclusie en wat er moet gebeuren, daarna de onderbouwing.' },
+        { q: 'Wat is in deze zaak het belangrijkste aangrijppunt voor de opsporing?', options: ['Het exchange-account, waar via KYC/Wwft een identiteit aan het spoor hangt', 'De mixer, die je offline kunt halen', 'De hop-wallets', 'De losgeldbrief'], answer: 0, explain: 'De cash-out bij de exchange koppelt het pseudonieme spoor aan een echte naam; daar grijp je aan met een vordering.' },
+        { q: 'Hoe schrijf je de attributie in het eindproduct verantwoord?', options: ['Waarschijnlijk een professionele cash-out-dienst (afgeleid); een specifieke beheerder niet aan te wijzen (aanname vermijden)', 'Het is zeker persoon X', 'De mixer bepaalt de dader', 'Attributie laat je weg'], answer: 0, explain: 'Je benoemt de best passende hypothese met waarschijnlijkheidstaal en vermijdt de tool=actor-valkuil.' },
+        { q: 'Welke slotvlag hoort bij het afronden van het BLUF-eindproduct?', answer: ['JVT{cash_out_is_het_knelpunt}'], hint: 'Staat in de tip-callout van deze taak.', explain: 'De slotvlag is JVT{cash_out_is_het_knelpunt}.' },
+      ],
+    },
+  ],
+});
+
+</script>
+<script>
 /* Room: Eindopdracht — Mini-CTF "Operatie KoffieKlap" */
 CS.registerRoom({
   id: 'mini-ctf',

@@ -100,6 +100,9 @@ Leren door te doen — veel plezier met oplosbare cybercrime-puzzels.
 3. **OSINT-jacht: ontmasker de operator** — correleer sporen tot één identiteit.
 4. **Cybercrime-arcade: gemengde puzzels** — verbanden, volgorde, regex-golf, cijfers en een crackme.
 5. **Cybercrime-CTF: Operatie Spookgeld** — een grote capstone van hash tot BLUF (tien vlaggen).
+6. **Casus: bankhelpdeskfraude** — vishing, money mules en de geldstroom naar de cash-out.
+7. **Casus: botnet-takedown** — C2-verkeer, ATT&CK, pivoten en de stappen van een takedown.
+8. **Casus: het cryptomixer-onderzoek** — taint volgen door een mixer met de blockchain-tracer.
 
 ### 🏁 Eindopdracht
 1. **Mini-CTF: Operatie KoffieKlap** — breng alles samen in een afsluitende Capture The Flag met zes vlaggen.
