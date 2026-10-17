@@ -9788,6 +9788,197 @@ CS.registerRoom({
 
 </script>
 <script>
+/* Room: Security-kern — vishing & deepfake-stemmen (voice-fraude) */
+
+// =======================================================================
+//  Alles FICTIEF: verzonnen scenario's. Je oefent het herkennen van en
+//  reageren op spraak-social-engineering; er wordt niets echt aangevallen.
+// =======================================================================
+
+// --- Connections: de vier social-engineering-kanalen ---
+const VD_GROUPS = [
+  { name: 'Phishing (e-mail)', items: ['Nep-inlogmail van "de bank"', 'Link naar een lookalike-site', 'Bijlage met een macro', 'Spoofed afzenderadres'] },
+  { name: 'Vishing (telefoon)', items: ['"Bankhelpdesk" belt je', 'Deepfake-stem van de directeur', 'Spoofed beller-ID', 'Druk om nú te handelen'] },
+  { name: 'Smishing (sms)', items: ['"Pakket kon niet bezorgd worden"', 'Korte link (bit.ly)', 'Nep-bezorgkosten betalen', 'Afzender is een 06-nummer'] },
+  { name: 'Quishing (QR-code)', items: ['QR-sticker over de echte geplakt', 'Op een parkeer- of laadpaal', 'QR leidt naar een nep-betaalpagina', 'QR in een e-mail i.p.v. een link'] },
+];
+
+// --- Ordering: het script van een vishing-call ---
+const VD_STEPS = [
+  { id: '1', label: 'Aanvaller verzamelt info (OSINT/datalek) en kloont desnoods een stem uit publieke audio (deepfake)' },
+  { id: '2', label: 'Belt met een spoofed beller-ID die op de bank of de directeur lijkt' },
+  { id: '3', label: 'Bouwt vertrouwen op (kent je gegevens) en creëert urgentie' },
+  { id: '4', label: 'Vraagt een handeling: een code doorgeven, een betaling of remote toegang' },
+  { id: '5', label: 'Het slachtoffer handelt onder druk' },
+  { id: '6', label: 'Geld of toegang wordt direct misbruikt' },
+];
+
+// --- Scenario: herkennen en weerstaan ---
+const VD_SCEN = [
+  {
+    situation: 'Je "CEO" belt — de stem klinkt precies zoals je hem kent — en vraagt met spoed een vertrouwelijke betaling. Wat doe je?',
+    choices: [
+      { label: 'Verifieer via een onafhankelijk, bekend kanaal: hang op en bel terug op zijn vaste nummer', good: true, feedback: 'Precies: een bekende stem is geen bewijs meer. Een onafhankelijke callback ontmaskert een deepfake.' },
+      { label: 'De stem klinkt echt, dus gewoon uitvoeren', good: false, feedback: 'AI kan een stem klonen uit enkele seconden publieke audio. "Het klonk echt" is geen verificatie.' },
+      { label: 'Gevoelige details via de telefoon bevestigen', good: false, feedback: 'Je geeft informatie weg aan mogelijk de aanvaller. Stap uit het gesprek en verifieer apart.' },
+    ],
+  },
+  {
+    situation: 'Hoe betrouwbaar is "ik herkende zijn stem" nog als bewijs?',
+    choices: [
+      { label: 'Niet: moderne AI kloont stemmen uit korte publieke audio; een bekende stem bewijst niets', good: true, feedback: 'Juist: stem-deepfakes zijn realistisch en goedkoop. Verifieer altijd via een ander kanaal.' },
+      { label: 'Volledig betrouwbaar — een stem is uniek en onnamaakbaar', good: false, feedback: 'Dat was ooit zo; met AI-stemkloning niet meer. Vertrouw niet op stemherkenning alleen.' },
+      { label: 'Alleen betrouwbaar bij vaste telefoons', good: false, feedback: 'Het apparaat doet er niet toe; de stem zelf kan nagemaakt zijn.' },
+    ],
+  },
+  {
+    situation: 'De "bank" belt: "Uw rekening is gehackt, geef de sms-code door zodat wij hem kunnen beveiligen."',
+    choices: [
+      { label: 'Ophangen en zelf de bank bellen; de bank vraagt nooit om je code', good: true, feedback: 'Correct: geen enkele bank vraagt je code of pin. Zelf terugbellen doorbreekt de fraude.' },
+      { label: 'De code doorgeven om snel te zijn', good: false, feedback: 'De code is precies wat de aanvaller nodig heeft om jouw rekening over te nemen. Nooit doen.' },
+      { label: 'De code alleen doorgeven als ze je naam al weten', good: false, feedback: 'Je gegevens kennen ze uit een datalek; dat maakt het niet echt. Geef nooit codes door.' },
+    ],
+  },
+  {
+    situation: 'Welke afspraak beschermt je bedrijf het best tegen deepfake-CEO-fraude?',
+    choices: [
+      { label: 'Een afgesproken codewoord en/of verplichte callback-verificatie voor betaalopdrachten', good: true, feedback: 'Goed: een proces dat niet op stem of mail leunt, maar op een onafhankelijke verificatie.' },
+      { label: 'Vertrouwen op stemherkenning door ervaren medewerkers', good: false, feedback: 'Mensen horen het verschil niet betrouwbaar; bouw niet op gehoor maar op proces.' },
+      { label: 'Alleen \'s nachts geen betalingen doen', good: false, feedback: 'Fraude gebeurt ook overdag. Je hebt een verificatieproces nodig, geen tijdslot.' },
+    ],
+  },
+  {
+    situation: 'Op een laadpaal zit een QR-sticker die naar een "betaalpagina" leidt. Wat doe je?',
+    choices: [
+      { label: 'Niet scannen; betaal via de officiële app of de op de paal gedrukte URL', good: true, feedback: 'Precies: quishing plakt een valse QR over de echte. Gebruik de officiële, geverifieerde route.' },
+      { label: 'Scannen en betalen, dat is het makkelijkst', good: false, feedback: 'De QR kan naar een nep-betaalpagina leiden die je gegevens steelt. Niet scannen.' },
+      { label: 'Scannen om "even te kijken" waar hij heen gaat', good: false, feedback: 'Ook alleen openen kan je naar een kwaadaardige pagina leiden. Vermijd onbekende QR\'s.' },
+    ],
+  },
+];
+
+CS.registerRoom({
+  id: 'vishing-deepfake',
+  path: 'security-kern',
+  order: 10,
+  title: 'Vishing & deepfake-stemmen',
+  icon: '📞',
+  difficulty: 'Gemiddeld',
+  minutes: 45,
+  summary: 'Social engineering verplaatst zich naar je oor. Je leert vishing (fraude via de telefoon) en de nieuwe dreiging van AI-stemkloning (deepfake-stemmen) herkennen, onderscheidt de kanalen (phishing, vishing, smishing, quishing), ontleedt het script van een vishing-call en oefent de juiste reacties. De kernregel blijft: een stem is geen bewijs — verifieer via een onafhankelijk kanaal.',
+  objectives: [
+    'Vishing en de vier social-engineering-kanalen herkennen en onderscheiden',
+    'Begrijpen dat een bekende stem door AI-kloning geen bewijs meer is',
+    'Het script van een vishing-call op volgorde zetten',
+    'De juiste reacties kiezen onder druk (ophangen, zelf terugbellen)',
+    'Organisatorische afspraken benoemen tegen deepfake-CEO-fraude (codewoord, callback)',
+  ],
+  terms: [
+    { term: 'Vishing', def: 'Voice phishing: fraude via een telefoongesprek, waarbij de beller zich voordoet als bank, overheid of collega.' },
+    { term: 'Deepfake-stem', def: 'Een met AI gekloonde stem, gemaakt uit korte publieke audio, die klinkt als een echt persoon.' },
+    { term: 'Smishing', def: 'Phishing via sms (bijv. een nep-pakketbericht met een korte link).' },
+    { term: 'Quishing', def: 'Phishing via een QR-code, bijvoorbeeld een valse sticker over een echte op een betaalautomaat.' },
+    { term: 'Spoofed beller-ID', def: 'Een vervalst telefoonnummer in het display, zodat een oproep van de bank of je baas lijkt te komen.' },
+    { term: 'Callback-verificatie', def: 'Een verzoek bevestigen door zelf terug te bellen op een vooraf bekend nummer — niet op een nummer uit het gesprek.' },
+    { term: 'Codewoord', def: 'Een vooraf afgesproken woord om bij gevoelige verzoeken te verifiëren dat je met de echte persoon spreekt.' },
+    { term: 'Zero trust (voice)', def: 'Vertrouw geen stem of nummer op zichzelf; verifieer altijd onafhankelijk voordat je handelt.' },
+  ],
+  resources: [
+    { title: 'Fraudehelpdesk — telefoonfraude en spoofing', url: 'https://www.fraudehelpdesk.nl/' },
+    { title: 'NCSC — social engineering', url: 'https://www.ncsc.nl/' },
+    { title: 'FBI — deepfakes en vishing (IC3)', url: 'https://www.ic3.gov/' },
+    { title: 'Politie — fraude en oplichting', url: 'https://www.politie.nl/informatie/fraude.html' },
+  ],
+  tasks: [
+    {
+      title: 'Taak 1 — De stem is geen bewijs meer',
+      content: `
+        <p>Fraude verplaatst zich naar je oor. Bij <strong>vishing</strong> (voice phishing) belt een "bankmedewerker",
+        "politieagent" of "collega" en bewerkt je met autoriteit en urgentie. Nieuw en verraderlijk is de
+        <strong>deepfake-stem</strong>: met AI klonen fraudeurs een stem uit <em>enkele seconden</em> publieke audio (een
+        interview, een voicemail, een video). De stem van je CEO klinkt dan precies echt — en toch is het nep.</p>
+        <p>Daarom geldt één harde regel: <strong>een stem (of een nummer) is geen bewijs</strong>. Verifieer elk gevoelig
+        verzoek via een <strong>onafhankelijk, bekend kanaal</strong>: hang op en bel zelf terug op een nummer dat je al had.</p>
+        <div class="callout warn"><strong>Alles fictief:</strong> de scenario's zijn verzonnen oefenmateriaal.</div>
+        <div class="callout tip"><strong>Beloning:</strong> vertrouw geen stem, verifieer het kanaal. Vlag: <code>NM{stem_is_geen_bewijs}</code>.</div>
+      `,
+      questions: [
+        { q: 'Wat is vishing?', options: ['Fraude via een telefoongesprek (voice phishing)', 'Phishing via e-mail', 'Een virus', 'Een firewall-techniek'], answer: 0, explain: 'Vishing is social engineering via de telefoon; de beller doet zich voor als een vertrouwde partij.' },
+        { q: 'Hoe maakt AI een deepfake-stem geloofwaardig?', options: ['Door een stem te klonen uit korte publieke audio', 'Door het telefoonnummer te hacken', 'Door de microfoon te besturen', 'Dat kan niet'], answer: 0, explain: 'Enkele seconden audio volstaan vaak al om een overtuigende stemkloon te maken.' },
+        { q: 'Wat is de kernregel tegen voice-fraude?', options: ['Een stem/nummer is geen bewijs — verifieer via een onafhankelijk, bekend kanaal', 'Herken de stem goed genoeg', 'Vraag of ze echt de bank zijn', 'Betaal snel om van het gesprek af te zijn'], answer: 0, explain: 'Alleen een onafhankelijke callback (of codewoord) is betrouwbare verificatie.' },
+        { q: 'Welke vlag staat in de tip-callout?', answer: ['NM{stem_is_geen_bewijs}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{stem_is_geen_bewijs}.' },
+      ],
+    },
+    {
+      title: 'Taak 2 — De vier kanalen',
+      content: `
+        <p>Dezelfde trucs reizen over verschillende kanalen. Groepeer de zestien signalen in de vier kanalen:
+        <strong>phishing</strong> (e-mail), <strong>vishing</strong> (telefoon), <strong>smishing</strong> (sms) en
+        <strong>quishing</strong> (QR-code).</p>
+        <div class="callout tip"><strong>Beloning:</strong> vier kanalen, één doel. Vlag: <code>NM{vier_kanalen}</code>.</div>
+      `,
+      lab: {
+        type: 'connections',
+        title: 'signaal → kanaal',
+        prompt: 'Vind de vier groepen van vier: phishing, vishing, smishing en quishing.',
+        groups: VD_GROUPS,
+      },
+      questions: [
+        { q: 'Wat is smishing?', options: ['Phishing via sms', 'Phishing via telefoon', 'Phishing via QR', 'Phishing via e-mail'], answer: 0, explain: 'Smishing = SMS-phishing, bijvoorbeeld een nep-pakketbericht met een korte link.' },
+        { q: 'Wat is quishing?', options: ['Phishing via een QR-code (bijv. een valse sticker over de echte)', 'Phishing via spraak', 'Een sterke vorm van encryptie', 'Een type firewall'], answer: 0, explain: 'Bij quishing leidt een kwaadaardige QR naar een nep-pagina; vaak op betaalautomaten geplakt.' },
+        { q: 'Wat hebben alle vier de kanalen gemeen?', options: ['Ze manipuleren de mens met autoriteit en urgentie, niet de techniek', 'Ze gebruiken allemaal malware', 'Ze werken alleen \'s nachts', 'Ze zijn onschuldig'], answer: 0, explain: 'Het kanaal verschilt, de social-engineering-hefbomen zijn steeds dezelfde.' },
+        { q: 'Welke vlag staat in de tip-callout van deze taak?', answer: ['NM{vier_kanalen}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{vier_kanalen}.' },
+      ],
+    },
+    {
+      title: 'Taak 3 — Het script van een vishing-call',
+      content: `
+        <p>Een vishing-gesprek volgt een vast script. Zet de stappen op volgorde — van voorbereiding tot misbruik. Als je het
+        script kent, hoor je de fraude al aankomen.</p>
+        <div class="callout tip"><strong>Beloning:</strong> hoor het script aankomen. Vlag: <code>NM{hoor_het_script}</code>.</div>
+      `,
+      lab: {
+        type: 'ordering',
+        title: 'de vishing-call',
+        prompt: 'Zet de zes stappen op volgorde, van voorbereiding tot misbruik.',
+        items: VD_STEPS,
+        correct: ['1', '2', '3', '4', '5', '6'],
+        flag: 'NM{hoor_het_script}',
+        explain: 'Info verzamelen/stem klonen → spoofed bellen → vertrouwen + urgentie → handeling vragen → slachtoffer handelt → misbruik.',
+      },
+      questions: [
+        { q: 'Wat gebeurt er in de voorbereiding?', options: ['Info verzamelen en eventueel een stem klonen om geloofwaardig te zijn', 'Het geld opnemen', 'De sms-code vragen', 'Niets'], answer: 0, explain: 'Met jouw gegevens (en soms een stemkloon) klinkt de beller overtuigend.' },
+        { q: 'Op welk moment kun je de call het best breken?', options: ['Zodra er om een code/betaling/remote toegang wordt gevraagd: ophangen en zelf verifiëren', 'Nadat je betaald hebt', 'Nooit', 'Alleen aan het begin'], answer: 0, explain: 'De "vraag om een handeling" is het kantelpunt; daar stop je en verifieer je onafhankelijk.' },
+        { q: 'Welke vlag hoort bij de juiste volgorde?', answer: ['NM{hoor_het_script}'], hint: 'Verschijnt bij de juiste volgorde / staat in de tip-callout.', explain: 'De vlag is NM{hoor_het_script}.' },
+      ],
+    },
+    {
+      title: 'Taak 4 — Herkennen en weerstaan',
+      content: `
+        <p>Nu de praktijk. Loop door vijf beslismomenten rond vishing en deepfake-stemmen en kies telkens de verstandigste
+        reactie. Vier van de vijf goed = je houdt het hoofd koel.</p>
+        <div class="callout tip"><strong>Beloning:</strong> ophangen en zelf terugbellen. Vlag: <code>NM{hang_op_verifieer}</code>.</div>
+      `,
+      lab: {
+        type: 'scenario',
+        title: 'voice-fraude — jouw reacties',
+        scenario: 'Vijf beslismomenten rond vishing, deepfake en QR. Kies verstandig.',
+        steps: VD_SCEN,
+        pass: 4,
+        flag: 'NM{hang_op_verifieer}',
+      },
+      questions: [
+        { q: 'Je "CEO" belt met een bekende stem en vraagt een spoedbetaling. Beste reactie?', options: ['Ophangen en terugbellen op zijn bekende nummer', 'Uitvoeren, de stem klinkt echt', 'Gevoelige details telefonisch bevestigen', 'Meteen betalen'], answer: 0, explain: 'Een bekende stem kan gekloond zijn; een onafhankelijke callback is de verificatie.' },
+        { q: 'Welke afspraak beschermt het bedrijf het best tegen deepfake-CEO-fraude?', options: ['Een codewoord en/of verplichte callback-verificatie voor betaalopdrachten', 'Vertrouwen op stemherkenning', '\'s Nachts geen betalingen', 'Een langer wachtwoord'], answer: 0, explain: 'Een proces dat niet op stem/mail leunt maar op onafhankelijke verificatie houdt stand.' },
+        { q: 'Een QR-sticker op een laadpaal leidt naar een "betaalpagina". Wat doe je?', options: ['Niet scannen; via de officiële app of gedrukte URL betalen', 'Scannen en betalen', 'Scannen om te kijken', 'Je pin invoeren'], answer: 0, explain: 'Quishing plakt een valse QR over de echte; gebruik alleen de officiële route.' },
+        { q: 'Welke vlag hoort bij een goede afhandeling?', answer: ['NM{hang_op_verifieer}'], hint: 'Verschijnt bij ≥4/5 goed / staat in de tip-callout.', explain: 'De vlag is NM{hang_op_verifieer}.' },
+      ],
+    },
+  ],
+});
+
+</script>
+<script>
 /* Room: OWASP Top 10 (editie 2025) */
 CS.registerRoom({
   id: 'owasp-top-10',
@@ -14905,6 +15096,184 @@ CS.registerRoom({
         { q: 'Welke twee maatregelen dichten de meestgebruikte voordeuren?', options: ['MFA overal en snel patchen van internet-facing systemen', 'Een langer wachtwoord en een screensaver', 'Meer schijfruimte en RAM', 'Een nieuwe router'], answer: 0, explain: 'Gestolen/zwakke credentials en ongepatchte systemen zijn de klassieke toegangswegen; MFA en patchen sluiten ze.' },
         { q: 'Waarom helpt netwerksegmentatie?', options: ['Eén besmette werkplek neemt dan niet het hele netwerk mee', 'Het versnelt de back-up', 'Het voorkomt phishing', 'Het is wettelijk verplicht'], answer: 0, explain: 'Segmentatie en least privilege beperken laterale beweging en dus de schade van een besmetting.' },
         { q: 'Welke vlag staat in de tip-callout van deze taak?', answer: ['NM{teste_back_ups_redden}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{teste_back_ups_redden}.' },
+      ],
+    },
+  ],
+});
+
+</script>
+<script>
+/* Room: Defensief — phishing-kit & -infrastructuur ontleden (tot de takedown) */
+
+// =======================================================================
+//  Alles FICTIEF: .nm.lab-domeinen, documentatie-IP's (RFC 5737) en een
+//  verzonnen phishing-kit. Passieve analyse; je breekt nergens in.
+// =======================================================================
+
+// --- IOC-extractor: de configuratie van de phishing-kit ---
+const PK_IOC_TEXT = [
+  '// config.php — gevonden phishing-kit (passief uit een open directory)',
+  '$victim_brand = "nederbank.nl";',
+  '$exfil_endpoint = "https://opslag-x9f3.nm.lab/collect.php";',
+  '$notify_email = "beheer@boos.nm.lab";',
+  '$telegram_note = "stuurt buit ook naar @boos_exfil_bot";',
+  '// drop-IPs voor de buit: 203.0.113.77 en secundair 198.51.100.40',
+  '// kit-signatuur in de footer: "kit by rxkit v3"',
+].join('\n');
+
+// --- Pivot: twee phishingsites, één operator (gedeeld exfil-endpoint + cert) ---
+const PK_ENTITIES = [
+  { id: 'p1', type: 'domain', label: 'nederbank-verificatie.boos.nm.lab' },
+  { id: 'p2', type: 'domain', label: 'inlog-pakketpost.boos.nm.lab' },
+  { id: 'exfil', type: 'domain', label: 'opslag-x9f3.nm.lab (exfil-endpoint)' },
+  { id: 'cert', type: 'cert', label: 'A1B2C3D4 (TLS-cert)' },
+  { id: 'mail', type: 'email', label: 'beheer@boos.nm.lab' },
+];
+const PK_EDGES = [
+  { from: 'p1', to: 'exfil', rel: 'POST buit naar', time: '2026-02', source: 'kit-config' },
+  { from: 'p2', to: 'exfil', rel: 'POST buit naar', time: '2026-02', source: 'kit-config' },
+  { from: 'p1', to: 'cert', rel: 'presenteert cert', time: '2026-02', source: 'crt.sh' },
+  { from: 'p2', to: 'cert', rel: 'presenteert cert', time: '2026-02', source: 'crt.sh' },
+  { from: 'p1', to: 'mail', rel: 'WHOIS-contact', time: '2026-02', source: 'WHOIS' },
+];
+
+CS.registerRoom({
+  id: 'phishing-kit-infrastructuur',
+  path: 'defensief',
+  order: 8,
+  title: 'Phishing-kit & -infrastructuur ontleden',
+  icon: '🧪',
+  difficulty: 'Gemiddeld',
+  minutes: 55,
+  summary: 'Moderne phishing is industrie: kant-en-klare "kits" (phishing-as-a-service) maken nep-inlogpagina\'s en sturen de buit automatisch weg. Je ontleedt zo\'n kit van buitenaf: je analyseert de phishing-URL, haalt de IOCs uit de kit-configuratie, pivoteert de infrastructuur naar één operator, en zet de stappen voor een takedown. Alles passief en lawful.',
+  objectives: [
+    'Uitleggen wat een phishing-kit / phishing-as-a-service is en hoe de infrastructuur eruitziet',
+    'Een phishing-URL ontleden en de misleiding aanwijzen',
+    'IOCs uit een kit-configuratie halen (exfil-endpoint, drop-IPs, e-mail)',
+    'De infrastructuur pivoteren om meerdere sites aan één operator te koppelen',
+    'De stappen van een takedown benoemen (abuse, registrar, host, blocklists)',
+  ],
+  terms: [
+    { term: 'Phishing-kit', def: 'Een kant-en-klaar pakket (HTML/PHP) dat een nep-inlogpagina nabootst en ingevoerde gegevens wegstuurt.' },
+    { term: 'Phishing-as-a-Service (PhaaS)', def: 'Phishing-kits en -diensten die als abonnement worden verkocht, zodat ook onervaren criminelen kunnen phishen.' },
+    { term: 'Landingspagina', def: 'De nep-inlogpagina die het slachtoffer ziet; vaak een pixel-perfecte kopie van de echte site.' },
+    { term: 'Exfil-endpoint', def: 'De plek waar de kit de buitgemaakte gegevens naartoe stuurt (een URL, e-mail of Telegram-bot).' },
+    { term: 'Open directory', def: 'Een verkeerd geconfigureerde map op de server waardoor onderzoekers de kit-bestanden (soms de config) passief kunnen inzien.' },
+    { term: 'Kit-signatuur', def: 'Een herkenbaar kenmerk in de kit (een commentaar, bestandsnaam, variabele) dat kits van dezelfde maker verbindt.' },
+    { term: 'Pivoteren', def: 'Van één bekend kenmerk (exfil-endpoint, cert) naar andere sites van dezelfde operator springen.' },
+    { term: 'Takedown', def: 'Een kwaadaardige site offline laten halen via de hostingpartij/registrar (abuse-melding) en op blocklists zetten.' },
+  ],
+  resources: [
+    { title: 'APWG — Anti-Phishing Working Group', url: 'https://apwg.org/' },
+    { title: 'PhishTank — phishing melden en opzoeken', url: 'https://phishtank.org/' },
+    { title: 'crt.sh — certificate transparency', url: 'https://crt.sh/' },
+    { title: 'NCSC — phishing melden', url: 'https://www.ncsc.nl/' },
+  ],
+  tasks: [
+    {
+      title: 'Taak 1 — Phishing is een industrie',
+      content: `
+        <p>Phishing is allang geen handwerk meer. Criminelen kopen kant-en-klare <strong>phishing-kits</strong> — of huren
+        <strong>Phishing-as-a-Service</strong> — die een pixel-perfecte nep-inlogpagina leveren en de buit automatisch
+        wegsturen. De infrastructuur heeft vaste onderdelen: een <strong>landingspagina</strong> (de nep-site), een
+        <strong>exfil-endpoint</strong> (waar de gegevens heen gaan), en vaak een <strong>C2/Telegram-bot</strong> voor
+        meldingen.</p>
+        <p>Als verdediger ontleed je zo'n operatie <strong>van buitenaf en passief</strong>: de URL, de kit-configuratie (als
+        die via een open directory zichtbaar is), de gedeelde infrastructuur. Zo koppel je losse sites aan één operator — en
+        zet je de takedown in gang.</p>
+        <div class="callout warn"><strong>Alles fictief en passief:</strong> de domeinen, IP's en kit zijn verzonnen. Je kijkt
+        in open bronnen; je breekt nergens in.</div>
+        <div class="callout tip"><strong>Beloning:</strong> phishing is schaalbaar geworden. Vlag: <code>NM{kit_maakt_het_schaalbaar}</code>.</div>
+      `,
+      questions: [
+        { q: 'Wat is een phishing-kit?', options: ['Een kant-en-klaar pakket dat een nep-inlogpagina nabootst en gegevens wegstuurt', 'Een antivirusprogramma', 'Een wachtwoordmanager', 'Een firewall-regel'], answer: 0, explain: 'De kit bevat de nep-pagina én de logica om ingevoerde gegevens te exfiltreren.' },
+        { q: 'Wat maakt Phishing-as-a-Service gevaarlijk?', options: ['Ook onervaren criminelen kunnen tegen een abonnement grootschalig phishen', 'Het is legaal', 'Het werkt alleen op mainframes', 'Het is heel duur en dus zeldzaam'], answer: 0, explain: 'PhaaS verlaagt de drempel enorm — phishing wordt een schaalbare dienst.' },
+        { q: 'Hoe ontleed je zo\'n operatie als verdediger?', options: ['Passief en van buitenaf: URL, kit-config (open directory), gedeelde infrastructuur', 'Door in te breken op de server', 'Door de kit zelf te kopen en te gebruiken', 'Dat kan niet'], answer: 0, explain: 'Lawful onderzoek blijft passief: open bronnen, geen ongeautoriseerde toegang.' },
+        { q: 'Welke vlag staat in de tip-callout?', answer: ['NM{kit_maakt_het_schaalbaar}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{kit_maakt_het_schaalbaar}.' },
+      ],
+    },
+    {
+      title: 'Taak 2 — Ontleed de phishing-URL',
+      content: `
+        <p>Je vindt twee links die naar de nep-site leiden. Ontleed ze: waar staat het echte domein, en welk merk wordt
+        nagebootst? Onthoud: het echte domein staat <strong>rechts</strong>, vlak vóór het pad.</p>
+        <div class="callout tip"><strong>Beloning:</strong> het merk zit in het subdomein, niet in het domein. Vlag: <code>NM{merk_in_subdomein}</code>.</div>
+      `,
+      lab: {
+        type: 'url',
+        urls: [
+          'https://nederbank.nl.secure-login.boos.nm.lab/inloggen',
+          'https://nederbank-verificatie.boos.nm.lab/klant',
+        ],
+      },
+      questions: [
+        { q: 'Wat is het echte geregistreerde domein van deze links (rechts, vlak vóór het pad)?', answer: ['boos.nm.lab', 'nm.lab'], hint: 'Kijk naar de laatste labels vóór de eerste /.', explain: 'Het domein is boos.nm.lab; "nederbank.nl" staat er slechts als subdomein voor om te misleiden.' },
+        { q: 'Welk merk wordt nagebootst?', answer: ['nederbank', 'Nederbank'], hint: 'Het staat prominent in het subdomein.', explain: 'De links zetten "nederbank" in het subdomein om vertrouwen te wekken.' },
+        { q: 'Waarom is het "https"-slotje geen bewijs van echtheid?', options: ['Https versleutelt alleen de verbinding; ook phishingsites hebben een certificaat', 'Https betekent dat de site veilig is', 'Https controleert de eigenaar', 'Dat is het wel'], answer: 0, explain: 'Een certificaat is gratis en zegt niets over wie de site beheert.' },
+        { q: 'Welke vlag staat in de tip-callout van deze taak?', answer: ['NM{merk_in_subdomein}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{merk_in_subdomein}.' },
+      ],
+    },
+    {
+      title: 'Taak 3 — Haal de IOCs uit de kit',
+      content: `
+        <p>Door een <strong>open directory</strong> is de configuratie van de kit zichtbaar. Plak hem in de extractor en haal
+        de indicatoren eruit: waar gaat de buit heen (exfil-endpoint), welke drop-IP's, welk meldadres? Defang voordat je ze
+        deelt.</p>
+        <div class="callout tip"><strong>Beloning:</strong> de config verraadt de buitroute. Vlag: <code>NM{config_verraadt_de_buit}</code>.</div>
+      `,
+      lab: {
+        type: 'ioc',
+        text: PK_IOC_TEXT,
+      },
+      questions: [
+        { q: 'Naar welk endpoint stuurt de kit de buit?', answer: ['opslag-x9f3.nm.lab', 'https://opslag-x9f3.nm.lab/collect.php', 'opslag-x9f3.nm.lab/collect.php'], hint: 'De $exfil_endpoint-regel.', explain: 'De kit POST de gestolen gegevens naar https://opslag-x9f3.nm.lab/collect.php.' },
+        { q: 'Hoeveel unieke IPv4-adressen staan er als drop-IP in de config?', answer: ['2', 'twee'], hint: 'De drop-IP-regel.', explain: 'Twee: 203.0.113.77 en 198.51.100.40.' },
+        { q: 'Welk meldadres (e-mail) gebruikt de operator?', answer: ['beheer@boos.nm.lab'], hint: 'De $notify_email-regel.', explain: 'beheer@boos.nm.lab ontvangt een melding bij elke buit.' },
+        { q: 'Welke vlag staat in de tip-callout van deze taak?', answer: ['NM{config_verraadt_de_buit}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{config_verraadt_de_buit}.' },
+      ],
+    },
+    {
+      title: 'Taak 4 — Pivoteer naar de operator',
+      content: `
+        <p>Eén phishingsite is zelden alleen. Pivoteer de infrastructuur: welke andere site deelt hetzelfde
+        <strong>exfil-endpoint</strong> en hetzelfde <strong>certificaat</strong>? Dat gedeelde, zeldzame kenmerk koppelt de
+        sites aan <em>één operator</em> — en dat maakt een bredere takedown mogelijk.</p>
+        <div class="callout tip"><strong>Beloning:</strong> één exfil-endpoint, één operator. Vlag: <code>NM{een_endpoint_een_operator}</code>.</div>
+      `,
+      lab: {
+        type: 'pivot',
+        title: 'twee phishingsites, één operator',
+        scenario: 'Twee nep-sites (verschillende merken) POSTen naar hetzelfde exfil-endpoint en delen een certificaat.',
+        entities: PK_ENTITIES,
+        edges: PK_EDGES,
+      },
+      questions: [
+        { q: 'Welk gedeeld kenmerk koppelt de twee phishingsites aan één operator?', answer: ['opslag-x9f3.nm.lab', 'exfil-endpoint', 'het exfil-endpoint', 'A1B2C3D4', 'het certificaat', 'cert'], hint: 'Beide sites POSTen hun buit naar hetzelfde adres (en delen een cert).', explain: 'Beide sturen de buit naar opslag-x9f3.nm.lab en presenteren cert A1B2C3D4 — zelfde operator.' },
+        { q: 'Waarom is een gedeeld exfil-endpoint een sterke link?', options: ['Het is specifiek en zelden toevallig gedeeld: dezelfde operator oogst op één plek', 'Omdat endpoints geheim zijn', 'Omdat het een IP is', 'Dat is het niet'], answer: 0, explain: 'Verschillende merk-sites die naar hetzelfde oogst-adres sturen, horen vrijwel zeker bij dezelfde hand.' },
+        { q: 'Wat levert deze pivot op voor de verdediging?', options: ['Een bredere takedown: je haalt het hele cluster neer in plaats van één site', 'De naam van de dader', 'Een decryptor', 'Niets'], answer: 0, explain: 'Door het cluster te kennen, kun je alle sites én het exfil-endpoint laten blokkeren/offline halen.' },
+        { q: 'Welke vlag staat in de tip-callout van deze taak?', answer: ['NM{een_endpoint_een_operator}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{een_endpoint_een_operator}.' },
+      ],
+    },
+    {
+      title: 'Taak 5 — Zet de takedown in',
+      content: `
+        <p>Analyse zonder actie helpt niemand. Zet de <strong>takedown</strong> in gang:</p>
+        <ul>
+          <li><strong>Meld</strong> de phishing-URL's bij blocklists en meldpunten (PhishTank, APWG, de nagebootste bank, het
+          NCSC), zodat browsers en filters ze blokkeren.</li>
+          <li><strong>Abuse-melding</strong> naar de <strong>hostingpartij</strong> en de <strong>registrar</strong> van de
+          domeinen (abuse@…), met bewijs, om de sites offline te halen.</li>
+          <li>Laat ook het <strong>exfil-endpoint</strong> blokkeren — zonder oogstplek is de kit waardeloos.</li>
+          <li>Deel de <strong>IOCs</strong> (gedefangd) met je eigen SOC en sectorpartners zodat anderen beschermd zijn.</li>
+          <li>Doe waar passend <strong>aangifte</strong>; laat de verdere opsporing aan het bevoegde gezag.</li>
+        </ul>
+        <div class="callout tip"><strong>Beloning:</strong> melden, blokkeren, offline. Vlag: <code>NM{meld_blokkeer_offline}</code>.</div>
+      `,
+      questions: [
+        { q: 'Wat is een effectieve eerste takedown-stap?', options: ['De URL\'s melden bij blocklists/meldpunten en een abuse-melding naar host en registrar sturen', 'Zelf de server hacken', 'Niets, wachten tot het vanzelf stopt', 'De nep-site bezoeken en je gegevens invoeren'], answer: 0, explain: 'Blocklists beschermen snel veel mensen; de abuse-melding laat de site offline halen.' },
+        { q: 'Waarom wil je ook het exfil-endpoint laten blokkeren?', options: ['Zonder oogstplek voor de buit is de kit waardeloos', 'Omdat het mooi staat', 'Dat hoeft niet', 'Om de snelheid te verhogen'], answer: 0, explain: 'Als de buit nergens heen kan, stop je de schade ook bij nog-actieve pagina\'s.' },
+        { q: 'Wat doe je met de verzamelde IOCs?', options: ['Gedefangd delen met je SOC en sectorpartners, en waar passend aangifte doen', 'Publiek online zetten met namen', 'Weggooien', 'Zelf de operator confronteren'], answer: 0, explain: 'Delen beschermt anderen; opsporing en attributie laat je aan het bevoegde gezag.' },
+        { q: 'Welke vlag staat in de tip-callout van deze taak?', answer: ['NM{meld_blokkeer_offline}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{meld_blokkeer_offline}.' },
       ],
     },
   ],
@@ -23070,6 +23439,202 @@ CS.registerRoom({
 
 </script>
 <script>
+/* Room: Intelligence — money-mule-ronseling (geldezels: ronselen, gebruik, gevolgen) */
+
+// =======================================================================
+//  Alles FICTIEF: verzonnen scenario's. Deze room leert geldezel-ronseling
+//  herkennen, weigeren en melden — én de juridische gevolgen. Geen
+//  aanmoediging; juist een waarschuwing.
+// =======================================================================
+
+// --- Scenario: word je geronseld? herken en weiger ---
+const MM_SCEN = [
+  {
+    situation: 'Op social media: "Verdien € 300 door simpelweg geld via jouw bankrekening te laten lopen. 100% veilig!" Wat doe je?',
+    choices: [
+      { label: 'Weigeren en melden — dit is geldezel-ronseling en strafbaar', good: true, feedback: 'Precies: "geld via je rekening laten lopen" tegen een vergoeding is witwassen. Nooit doen, wél melden.' },
+      { label: 'Doen, het is makkelijk en snel geld', good: false, feedback: 'Dit is ronseling voor witwassen. Je bent medeplichtig, met zware gevolgen — geen "makkelijk geld".' },
+      { label: 'Eén keertje kan geen kwaad', good: false, feedback: 'Ook één keer is strafbaar en wordt vastgelegd; banken en politie herkennen het patroon.' },
+    ],
+  },
+  {
+    situation: '"Het is toch niet mijn geld, dus ik doe niets strafbaars." Klopt dat?',
+    choices: [
+      { label: 'Nee: je rekening lenen voor crimineel geld is witwassen (art. 420bis Sr), ook als je verder "niets deed"', good: true, feedback: 'Correct: het ter beschikking stellen van je rekening voor misdaadgeld is zelf een misdrijf.' },
+      { label: 'Ja, je bent onschuldig want je deed niets', good: false, feedback: 'De wet ziet het doorsluizen van crimineel geld als witwassen — ook als jij "alleen je rekening leende".' },
+      { label: 'Alleen de opdrachtgever is strafbaar', good: false, feedback: 'De geldezel is zelf óók strafbaar; onwetendheid of "ik kreeg maar weinig" is geen vrijbrief.' },
+    ],
+  },
+  {
+    situation: 'Welke gevolgen heeft meedoen als geldezel?',
+    choices: [
+      { label: 'Strafblad, je bankrekening(en) geblokkeerd, moeilijk nog ergens bankieren, en terugbetalingsplicht', good: true, feedback: 'Precies: de gevolgen reiken jaren vooruit — van geen bankrekening tot problemen met studie, werk en reizen.' },
+      { label: 'Geen enkel gevolg, het is anoniem', good: false, feedback: 'Niets is anoniem: je rekening staat op jouw naam. De gevolgen zijn fors en langdurig.' },
+      { label: 'Alleen een waarschuwing', good: false, feedback: 'Het is een misdrijf, geen waarschuwing; een strafblad en een bankverbod zijn reële gevolgen.' },
+    ],
+  },
+  {
+    situation: 'Een "vriend" vraagt of hij "even je rekening mag gebruiken" voor een overboeking.',
+    choices: [
+      { label: 'Weigeren — leen nooit je rekening, pas, pincode of DigiD uit', good: true, feedback: 'Goed: je rekening uitlenen maakt je een geldezel, ook voor een vriend. Houd het strikt privé.' },
+      { label: 'Lenen, het is tenslotte een vriend', good: false, feedback: 'Vriendschap is juist de ronsel-haak. Jouw naam, jouw verantwoordelijkheid — niet doen.' },
+      { label: 'Lenen maar alleen voor een klein bedrag', good: false, feedback: 'Elk bedrag maakt je medeplichtig. Leen je rekening nooit uit.' },
+    ],
+  },
+  {
+    situation: 'Je beseft dat je al benaderd (of geronseld) bent. Wat doe je?',
+    choices: [
+      { label: 'Stoppen, de berichten bewaren en melden bij je bank en de politie', good: true, feedback: 'Precies: direct stoppen en melden beperkt de schade en je aansprakelijkheid; bewaar het bewijs.' },
+      { label: 'Negeren en hopen dat het overwaait', good: false, feedback: 'Doorgaan of wegkijken maakt het erger. Stoppen en melden is de enige goede route.' },
+      { label: 'De berichten verwijderen om geen sporen te hebben', good: false, feedback: 'Juist bewaren: het bewijs helpt jou en de opsporing. Verwijderen werkt tegen je.' },
+    ],
+  },
+];
+
+// --- Flow: de rol van de geldezel in de keten ---
+const MM_NODES = [
+  { id: 'v', type: 'victim', label: 'Slachtoffer (fraude)' },
+  { id: 'mule', type: 'mule', label: 'Geronselde geldezel' },
+  { id: 'org', type: 'account', label: 'Organisatie (verzamelrekening)' },
+  { id: 'cash', type: 'cashout', label: 'Cash-out' },
+];
+const MM_EDGES = [
+  { from: 'v', to: 'mule', amount: 5000, time: 'dag 1', note: 'buit van fraude komt binnen op de rekening van de geldezel' },
+  { from: 'mule', to: 'org', amount: 4700, time: 'dag 1', note: 'geldezel houdt € 300 "vergoeding" en sluist door' },
+  { from: 'org', to: 'cash', amount: 4500, time: 'dag 2', note: 'organisatie houdt € 200; cash-out' },
+];
+
+CS.registerRoom({
+  id: 'money-mule-ronseling',
+  path: 'intelligence',
+  order: 12,
+  title: 'Money-mule-ronseling: de geldezel',
+  icon: '🐴',
+  difficulty: 'Gemiddeld',
+  minutes: 45,
+  summary: 'Elke witwasketen heeft geldezels nodig: mensen die hun rekening uitlenen om crimineel geld door te sluizen. Ze worden geronseld met "makkelijk geld" — vaak jongeren. Je leert hoe ronseling werkt (crime script), hoe je het herkent en weigert (simulatie), welke rol de geldezel in de geldstroom speelt, en — cruciaal — dat een geldezel zélf strafbaar is, met jarenlange gevolgen.',
+  objectives: [
+    'Uitleggen wat een money mule (geldezel) is en waarom criminelen ze nodig hebben',
+    'Ronseltactieken herkennen (nep-bijbaan, "makkelijk geld", vriendendienst)',
+    'Weten dat een geldezel zélf strafbaar is (witwassen, art. 420bis Sr) met zware gevolgen',
+    'De rol van de geldezel in de geldstroom volgen',
+    'Weten hoe te weigeren, stoppen en melden',
+  ],
+  terms: [
+    { term: 'Money mule / geldezel', def: 'Iemand die zijn bankrekening (of pas/identiteit) ter beschikking stelt om crimineel geld door te sluizen, meestal tegen een vergoeding.' },
+    { term: 'Ronselen', def: 'Werven van geldezels, vaak via social media, nep-vacatures, gaming-chats of vriendenkringen, met de belofte van snel geld.' },
+    { term: 'Witwassen (art. 420bis Sr)', def: 'Crimineel geld een legale schijn geven; je rekening lenen voor misdaadgeld valt hieronder — de geldezel is zelf strafbaar.' },
+    { term: 'Katvanger', def: 'Een ander woord voor iemand die zijn rekening/identiteit uitleent voor criminele doeleinden.' },
+    { term: 'Doorsluizen', def: 'Geld snel verder sturen (layering) zodat de herkomst vervaagt; de kernrol van een geldezel.' },
+    { term: 'Gevolgen', def: 'Strafblad, geblokkeerde rekeningen, geen bankrekening meer kunnen krijgen, terugbetalingsplicht — jarenlang.' },
+    { term: 'Grooming/ronselhaak', def: 'De psychologische haak (vriendschap, status, geld, druk) waarmee ronselaars vooral jongeren binnenhalen.' },
+    { term: 'Melden', def: 'Stoppen, bewijs bewaren en melden bij je bank en de politie beperkt schade én je aansprakelijkheid.' },
+  ],
+  resources: [
+    { title: 'Politie — geldezels (money mules)', url: 'https://www.politie.nl/informatie/geldezel.html' },
+    { title: 'Fraudehelpdesk — geldezel worden', url: 'https://www.fraudehelpdesk.nl/' },
+    { title: 'Europol — Money Mule-campagne (#DontBeAMule)', url: 'https://www.europol.europa.eu/' },
+    { title: 'Wijzer in geldzaken — veilig bankieren', url: 'https://www.wijzeringeldzaken.nl/' },
+  ],
+  tasks: [
+    {
+      title: 'Taak 1 — Wat is een geldezel?',
+      content: `
+        <p>Criminelen willen hun buit niet op hun eigen rekening. Daarom hebben ze <strong>geldezels</strong> (money mules)
+        nodig: mensen die hun bankrekening uitlenen om crimineel geld te ontvangen en snel <strong>door te sluizen</strong>.
+        Ze worden <strong>geronseld</strong> met de belofte van "makkelijk geld" — via social media, nep-vacatures,
+        gaming-chats of vriendenkringen. Vooral jongeren zijn een doelwit.</p>
+        <p>De grote misvatting: <em>"het is toch niet mijn geld, dus ik doe niets fout."</em> Mis. Je rekening lenen voor
+        crimineel geld is <strong>witwassen</strong> (art. 420bis Sr) — de geldezel is <strong>zelf strafbaar</strong>. De
+        gevolgen zijn fors en langdurig: een strafblad, geblokkeerde rekeningen, nergens meer kunnen bankieren en soms een
+        terugbetalingsplicht.</p>
+        <div class="callout warn"><strong>Alles fictief:</strong> de scenario's zijn verzonnen. Deze room waarschuwt en leert
+        herkennen — het is nadrukkelijk geen aanmoediging.</div>
+        <div class="callout tip"><strong>Beloning:</strong> je rekening lenen = witwassen. Vlag: <code>NM{geen_makkelijk_geld}</code>.</div>
+      `,
+      questions: [
+        { q: 'Wat is een geldezel (money mule)?', options: ['Iemand die zijn rekening uitleent om crimineel geld door te sluizen', 'Een medewerker van de bank', 'Een type malware', 'Een cryptomunt'], answer: 0, explain: 'De geldezel ontvangt en sluist crimineel geld door — een cruciale schakel in witwassen.' },
+        { q: 'Klopt het dat een geldezel "niets strafbaars" doet?', options: ['Nee — je rekening lenen voor crimineel geld is witwassen (art. 420bis Sr)', 'Ja, want het is niet zijn geld', 'Ja, zolang hij weinig krijgt', 'Alleen de opdrachtgever is strafbaar'], answer: 0, explain: 'De geldezel is zelf strafbaar; onwetendheid of een kleine vergoeding is geen vrijbrief.' },
+        { q: 'Hoe worden geldezels vooral geronseld?', options: ['Via social media, nep-vacatures en vriendenkringen met de belofte van snel geld', 'Via de belastingdienst', 'Via de bank zelf', 'Dat gebeurt niet'], answer: 0, explain: 'Ronselaars gebruiken "makkelijk geld" en sociale druk, vooral richting jongeren.' },
+        { q: 'Welke vlag staat in de tip-callout?', answer: ['NM{geen_makkelijk_geld}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{geen_makkelijk_geld}.' },
+      ],
+    },
+    {
+      title: 'Taak 2 — Het ronsel- en gebruiksscript',
+      content: `
+        <p>Ronselen en inzetten van geldezels verloopt volgens een <strong>crime script</strong>. Ontleed het per fase: wie
+        doet wat, met welke middelen, waar, onder welke randvoorwaarden en welke sporen het nalaat — plus een
+        <strong>interventie</strong> per fase (bijv. voorlichting, bankdetectie). Met "Toon een voorbeelduitwerking"
+        vergelijk je achteraf.</p>
+        <div class="callout tip"><strong>Beloning:</strong> elke fase is te onderbreken. Vlag: <code>NM{ronsel_script_ontleed}</code>.</div>
+      `,
+      lab: {
+        type: 'crimescript',
+        title: 'geldezel-ronseling en -gebruik',
+        scenario: 'Een netwerk ronselt jongeren als geldezel, laat fraudegeld binnenkomen op hun rekening en sluist het snel door naar een verzamelrekening en cash-out.',
+        phases: ['1 · Voorbereiding (doelgroep & kanaal)', '2 · Benaderen (de ronselhaak)', '3 · Werven (rekening/pas regelen)', '4 · Gebruik (geld doorsluizen)', '5 · Afschermen (sporen/afstand)', '6 · Cash-out & witwassen'],
+        model: '<ul><li><strong>Voorbereiding:</strong> doelgroep (jongeren, geldnood) en kanaal (Snapchat/Telegram, nep-vacature). Interventie: voorlichting op scholen, advertenties weren.</li><li><strong>Benaderen:</strong> "verdien snel geld, 100% veilig". Interventie: herkennen en melden; #DontBeAMule-campagnes.</li><li><strong>Werven:</strong> rekening/pas/DigiD vragen. Interventie: nooit uitlenen; banken detecteren nieuwe/ongebruikelijke rekeningopeningen.</li><li><strong>Gebruik:</strong> fraudegeld binnen, snel doorsluizen. Interventie: transactiemonitoring (plotse in- en uitstroom).</li><li><strong>Afschermen:</strong> ronselaar houdt afstand, mule draagt risico. Interventie: de keten omhoog volgen vanaf de mule.</li><li><strong>Cash-out:</strong> verzamelen, contant/crypto. Interventie: cash-out-knelpunten en KYC.</li></ul>',
+      },
+      questions: [
+        { q: 'Wat is de "ronselhaak" in de benaderingsfase?', options: ['De psychologische haak (snel geld, vriendschap, status) om iemand binnen te halen', 'Een technische exploit', 'Een bankpas', 'Een virus'], answer: 0, explain: 'Ronselaars spelen in op geldnood, vriendschap of status — vooral bij jongeren.' },
+        { q: 'Welke bankmaatregel past bij de "gebruik"-fase (doorsluizen)?', options: ['Transactiemonitoring die plotse in- en uitstroom op een rekening detecteert', 'Een langer wachtwoord', 'Een snellere app', 'Niets'], answer: 0, explain: 'Een rekening die opeens geld ontvangt en meteen doorsluist, is een klassiek mule-patroon.' },
+        { q: 'Waarom houdt de ronselaar "afstand" in de afschermingsfase?', options: ['De geldezel draagt het zichtbare risico; de ronselaar blijft buiten beeld', 'Omdat hij het geld niet wil', 'Omdat het verplicht is', 'Dat doet hij niet'], answer: 0, explain: 'De mule staat met naam op de rekening en draagt het risico; daarom volg je de keten omhoog vanaf de mule.' },
+        { q: 'Welke vlag staat in de tip-callout van deze taak?', answer: ['NM{ronsel_script_ontleed}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{ronsel_script_ontleed}.' },
+      ],
+    },
+    {
+      title: 'Taak 3 — Herkennen, weigeren, melden',
+      content: `
+        <p>Nu jij. Loop door vijf situaties waarin je geronseld wordt of ermee in aanraking komt, en kies telkens de juiste
+        reactie. Vier van de vijf goed = je trapt er niet in en weet wat te doen.</p>
+        <div class="callout tip"><strong>Beloning:</strong> weigeren en melden. Vlag: <code>NM{weiger_en_meld}</code>.</div>
+      `,
+      lab: {
+        type: 'scenario',
+        title: 'word je geronseld?',
+        scenario: 'Vijf situaties rond geldezel-ronseling. Kies verstandig.',
+        steps: MM_SCEN,
+        pass: 4,
+        flag: 'NM{weiger_en_meld}',
+      },
+      questions: [
+        { q: 'Iemand biedt je geld om "geld via je rekening te laten lopen". Wat doe je?', options: ['Weigeren en melden — dit is strafbare ronseling', 'Doen voor het snelle geld', 'Eén keertje meedoen', 'Onderhandelen over meer'], answer: 0, explain: 'Dit is witwassen; weigeren en melden is de enige goede route.' },
+        { q: 'Mag je je rekening "even lenen" aan een vriend voor een overboeking?', options: ['Nee — leen nooit je rekening, pas, pincode of DigiD uit', 'Ja, voor een vriend', 'Ja, voor een klein bedrag', 'Alleen eenmalig'], answer: 0, explain: 'Je rekening uitlenen maakt je een geldezel, ook voor een vriend.' },
+        { q: 'Je bent al benaderd/geronseld. Wat nu?', options: ['Stoppen, de berichten bewaren en melden bij bank en politie', 'Negeren en hopen dat het overwaait', 'De berichten verwijderen', 'Gewoon doorgaan'], answer: 0, explain: 'Stoppen en melden beperkt de schade en je aansprakelijkheid; bewaar het bewijs.' },
+        { q: 'Welke vlag hoort bij een goede afhandeling?', answer: ['NM{weiger_en_meld}'], hint: 'Verschijnt bij ≥4/5 goed / staat in de tip-callout.', explain: 'De vlag is NM{weiger_en_meld}.' },
+      ],
+    },
+    {
+      title: 'Taak 4 — De rol in de geldstroom',
+      content: `
+        <p>Zie tot slot waar de geldezel precies zit: tussen het slachtoffer en de cash-out, als bufferende schakel die de
+        herkomst versluiert. Volg de stroom en zie hoe weinig de geldezel overhoudt — tegenover hoeveel risico hij draagt.</p>
+        <div class="callout tip"><strong>Beloning:</strong> veel risico, weinig buit. Vlag: <code>NM{veel_risico_weinig_buit}</code>.</div>
+      `,
+      lab: {
+        type: 'flow',
+        title: 'de geldezel in de keten',
+        unit: '€',
+        scenario: 'Fraudegeld loopt via de rekening van de geldezel naar een verzamelrekening en cash-out.',
+        nodes: MM_NODES,
+        edges: MM_EDGES,
+        ask: [
+          { q: 'Hoeveel "vergoeding" houdt de geldezel over? (alleen het getal)', answer: ['300'], hint: 'Vergelijk wat binnenkomt en wat de geldezel doorsluist.' },
+          { q: 'Hoeveel bereikt uiteindelijk de cash-out?', answer: ['4500', '4.500'], hint: 'De laatste transactie.' },
+        ],
+      },
+      questions: [
+        { q: 'Hoeveel houdt de geldezel over van € 5.000 die binnenkwam?', answer: ['300', '€ 300', '€300'], hint: 'Binnen 5000, doorgesluisd 4700.', explain: 'De geldezel houdt € 300 "vergoeding" — een schijntje tegenover het risico van een strafblad.' },
+        { q: 'Waarom is de geldezel zo belangrijk voor de criminelen?', options: ['Hij vormt een buffer die de herkomst versluiert en het risico draagt', 'Hij levert de malware', 'Hij maakt de phishingmail', 'Hij is de bank'], answer: 0, explain: 'De mule zet afstand tussen de buit en de organisatie en draagt het zichtbare risico.' },
+        { q: 'Wat is de verhouding risico/opbrengst voor de geldezel?', options: ['Veel risico (strafblad, bankverbod) voor een kleine vergoeding', 'Weinig risico, veel geld', 'Geen risico', 'Alleen risico voor de bank'], answer: 0, explain: 'Een paar honderd euro tegenover jarenlange, zware gevolgen — een extreem slechte deal.' },
+        { q: 'Welke vlag staat in de tip-callout van deze taak?', answer: ['NM{veel_risico_weinig_buit}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{veel_risico_weinig_buit}.' },
+      ],
+    },
+  ],
+});
+
+</script>
+<script>
 /* Room: Datastromen — witwassen & structurering (smurfing, Wwft, follow-the-money) */
 
 // =======================================================================
@@ -28237,6 +28802,269 @@ function check(sleutel) {
         { q: 'Wat is de eindvlag van Operatie Sleutelbos?', answer: ['NM{operatie_sleutelbos_voltooid}'], hint: 'Staat in deze slottaak, als beloning voor het afronden.', explain: 'De eindvlag is NM{operatie_sleutelbos_voltooid} — alle zeven vlaggen binnen.' },
         { q: 'Wat is de belangrijkste aanbeveling tegen het kraken van de wachtwoordhashes die je vond?', options: ['Langere gebruikersnamen eisen', 'Opslag met een traag, gesalt algoritme (bcrypt/scrypt/Argon2)', 'De hashes dubbel MD5-en', 'De hashes geheimhouden'], answer: 1, explain: 'Een traag, gesalt algoritme maakt massaal kraken onbetaalbaar traag en breekt rainbow tables.' },
         { q: 'Ik heb alle zeven vlaggen verzameld en rond de opdracht ethisch en reproduceerbaar af. 🏆', noAnswer: true },
+      ],
+    },
+  ],
+});
+
+</script>
+<script>
+/* Room: Eindopdracht — de grote Datastromen-CTF: Operatie Spiegelglas */
+
+// =======================================================================
+//  Alles FICTIEF: "Operatie Spiegelglas", documentatie-IP's (RFC 5737),
+//  .nm.lab-domeinen en verzonnen bedragen/wallets. Eén samenhangende zaak
+//  die het hele Datastromen-pad combineert tot een CTF met zeven vlaggen.
+// =======================================================================
+
+// Vlag 1 — e-mailheader (de entree)
+const CTF_HOPS = [
+  { from: '[vervalst / onbekend]', ip: '203.0.113.200', by: 'mail.boos.nm.lab', time: '07:55:01' },
+  { from: 'mail.boos.nm.lab', ip: '203.0.113.200', by: 'relay9.nm.lab', time: '07:55:40' },
+  { from: 'relay9.nm.lab', ip: '198.51.100.5', by: 'mx.nm.lab (ontvanger)', time: '07:56:12' },
+];
+
+// Vlag 2 — netflow (beaconing & exfiltratie)
+const CTF_FLOWS = [
+  { dst: '203.0.113.150', dstLabel: 'cdn-x.nm.lab', port: 443, proto: 'tcp', conns: 360, intervalSec: 120, jitterPct: 5, bytesOut: 61000, bytesIn: 44000, note: 'elke ~120s een klein check-in' },
+  { dst: '203.0.113.201', dstLabel: 'opslag-x9f3.nm.lab', port: 443, proto: 'tcp', conns: 4, intervalSec: null, jitterPct: null, bytesOut: 3400000000, bytesIn: 5200, note: 'grote nachtelijke uploads' },
+  { dst: '198.51.100.12', dstLabel: 'intranet.nm.lab', port: 443, proto: 'tcp', conns: 88, intervalSec: null, jitterPct: 61, bytesOut: 3900000, bytesIn: 27000000, note: 'normaal portaalgebruik' },
+];
+
+// Vlag 3 — structuring (smurfing); grens € 10.000, band [8000,10000)
+const CTF_TX = [
+  { date: '2026-04-06', who: 'Katvanger A', amount: 9900, kind: 'contant' },
+  { date: '2026-04-06', who: 'Katvanger B', amount: 9800, kind: 'contant' },
+  { date: '2026-04-07', who: 'Katvanger A', amount: 9700, kind: 'contant' },
+  { date: '2026-04-07', who: 'R. Bakker', amount: 250, kind: 'pin', note: 'normaal' },
+  { date: '2026-04-08', who: 'Katvanger B', amount: 9600, kind: 'contant' },
+  { date: '2026-04-08', who: 'Katvanger A', amount: 11000, kind: 'overboeking', note: 'boven de grens — meldplichtig' },
+];
+
+// Vlag 4 — flow (het geldspoor; de € 39.000 gestructureerd)
+const CTF_NODES = [
+  { id: 'a', type: 'mule', label: 'Katvanger A' },
+  { id: 'b', type: 'mule', label: 'Katvanger B' },
+  { id: 'verz', type: 'account', label: 'Verzamelrekening' },
+  { id: 'ex', type: 'exchange', label: 'Crypto-exchange' },
+  { id: 'cash', type: 'cashout', label: 'Cash-out' },
+];
+const CTF_EDGES = [
+  { from: 'a', to: 'verz', amount: 20000, time: 'week 15', note: 'gestructureerde stortingen A' },
+  { from: 'b', to: 'verz', amount: 19000, time: 'week 15', note: 'gestructureerde stortingen B' },
+  { from: 'verz', to: 'ex', amount: 38500, time: 'week 15', note: 'katvanger houdt 500' },
+  { from: 'ex', to: 'cash', amount: 38000, time: 'week 16', note: 'exchange-fee 500; cash-out' },
+];
+
+// Vlag 5 — chaintrace (taint door een mixer); 6 vuil + 6 schoon -> 50%
+const CTF_LABELS = { D: 'Vuile bron', C: 'Schone mixer-liquiditeit', HOP: 'Hop-wallet', OUT1: 'Mixer-uitbetaling 1', OUT2: 'Mixer-uitbetaling 2', EX: 'Exchange (cash-out)' };
+const CTF_ORIGINS = [{ addr: 'D', amount: 6 }, { addr: 'C', amount: 6, dirty: false }];
+const CTF_TXS = [
+  { inputs: ['D'], outputs: [{ addr: 'HOP', amount: 6 }], time: '10:00' },
+  { inputs: ['HOP', 'C'], outputs: [{ addr: 'OUT1', amount: 6 }, { addr: 'OUT2', amount: 6 }], time: '11:00' },
+  { inputs: ['OUT1'], outputs: [{ addr: 'EX', amount: 6 }], time: '12:00' },
+];
+
+// Vlag 6/7 — bluf (het eindproduct)
+const CTF_BLUF_SOURCE = [
+  '07:56 — BEC-phishingmail bij de financiële afdeling; From spooft een bekende leverancier, SPF=fail, oorsprong-IP 203.0.113.200 (mail.boos.nm.lab).',
+  'Dag 1 — besmette werkplek beacont elke 120s naar cdn-x.nm.lab; ’s nachts ~3,4 GB geëxfiltreerd naar opslag-x9f3.nm.lab (203.0.113.201).',
+  'Week 15 — twee katvangers storten € 39.000 gestructureerd (vier stortingen net onder de € 10.000-grens).',
+  'Week 15-16 — het geld loopt via een verzamelrekening en een crypto-exchange naar een cash-out (€ 38.000).',
+  'Chain — 6 BTC vuil + 6 BTC schoon door een mixer; 3 BTC (50% taint) bereikt de exchange.',
+  'Attributie — de C2- en exfil-infrastructuur deelt certificaat A1B2C3D4 met een eerder BEC-dossier (afgeleid).',
+].join('\n');
+const CTF_BLUF_MODEL = [
+  'BEOORDELING: Zeer waarschijnlijk is dit één georganiseerde operatie die BEC-fraude, data-exfiltratie en witwassen combineert (betrouwbaarheid: hoog; de keten en gedeelde infrastructuur grijpen op elkaar in).',
+  'ONDERBOUWING: de spoofmail (SPF=fail) opende de toegang; de werkplek beaconde en exfiltreerde ~3,4 GB; de buit werd gestructureerd (€ 39.000) en via een exchange uitbetaald (€ 38.000); op de chain bereikt 3 BTC (50% taint) de exchange; het gedeelde certificaat A1B2C3D4 koppelt de infrastructuur aan een eerder dossier (afgeleid, geen persoonsattributie).',
+  'ADVIES (eigenaar): (1) Terugboeking aanvragen en de exchange-tegoeden laten bevriezen — bank/betalingsverkeer + politie. (2) Werkplek isoleren, IOCs blokkeren (cdn-x.nm.lab, opslag-x9f3.nm.lab) — SOC/CSIRT. (3) Datalek melden bij de AP en aangifte doen — CISO/juridisch + politie. (4) Vordering richting de crypto-exchange (KYC) — OM.',
+].join('\n\n');
+
+CS.registerRoom({
+  id: 'datastromen-ctf',
+  path: 'eindopdracht',
+  order: 3,
+  title: 'De grote Datastromen-CTF: Operatie Spiegelglas',
+  icon: '🏁',
+  difficulty: 'Moeilijk',
+  minutes: 90,
+  summary: 'Het eindexamen van het Datastromen-pad. Eén samenhangende, fictieve zaak — van een BEC-phishingmail via beaconing en exfiltratie, structurering, het geldspoor en crypto-witwassen tot attributie en een BLUF-product — waarin je elk van je datastromen-vaardigheden achter elkaar inzet. Zeven vlaggen. Bewijs dat je de hele keten kunt lezen.',
+  objectives: [
+    'De herkomst van een phishingmail traceren (header)',
+    'Beaconing en exfiltratie uit netwerkstromen halen',
+    'Structurering betrappen en het geldspoor volgen tot de cash-out',
+    'Crypto-taint door een mixer narekenen',
+    'De bevindingen tot één BLUF-intelligenceproduct samenbrengen',
+  ],
+  terms: [
+    { term: 'CTF', def: 'Capture The Flag: los uitdagingen op en verzamel "vlaggen" (NM{...}) als bewijs.' },
+    { term: 'BEC', def: 'Business Email Compromise: fraude via een nagebootste/gekaapte zakelijke e-mail.' },
+    { term: 'Beaconing', def: 'Het periodieke check-in-signaal van malware naar zijn C2 (regelmatig, klein).' },
+    { term: 'Structurering', def: 'Smurfing: één bedrag opknippen in stortingen net onder de meldgrens.' },
+    { term: 'Taint', def: 'De mate waarin geld op een adres uit een vuile bron komt (bedrag en percentage).' },
+    { term: 'BLUF', def: 'Bottom Line Up Front: conclusie en advies eerst, onderbouwing eronder.' },
+  ],
+  resources: [
+    { title: 'MITRE ATT&CK', url: 'https://attack.mitre.org/' },
+    { title: 'FIU-Nederland', url: 'https://www.fiu-nederland.nl/' },
+    { title: 'NCSC', url: 'https://www.ncsc.nl/' },
+    { title: 'Chainalysis — crypto-onderzoek', url: 'https://www.chainalysis.com/' },
+  ],
+  tasks: [
+    {
+      title: 'Taak 1 — De opdracht',
+      content: `
+        <p>Welkom bij <strong>Operatie Spiegelglas</strong>, het eindexamen van het Datastromen-pad. Eén zaak, zeven vlaggen,
+        elke taak een stuk van de keten: van de phishingmail die de deur opende, via het netwerkverkeer en de geldstroom, tot
+        de crypto-witwas en je eindproduct. Gebruik alles wat je leerde — en verzamel elke <code>NM{...}</code>-vlag.</p>
+        <div class="callout warn"><strong>Alles fictief:</strong> de zaak, IP's (RFC 5737), domeinen en bedragen zijn verzonnen.</div>
+        <div class="callout tip"><strong>Vlag 0:</strong> je bent begonnen. <code>NM{spiegelglas_geopend}</code>.</div>
+      `,
+      questions: [
+        { q: 'Wat ga je in deze CTF doen?', options: ['Eén zaak van begin tot eind onderzoeken en per stap een vlag verzamelen', 'Alleen één vraag beantwoorden', 'Een echte server aanvallen', 'Niets'], answer: 0, explain: 'De CTF combineert al je datastromen-vaardigheden in één samenhangend onderzoek.' },
+        { q: 'Welke vlag hoort bij de start?', answer: ['NM{spiegelglas_geopend}'], hint: 'Lees de tip-callout.', explain: 'De startvlag is NM{spiegelglas_geopend}.' },
+      ],
+    },
+    {
+      title: 'Taak 2 — Vlag 1: de entree (e-mailheader)',
+      content: `
+        <p>Het begon met een e-mail. Traceer de herkomst via de header: wat is het oorspronkelijke verzend-IP, en is het
+        spoofing?</p>
+        <div class="callout tip"><strong>Vlag 1:</strong> <code>NM{ctf_entree_getraceerd}</code>.</div>
+      `,
+      lab: {
+        type: 'emailheader',
+        title: 'de openingsmail',
+        scenario: 'Traceer de oorsprong en bepaal of het spoofing is.',
+        from: 'Leverancier Noord <facturen@leverancier-noord.nl>',
+        returnPath: 'retour@mail.boos.nm.lab',
+        hops: CTF_HOPS,
+        auth: { spf: 'fail', dkim: 'none', dmarc: 'fail' },
+        ask: [
+          { q: 'Wat is het oorspronkelijke verzend-IP?', answer: ['203.0.113.200'], hint: 'De onderste Received-regel.' },
+          { q: 'Is dit spoofing? (ja/nee)', answer: ['ja'], hint: 'From vs Return-Path + SPF/DMARC.' },
+        ],
+      },
+      questions: [
+        { q: 'Wat is het oorspronkelijke verzend-IP?', answer: ['203.0.113.200'], hint: 'De onderste Received-regel.', explain: 'De keten begint bij 203.0.113.200 via mail.boos.nm.lab.' },
+        { q: 'Waaruit blijkt de spoofing?', options: ['SPF/DMARC=fail en een Return-Path naar boos.nm.lab i.p.v. de leverancier', 'De mail is te lang', 'Er zit een bijlage bij', 'Niets'], answer: 0, explain: 'De authenticatie faalt en het antwoordadres klopt niet met de afzender.' },
+        { q: 'Welke vlag hoort bij deze taak?', answer: ['NM{ctf_entree_getraceerd}'], hint: 'Lees de tip-callout.', explain: 'Vlag 1: NM{ctf_entree_getraceerd}.' },
+      ],
+    },
+    {
+      title: 'Taak 3 — Vlag 2: beaconing & exfiltratie (NetFlow)',
+      content: `
+        <p>De besmette werkplek verraadt zich in het egressverkeer. Vind het C2-baken en de exfiltratie.</p>
+        <div class="callout tip"><strong>Vlag 2:</strong> <code>NM{ctf_exfil_betrapt}</code>.</div>
+      `,
+      lab: {
+        type: 'netflow',
+        title: 'egress van de besmette werkplek',
+        scenario: 'Eén bestemming beacont, één slokt gigabytes op.',
+        flows: CTF_FLOWS,
+        ask: [
+          { q: 'Welke bestemming wijst op data-exfiltratie?', answer: ['opslag-x9f3.nm.lab', 'opslag-x9f3', '203.0.113.201'], hint: 'Grootste uitgaande volume.' },
+          { q: 'Met welk interval (seconden) beacont de werkplek?', answer: ['120', '120s'], hint: 'De kolom Interval bij het baken.' },
+        ],
+      },
+      questions: [
+        { q: 'Welke bestemming is het C2-baken?', answer: ['cdn-x.nm.lab', 'cdn-x', '203.0.113.150'], hint: 'Laagste jitter, veel kleine check-ins.', explain: 'cdn-x.nm.lab: 360 verbindingen, elke ~120s, jitter 5%.' },
+        { q: 'Ongeveer hoeveel data lekte er weg?', answer: ['3.4 GB', '3.4', '3,4 GB', '3,4'], hint: 'De kolom Uit bij opslag-x9f3.nm.lab.', explain: 'Ongeveer 3,4 GB ging uitgaand naar opslag-x9f3.nm.lab.' },
+        { q: 'Welke vlag hoort bij deze taak?', answer: ['NM{ctf_exfil_betrapt}'], hint: 'Lees de tip-callout.', explain: 'Vlag 2: NM{ctf_exfil_betrapt}.' },
+      ],
+    },
+    {
+      title: 'Taak 4 — Vlag 3: de structurering',
+      content: `
+        <p>De buit moest het systeem in. Betrap het structurering-patroon onder de meldgrens van € 10.000.</p>
+        <div class="callout tip"><strong>Vlag 3:</strong> <code>NM{ctf_smurf_gevonden}</code>.</div>
+      `,
+      lab: {
+        type: 'structuring',
+        title: 'stortingen rond de meldgrens',
+        threshold: 10000,
+        currency: '€',
+        scenario: 'Twee katvangers storten net onder de grens; één storting valt er juist boven.',
+        tx: CTF_TX,
+        ask: [
+          { q: 'Hoeveel stortingen passen in het smurf-patroon?', answer: ['4', 'vier'], hint: 'De gemarkeerde rijen.' },
+          { q: 'Wat is het totale gestructureerde bedrag? (getal)', answer: ['39000', '39.000'], hint: '9900+9800+9700+9600.' },
+        ],
+      },
+      questions: [
+        { q: 'Hoeveel stortingen zijn gestructureerd (net onder de grens)?', answer: ['4', 'vier'], hint: 'De rode rijen.', explain: 'Vier stortingen (9900, 9800, 9700, 9600) liggen net onder € 10.000.' },
+        { q: 'Wat is het totale gestructureerde bedrag?', answer: ['39000', '39.000', '€ 39.000', '€39000'], hint: 'Tel de vier op.', explain: '9900 + 9800 + 9700 + 9600 = € 39.000.' },
+        { q: 'Welke vlag hoort bij deze taak?', answer: ['NM{ctf_smurf_gevonden}'], hint: 'Lees de tip-callout.', explain: 'Vlag 3: NM{ctf_smurf_gevonden}.' },
+      ],
+    },
+    {
+      title: 'Taak 5 — Vlag 4: het geldspoor',
+      content: `
+        <p>Volg de gestructureerde € 39.000 via een verzamelrekening en een crypto-exchange naar de cash-out.</p>
+        <div class="callout tip"><strong>Vlag 4:</strong> <code>NM{ctf_geldspoor_gevolgd}</code>.</div>
+      `,
+      lab: {
+        type: 'flow',
+        title: 'het geldspoor',
+        unit: '€',
+        scenario: 'De € 39.000 loopt via een verzamelrekening en een exchange naar een cash-out.',
+        nodes: CTF_NODES,
+        edges: CTF_EDGES,
+        ask: [
+          { q: 'Hoeveel komt er binnen op de verzamelrekening? (getal)', answer: ['39000', '39.000'], hint: 'Tel de twee stortingen op (klik de verzamelrekening).' },
+          { q: 'Hoeveel bereikt de cash-out?', answer: ['38000', '38.000'], hint: 'De laatste transactie.' },
+        ],
+      },
+      questions: [
+        { q: 'Hoeveel komt er binnen op de verzamelrekening?', answer: ['39000', '39.000', '€ 39.000', '€39000'], hint: '20000 + 19000.', explain: '€ 20.000 + € 19.000 = € 39.000 — precies de gestructureerde buit.' },
+        { q: 'Hoeveel bereikt de cash-out?', answer: ['38000', '38.000', '€ 38.000', '€38000'], hint: 'Na de afdrachten.', explain: 'Na € 500 (katvanger) + € 500 (exchange) blijft € 38.000 over.' },
+        { q: 'Welke vlag hoort bij deze taak?', answer: ['NM{ctf_geldspoor_gevolgd}'], hint: 'Lees de tip-callout.', explain: 'Vlag 4: NM{ctf_geldspoor_gevolgd}.' },
+      ],
+    },
+    {
+      title: 'Taak 6 — Vlag 5: de crypto-taint',
+      content: `
+        <p>Een deel liep via crypto door een mixer. Reken de taint na: hoeveel vuil geld bereikt de exchange, en bij welk
+        percentage?</p>
+        <div class="callout tip"><strong>Vlag 5:</strong> <code>NM{ctf_taint_berekend}</code>.</div>
+      `,
+      lab: {
+        type: 'chaintrace',
+        title: 'taint door de mixer',
+        unit: 'BTC',
+        scenario: '6 BTC vuil + 6 BTC schoon door een mixer. Hoeveel vuil bereikt de exchange?',
+        labels: CTF_LABELS,
+        exchanges: ['EX'],
+        origins: CTF_ORIGINS,
+        txs: CTF_TXS,
+        ask: [
+          { q: 'Hoeveel vuil geld (BTC) bereikt de exchange?', answer: ['3', '3.0', '3 btc'], hint: 'Lees de taint-kolom bij de exchange.' },
+          { q: 'Wat is het taint-percentage op de exchange? (in %)', answer: ['50%', '50', '50 %'], hint: '6 vuil + 6 schoon = 12, fractie 6/12.' },
+        ],
+      },
+      questions: [
+        { q: 'Hoeveel BTC vuil geld bereikt de exchange?', answer: ['3', '3.0', '3 btc'], hint: 'De tracer toont het bij de exchange.', explain: 'De mixer verdunde 6 vuil + 6 schoon tot 50%; uitbetaling 1 (6 BTC @ 50% = 3 BTC vuil) bereikt de exchange.' },
+        { q: 'Verdween het vuile geld door het mengen?', options: ['Nee — het percentage zakt naar 50%, maar het vuile bedrag blijft bestaan', 'Ja, het is nu schoon', 'Ja, de mixer wist het', 'Dat hangt van de fee af'], answer: 0, explain: 'Verdunnen verlaagt het percentage, niet het vuile bedrag.' },
+        { q: 'Welke vlag hoort bij deze taak?', answer: ['NM{ctf_taint_berekend}'], hint: 'Lees de tip-callout.', explain: 'Vlag 5: NM{ctf_taint_berekend}.' },
+      ],
+    },
+    {
+      title: 'Taak 7 — Vlag 6: het BLUF-eindproduct',
+      content: `
+        <p>Breng alles samen. Herschrijf de chronologische bevindingen naar een <strong>BLUF</strong>: conclusie en advies
+        eerst, dan de onderbouwing — met waarschijnlijkheidstaal en een eigenaar per advies. Daarmee sluit je Operatie
+        Spiegelglas af.</p>
+        <div class="callout tip"><strong>Vlag 6 (slot):</strong> <code>NM{spiegelglas_gesloten}</code>.</div>
+      `,
+      lab: {
+        type: 'bluf',
+        source: CTF_BLUF_SOURCE,
+        model: CTF_BLUF_MODEL,
+      },
+      questions: [
+        { q: 'Wat hoort bovenaan een BLUF-product?', options: ['De conclusie en het advies (de kernboodschap)', 'De volledige chronologie', 'Alle IP-adressen', 'De namen van de analisten'], answer: 0, explain: 'Bottom Line Up Front: eerst wat er speelt en wat er moet gebeuren.' },
+        { q: 'Hoe schrijf je de attributie in dit product?', options: ['Met waarschijnlijkheidstaal; de infrastructuur koppelen zonder een persoon hard te beschuldigen', 'Noem gewoon een naam', 'Laat attributie weg', 'Zeg dat het zeker een insider is'], answer: 0, explain: 'Het gedeelde certificaat koppelt infrastructuur (afgeleid); een persoon aanwijzen vraagt meer bewijs.' },
+        { q: 'Welke slotvlag sluit Operatie Spiegelglas af?', answer: ['NM{spiegelglas_gesloten}'], hint: 'Lees de tip-callout.', explain: 'Slotvlag: NM{spiegelglas_gesloten}. Gefeliciteerd — je las de hele keten.' },
       ],
     },
   ],
