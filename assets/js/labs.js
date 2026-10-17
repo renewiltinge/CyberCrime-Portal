@@ -2886,6 +2886,122 @@
   });
 
   // =====================================================================
+  //  RECON — transactie-reconciliatie (bankafschrift vs boekhouding)
+  // =====================================================================
+  CS.registerLab('recon', function (container, cfg) {
+    const left = (cfg.left || []).slice();   // bankafschrift
+    const right = (cfg.right || []).slice(); // boekhouding
+    const cur = cfg.currency || '€';
+    const leftName = cfg.leftName || 'Bankafschrift';
+    const rightName = cfg.rightName || 'Boekhouding';
+    const fmt = (n) => (n < 0 ? '−' : '+') + ' ' + cur + ' ' + Math.abs(Number(n)).toLocaleString('nl-NL');
+    // greedy one-op-één matching op bedrag (en optioneel ref/key)
+    const rUsed = right.map(() => false);
+    const lMatch = left.map((l) => {
+      const idx = right.findIndex((r, i) => !rUsed[i] && Math.abs((+r.amount) - (+l.amount)) < 0.005 && (!l.key || !r.key || l.key === r.key));
+      if (idx >= 0) { rUsed[idx] = true; return idx; }
+      return -1;
+    });
+    const wrap = el('div', { class: 'lab-pad' });
+    if (cfg.scenario) wrap.append(el('div', { class: 'callout info', html: esc(cfg.scenario) }));
+    wrap.append(el('div', { class: 'found-note', html: 'Reconciliëren = twee administraties naast elkaar leggen die zouden moeten kloppen. Een post die wél op het ' + esc(leftName.toLowerCase()) + ' staat maar niet in de ' + esc(rightName.toLowerCase()) + ' (of andersom) is <strong>niet te verklaren</strong> — en vaak het spoor van de fraude.' }));
+    const cols = el('div', { class: 'lab-grid2' });
+    const mkCol = (name, rows, matchArr) => {
+      const c = el('div', {});
+      c.append(el('label', { text: name }));
+      const box = el('div', { class: 'logview', style: 'max-height:240px' });
+      rows.forEach((r, i) => {
+        const matched = matchArr[i];
+        const ln = el('div', { class: 'ln', style: matched ? '' : 'background:rgba(240,110,110,.12)' });
+        ln.append(el('span', { class: 'n', html: matched ? '✓' : '⚠️' }),
+          el('span', { html: '<strong>' + fmt(+r.amount) + '</strong> <span style="color:var(--muted)">' + esc(r.desc || '') + '</span>' + (r.date ? ' <span style="color:#7f8db5">' + esc(r.date) + '</span>' : '') }));
+        box.append(ln);
+      });
+      c.append(box);
+      return c;
+    };
+    const rMatchArr = right.map((_, i) => rUsed[i]);
+    cols.append(mkCol(leftName, left, lMatch.map((m) => m >= 0)), mkCol(rightName, right, rMatchArr));
+    wrap.append(cols);
+    const sum = (a) => a.reduce((s, x) => s + (+x.amount || 0), 0);
+    const lSum = sum(left), rSum = sum(right);
+    wrap.append(el('div', { class: 'lab-out', style: 'margin-top:8px', html: 'Saldo <strong>' + esc(leftName) + '</strong>: ' + fmt(lSum) + ' &nbsp;·&nbsp; saldo <strong>' + esc(rightName) + '</strong>: ' + fmt(rSum) + ' &nbsp;·&nbsp; verschil: <strong style="color:' + (Math.abs(lSum - rSum) < 0.005 ? 'var(--good)' : 'var(--bad)') + '">' + cur + ' ' + Math.abs(lSum - rSum).toLocaleString('nl-NL') + '</strong>' }));
+    puzzleAsk(wrap, cfg.ask);
+    container.append(shell('<b>Reconciliatie</b> — ' + esc(cfg.title || 'leg de administraties naast elkaar'), wrap, false));
+  });
+
+  // =====================================================================
+  //  DETECTRULE — bouw en test een detectieregel (Sigma-stijl)
+  // =====================================================================
+  CS.registerLab('detectrule', function (container, cfg) {
+    const fields = cfg.fields || [];
+    const events = (cfg.events || []).slice();
+    const OPS = ['is', 'bevat', '>', '<'];
+    const conds = [];
+    const wrap = el('div', { class: 'lab-pad' });
+    if (cfg.scenario) wrap.append(el('div', { class: 'callout info', html: esc(cfg.scenario) }));
+    wrap.append(el('div', { class: 'found-note', html: 'Bouw een regel uit één of meer voorwaarden (ze worden met <strong>EN</strong> gecombineerd). Doel: álle kwaadaardige events vangen (true positives) met <strong>geen</strong> vals-positieven. Te breed → ruis; te smal → je mist aanvallen.' }));
+    // conditie-bouwer
+    const builder = el('div', { class: 'ans-row', style: 'flex-wrap:wrap' });
+    const fSel = el('select', {}, fields.map((f) => el('option', { value: f, text: f })));
+    const oSel = el('select', {}, OPS.map((o) => el('option', { value: o, text: o })));
+    const vInp = el('input', { type: 'text', placeholder: 'waarde…', style: 'flex:1;min-width:120px' });
+    const addBtn = el('button', { class: 'btn small primary', text: '+ voorwaarde' });
+    builder.append(fSel, oSel, vInp, addBtn);
+    wrap.append(builder);
+    const condBox = el('div', { class: 'chip-row', style: 'margin:6px 0' });
+    wrap.append(condBox);
+    const out = el('div', { class: 'lab-out', style: 'margin-top:8px' });
+    wrap.append(out);
+    function evalEvent(ev) {
+      if (!conds.length) return false;
+      return conds.every((c) => {
+        const v = ev.fields ? ev.fields[c.field] : undefined;
+        if (v == null) return false;
+        const val = String(v).toLowerCase(), cv = String(c.value).toLowerCase();
+        if (c.op === 'is') return val === cv;
+        if (c.op === 'bevat') return val.indexOf(cv) >= 0;
+        if (c.op === '>') return parseFloat(v) > parseFloat(c.value);
+        if (c.op === '<') return parseFloat(v) < parseFloat(c.value);
+        return false;
+      });
+    }
+    function renderConds() {
+      condBox.innerHTML = '';
+      if (!conds.length) { condBox.append(el('span', { class: 'found-note', text: 'Nog geen voorwaarden — voeg er één toe.' })); return; }
+      conds.forEach((c, i) => condBox.append(el('span', { class: 'chip on', html: esc(c.field + ' ' + c.op + ' "' + c.value + '"') + ' ✕', onclick: () => { conds.splice(i, 1); renderConds(); evaluate(); } })));
+    }
+    function evaluate() {
+      let tp = 0, fp = 0, fn = 0, tn = 0; const hits = [];
+      events.forEach((ev) => {
+        const m = evalEvent(ev);
+        if (m && ev.malicious) tp++; else if (m && !ev.malicious) fp++; else if (!m && ev.malicious) fn++; else tn++;
+        if (m) hits.push(ev);
+      });
+      const totMal = events.filter((e) => e.malicious).length;
+      out.innerHTML = '';
+      out.append(el('div', { html: '<strong>Resultaat:</strong> ' + '<span style="color:var(--good)">TP ' + tp + '</span> · <span style="color:var(--bad)">FP ' + fp + '</span> · <span style="color:var(--warn)">FN ' + fn + '</span> · TN ' + tn }));
+      const perfect = conds.length && tp === totMal && fp === 0;
+      out.append(el('div', { class: 'found-note', html: perfect ? '✅ Perfect: alle ' + totMal + ' kwaadaardige events gevangen, geen vals-positieven.' + (cfg.flag ? ' Vlag: <code>' + esc(cfg.flag) + '</code>' : '') : (conds.length ? (fp > 0 ? '⚠️ ' + fp + ' vals-positief(ven): je regel is te breed — maak hem specifieker.' : (fn > 0 ? '⚠️ ' + fn + ' gemist: je regel is te smal.' : '—')) : 'Voeg voorwaarden toe en test.') }));
+      if (hits.length) {
+        out.append(el('label', { text: 'Gematchte events' }));
+        hits.forEach((h) => { out.append(el('div', { class: 'ln', html: (h.malicious ? '🟥' : '🟩') + ' ' + esc(h.label || (h.fields && h.fields.CommandLine) || '') })); });
+      }
+    }
+    addBtn.addEventListener('click', () => { if (!vInp.value.trim() && oSel.value !== '>' && oSel.value !== '<') return; conds.push({ field: fSel.value, op: oSel.value, value: vInp.value.trim() }); vInp.value = ''; renderConds(); evaluate(); });
+    vInp.addEventListener('keydown', (e) => { if (e.key === 'Enter') addBtn.click(); });
+    // events-overzicht
+    wrap.append(el('details', { html: '<summary>📋 Toon de events (' + events.length + ')</summary>' }, [(function () {
+      const d = el('div', { class: 'logview', style: 'max-height:200px;margin-top:6px' });
+      events.forEach((ev) => d.append(el('div', { class: 'ln', html: (ev.malicious ? '🟥' : '🟩') + ' ' + esc(Object.keys(ev.fields || {}).map((k) => k + '=' + ev.fields[k]).join('  ')) })));
+      return d;
+    })()]));
+    if (cfg.solution) wrap.append(el('div', { class: 'chip-row' }, [el('span', { class: 'chip', text: '💡 Toon een voorbeeldregel', onclick: () => { conds.length = 0; cfg.solution.forEach((c) => conds.push(Object.assign({}, c))); renderConds(); evaluate(); } })]));
+    renderConds(); evaluate();
+    container.append(shell('<b>Detectieregel bouwen</b> — ' + esc(cfg.title || 'van IOC naar regel'), wrap, false));
+  });
+
+  // =====================================================================
   //  Encoding & hash helpers
   // =====================================================================
   function b64encode(s) { return btoa(unescape(encodeURIComponent(s))); }

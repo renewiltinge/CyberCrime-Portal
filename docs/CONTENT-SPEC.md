@@ -657,3 +657,31 @@ lab: {
 Toont het querylog (met ⚠️ bij TXT / lange subdomeinen / NXDOMAIN) en een samenvatting per domein (queries, TXT,
 NXDOMAIN, langste subdomein). Een domein met ≥3 TXT én een subdomein >24 tekens wordt als **tunneling** gemarkeerd; een
 hoge NXDOMAIN-telling wijst op een **DGA**. Groepeert op de laatste drie labels (geschikt voor `*.nm.lab`).
+
+### `recon`: transactie-reconciliatie (twee administraties afstemmen)
+
+```js
+lab: {
+  type: 'recon', title: '...', currency: '€', leftName: 'Bankafschrift', rightName: 'Boekhouding',
+  left:  [ { date: '02-08', amount: -4500, desc: 'Onbekende BV' }, ... ],  // signed: + inkomend, − uitgaand
+  right: [ ... ],                                                          // optioneel 'key' voor expliciete match
+  ask: [ { q: 'Welk bedrag is onverklaard?', answer: ['4500'] } ],
+}
+```
+Matcht links↔rechts greedy op bedrag (en optioneel `key`); ongematchte posten worden rood gemarkeerd. Toont beide saldi
+en het verschil. Een post die maar aan één kant staat is de onverklaarde/fraude-post.
+
+### `detectrule`: detectieregel bouwen & testen (Sigma-stijl)
+
+```js
+lab: {
+  type: 'detectrule', title: '...', fields: ['EventID','Image','CommandLine'],
+  events: [ { label: '...', malicious: true, fields: { Image: 'powershell.exe', CommandLine: '... -w hidden ...' } }, ... ],
+  solution: [ { field: 'CommandLine', op: 'bevat', value: '-w hidden' } ],   // optioneel: "Toon voorbeeldregel"
+  flag: 'NM{...}',                                                           // getoond bij TP=alle kwaadaardige, FP=0
+  ask: [ { q: 'Hoeveel kwaadaardige events?', answer: ['2'] } ],
+}
+```
+De leerling bouwt voorwaarden (`field` + operator `is`/`bevat`/`>`/`<` + waarde), die met **EN** worden gecombineerd, en
+test live tegen de events. Toont TP/FP/FN/TN. Doel: alle `malicious:true` vangen zonder vals-positieven; dan verschijnt
+`flag`. Leert specificiteit (weinig FP) vs. dekking (weinig FN).

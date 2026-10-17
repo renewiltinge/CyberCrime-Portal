@@ -48,6 +48,7 @@ De bouwstenen van beveiliging.
 4. **Kwetsbaarheden & CVSS** — van CVE tot patch, met een interactieve CVSS-calculator, EPSS en de KEV-catalogus.
 5. **Klassieke cijfers kraken** — Caesar, Vigenère en XOR ontcijferen met een cijfer-kraker.
 6. **Rainbow tables & waarom salt wint** — precomputatie, salt, peper en trage hashes.
+7. **Fraudevormen herkennen** — helpdesk-, marktplaats-, investerings- en CEO-/spoofingfraude herkennen, het crime script ontleden en de geldstroom volgen.
 
 ### ⚔️ Offensief (red team)
 Denken als een aanvaller — altijd in een veilig lab.
@@ -66,6 +67,7 @@ Denken als een verdediger.
 3. **Veilig thuis & op het werk** — updates, back-ups, hardening.
 4. **Threat intelligence & MITRE ATT&CK** — IOC's, de Pyramid of Pain, TLP en het ATT&CK-model.
 5. **Detectie-engineering** — detectieregels bouwen met regex, Sigma en YARA.
+6. **Detectie bouwen: van IOC naar regel** — zelf een detectieregel samenstellen en live tunen op true/false positives.
 
 ### 🕵️ Digitale forensie & opsporing
 De weg naar digitaal rechercheur — sporen vinden, veiligstellen en duiden.
@@ -99,7 +101,9 @@ Word expert in geld- en datastromen — de rode draad van bijna elke cybercrimez
 2. **Netwerkstromen: beaconing & exfiltratie** — C2-beaconing (strak ritme) onderscheiden van data-exfiltratie (groot uitgaand volume), eerst via NetFlow en dan op pakketniveau.
 3. **E-mail forensics** — de Received-keten van onder naar boven lezen, spoofing betrappen met SPF/DKIM/DMARC, IOCs extraheren en een phishinglink ontleden.
 4. **DNS: de stille uitgang** — DNS-tunneling (data in lange subdomeinen, vaak TXT) en een DGA (veel NXDOMAIN) herkennen, detecteren en blokkeren.
-5. **Capstone: Operatie Spiegelstroom** — één zaak die alles samenbrengt: van BEC-phishing via exfiltratie tot witwassen, met een afsluitend BLUF-product.
+5. **Crypto-witwassen: peel chains & chain-hopping** — waarom peelen de taint niet verwijdert, en hoe mixers, chain-hopping, stablecoins en NFT-wash-trading het spoor versluieren.
+6. **Financiële recherche: reconstrueer de rekeningen** — bankafschrift en boekhouding reconciliëren om de onverklaarde post te vinden en het geld te volgen.
+7. **Capstone: Operatie Spiegelstroom** — één zaak die alles samenbrengt: van BEC-phishing via exfiltratie tot witwassen, met een afsluitend BLUF-product.
 
 ### 🧩 Puzzels & uitdagingen
 Leren door te doen — veel plezier met oplosbare cybercrime-puzzels.
@@ -166,6 +170,8 @@ Alle labs draaien **volledig in je browser** — veilig, offline, zonder dat er 
 | 💶 **Structurering-detector** | Smurfing herkennen: stortingen net onder de Wwft-meldgrens, met totaalbedrag en dagen. |
 | ✉️ **E-mailheader-analyse** | De Received-keten traceren en spoofing betrappen met From/Return-Path en SPF/DKIM/DMARC. |
 | 🌫️ **DNS-log-analyse** | DNS-tunneling (TXT + lange subdomeinen) en een DGA (veel NXDOMAIN) in een querylog herkennen. |
+| 📒 **Reconciliatie** | Bankafschrift en boekhouding naast elkaar leggen en de onverklaarde (fraude)post vinden. |
+| 🧰 **Detectieregel bouwen** | Zelf een detectieregel samenstellen en live testen op true/false positives tegen events. |
 
 Alle tools zijn ook los te gebruiken via de **🧰 Gereedschapskist** (knop op de startpagina, of `#/tools`) — handig voor je eigen, ethische oefeningen.
 

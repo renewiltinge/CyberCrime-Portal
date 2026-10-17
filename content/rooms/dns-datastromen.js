@@ -28,7 +28,7 @@ const DNS_QUERIES = [
 CS.registerRoom({
   id: 'dns-datastromen',
   path: 'datastromen',
-  order: 5,
+  order: 4,
   title: 'DNS: de stille uitgang',
   icon: '🌫️',
   difficulty: 'Gemiddeld',

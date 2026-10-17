@@ -65,7 +65,7 @@ const SP_BLUF_MODEL = [
 CS.registerRoom({
   id: 'operatie-spiegelstroom',
   path: 'datastromen',
-  order: 4,
+  order: 7,
   title: 'Capstone: Operatie Spiegelstroom',
   icon: '🌊',
   difficulty: 'Moeilijk',
