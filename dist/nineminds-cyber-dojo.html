@@ -15281,6 +15281,370 @@ CS.registerRoom({
 
 </script>
 <script>
+/* Room: Defensief — OT/ICS & ransomware op kritieke infrastructuur */
+
+// =======================================================================
+//  Alles FICTIEF: een verzonnen fabriek/incident. Je leert waarom OT
+//  anders is dan IT en hoe je kritieke infra beschermt.
+// =======================================================================
+
+// --- Connections: IT vs OT ---
+const OT_GROUPS = [
+  { name: 'IT-systemen', items: ['Kantoor-pc', 'E-mailserver', 'Active Directory', 'Webserver'] },
+  { name: 'OT/ICS-systemen', items: ['PLC (aansturing)', 'SCADA-server', 'HMI (bedienpaneel)', 'Historian (procesdata)'] },
+  { name: 'Gevolg van een OT-aanval', items: ['Productielijn stilgelegd', 'Veiligheidssysteem uit', 'Fysieke schade', 'Gevaar voor mens/omgeving'] },
+  { name: 'OT-bescherming', items: ['IT/OT-segmentatie', 'Unidirectionele gateway', 'Geen directe internettoegang', 'Streng wijzigingsbeheer'] },
+];
+
+// --- Ordering: de weg van IT naar OT ---
+const OT_STEPS = [
+  { id: '1', label: 'Phishing geeft de aanvaller toegang tot het IT-kantoornetwerk' },
+  { id: '2', label: 'De aanvaller beweegt lateraal en vindt de koppeling tussen IT en OT' },
+  { id: '3', label: 'Zwakke segmentatie laat een doorsteek naar het OT-netwerk toe' },
+  { id: '4', label: 'De aanvaller bereikt de SCADA/HMI-laag' },
+  { id: '5', label: 'Commando\'s naar de PLC\'s verstoren het fysieke proces' },
+  { id: '6', label: 'De productie ligt stil / de veiligheid is in gevaar; er volgt een losgeldeis' },
+];
+
+// --- Scenario: beslissen in een OT-incident ---
+const OT_SCEN = [
+  {
+    situation: 'Ransomware raast door het IT-netwerk van de fabriek; de productie (OT) draait nog. Wat is je eerste zorg?',
+    choices: [
+      { label: 'De koppeling tussen IT en OT dichtzetten zodat het OT-netwerk beschermd blijft', good: true, feedback: 'Precies: isoleer OT van het besmette IT-netwerk om het fysieke proces veilig te houden.' },
+      { label: 'Alle OT-systemen meteen uitzetten', good: false, feedback: 'Een harde noodstop kan zelf gevaarlijk zijn. Isoleer gericht; coördineer met OT-engineers.' },
+      { label: 'Niets doen — het is "alleen IT"', good: false, feedback: 'Zonder segmentatie springt ransomware over naar OT. Handel juist nu om dat te voorkomen.' },
+    ],
+  },
+  {
+    situation: 'In OT geldt een andere prioriteitsvolgorde dan in IT. Welke?',
+    choices: [
+      { label: 'Beschikbaarheid en veiligheid (safety) gaan vóór vertrouwelijkheid', good: true, feedback: 'Juist: in OT kan downtime of een uitgeschakelde beveiliging levens kosten. Safety eerst.' },
+      { label: 'Vertrouwelijkheid eerst, net als in IT', good: false, feedback: 'In OT is de CIA-driehoek omgedraaid: availability/safety boven confidentiality.' },
+      { label: 'Snelheid van patchen eerst', good: false, feedback: 'Patchen in OT is juist lastig (24/7-processen); het vraagt planning en test, geen haast.' },
+    ],
+  },
+  {
+    situation: 'Een getroffen PLC hapert. Mag je hem zomaar herstarten of patchen zoals een pc?',
+    choices: [
+      { label: 'Nee — coördineer met de OT-engineers; een herstart kan het fysieke proces en de veiligheid raken', good: true, feedback: 'Precies: in OT heeft elke actie fysieke gevolgen. Nooit "even herstarten" zonder OT-kennis.' },
+      { label: 'Ja, gewoon herstarten — dat lost meestal alles op', good: false, feedback: 'Een blinde herstart kan een proces ontregelen of een veiligheidsfunctie uitschakelen.' },
+      { label: 'Direct een firmware-update forceren', good: false, feedback: 'Ongeteste updates op draaiende OT zijn riskant; dit vergt zorgvuldig wijzigingsbeheer.' },
+    ],
+  },
+  {
+    situation: 'Hoe voorkom je dat IT-ransomware volgende keer OT raakt?',
+    choices: [
+      { label: 'Strikte netwerksegmentatie met een unidirectionele gateway tussen IT en OT', good: true, feedback: 'Goed: een sterke IT/OT-scheiding (en eenrichtingskoppeling) stopt de oversprong.' },
+      { label: 'IT en OT in één plat netwerk zetten voor het gemak', good: false, feedback: 'Een plat netwerk laat ransomware vrij overspringen — precies wat je wilt voorkomen.' },
+      { label: 'OT direct aan internet hangen voor remote beheer', good: false, feedback: 'Directe internettoegang tot OT is een groot risico; gebruik strikte, bewaakte toegang.' },
+    ],
+  },
+];
+
+CS.registerRoom({
+  id: 'ot-ics-ransomware',
+  path: 'defensief',
+  order: 9,
+  title: 'OT/ICS & ransomware op kritieke infra',
+  icon: '🏭',
+  difficulty: 'Gemiddeld',
+  minutes: 50,
+  summary: 'Fabrieken, ziekenhuizen, waterzuiveringen en energienetten draaien op OT (operationele techniek): PLC\'s, SCADA en HMI\'s. Daar heeft een cyberaanval fysieke gevolgen. Je leert waarom OT fundamenteel anders beveiligd wordt dan IT, hoe ransomware via het kantoornetwerk naar OT springt, en hoe je dat tegenhoudt — met de veiligheid (safety) altijd voorop.',
+  objectives: [
+    'IT- en OT-systemen onderscheiden en benoemen',
+    'Uitleggen waarom in OT beschikbaarheid/veiligheid vóór vertrouwelijkheid gaan',
+    'De aanvalsweg van IT naar OT reconstrueren',
+    'De juiste beslissingen nemen in een OT-incident (isoleren, coördineren)',
+    'OT beschermen met segmentatie, unidirectionele koppeling en wijzigingsbeheer',
+  ],
+  terms: [
+    { term: 'OT', def: 'Operational Technology: de techniek die fysieke processen aanstuurt en meet (fabriek, net, zuivering).' },
+    { term: 'ICS', def: 'Industrial Control System: de besturingssystemen binnen OT.' },
+    { term: 'PLC', def: 'Programmable Logic Controller: stuurt kleppen, motoren en sensoren direct aan.' },
+    { term: 'SCADA', def: 'Supervisory Control and Data Acquisition: het systeem dat processen bewaakt en bedient.' },
+    { term: 'HMI', def: 'Human-Machine Interface: het bedienpaneel waarmee operators het proces aansturen.' },
+    { term: 'Purdue-model', def: 'Een referentiemodel dat IT en OT in lagen (zones) scheidt, met strikte koppelingen ertussen.' },
+    { term: 'Safety vs. security', def: 'In OT staat fysieke veiligheid (safety) voorop; een beveiligingsmaatregel mag die nooit in gevaar brengen.' },
+    { term: 'Unidirectionele gateway', def: 'Een koppeling die data maar één kant op laat (bijv. OT → IT voor monitoring), zodat een aanval niet terug kan.' },
+  ],
+  resources: [
+    { title: 'NCSC — vitale infrastructuur', url: 'https://www.ncsc.nl/' },
+    { title: 'MITRE ATT&CK for ICS', url: 'https://attack.mitre.org/matrices/ics/' },
+    { title: 'CISA — Industrial Control Systems', url: 'https://www.cisa.gov/topics/industrial-control-systems' },
+    { title: 'ENISA — OT/ICS security', url: 'https://www.enisa.europa.eu/' },
+  ],
+  tasks: [
+    {
+      title: 'Taak 1 — Waarom OT anders is',
+      content: `
+        <p>In de IT-wereld draait beveiliging vooral om <strong>data</strong>. In de <strong>OT</strong>-wereld draait het om
+        <strong>fysieke processen</strong>: een klep die opengaat, een turbine die draait, een infuus dat loopt. Een aanval
+        heeft daar <em>fysieke</em> gevolgen — stilstand, schade, of gevaar voor mensen. Daarom is de prioriteit omgedraaid:
+        <strong>beschikbaarheid en veiligheid (safety) gaan vóór vertrouwelijkheid</strong>.</p>
+        <p>Dat maakt OT lastig te beveiligen: systemen draaien 24/7 en zijn moeilijk te patchen, apparatuur is soms decennia
+        oud, en "even herstarten" kan een proces ontregelen. De grootste dreiging: ransomware die via het
+        <strong>IT-kantoornetwerk</strong> naar OT springt als de scheiding zwak is.</p>
+        <div class="callout warn"><strong>Alles fictief:</strong> de fabriek en het incident zijn verzonnen oefenmateriaal.</div>
+        <div class="callout tip"><strong>Beloning:</strong> in OT staat veiligheid voorop. Vlag: <code>NM{safety_gaat_voor}</code>.</div>
+      `,
+      questions: [
+        { q: 'Wat is het verschil tussen IT en OT?', options: ['IT draait om data; OT stuurt fysieke processen aan, met fysieke gevolgen bij een aanval', 'Er is geen verschil', 'OT is alleen software', 'IT is gevaarlijker'], answer: 0, explain: 'In OT kan een aanval leiden tot stilstand, schade of gevaar — niet "alleen" dataverlies.' },
+        { q: 'Welke prioriteit geldt in OT?', options: ['Beschikbaarheid en veiligheid (safety) vóór vertrouwelijkheid', 'Vertrouwelijkheid eerst', 'Snelheid eerst', 'Kosten eerst'], answer: 0, explain: 'De CIA-driehoek is in OT omgedraaid: availability/safety boven confidentiality.' },
+        { q: 'Waarom is patchen in OT lastig?', options: ['Systemen draaien 24/7, zijn vaak oud, en een herstart kan het proces ontregelen', 'Omdat het te duur is', 'Omdat OT geen software heeft', 'Dat is het niet'], answer: 0, explain: 'Continu draaiende, soms verouderde systemen maken ongeplande wijzigingen riskant.' },
+        { q: 'Welke vlag staat in de tip-callout?', answer: ['NM{safety_gaat_voor}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{safety_gaat_voor}.' },
+      ],
+    },
+    {
+      title: 'Taak 2 — IT versus OT',
+      content: `
+        <p>Groepeer de zestien begrippen: welke zijn <strong>IT-systemen</strong>, welke <strong>OT/ICS-systemen</strong>, wat
+        zijn de <strong>gevolgen</strong> van een OT-aanval, en wat zijn de <strong>beschermingen</strong>?</p>
+        <div class="callout tip"><strong>Beloning:</strong> ken het verschil, bescherm de koppeling. Vlag: <code>NM{it_ot_gescheiden}</code>.</div>
+      `,
+      lab: {
+        type: 'connections',
+        title: 'IT/OT: begrippen → categorie',
+        prompt: 'Vind de vier groepen van vier.',
+        groups: OT_GROUPS,
+      },
+      questions: [
+        { q: 'Welke hoort bij OT/ICS?', options: ['PLC', 'E-mailserver', 'Active Directory', 'Kantoor-pc'], answer: 0, explain: 'Een PLC stuurt het fysieke proces aan en is een kern-OT-component.' },
+        { q: 'Wat doet een unidirectionele gateway?', options: ['Laat data maar één kant op (bijv. OT → IT), zodat een aanval niet terug kan', 'Versnelt het netwerk', 'Versleutelt e-mail', 'Blokkeert alle data'], answer: 0, explain: 'Eenrichtingsverkeer laat monitoring toe zonder een terugweg voor een aanvaller.' },
+        { q: 'Welke vlag staat in de tip-callout van deze taak?', answer: ['NM{it_ot_gescheiden}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{it_ot_gescheiden}.' },
+      ],
+    },
+    {
+      title: 'Taak 3 — Van IT-phishing naar het fysieke proces',
+      content: `
+        <p>Een OT-incident begint zelden in OT zelf. Zet de stappen op volgorde: van een phishingmail in het kantoornetwerk
+        tot commando's die het fysieke proces verstoren. Zie je waar de <strong>segmentatie</strong> de keten had moeten
+        breken?</p>
+        <div class="callout tip"><strong>Beloning:</strong> de oversprong zit bij de zwakke scheiding. Vlag: <code>NM{it_naar_ot_pad}</code>.</div>
+      `,
+      lab: {
+        type: 'ordering',
+        title: 'de weg van IT naar OT',
+        prompt: 'Zet de zes stappen op volgorde, van phishing tot verstoord proces.',
+        items: OT_STEPS,
+        correct: ['1', '2', '3', '4', '5', '6'],
+        flag: 'NM{it_naar_ot_pad}',
+        explain: 'Phishing (IT) → lateraal → IT/OT-doorsteek → SCADA/HMI → PLC-commando\'s → proces verstoord/losgeld.',
+      },
+      questions: [
+        { q: 'Waar begint het incident meestal?', options: ['In het IT-kantoornetwerk (bijv. via phishing)', 'In de PLC zelf', 'Bij de HMI', 'In de cloud'], answer: 0, explain: 'De toegang komt meestal via IT; de sprong naar OT volgt als de scheiding zwak is.' },
+        { q: 'Welke stap had de keten het best gebroken?', options: ['Strikte IT/OT-segmentatie die de doorsteek blokkeert', 'Een snellere PLC', 'Een langer wachtwoord op de HMI', 'Meer e-mail'], answer: 0, explain: 'Zonder doorsteek van IT naar OT bereikt de aanvaller het fysieke proces niet.' },
+        { q: 'Welke vlag hoort bij de juiste volgorde?', answer: ['NM{it_naar_ot_pad}'], hint: 'Verschijnt bij de juiste volgorde / staat in de tip-callout.', explain: 'De vlag is NM{it_naar_ot_pad}.' },
+      ],
+    },
+    {
+      title: 'Taak 4 — Beslissen in het incident',
+      content: `
+        <p>Nu jij. Loop door vier beslismomenten van een OT-incident en kies telkens de verstandigste optie — met de veiligheid
+        voorop. Drie van de vier goed = je houdt het proces veilig.</p>
+        <div class="callout tip"><strong>Beloning:</strong> isoleren, coördineren, safety eerst. Vlag: <code>NM{ot_incident_veilig}</code>.</div>
+      `,
+      lab: {
+        type: 'scenario',
+        title: 'ransomware bij de fabriek',
+        scenario: 'Vier beslismomenten in een OT-incident. Kies met safety voorop.',
+        steps: OT_SCEN,
+        pass: 3,
+        flag: 'NM{ot_incident_veilig}',
+      },
+      questions: [
+        { q: 'Ransomware in IT, de fabriek draait nog. Eerste zorg?', options: ['De IT/OT-koppeling dichtzetten om OT te beschermen', 'Alle OT uitzetten', 'Niets, het is alleen IT', 'De PLC herstarten'], answer: 0, explain: 'Isoleer OT van het besmette IT-netwerk; een harde noodstop kan zelf gevaarlijk zijn.' },
+        { q: 'Mag je een haperende PLC zomaar herstarten?', options: ['Nee — coördineer met OT-engineers; het raakt het fysieke proces en de veiligheid', 'Ja, net als een pc', 'Ja, met een firmware-update', 'Alleen \'s nachts'], answer: 0, explain: 'Elke actie in OT heeft fysieke gevolgen; nooit blind herstarten of patchen.' },
+        { q: 'Hoe voorkom je de oversprong volgende keer?', options: ['Strikte segmentatie met een unidirectionele gateway tussen IT en OT', 'IT en OT in één plat netwerk', 'OT aan internet hangen', 'Niets'], answer: 0, explain: 'Een sterke IT/OT-scheiding stopt dat ransomware van IT naar OT springt.' },
+        { q: 'Welke vlag hoort bij een goede afhandeling?', answer: ['NM{ot_incident_veilig}'], hint: 'Verschijnt bij ≥3/4 goed / staat in de tip-callout.', explain: 'De vlag is NM{ot_incident_veilig}.' },
+      ],
+    },
+  ],
+});
+
+</script>
+<script>
+/* Room: Defensief — insider threat & datadiefstal */
+
+// =======================================================================
+//  Alles FICTIEF: een verzonnen medewerker en netwerk. Documentatie-IP's
+//  (RFC 5737), .nm.lab-domeinen. Je oefent detectie en een zorgvuldig proces.
+// =======================================================================
+
+// --- NetFlow: betrap de insider-exfiltratie ---
+const IT_FLOWS = [
+  { dst: '198.51.100.88', dstLabel: 'drive-prive.nm.lab', port: 443, proto: 'tcp', conns: 6, intervalSec: null, jitterPct: null, bytesOut: 8200000000, bytesIn: 4000, note: 'grote uploads — ’s nachts, vlak voor zijn vertrekdatum' },
+  { dst: '198.51.100.12', dstLabel: 'intranet.nm.lab', port: 443, proto: 'tcp', conns: 74, intervalSec: null, jitterPct: 55, bytesOut: 3100000, bytesIn: 24000000, note: 'normaal portaalgebruik' },
+  { dst: '198.51.100.25', dstLabel: 'mail.nm.lab', port: 993, proto: 'tcp', conns: 33, intervalSec: null, jitterPct: 48, bytesOut: 700000, bytesIn: 9000000, note: 'IMAP-mail' },
+];
+
+// --- Connections: insider-threat in kaart ---
+const IT_GROUPS = [
+  { name: 'Soorten insider', items: ['Kwaadwillende insider', 'Nalatige insider', 'Gecompromitteerd account', 'Vertrekkende insider'] },
+  { name: 'Gedragssignalen', items: ['Grote downloads vlak voor vertrek', 'Toegang buiten kantoortijd', 'Data naar privé-cloud/USB', 'Zoeken buiten de eigen rol'] },
+  { name: 'Technische controles', items: ['DLP (data loss prevention)', 'Least privilege', 'Logging & UEBA', 'Netwerk-monitoring'] },
+  { name: 'Proces & mens', items: ['Nette offboarding', 'Functiescheiding', 'Meldcultuur', 'Achtergrondcheck'] },
+];
+
+// --- Scenario: het zorgvuldige proces ---
+const IT_SCEN = [
+  {
+    situation: 'Monitoring toont dat een medewerker ’s nachts gigabytes naar een privé-cloud uploadt, vlak voor zijn vertrekdatum. Wat is je eerste stap?',
+    choices: [
+      { label: 'Discreet escaleren naar security, HR en juridisch, en het bewijs veiligstellen — niet zelf confronteren', good: true, feedback: 'Precies: een insider-zaak vraagt een zorgvuldig, bewijsvast en juridisch correct proces.' },
+      { label: 'De medewerker meteen aanspreken en beschuldigen', good: false, feedback: 'Voortijdig confronteren tipt de persoon, kan bewijs laten verdwijnen en schaadt de zaak (en hem, als je het mis hebt).' },
+      { label: 'Zijn account direct verwijderen', good: false, feedback: 'Dan vernietig je mogelijk bewijs. Veiligstellen gaat vóór opruimen.' },
+    ],
+  },
+  {
+    situation: 'Waarom confronteer je niet meteen?',
+    choices: [
+      { label: 'Je hebt een zorgvuldig, bewijsvast proces nodig (privacy, arbeidsrecht); voortijdig handelen schaadt de zaak én de persoon', good: true, feedback: 'Juist: zonder goede onderbouwing en de juiste partijen (HR/juridisch) kan een actie onrechtmatig zijn.' },
+      { label: 'Confronteren schrikt andere medewerkers af', good: false, feedback: 'Dat is niet de reden; het gaat om een rechtmatig, bewijsvast proces.' },
+      { label: 'Omdat monitoren sowieso niet mag', good: false, feedback: 'Monitoren mag binnen kaders (doel, proportioneel, vastgelegd); het gaat om zorgvuldigheid, niet om niets doen.' },
+    ],
+  },
+  {
+    situation: 'Welk gedrag past het best bij een vertrekkende, kwaadwillende insider?',
+    choices: [
+      { label: 'Ongebruikelijke, grote data-toegang vlak voor vertrek, buiten kantoortijd', good: true, feedback: 'Precies: een piek in toegang/exfil rond de vertrekdatum is een klassiek signaal.' },
+      { label: 'Normale 9-5-toegang binnen zijn eigen rol', good: false, feedback: 'Dat is juist normaal gedrag; het signaal is de afwijking daarvan.' },
+      { label: 'Minder inloggen dan normaal', good: false, feedback: 'Datadiefstal gaat meestal gepaard met méér (en ongebruikelijke) toegang, niet minder.' },
+    ],
+  },
+  {
+    situation: 'Hoe beperk je insider-risico vooraf?',
+    choices: [
+      { label: 'Least privilege, DLP, logging/UEBA én een nette offboarding (toegang tijdig intrekken)', good: true, feedback: 'Goed: techniek én proces samen. Zeker bij vertrek is tijdig toegang intrekken cruciaal.' },
+      { label: 'Iedereen admin-rechten geven voor het gemak', good: false, feedback: 'Dat vergroot het risico enorm; least privilege doet het tegenovergestelde.' },
+      { label: 'Niets — insiders vertrouw je gewoon', good: false, feedback: 'Vertrouwen is goed, controle is nodig: de meeste insider-schade komt van (ex-)vertrouwde mensen.' },
+    ],
+  },
+];
+
+CS.registerRoom({
+  id: 'insider-threat',
+  path: 'defensief',
+  order: 10,
+  title: 'Insider threat & datadiefstal',
+  icon: '🕵️',
+  difficulty: 'Gemiddeld',
+  minutes: 50,
+  summary: 'De gevaarlijkste dreiging heeft soms al een toegangspas. Je leert de soorten insider (kwaadwillend, nalatig, gecompromitteerd, vertrekkend), herkent de gedragssignalen, betrapt een data-exfiltratie in het netwerkverkeer, en — cruciaal — volgt het zorgvuldige, bewijsvaste proces: escaleren naar HR/juridisch, bewijs veiligstellen, niet voortijdig confronteren.',
+  objectives: [
+    'De vier soorten insider-dreiging onderscheiden',
+    'Gedragssignalen van een (vertrekkende) insider herkennen',
+    'Een insider-exfiltratie in het netwerkverkeer detecteren',
+    'Het juiste, zorgvuldige responsproces volgen (escaleren, bewijs, geen eigenrichting)',
+    'Insider-risico vooraf beperken (least privilege, DLP, offboarding)',
+  ],
+  terms: [
+    { term: 'Insider threat', def: 'Een dreiging van binnenuit: iemand met legitieme toegang (medewerker, leverancier) die data steelt of schade aanricht.' },
+    { term: 'Kwaadwillende insider', def: 'Iemand die bewust data steelt of saboteert (bijv. uit wraak of voor geld).' },
+    { term: 'Nalatige insider', def: 'Iemand die per ongeluk een lek veroorzaakt (verkeerde mail, zwak wachtwoord).' },
+    { term: 'Gecompromitteerd account', def: 'Een legitiem account dat door een aanvaller is overgenomen — van buiten, maar van binnen zichtbaar.' },
+    { term: 'DLP', def: 'Data Loss Prevention: techniek die het weglekken van gevoelige data detecteert of blokkeert.' },
+    { term: 'UEBA', def: 'User & Entity Behavior Analytics: detecteert afwijkend gedrag t.o.v. een normaalprofiel.' },
+    { term: 'Least privilege', def: 'Iedereen krijgt alleen de rechten die nodig zijn — zo beperk je de schade van misbruik.' },
+    { term: 'Offboarding', def: 'Het nette proces bij vertrek: toegang tijdig en volledig intrekken.' },
+  ],
+  resources: [
+    { title: 'CISA — Insider Threat Mitigation', url: 'https://www.cisa.gov/topics/physical-security/insider-threat-mitigation' },
+    { title: 'CERT Insider Threat Center (SEI/CMU)', url: 'https://www.sei.cmu.edu/' },
+    { title: 'NCSC — interne dreigingen', url: 'https://www.ncsc.nl/' },
+    { title: 'Autoriteit Persoonsgegevens — monitoring van werknemers', url: 'https://www.autoriteitpersoonsgegevens.nl/' },
+  ],
+  tasks: [
+    {
+      title: 'Taak 1 — De dreiging van binnenuit',
+      content: `
+        <p>Firewalls kijken naar buiten, maar de gevaarlijkste dreiging heeft soms al een toegangspas. Een
+        <strong>insider</strong> heeft legitieme toegang en weet waar de kroonjuwelen liggen. Er zijn vier smaken: de
+        <strong>kwaadwillende</strong> insider (bewust), de <strong>nalatige</strong> (per ongeluk), het
+        <strong>gecompromitteerde account</strong> (van buiten overgenomen), en de <strong>vertrekkende</strong> insider die
+        "nog even" data meeneemt.</p>
+        <p>Detectie draait om <strong>afwijkend gedrag</strong>: ongebruikelijke toegang, buiten kantoortijd, data naar een
+        privé-cloud of USB — zeker rond een vertrekdatum. Maar minstens zo belangrijk is het <strong>proces</strong>: je
+        confronteert niemand op eigen houtje. Je escaleert naar security, HR en juridisch, en stelt eerst bewijs veilig.</p>
+        <div class="callout warn"><strong>Alles fictief:</strong> de medewerker en het netwerk zijn verzonnen oefenmateriaal.</div>
+        <div class="callout tip"><strong>Beloning:</strong> detecteren én zorgvuldig handelen. Vlag: <code>NM{dreiging_van_binnenuit}</code>.</div>
+      `,
+      questions: [
+        { q: 'Wat kenmerkt een insider threat?', options: ['De dreiging komt van iemand met legitieme toegang', 'Het is altijd een externe hacker', 'Het is alleen malware', 'Het bestaat niet'], answer: 0, explain: 'Een insider heeft al toegang en kennis — dat maakt de dreiging lastig en potentieel groot.' },
+        { q: 'Waarop draait insider-detectie vooral?', options: ['Afwijkend gedrag t.o.v. het normaalprofiel', 'Een langer wachtwoord', 'Een snellere pc', 'De kleur van de badge'], answer: 0, explain: 'UEBA en monitoring zoeken naar ongebruikelijke toegang, tijdstippen en datastromen.' },
+        { q: 'Waarom confronteer je een verdachte insider niet zelf meteen?', options: ['Je hebt een zorgvuldig, bewijsvast en juridisch correct proces nodig (HR/juridisch)', 'Omdat het te eng is', 'Omdat monitoren verboden is', 'Dat moet je juist wel'], answer: 0, explain: 'Voortijdig handelen schaadt de zaak en kan onrechtmatig zijn; escaleer en stel bewijs veilig.' },
+        { q: 'Welke vlag staat in de tip-callout?', answer: ['NM{dreiging_van_binnenuit}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{dreiging_van_binnenuit}.' },
+      ],
+    },
+    {
+      title: 'Taak 2 — Betrap de exfiltratie',
+      content: `
+        <p>Het netwerkverkeer van één medewerker valt op. Lees de flows: wie stuurt er ’s nachts gigabytes naar buiten, en
+        waarheen? Laat je niet afleiden door normaal intranet- en mailverkeer.</p>
+        <div class="callout tip"><strong>Beloning:</strong> grote upload, verkeerde bestemming, verkeerd tijdstip. Vlag: <code>NM{exfil_voor_vertrek}</code>.</div>
+      `,
+      lab: {
+        type: 'netflow',
+        title: 'egress van de werkplek van een vertrekkende medewerker',
+        scenario: 'Eén bestemming slokt ’s nachts gigabytes op; de rest is normaal.',
+        flows: IT_FLOWS,
+        ask: [
+          { q: 'Naar welke bestemming lekt de data weg?', answer: ['drive-prive.nm.lab', 'drive-prive', '198.51.100.88'], hint: 'Het grootste uitgaande volume.' },
+          { q: 'Ongeveer hoeveel data ging er uitgaand? (bijv. 8.2 GB)', answer: ['8.2 GB', '8.2', '8,2 GB', '8,2'], hint: 'De kolom "Uit" bij drive-prive.nm.lab.' },
+        ],
+      },
+      questions: [
+        { q: 'Welke bestemming wijst op insider-exfiltratie?', answer: ['drive-prive.nm.lab', 'drive-prive', '198.51.100.88'], hint: 'Groot uitgaand volume, buiten kantoortijd.', explain: 'drive-prive.nm.lab ontving ~8,2 GB uitgaand ’s nachts — een persoonlijke cloud, vlak voor vertrek.' },
+        { q: 'Waarom is het tijdstip (’s nachts) een belangrijk signaal?', options: ['Het wijkt af van het normale werkpatroon — een klassieke red flag', 'Omdat ’s nachts internet goedkoper is', 'Omdat de server dan sneller is', 'Dat maakt niet uit'], answer: 0, explain: 'Afwijking van het normaalprofiel (tijd, volume, bestemming) is precies wat je zoekt.' },
+        { q: 'Welke vlag staat in de tip-callout van deze taak?', answer: ['NM{exfil_voor_vertrek}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{exfil_voor_vertrek}.' },
+      ],
+    },
+    {
+      title: 'Taak 3 — Insider-threat in kaart',
+      content: `
+        <p>Groepeer de zestien begrippen: de <strong>soorten insider</strong>, de <strong>gedragssignalen</strong>, de
+        <strong>technische controles</strong> en de <strong>proces/mens</strong>-maatregelen.</p>
+        <div class="callout tip"><strong>Beloning:</strong> techniek én proces samen. Vlag: <code>NM{techniek_en_proces}</code>.</div>
+      `,
+      lab: {
+        type: 'connections',
+        title: 'insider threat: begrippen → categorie',
+        prompt: 'Vind de vier groepen van vier.',
+        groups: IT_GROUPS,
+      },
+      questions: [
+        { q: 'Wat is een "gecompromitteerd account" als insider-type?', options: ['Een legitiem account dat door een externe aanvaller is overgenomen', 'Een medewerker die ontslag neemt', 'Een nieuwe collega', 'Een printer'], answer: 0, explain: 'Van buiten overgenomen, maar van binnen zichtbaar — het gedraagt zich als een insider.' },
+        { q: 'Welke technische controle beperkt de schade van misbruik het meest?', options: ['Least privilege (alleen de rechten die nodig zijn)', 'Iedereen admin', 'Een snellere pc', 'Meer e-mail'], answer: 0, explain: 'Hoe minder rechten, hoe kleiner de schade die een insider (of gekaapt account) kan aanrichten.' },
+        { q: 'Welke vlag staat in de tip-callout van deze taak?', answer: ['NM{techniek_en_proces}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{techniek_en_proces}.' },
+      ],
+    },
+    {
+      title: 'Taak 4 — Het zorgvuldige proces',
+      content: `
+        <p>Detectie is pas het begin. Een insider-zaak kan iemands loopbaan — en jouw bewijs — maken of breken. Loop door
+        vier beslismomenten en kies de zorgvuldige, rechtmatige route. Drie van de vier goed = je handelt juist.</p>
+        <div class="callout tip"><strong>Beloning:</strong> escaleren, bewijs veiligstellen, geen eigenrichting. Vlag: <code>NM{bewijs_voor_confrontatie}</code>.</div>
+      `,
+      lab: {
+        type: 'scenario',
+        title: 'de insider-zaak',
+        scenario: 'Vier beslismomenten in een insider-onderzoek. Kies zorgvuldig.',
+        steps: IT_SCEN,
+        pass: 3,
+        flag: 'NM{bewijs_voor_confrontatie}',
+      },
+      questions: [
+        { q: 'Je ziet nachtelijke uploads naar een privé-cloud vlak voor iemands vertrek. Eerste stap?', options: ['Discreet escaleren (security/HR/juridisch) en bewijs veiligstellen', 'De persoon meteen beschuldigen', 'Zijn account verwijderen', 'Niets doen'], answer: 0, explain: 'Een bewijsvast, juridisch correct proces gaat vóór confrontatie.' },
+        { q: 'Waarom het account niet meteen verwijderen?', options: ['Dan vernietig je mogelijk bewijs; eerst veiligstellen', 'Omdat het duur is', 'Omdat het niet mag', 'Dat moet je juist wel'], answer: 0, explain: 'Bewaren en veiligstellen gaat vóór opruimen; anders verlies je je zaak.' },
+        { q: 'Hoe beperk je insider-risico vooraf?', options: ['Least privilege, DLP, logging/UEBA en een nette offboarding', 'Iedereen admin', 'Monitoring uitzetten', 'Niets'], answer: 0, explain: 'Techniek én proces samen — en tijdig toegang intrekken bij vertrek.' },
+        { q: 'Welke vlag hoort bij een goede afhandeling?', answer: ['NM{bewijs_voor_confrontatie}'], hint: 'Verschijnt bij ≥3/4 goed / staat in de tip-callout.', explain: 'De vlag is NM{bewijs_voor_confrontatie}.' },
+      ],
+    },
+  ],
+});
+
+</script>
+<script>
 /* Room: Introductie digitale forensie & opsporing */
 CS.registerRoom({
   id: 'intro-forensie',
@@ -23628,6 +23992,336 @@ CS.registerRoom({
         { q: 'Waarom is de geldezel zo belangrijk voor de criminelen?', options: ['Hij vormt een buffer die de herkomst versluiert en het risico draagt', 'Hij levert de malware', 'Hij maakt de phishingmail', 'Hij is de bank'], answer: 0, explain: 'De mule zet afstand tussen de buit en de organisatie en draagt het zichtbare risico.' },
         { q: 'Wat is de verhouding risico/opbrengst voor de geldezel?', options: ['Veel risico (strafblad, bankverbod) voor een kleine vergoeding', 'Weinig risico, veel geld', 'Geen risico', 'Alleen risico voor de bank'], answer: 0, explain: 'Een paar honderd euro tegenover jarenlange, zware gevolgen — een extreem slechte deal.' },
         { q: 'Welke vlag staat in de tip-callout van deze taak?', answer: ['NM{veel_risico_weinig_buit}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{veel_risico_weinig_buit}.' },
+      ],
+    },
+  ],
+});
+
+</script>
+<script>
+/* Room: Intelligence — IoT-botnet & de DDoS-economie */
+
+// =======================================================================
+//  Alles FICTIEF: verzonnen diensten en bedragen. Educatief/defensief —
+//  je leert botnets en DDoS herkennen en tegenhouden, niet bouwen.
+// =======================================================================
+
+// --- Ordering: de levenscyclus van een IoT-botnet ---
+const BD_STEPS = [
+  { id: '1', label: 'Een scanner zoekt op internet naar IoT-apparaten met standaardwachtwoorden' },
+  { id: '2', label: 'Een kwetsbaar apparaat wordt geïnfecteerd (een loader plaatst de bot)' },
+  { id: '3', label: 'De bot meldt zich bij de command-and-control (C2)' },
+  { id: '4', label: 'Het botnet wordt te huur aangeboden via een booter/stresser-dienst' },
+  { id: '5', label: 'Een klant bestelt (en betaalt voor) een DDoS-aanval op een doelwit' },
+  { id: '6', label: 'Het doelwit gaat offline; soms volgt afpersing (ransom-DDoS)' },
+];
+
+// --- Connections: begrijp de DDoS-wereld ---
+const BD_GROUPS = [
+  { name: 'DDoS-typen', items: ['Volumetrisch (bandbreedte vol)', 'Protocol (SYN-flood)', 'Applicatielaag (HTTP-flood)', 'Amplificatie (DNS/NTP)'] },
+  { name: 'Botnet-onderdelen', items: ['Geïnfecteerde IoT-camera', 'C2-server', 'Loader/dropper', 'Scanner (default creds)'] },
+  { name: 'De DDoS-dienst (markt)', items: ['Booter/stresser', 'Abonnement per maand', 'Betaling in crypto', '"Stress-test je eigen server"-smoes'] },
+  { name: 'Mitigatie', items: ['Scrubbing-center', 'Rate limiting', 'Anycast-spreiding', 'Upstream-filtering (ISP)'] },
+];
+
+// --- Flow: de booter-economie ---
+const BD_NODES = [
+  { id: 'klant', type: 'account', label: 'Klant (huurt een aanval)' },
+  { id: 'booter', type: 'service', label: 'Booter/stresser-dienst' },
+  { id: 'infra', type: 'service', label: 'Gehuurde bots & bandbreedte' },
+  { id: 'crypto', type: 'cashout', label: 'Crypto-winst operator' },
+];
+const BD_EDGES = [
+  { from: 'klant', to: 'booter', amount: 50, time: 'maand 1', note: 'maandabonnement voor "stresstests"' },
+  { from: 'booter', to: 'infra', amount: 30, time: 'maand 1', note: 'kosten voor infra/bandbreedte' },
+  { from: 'booter', to: 'crypto', amount: 20, time: 'maand 1', note: 'winst operator (crypto)' },
+];
+
+CS.registerRoom({
+  id: 'botnet-ddos-economie',
+  path: 'intelligence',
+  order: 13,
+  title: 'IoT-botnet & de DDoS-economie',
+  icon: '🌐',
+  difficulty: 'Gemiddeld',
+  minutes: 45,
+  summary: 'Slecht beveiligde IoT-apparaten vormen samen een wapen. Je leert hoe een botnet ontstaat (scannen, infecteren, C2), hoe DDoS-aanvallen werken en als dienst te huur zijn (booters/stressers), hoe het geld daar loopt, en welke mitigaties een aanval opvangen. Educatief en defensief.',
+  objectives: [
+    'De levenscyclus van een IoT-botnet benoemen (scan → infectie → C2 → verhuur → aanval)',
+    'De DDoS-typen onderscheiden (volumetrisch, protocol, applicatielaag, amplificatie)',
+    'Uitleggen hoe booter/stresser-diensten DDoS als dienst aanbieden',
+    'De geldstroom in de DDoS-economie volgen',
+    'Mitigaties kiezen en je eigen IoT uit een botnet houden',
+  ],
+  terms: [
+    { term: 'Botnet', def: 'Een netwerk van geïnfecteerde apparaten dat op afstand bestuurd wordt (bijv. voor DDoS of spam).' },
+    { term: 'IoT', def: 'Internet of Things: camera\'s, routers, printers en andere apparaten online — vaak met zwakke standaardwachtwoorden.' },
+    { term: 'C2', def: 'Command-and-control: de server waarmee de bots contact houden voor opdrachten.' },
+    { term: 'DDoS', def: 'Distributed Denial of Service: een doelwit overspoelen met verkeer vanaf vele bronnen zodat het onbereikbaar wordt.' },
+    { term: 'Amplificatie', def: 'Een klein verzoek naar een open server (DNS/NTP) uitlokken met een vervalst bron-IP, zodat een groot antwoord naar het slachtoffer gaat.' },
+    { term: 'Booter/stresser', def: 'Een (illegaal) dienst die DDoS-aanvallen te huur aanbiedt, vermomd als "stresstest-dienst".' },
+    { term: 'Ransom-DDoS', def: 'Afpersing: betaal, anders (blijft) de aanval.' },
+    { term: 'Scrubbing-center', def: 'Een dienst die het aanvalsverkeer "schoonwast" en alleen legitiem verkeer doorlaat.' },
+  ],
+  resources: [
+    { title: 'NCSC — DDoS en weerbaarheid', url: 'https://www.ncsc.nl/' },
+    { title: 'Cloudflare — wat is een DDoS-aanval', url: 'https://www.cloudflare.com/learning/ddos/what-is-a-ddos-attack/' },
+    { title: 'Nationale Beheersorganisatie Internet Providers (NBIP) — anti-DDoS', url: 'https://www.nbip.nl/' },
+    { title: 'Europol — booter-takedowns', url: 'https://www.europol.europa.eu/' },
+  ],
+  tasks: [
+    {
+      title: 'Taak 1 — Van losse apparaten naar een wapen',
+      content: `
+        <p>Een enkele slecht beveiligde IP-camera is vooral een risico voor de eigenaar. Maar <em>honderdduizenden</em> ervan
+        samen vormen een <strong>botnet</strong>: een leger van geïnfecteerde apparaten dat een aanvaller op afstand bestuurt.
+        De klassieke route: een <strong>scanner</strong> zoekt apparaten met <strong>standaardwachtwoorden</strong>, een
+        <strong>loader</strong> infecteert ze, en de bots melden zich bij de <strong>C2</strong>.</p>
+        <p>Dat leger wordt verhuurd voor <strong>DDoS</strong>-aanvallen — vaak kant-en-klaar via een
+        <strong>booter/stresser</strong>-dienst, vermomd als "stresstest". Het is een hele economie, met abonnementen en
+        crypto-betalingen. Jij leert de keten herkennen, het geld volgen en de aanval mitigeren.</p>
+        <div class="callout warn"><strong>Alles fictief en defensief:</strong> de diensten en bedragen zijn verzonnen. Deze
+        room leert herkennen en tegenhouden, niet bouwen.</div>
+        <div class="callout tip"><strong>Beloning:</strong> zwakke IoT wordt andermans wapen. Vlag: <code>NM{iot_wordt_wapen}</code>.</div>
+      `,
+      questions: [
+        { q: 'Wat is een botnet?', options: ['Een netwerk van geïnfecteerde apparaten dat op afstand bestuurd wordt', 'Een firewall', 'Een soort back-up', 'Een wachtwoordmanager'], answer: 0, explain: 'Een botnet is een op afstand bestuurd leger van bots, inzetbaar voor o.a. DDoS.' },
+        { q: 'Hoe komen de meeste IoT-apparaten in een botnet?', options: ['Via standaardwachtwoorden die nooit gewijzigd zijn', 'Door een dure exploit', 'Door fysieke diefstal', 'Dat kan niet'], answer: 0, explain: 'Standaard/ zwakke wachtwoorden op IoT zijn de klassieke ingang (bijv. Mirai-stijl).' },
+        { q: 'Wat is een booter/stresser?', options: ['Een dienst die DDoS-aanvallen te huur aanbiedt (vermomd als "stresstest")', 'Een legale snelheidstest', 'Een back-updienst', 'Een VPN'], answer: 0, explain: 'Booters verkopen DDoS-as-a-service; de "stresstest"-smoes maakt het niet legaal.' },
+        { q: 'Welke vlag staat in de tip-callout?', answer: ['NM{iot_wordt_wapen}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{iot_wordt_wapen}.' },
+      ],
+    },
+    {
+      title: 'Taak 2 — De levenscyclus',
+      content: `
+        <p>Zet de stappen van een IoT-botnet op volgorde, van het scannen tot de aanval en afpersing.</p>
+        <div class="callout tip"><strong>Beloning:</strong> scan → infecteer → C2 → verhuur → aanval. Vlag: <code>NM{botnet_levenscyclus}</code>.</div>
+      `,
+      lab: {
+        type: 'ordering',
+        title: 'de levenscyclus van een botnet',
+        prompt: 'Zet de zes stappen op volgorde, van scannen tot de DDoS-aanval.',
+        items: BD_STEPS,
+        correct: ['1', '2', '3', '4', '5', '6'],
+        flag: 'NM{botnet_levenscyclus}',
+        explain: 'Scannen → infecteren → C2 → verhuren via booter → klant bestelt aanval → doelwit offline/afpersing.',
+      },
+      questions: [
+        { q: 'Wat is de eerste stap?', options: ['Scannen naar apparaten met standaardwachtwoorden', 'De DDoS uitvoeren', 'Afpersen', 'De bot aan C2 melden'], answer: 0, explain: 'Eerst zoekt de scanner kwetsbare apparaten; daarna volgt de infectie.' },
+        { q: 'Waar grijpt een takedown vaak aan?', options: ['De C2 en de booter-dienst offline halen', 'Elke IoT-camera apart', 'Het slachtoffer', 'Niets'], answer: 0, explain: 'Zonder C2/booter valt de aansturing en de verhuur stil; dat raakt het hele botnet.' },
+        { q: 'Welke vlag hoort bij de juiste volgorde?', answer: ['NM{botnet_levenscyclus}'], hint: 'Verschijnt bij de juiste volgorde / staat in de tip-callout.', explain: 'De vlag is NM{botnet_levenscyclus}.' },
+      ],
+    },
+    {
+      title: 'Taak 3 — De DDoS-wereld in kaart',
+      content: `
+        <p>Groepeer de zestien begrippen in vier categorieën: de <strong>DDoS-typen</strong>, de
+        <strong>botnet-onderdelen</strong>, de kenmerken van de <strong>DDoS-dienst</strong> en de
+        <strong>mitigaties</strong>.</p>
+        <div class="callout tip"><strong>Beloning:</strong> ken de typen én de tegenmaatregelen. Vlag: <code>NM{ddos_in_kaart}</code>.</div>
+      `,
+      lab: {
+        type: 'connections',
+        title: 'DDoS: begrippen → categorie',
+        prompt: 'Vind de vier groepen van vier.',
+        groups: BD_GROUPS,
+      },
+      questions: [
+        { q: 'Wat is een amplificatie-aanval?', options: ['Een klein verzoek naar een open server lokt een groot antwoord naar het (vervalste) slachtoffer-IP', 'Een aanval met één pakket', 'Een phishingmail', 'Een wachtwoordaanval'], answer: 0, explain: 'DNS/NTP-amplificatie misbruikt open servers om het verkeer te vergroten richting het slachtoffer.' },
+        { q: 'Waarom helpt een scrubbing-center of upstream-filtering tegen een volumetrische aanval?', options: ['Je eigen lijn is te klein; het verkeer moet stroomopwaarts worden schoongemaakt/gefilterd', 'Omdat je server dan sneller is', 'Omdat het gratis is', 'Dat helpt niet'], answer: 0, explain: 'Bij een volumetrische flood moet je bovenstrooms (ISP/scrubbing) filteren, want je eigen aansluiting raakt vol.' },
+        { q: 'Welke vlag staat in de tip-callout van deze taak?', answer: ['NM{ddos_in_kaart}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{ddos_in_kaart}.' },
+      ],
+    },
+    {
+      title: 'Taak 4 — De booter-economie',
+      content: `
+        <p>DDoS is een bedrijfsmodel geworden. Volg het geld: een klant betaalt een <strong>abonnement</strong>, de operator
+        betaalt zijn infrastructuur en houdt de rest als <strong>winst</strong> — meestal in crypto. Klein per klant, groot
+        over duizenden klanten.</p>
+        <div class="callout tip"><strong>Beloning:</strong> DDoS als abonnement. Vlag: <code>NM{ddos_als_dienst}</code>.</div>
+      `,
+      lab: {
+        type: 'flow',
+        title: 'de booter-economie',
+        unit: '€',
+        scenario: 'Een klant huurt aanvallen; de operator betaalt infra en houdt winst (crypto).',
+        nodes: BD_NODES,
+        edges: BD_EDGES,
+        ask: [
+          { q: 'Hoeveel betaalt de klant per maand? (getal)', answer: ['50'], hint: 'De eerste transactie.' },
+          { q: 'Hoeveel winst houdt de operator over? (getal)', answer: ['20'], hint: 'Wat er naar de crypto-cash-out gaat.' },
+        ],
+      },
+      questions: [
+        { q: 'Hoeveel houdt de operator over van de € 50 per klant?', answer: ['20', '€ 20', '€20'], hint: '50 − 30 infra = …', explain: 'Na € 30 infrakosten blijft € 20 winst per klant — schaalbaar over veel klanten.' },
+        { q: 'Waarom is de booter-economie zo schaalbaar en hardnekkig?', options: ['Lage prijs per klant × veel klanten, en crypto-betaling verhult het geld', 'Omdat het legaal is', 'Omdat er geen infra nodig is', 'Dat is het niet'], answer: 0, explain: 'Veel kleine abonnementen tellen op; crypto en bulletproof-hosting maken opsporing lastiger.' },
+        { q: 'Hoe houd je je eigen IoT uit een botnet?', options: ['Standaardwachtwoorden wijzigen, updaten en onnodige poorten/toegang sluiten', 'Niets, IoT is veilig', 'Het apparaat sneller maken', 'Meer camera\'s kopen'], answer: 0, explain: 'Sterke wachtwoorden, updates en minder blootstelling halen je apparaat uit het vizier van scanners.' },
+        { q: 'Welke vlag staat in de tip-callout van deze taak?', answer: ['NM{ddos_als_dienst}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{ddos_als_dienst}.' },
+      ],
+    },
+  ],
+});
+
+</script>
+<script>
+/* Room: Intelligence — infostealers & gestolen-datamarkten */
+
+// =======================================================================
+//  Alles FICTIEF en EDUCATIEF: verzonnen bedragen en namen. Deze room legt
+//  de keten en de verdediging uit — geen handleiding om te stelen.
+// =======================================================================
+
+// --- Ordering: de infostealer-keten ---
+const IS_STEPS = [
+  { id: '1', label: 'Slachtoffer downloadt gekraakte software of klikt een malvertising-link' },
+  { id: '2', label: 'De infostealer draait en oogst wachtwoorden, cookies en crypto-wallets' },
+  { id: '3', label: 'De "stealer log" wordt geüpload naar de operator' },
+  { id: '4', label: 'Logs worden verkocht op een marktplaats (los, in bulk of als combolist)' },
+  { id: '5', label: 'Kopers doen credential stuffing of nemen accounts over (ATO)' },
+  { id: '6', label: 'De toegang wordt te gelde gemaakt: fraude, of initial access verkocht aan ransomware' },
+];
+
+// --- Connections: de infostealer-economie ---
+const IS_GROUPS = [
+  { name: 'Wat een infostealer oogst', items: ['Opgeslagen wachtwoorden', 'Sessie-cookies', 'Crypto-wallets', 'Autofill & creditcards'] },
+  { name: 'Besmettingswegen', items: ['Gekraakte software', 'Malvertising', 'Nep-download in YouTube-beschrijving', 'Phishingbijlage'] },
+  { name: 'Handelswaar', items: ['Stealer log', 'Combolist', 'Sessie-cookie (sessie-overname)', 'Initial access (aan ransomware)'] },
+  { name: 'Verdediging', items: ['MFA / passkeys', 'Wachtwoordmanager + uniek wachtwoord', 'Geen gekraakte software', 'Uitloggen / sessies invalideren'] },
+];
+
+// --- Flow: de geldstroom rond de logverkoop ---
+const IS_NODES = [
+  { id: 'buyer', type: 'account', label: 'Koper (fraudeur)' },
+  { id: 'market', type: 'service', label: 'Log-marktplaats' },
+  { id: 'op', type: 'cashout', label: 'Stealer-operator (crypto)' },
+  { id: 'fee', type: 'cashout', label: 'Platformfee (crypto)' },
+];
+const IS_EDGES = [
+  { from: 'buyer', to: 'market', amount: 100, time: 'dag 1', note: 'koopt een pakket van 100 logs' },
+  { from: 'market', to: 'op', amount: 70, time: 'dag 1', note: 'operatoraandeel (70%)' },
+  { from: 'market', to: 'fee', amount: 30, time: 'dag 1', note: 'platformfee (30%)' },
+];
+
+CS.registerRoom({
+  id: 'infostealers-datamarkten',
+  path: 'intelligence',
+  order: 14,
+  title: 'Infostealers & gestolen-datamarkten',
+  icon: '🪝',
+  difficulty: 'Gemiddeld',
+  minutes: 50,
+  summary: 'Infostealers zijn de motor achter moderne cybercrime: goedkope malware die in één klap wachtwoorden, cookies en wallets oogst. De buit — "stealer logs" — wordt per bulk verhandeld en vormt de brandstof voor accountovername, fraude en zelfs ransomware (initial access). Je leert de keten, de handelswaar, de geldstroom en vooral: de verdediging. Educatief en defensief.',
+  objectives: [
+    'Uitleggen wat een infostealer is en wat hij oogst',
+    'De infostealer-keten van besmetting tot te-gelde-maken benoemen',
+    'De handelswaar (logs, combolists, cookies, initial access) herkennen',
+    'De geldstroom rond de logverkoop volgen',
+    'Je verdedigen: MFA/passkeys, unieke wachtwoorden, geen gekraakte software, sessie-invalidatie',
+  ],
+  terms: [
+    { term: 'Infostealer', def: 'Malware die in één run opgeslagen wachtwoorden, sessie-cookies, autofill en crypto-wallets steelt.' },
+    { term: 'Stealer log', def: 'Het buitpakket van één besmetting: alle gestolen credentials, cookies en gegevens van dat slachtoffer.' },
+    { term: 'Combolist', def: 'Een grote lijst van gebruikersnaam/wachtwoord-combinaties, samengesteld uit lekken en logs.' },
+    { term: 'Credential stuffing', def: 'Gelekte combinaties massaal uitproberen op andere sites (werkt door hergebruik van wachtwoorden).' },
+    { term: 'Sessie-cookie / ATO', def: 'Een gestolen sessie-cookie laat een aanvaller inloggen zónder wachtwoord of MFA — account takeover.' },
+    { term: 'Malvertising', def: 'Kwaadaardige advertenties die naar een nep-download of exploit leiden.' },
+    { term: 'Initial access', def: 'Eerste toegang tot een organisatie; infostealer-logs worden hiervoor aan ransomwaregroepen verkocht.' },
+    { term: 'Sessie-invalidatie', def: 'Overal uitloggen / sessies ongeldig maken, zodat een gestolen cookie niets meer waard is.' },
+  ],
+  resources: [
+    { title: 'Have I Been Pwned — check of je in een lek zit', url: 'https://haveibeenpwned.com/' },
+    { title: 'NCSC — wachtwoorden en MFA', url: 'https://www.ncsc.nl/' },
+    { title: 'Krebs on Security — infostealers', url: 'https://krebsonsecurity.com/' },
+    { title: 'FIDO Alliance — passkeys', url: 'https://fidoalliance.org/' },
+  ],
+  tasks: [
+    {
+      title: 'Taak 1 — De motor achter moderne cybercrime',
+      content: `
+        <p>Veel aanvallen beginnen tegenwoordig niet met een geniale exploit, maar met een <strong>infostealer</strong>:
+        goedkope malware die in één run je <strong>opgeslagen wachtwoorden</strong>, <strong>sessie-cookies</strong>,
+        <strong>autofill</strong> en <strong>crypto-wallets</strong> leegrooft. De buit — een <strong>stealer log</strong>
+        — wordt per bulk verhandeld en is de brandstof voor accountovername, fraude en zelfs ransomware (als
+        <strong>initial access</strong>).</p>
+        <p>Extra gemeen: een gestolen <strong>sessie-cookie</strong> laat een aanvaller soms inloggen <em>zonder</em>
+        wachtwoord én <em>zonder</em> MFA — want de sessie is al "ingelogd". Daarom is dit thema de kern van moderne
+        datastromen. Je leert de keten én hoe je jezelf beschermt.</p>
+        <div class="callout warn"><strong>Alles fictief en educatief:</strong> geen handleiding om te stelen; de nadruk ligt op
+        begrijpen en verdedigen.</div>
+        <div class="callout tip"><strong>Beloning:</strong> één besmetting, een hele buit. Vlag: <code>NM{een_log_een_buit}</code>.</div>
+      `,
+      questions: [
+        { q: 'Wat oogst een infostealer?', options: ['Opgeslagen wachtwoorden, cookies, autofill en crypto-wallets', 'Alleen je IP-adres', 'Alleen je schermafbeeldingen', 'Niets'], answer: 0, explain: 'In één run rooft een infostealer een brede buit aan credentials en gegevens.' },
+        { q: 'Waarom is een gestolen sessie-cookie zo gevaarlijk?', options: ['De aanvaller kan er soms mee inloggen zonder wachtwoord én zonder MFA', 'Cookies zijn versleuteld en dus veilig', 'Cookies bevatten nooit iets nuttigs', 'Dat is niet gevaarlijk'], answer: 0, explain: 'Een geldige sessie-cookie "is al ingelogd" en omzeilt zo zelfs MFA — tot je uitlogt/invalideert.' },
+        { q: 'Waarvoor worden infostealer-logs óók verkocht?', options: ['Als initial access aan ransomwaregroepen', 'Als antivirus', 'Als back-up', 'Nergens voor'], answer: 0, explain: 'Toegang uit logs is vaak de eerste stap van een ransomware-aanval — een hele markt op zich.' },
+        { q: 'Welke vlag staat in de tip-callout?', answer: ['NM{een_log_een_buit}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{een_log_een_buit}.' },
+      ],
+    },
+    {
+      title: 'Taak 2 — De keten',
+      content: `
+        <p>Zet de infostealer-keten op volgorde: van de besmetting tot het te gelde maken van de buit.</p>
+        <div class="callout tip"><strong>Beloning:</strong> van gekraakte download tot ransomware-toegang. Vlag: <code>NM{stealer_keten}</code>.</div>
+      `,
+      lab: {
+        type: 'ordering',
+        title: 'de infostealer-keten',
+        prompt: 'Zet de zes stappen op volgorde, van besmetting tot te gelde maken.',
+        items: IS_STEPS,
+        correct: ['1', '2', '3', '4', '5', '6'],
+        flag: 'NM{stealer_keten}',
+        explain: 'Besmetting → oogsten → log uploaden → verkopen → stuffing/ATO → te gelde maken (fraude/ransomware-toegang).',
+      },
+      questions: [
+        { q: 'Wat is vaak de eerste stap?', options: ['Een besmetting via gekraakte software of malvertising', 'De ransomware-aanval', 'Het verkopen van logs', 'Credential stuffing'], answer: 0, explain: 'De stealer moet eerst draaien; dat begint met een download/klik.' },
+        { q: 'Wat gebeurt er met de buit na de verkoop?', options: ['Kopers doen credential stuffing/ATO en maken de toegang te gelde', 'Hij wordt gewist', 'Hij wordt teruggegeven', 'Niets'], answer: 0, explain: 'Gekochte logs voeden accountovername, fraude en initial-access-verkoop.' },
+        { q: 'Welke vlag hoort bij de juiste volgorde?', answer: ['NM{stealer_keten}'], hint: 'Verschijnt bij de juiste volgorde / staat in de tip-callout.', explain: 'De vlag is NM{stealer_keten}.' },
+      ],
+    },
+    {
+      title: 'Taak 3 — De economie in kaart',
+      content: `
+        <p>Groepeer de zestien begrippen: wat een infostealer <strong>oogst</strong>, de <strong>besmettingswegen</strong>, de
+        <strong>handelswaar</strong>, en de <strong>verdediging</strong>.</p>
+        <div class="callout tip"><strong>Beloning:</strong> ken de buit én de tegenmaatregel. Vlag: <code>NM{stealer_economie}</code>.</div>
+      `,
+      lab: {
+        type: 'connections',
+        title: 'infostealers: begrippen → categorie',
+        prompt: 'Vind de vier groepen van vier.',
+        groups: IS_GROUPS,
+      },
+      questions: [
+        { q: 'Wat is een "combolist"?', options: ['Een grote lijst gebruikersnaam/wachtwoord-combinaties uit lekken en logs', 'Een antivirusregel', 'Een type cookie', 'Een wachtwoordmanager'], answer: 0, explain: 'Combolists voeden credential stuffing: massaal uitproberen op andere sites.' },
+        { q: 'Welke verdediging stopt credential stuffing het best?', options: ['MFA/passkeys én unieke wachtwoorden per site', 'Overal hetzelfde wachtwoord', 'Een snellere browser', 'Gekraakte software'], answer: 0, explain: 'Uniek per site breekt hergebruik; MFA/passkeys stoppen het inloggen met alleen een wachtwoord.' },
+        { q: 'Welke verdediging maakt een gestolen sessie-cookie waardeloos?', options: ['Uitloggen / sessies invalideren', 'Een langer wachtwoord', 'Een snellere pc', 'Niets'], answer: 0, explain: 'Een ongeldige sessie kan de aanvaller niet meer gebruiken, ook al heeft hij de cookie.' },
+        { q: 'Welke vlag staat in de tip-callout van deze taak?', answer: ['NM{stealer_economie}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{stealer_economie}.' },
+      ],
+    },
+    {
+      title: 'Taak 4 — De geldstroom',
+      content: `
+        <p>Stealer logs zijn spotgoedkoop per stuk, maar er gaan er miljoenen om. Volg het geld van één aankoop: een koper
+        betaalt de marktplaats, die het aandeel doorsluist naar de operator en een platformfee houdt.</p>
+        <div class="callout tip"><strong>Beloning:</strong> goedkoop per log, groot in volume. Vlag: <code>NM{goedkoop_maar_massaal}</code>.</div>
+      `,
+      lab: {
+        type: 'flow',
+        title: 'de logverkoop',
+        unit: '€',
+        scenario: 'Een koper betaalt € 100 voor 100 logs; de marktplaats splitst het tussen operator en platform.',
+        nodes: IS_NODES,
+        edges: IS_EDGES,
+        ask: [
+          { q: 'Hoeveel betaalt de koper voor het pakket? (getal)', answer: ['100'], hint: 'De eerste transactie.' },
+          { q: 'Hoeveel gaat er naar de stealer-operator? (getal)', answer: ['70'], hint: 'Het operatoraandeel (70%).' },
+        ],
+      },
+      questions: [
+        { q: 'Hoeveel ontvangt de operator van de € 100?', answer: ['70', '€ 70', '€70'], hint: '70% operatoraandeel.', explain: 'De operator krijgt € 70; de marktplaats houdt € 30 platformfee.' },
+        { q: 'Waarom is dit model zo winstgevend ondanks de lage prijs per log?', options: ['Het volume is enorm: een kleine marge × miljoenen logs', 'Omdat logs duur zijn', 'Omdat er geen kosten zijn', 'Dat is het niet'], answer: 0, explain: 'Spotgoedkoop per stuk, maar schaal maakt het lucratief — en houdt de hele economie draaiende.' },
+        { q: 'Wat is jouw sterkste persoonlijke verdediging tegen deze keten?', options: ['Unieke wachtwoorden + MFA/passkeys, en geen gekraakte software installeren', 'Overal hetzelfde wachtwoord', 'Nooit uitloggen', 'Je cookies delen'], answer: 0, explain: 'Je breekt het hergebruik, stopt inloggen-met-alleen-een-wachtwoord en voorkomt de besmetting zelf.' },
+        { q: 'Welke vlag staat in de tip-callout van deze taak?', answer: ['NM{goedkoop_maar_massaal}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{goedkoop_maar_massaal}.' },
       ],
     },
   ],

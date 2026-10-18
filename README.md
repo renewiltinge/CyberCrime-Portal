@@ -73,6 +73,8 @@ Denken als een verdediger.
 6. **Detectie bouwen: van IOC naar regel** — zelf een detectieregel samenstellen en live tunen op true/false positives.
 7. **Ransomware: incident & onderhandeling** — een incidentsimulatie: isoleren, back-ups, omgaan met een afperser en de NIST-fasen op volgorde.
 8. **Phishing-kit & -infrastructuur ontleden** — een phishing-kit van buitenaf analyseren (URL, IOCs, pivot) tot aan de takedown.
+9. **OT/ICS & ransomware op kritieke infra** — waarom OT anders is dan IT, hoe ransomware van IT naar OT springt en hoe je het fysieke proces beschermt.
+10. **Insider threat & datadiefstal** — soorten insider, de signalen, exfiltratie detecteren in netwerkverkeer en het zorgvuldige responsproces.
 
 ### 🕵️ Digitale forensie & opsporing
 De weg naar digitaal rechercheur — sporen vinden, veiligstellen en duiden.
@@ -103,6 +105,8 @@ Van fenomeen naar interventie: denken en werken als intelligence-analist.
 10. **Dark-web vendor OSINT** — een vendor attribueren via OPSEC-fouten (alias, PGP, bitcoin, schrijfstijl), pivoteren naar een echte-identiteit-lead en bronnen wegen — strikt lawful.
 11. **Carding & de fraude-economie** — de rollen, kaartdata en markten achter kaartfraude, het crime script en de waarde-erosie tot cash, plus de verdediging.
 12. **Money-mule-ronseling: de geldezel** — hoe geldezels geronseld worden, hun rol in de geldstroom en de (strafrechtelijke) gevolgen.
+13. **IoT-botnet & de DDoS-economie** — hoe botnets ontstaan, DDoS-typen, booter/stresser-diensten en de geldstroom, plus mitigatie.
+14. **Infostealers & gestolen-datamarkten** — infostealers, stealer logs, combolists en credential stuffing, de geldstroom en je verdediging.
 
 ### 💧 Datastromen volgen
 Word expert in geld- en datastromen — de rode draad van bijna elke cybercrimezaak.
