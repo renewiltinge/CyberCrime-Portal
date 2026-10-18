@@ -52,6 +52,7 @@ De bouwstenen van beveiliging.
 8. **CEO-fraude: de onderhandeling onder druk** — een BEC-simulatie: de spoofmail controleren, de druk en geheimhouding weerstaan en de betaalcontroles borgen.
 9. **SIM-swap & accountovername** — hoe het nummer-kapen sms-2FA breekt, de aanvalsketen, een beslissimulatie en sterkere 2FA.
 10. **Vishing & deepfake-stemmen** — voice-fraude en AI-stemkloning herkennen, de kanalen (phishing/vishing/smishing/quishing) en de juiste reacties.
+11. **Phishing gevorderd** — spear phishing, thread-hijacking, quishing en clone phishing herkennen in een lastige inbox (inclusief een legitieme mail), en verifiëren.
 
 ### ⚔️ Offensief (red team)
 Denken als een aanvaller — altijd in een veilig lab.
