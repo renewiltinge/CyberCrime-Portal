@@ -158,7 +158,7 @@ CS.registerRoom({
         motd: 'Forensisch werkstation — alleen veiliggestelde kopieën. Typ de commando\'s uit de opdracht.',
         fs: {
           '/home/rechercheur/zaak-2026-0042/opdracht.txt': 'ONDERZOEKSOPDRACHT zaak 2026-0042\n--------------------------------\nStel vast welke bestanden van de in beslag genomen laptop zijn gekopieerd naar een USB-stick,\nen op welk tijdstip. Werk uitsluitend op de kopie (bewijs.dd). Documenteer elke stap.\n',
-          '/home/rechercheur/zaak-2026-0042/zaaknotitie.txt': 'Notitie rechercheur:\nImage veiliggesteld met write-blocker. Integriteit vastgelegd.\nEerste bevinding gelogd onder: JVT{eerste_zaak_geopend}\n',
+          '/home/rechercheur/zaak-2026-0042/zaaknotitie.txt': 'Notitie rechercheur:\nImage veiliggesteld met write-blocker. Integriteit vastgelegd.\nEerste bevinding gelogd onder: NM{eerste_zaak_geopend}\n',
           '/home/rechercheur/zaak-2026-0042/bewijs.dd': 'DIT IS EEN FICTIEF SCHIJF-IMAGE VOOR DE OEFENING. (in het echt zijn dit vele gigabytes rauwe data)\n',
           '/home/rechercheur/zaak-2026-0042/.verborgen-logboek.txt': 'Chain of custody:\n2026-10-03 09:12 veiliggesteld door rech. De Vries\n2026-10-03 10:40 gehasht en opgeborgen in kluis K-7\n',
           '/home/rechercheur/README.txt': 'Welkom, rechercheur. Je zaken staan in de mappen hieronder.\n',
@@ -170,7 +170,7 @@ CS.registerRoom({
         },
       },
       questions: [
-        { q: 'Welke vlag staat in zaaknotitie.txt?', answer: 'JVT{eerste_zaak_geopend}', hint: 'cd zaak-2026-0042 en cat zaaknotitie.txt', explain: 'Je eerste bevinding — netjes gevonden via ls en cat.' },
+        { q: 'Welke vlag staat in zaaknotitie.txt?', answer: 'NM{eerste_zaak_geopend}', hint: 'cd zaak-2026-0042 en cat zaaknotitie.txt', explain: 'Je eerste bevinding — netjes gevonden via ls en cat.' },
         { q: 'Hoe heet het bestand met de onderzoeksopdracht in de zaaksmap?', answer: ['opdracht.txt', 'opdracht'], hint: 'ls -l in zaak-2026-0042', explain: 'opdracht.txt beschrijft wat je moet uitzoeken.' },
         { q: 'Waarom bereken je meteen een hash (sha256sum) van het image?', options: ['Om het kleiner te maken', 'Om later te kunnen bewijzen dat het bewijs niet is gewijzigd', 'Om het te versleutelen', 'Dat is niet nodig'], answer: 1, explain: 'De hash legt de integriteit vast: je kunt later aantonen dat er niets is veranderd.' },
         { q: 'Ik heb mijn eerste zaak geopend en begrijp waarom integriteit en documentatie centraal staan.', noAnswer: true },

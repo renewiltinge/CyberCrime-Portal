@@ -1,5 +1,5 @@
 /* ======================================================================
-   JVT Cyber Dojo — core engine
+   NineMinds Cyber Dojo — core engine
    Geen build, geen dependencies. Werkt via file:// en GitHub Pages.
    ====================================================================== */
 (function () {
@@ -19,6 +19,9 @@
     { id: 'offensief',     title: 'Offensief (red team)',   icon: '⚔️', desc: 'Denken als een aanvaller: de OWASP Top 10, verkenning, en webkwetsbaarheden zelf uitbuiten in een veilig lab.' },
     { id: 'defensief',     title: 'Defensief (blue team)',  icon: '🛡️', desc: 'Aanvallen detecteren in logs, reageren op incidenten (NIST) en systemen thuis en op het werk weerbaar maken.' },
     { id: 'forensie',      title: 'Digitale forensie & opsporing', icon: '🕵️', desc: 'De weg naar digitaal rechercheur: sporen veiligstellen, schijven, geheugen, netwerk en Windows-artefacten onderzoeken, OSINT en een echt forensisch onderzoek.' },
+    { id: 'intelligence',  title: 'Cyber-intelligence & opsporing', icon: '🧠', desc: 'Van fenomeen naar interventie: het cybercrime-ecosysteem, crime scripting, de intelligencecyclus, threat-intel-modellen, infrastructuur-OSINT & pivoting, en gestructureerde analyse tot een BLUF-product.' },
+    { id: 'datastromen',   title: 'Datastromen volgen',        icon: '💧', desc: 'Word expert in geld- en datastromen: volg witwasconstructies en structurering, betrap beaconing en exfiltratie in netwerkverkeer, en traceer de herkomst van een e-mail. De rode draad van cybercrime: het geld en de data.' },
+    { id: 'puzzels',       title: 'Puzzels & uitdagingen',  icon: '🧩', desc: 'Leren door te doen: volg geld- en datastromen, ontmasker operators met OSINT, groepeer en reconstrueer, en los een grote cybercrime-CTF op. Alle oefening, veel plezier.' },
     { id: 'eindopdracht',  title: 'Eindopdracht',           icon: '🏁', desc: 'Breng alles samen in een afsluitende mini-CTF. Bewijs aan jezelf wat je kunt.' },
   ];
 
@@ -44,7 +47,7 @@
   CS.util = { $, $$, el, norm, esc };
 
   // ---- Voortgang (localStorage) -----------------------------------------
-  const LS_KEY = 'jvt-cyber-dojo-v1';
+  const LS_KEY = 'nineminds-cyber-dojo-v1';
   let STATE = loadState();
   function loadState() {
     try { return JSON.parse(localStorage.getItem(LS_KEY)) || {}; } catch (e) { return {}; }
@@ -102,6 +105,9 @@
     { id: 'redteam',     icon: '⚔️', name: 'Red teamer', desc: 'Alle Offensief-rooms af', test: () => pathDone('offensief') },
     { id: 'blueteam',    icon: '🛡️', name: 'Blue teamer', desc: 'Alle Defensief-rooms af', test: () => pathDone('defensief') },
     { id: 'forensics',   icon: '🕵️', name: 'Digitaal rechercheur', desc: 'Alle Forensie-rooms af', test: () => pathDone('forensie') },
+    { id: 'analyst',     icon: '🧠', name: 'Intelligence-analist', desc: 'Alle Cyber-intelligence-rooms af', test: () => pathDone('intelligence') },
+    { id: 'tracer',      icon: '💧', name: 'Stromenvolger', desc: 'Alle Datastromen-rooms af', test: () => pathDone('datastromen') },
+    { id: 'puzzler',     icon: '🧩', name: 'Puzzelmeester', desc: 'Alle Puzzels & uitdagingen af', test: () => pathDone('puzzels') },
     { id: 'arena10',     icon: '🎯', name: 'Scherpschutter', desc: 'Reeks van 10 in de Oefenarena', test: () => (STATE.bestStreak || 0) >= 10 },
     { id: 'hacker10',    icon: '💡', name: 'Doorzetter', desc: '10 rooms afgerond', test: () => ROOMS.filter(roomDone).length >= 10 },
     { id: 'flaghunter',  icon: '🚩', name: 'Vlaggenjager', desc: '15 vlaggen gevonden', test: () => (STATE.flags || 0) >= 15 },
@@ -132,14 +138,14 @@
 
   // ---- Thema -------------------------------------------------------------
   function initTheme() {
-    const saved = localStorage.getItem('jvt-theme');
+    const saved = localStorage.getItem('nineminds-theme');
     if (saved) document.documentElement.setAttribute('data-theme', saved);
   }
   function toggleTheme() {
     const cur = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
     const next = cur === 'light' ? 'dark' : 'light';
     document.documentElement.setAttribute('data-theme', next);
-    localStorage.setItem('jvt-theme', next);
+    localStorage.setItem('nineminds-theme', next);
     $('#themeBtn').textContent = next === 'light' ? '🌙' : '☀️';
   }
 
@@ -152,7 +158,7 @@
     const wrap = el('div', { class: 'wrap' });
     const brand = el('button', { class: 'brand', onclick: () => go('#/') }, [
       el('span', { class: 'logo', text: '◈' }),
-      el('span', {}, [document.createTextNode('JVT Cyber Dojo'), el('small', { text: 'Leer cybersecurity, stap voor stap' })]),
+      el('span', {}, [document.createTextNode('NineMinds Cyber Dojo'), el('small', { text: 'Leer cybersecurity, stap voor stap' })]),
     ]);
     const search = el('div', { class: 'search' }, [
       el('span', { text: '🔎' }),
@@ -190,6 +196,10 @@
         el('button', { class: 'btn primary', text: continueTarget() ? '▶ Ga verder waar je was' : '▶ Begin bij het begin', onclick: () => go(continueTarget() || firstRoomHash()) }),
         el('button', { class: 'btn', text: '🎯 Oefenarena', onclick: () => go('#/arena') }),
         el('button', { class: 'btn', text: '🃏 Begrippentrainer', onclick: () => go('#/flashcards') }),
+        el('button', { class: 'btn', text: '🧰 Gereedschapskist', onclick: () => go('#/tools') }),
+        el('button', { class: 'btn', text: '🎓 Examen', onclick: () => go('#/examen') }),
+        el('button', { class: 'btn', text: '🔥 Dagchallenge', onclick: () => go('#/daily') }),
+        el('button', { class: 'btn', text: '📊 Scorebord', onclick: () => go('#/scorebord') }),
         el('button', { class: 'btn ghost', text: '🏅 Badges', onclick: showBadges }),
       ]),
       el('div', { class: 'stat-row' }, [
@@ -386,7 +396,7 @@
     STATE.answered[key] = true;
     // vlaggen tellen
     const ansFirst = Array.isArray(q.answer) ? q.answer[0] : q.answer;
-    if (typeof ansFirst === 'string' && /^JVT\{/.test(ansFirst)) { STATE.flags = (STATE.flags || 0) + 1; }
+    if (typeof ansFirst === 'string' && /^NM\{/.test(ansFirst)) { STATE.flags = (STATE.flags || 0) + 1; }
     saveState();
     addXP(qXP(q), 'vraag');
     updateTaskNav(room);
@@ -539,7 +549,7 @@
     const doneRooms = ROOMS.filter(roomDone).length;
     const body = el('div', {});
     body.append(el('p', { html: '<strong>Level ' + L.lvl + '</strong> · ' + STATE.xp + ' XP totaal' }));
-    body.append(el('div', { class: 'meter' }, el('i', { style: 'width:' + Math.round((L.into / L.need) * 100) + '%;background:linear-gradient(90deg,var(--accent),var(--accent-2))' })));
+    body.append(el('div', { class: 'meter' }, el('i', { style: 'width:' + Math.round((L.into / L.need) * 100) + '%;background:var(--accent)' })));
     body.append(el('p', { class: 'found-note', text: L.into + ' / ' + L.need + ' XP tot level ' + (L.lvl + 1) }));
     body.append(el('ul', {}, [
       el('li', { text: doneRooms + ' van ' + ROOMS.length + ' rooms voltooid' }),
@@ -728,11 +738,304 @@
   }
 
   // =======================================================================
+  //  Gereedschapskist — alle interactieve tools los te gebruiken
+  // =======================================================================
+  const TOOLBOX = [
+    { type: 'cyberchef', icon: '🧪', name: 'CyberChef', desc: 'Coderen, decoderen en hashen (Base64, hex, ROT13, XOR, MD5/SHA-…).', cfg: { input: 'NM{probeer_mij}' } },
+    { type: 'hashcrack', icon: '🔓', name: 'Hash-kraker', desc: 'Woordenlijst, regels (mangling) of brute-force (masker) — op MD5/SHA/NTLM.', cfg: { algo: 'md5', hash: '5f4dcc3b5aa765d61d8327deb882cf99', wordlist: ['123456', 'welkom', 'password', 'qwerty', 'geheim', 'letmein'] } },
+    { type: 'hashid', icon: '🧭', name: 'Hash-herkenner', desc: 'Welk hashtype is dit? Herkent MD5, NTLM, SHA, bcrypt en meer.', cfg: { value: '$2y$10$N9qo8uLOickgx2ZMRZoMy.MH/rq8qjHjhHj' } },
+    { type: 'cipher', icon: '🗝️', name: 'Cijfer-kraker', desc: 'Caesar/ROT, XOR, Vigenère en Atbash ontcijferen.', cfg: { text: 'Kl nlolptl cshn pz QCA{jhlzhy_pz_thrrlspqr}' } },
+    { type: 'multidecode', icon: '✨', name: 'Multi-decoder', desc: 'Herkent en pelt lagen codering af (Base64/32, hex, binair, morse, ROT13, URL…).', cfg: { input: '536c5a55653231316248527058327868655756795832397266513d3d' } },
+    { type: 'crackme', icon: '🔃', name: 'Crackme', desc: 'Reverse-engineering puzzel: lees de controle en vind de sleutel.', cfg: { title: 'demo', source: 'function check(key) {\n  // toegang als key, achterstevoren gelezen, "62oziuj" oplevert\n  return key.split("").reverse().join("") === "62oziuj";\n}', check: (k) => k.split('').reverse().join('') === '62oziuj', flag: 'NM{reverse_engineered}', hint: 'Draai de doelstring om: wat moet key dan zijn?' } },
+    { type: 'rainbow', icon: '🌈', name: 'Rainbow table', desc: 'Zie waarom onvergezouten hashes direct op te zoeken zijn — en salt dat breekt.', cfg: { algo: 'md5', wordlist: ['welkom', 'zomer2024', 'admin', 'geheim', 'voetbal', 'wachtwoord', 'qwerty', 'liefde'], target: '371620aa75830b1388b63305b0d42f06', saltExample: { word: 'welkom', salt: 'Xy7' } } },
+    { type: 'ach', icon: '🧮', name: 'ACH-matrix', desc: 'Concurrerende hypothesen afwegen door bewijs te scoren (C/I/N).', cfg: { question: 'Wie zit achter de ransomware-aanval op een fictief bedrijf?', hypotheses: ['Ontevreden insider', 'Georganiseerde crimineel (RaaS-affiliate)', 'Statelijke actor'], evidence: [{ text: 'Er is losgeld in crypto geëist', expert: ['I', 'C', 'I'] }, { text: 'Zeer gerichte spear-phishing vooraf' }, { text: 'Data gelekt op een bekende leksite' }, { text: 'Activiteit vooral tijdens kantooruren UTC+3' }] } },
+    { type: 'crimescript', icon: '🎬', name: 'Crime script-builder', desc: 'Ontleed een delict in zes fasen met interventies per fase.', cfg: { scenario: 'Phishing-fraude met moneymules (fictief).' } },
+    { type: 'admiralty', icon: '📊', name: 'Bronbeoordeling', desc: 'Betrouwbaarheid (A–F) en geloofwaardigheid (1–6) apart beoordelen.', cfg: { items: [{ source: 'Anonieme tip via Meld Misdaad Anoniem', info: 'Verdachte X plant een aanval', reliability: 'E', credibility: '4', explain: 'Onbekende, niet te verifiëren bron; info niet bevestigd.' }, { source: 'Eigen SIEM-logs, geverifieerd', info: 'Mislukte logins vanaf één IP', reliability: 'A', credibility: '1', explain: 'Eigen betrouwbare meting, door meerdere logs bevestigd.' }] } },
+    { type: 'probability', icon: '📈', name: 'Waarschijnlijkheidstaal', desc: 'Koppel woorden als "waarschijnlijk" aan de juiste percentage-band.', cfg: {} },
+    { type: 'attackmap', icon: '🗺️', name: 'ATT&CK-mapping', desc: 'Koppel een waarneming aan de juiste MITRE ATT&CK-techniek.', cfg: { items: [{ desc: 'Aanvaller dumpt het LSASS-geheugen om wachtwoorden te stelen', code: 'T1003.001' }, { desc: 'Bestanden worden versleuteld en er verschijnt een losgeldbrief', code: 'T1486' }, { desc: 'Binnenkomst via een kwaadaardige bijlage in een mail', code: 'T1566.001' }, { desc: 'Zijwaartse beweging via RDP naar een andere host', code: 'T1021.001' }] } },
+    { type: 'bluf', icon: '📝', name: 'BLUF-herschrijven', desc: 'Herschrijf een chronologisch verhaal naar "conclusie eerst".', cfg: { source: 'Om 08:40 vijf mislukte RDP-logins vanaf 203.0.113.77. Om 08:44 een geslaagde login als adm.backup. Om 08:45 start powershell.exe. Om 09:01 een grote upload naar een clouddienst. Om 09:25 is het securitylog gewist.', model: 'Waarschijnlijk is account adm.backup overgenomen en is data geëxfiltreerd (betrouwbaarheid: gemiddeld, op basis van eigen logs). Advies: reset adm.backup en blokkeer het bron-IP — eigenaar: SOC. Onderbouwing: brute-force om 08:40, geslaagde login 08:44, upload 09:01, logwissing 09:25.' } },
+    { type: 'flow', icon: '💸', name: 'Stroom volgen', desc: 'Volg geld/data door mules, mixers en exchanges naar de cash-out.', cfg: { unit: 'BTC', scenario: 'Losgeld van 3 BTC — waar komt het eruit?', nodes: [{ id: 'v', type: 'victim', label: 'Slachtoffer' }, { id: 'm1', type: 'mule', label: 'Mule A' }, { id: 'm2', type: 'mule', label: 'Mule B' }, { id: 'mix', type: 'mixer', label: 'Mixer' }, { id: 'ex', type: 'exchange', label: 'Exchange Zuid' }], edges: [{ from: 'v', to: 'm1', amount: 1.8, time: '10:00' }, { from: 'v', to: 'm2', amount: 1.2, time: '10:01', note: 'splitsing' }, { from: 'm1', to: 'mix', amount: 1.75, time: '10:20', note: 'fee' }, { from: 'm2', to: 'mix', amount: 1.15, time: '10:22', note: 'fee' }, { from: 'mix', to: 'ex', amount: 2.8, time: '11:30' }], ask: [{ q: 'Waar stroomt het geld uiteindelijk uit?', answer: ['Exchange Zuid', 'exchange'], hint: 'Volg tot het laatste knooppunt.' }, { q: 'Hoeveel BTC bereikt de exchange?', answer: ['2.8'], hint: 'Tel de twee stromen door de mixer op.' }] } },
+    { type: 'ordering', icon: '🔢', name: 'Volgorde-puzzel', desc: 'Reconstrueer de juiste volgorde van een aanval (tijdlijn/kill chain).', cfg: { prompt: 'Zet de fasen van de Cyber Kill Chain op volgorde.', items: [{ id: '1', label: 'Reconnaissance' }, { id: '2', label: 'Weaponization' }, { id: '3', label: 'Delivery' }, { id: '4', label: 'Exploitation' }, { id: '5', label: 'Installation' }, { id: '6', label: 'Command & Control' }, { id: '7', label: 'Actions on Objectives' }], correct: ['1', '2', '3', '4', '5', '6', '7'], explain: 'Dit is de volgorde van de Lockheed Martin Cyber Kill Chain.' } },
+    { type: 'regexgolf', icon: '🎯', name: 'Regex-golf', desc: 'Schrijf één patroon dat de kwaadaardige regels matcht en de goede mijdt.', cfg: { prompt: 'Match alleen de phishing-domeinen.', match: ['login-nederbank.nm.lab', 'verify-postnl.nm.lab', 'ideal-check.nm.lab'], avoid: ['nederbank.nl', 'postnl.nl', 'ideal.nl'] } },
+    { type: 'osintpuzzle', icon: '🔎', name: 'OSINT-puzzel', desc: 'Correleer fictieve fragmenten en ontmasker het verband.', cfg: { scenario: 'Drie fragmenten over verdachte "M". Welke draad verbindt ze?', records: [{ title: 'Hackforum-post', icon: '💬', lines: ['gebruiker: <b>n1ghtcrawl3r</b>', 'biedt loader-dienst aan', 'contact: nc_sales@mail.nm.lab'] }, { title: 'WHOIS (crt.sh)', icon: '📜', lines: ['domein: loader-shop.nm.lab', 'registrant-e-mail: nc_sales@mail.nm.lab'] }, { title: 'Wallet-tag', icon: '💰', lines: ['alias n1ghtcrawl3r gelinkt', 'aan wallet bc1qfictief…'] }], ask: [{ q: 'Welke gebruikersnaam/alias verbindt alle drie de bronnen?', answer: ['n1ghtcrawl3r'], hint: 'Zoek wat letterlijk terugkomt.' }, { q: 'Welk e-mailadres linkt de forumpost aan het domein?', answer: ['nc_sales@mail.nm.lab'], hint: 'Vergelijk contact en registrant.' }] } },
+    { type: 'chaintrace', icon: '⛓️', name: 'Blockchain-tracer', desc: 'Volg vuil geld door transacties: common-input-clustering en taint-analyse.', cfg: { unit: 'BTC', scenario: 'Losgeld van 10 BTC gaat de keten in. Hoeveel bereikt de exchange?', labels: { D: 'Ransom-wallet', EX: 'Exchange Zuid', C: 'Schone handelaar' }, exchanges: ['EX'], origins: [{ addr: 'D', amount: 10 }, { addr: 'C', amount: 5, dirty: false }], txs: [{ inputs: ['D'], outputs: [{ addr: 'A', amount: 6 }, { addr: 'B', amount: 4 }], time: '10:00' }, { inputs: ['A'], outputs: [{ addr: 'EX', amount: 3 }, { addr: 'M', amount: 3 }], time: '11:00' }, { inputs: ['B', 'C'], outputs: [{ addr: 'EX', amount: 9 }], time: '12:00' }], ask: [{ q: 'Hoeveel vuil geld (BTC) bereikt de exchange?', answer: ['7'], hint: 'Lees de taint-kolom bij de exchange.' }] } },
+    { type: 'connections', icon: '🧩', name: 'Verbanden', desc: 'Groepeer 16 begrippen in 4 categorieën — zoals NYT Connections, maar cyber.', cfg: { prompt: 'Vind de vier groepen van vier.', groups: [{ name: 'Hashtypes', items: ['MD5', 'SHA-256', 'NTLM', 'bcrypt'] }, { name: 'Cybercrime-rollen', items: ['IAB', 'Affiliate', 'Moneymule', 'Bulletproof hoster'] }, { name: 'ATT&CK-tactieken', items: ['Execution', 'Persistence', 'Exfiltration', 'Impact'] }, { name: 'OSINT-bronnen', items: ['crt.sh', 'Shodan', 'VirusTotal', 'abuse.ch'] }] } },
+    { type: 'netflow', icon: '📡', name: 'NetFlow-analyse', desc: 'Betrap beaconing (strak ritme) en exfiltratie (groot uitgaand volume) in netwerkstromen.', cfg: { title: 'demo-egress', scenario: 'Eén bestemming tikt als een klok, één slokt gigabytes op.', flows: [{ dst: '203.0.113.50', dstLabel: 'cdn-telemetry.nm.lab', port: 443, proto: 'tcp', conns: 480, intervalSec: 60, jitterPct: 4, bytesOut: 52000, bytesIn: 38000, note: 'klein, elke ~60s' }, { dst: '203.0.113.77', dstLabel: 'opslag-x9f3.nm.lab', port: 443, proto: 'tcp', conns: 3, bytesOut: 2100000000, bytesIn: 4200, note: 'nachtelijke uploads' }, { dst: '198.51.100.12', dstLabel: 'intranet.nm.lab', port: 443, proto: 'tcp', conns: 95, jitterPct: 58, bytesOut: 4200000, bytesIn: 31000000, note: 'normaal portaal' }], ask: [{ q: 'Welke bestemming is het C2-baken?', answer: ['cdn-telemetry.nm.lab', 'cdn-telemetry'], hint: 'Laagste jitter, veel kleine check-ins.' }, { q: 'Welke bestemming wijst op exfiltratie?', answer: ['opslag-x9f3.nm.lab', 'opslag-x9f3'], hint: 'Grootste uitgaande volume.' }] } },
+    { type: 'structuring', icon: '💶', name: 'Structurering-detector', desc: 'Betrap smurfing: meerdere stortingen net onder de meldgrens (Wwft).', cfg: { threshold: 10000, currency: '€', scenario: 'Twee katvangers storten net onder de grens.', tx: [{ date: '2026-03-02', who: 'M. de Groot', amount: 9800, kind: 'contant' }, { date: '2026-03-02', who: 'K. Visser', amount: 9500, kind: 'contant' }, { date: '2026-03-03', who: 'R. Bakker', amount: 250, kind: 'pin', note: 'normaal' }, { date: '2026-03-03', who: 'M. de Groot', amount: 9900, kind: 'contant' }, { date: '2026-03-04', who: 'K. Visser', amount: 12000, kind: 'overboeking', note: 'boven grens' }], ask: [{ q: 'Hoeveel stortingen passen in het smurf-patroon?', answer: ['3'], hint: 'Tel de gemarkeerde rijen.' }] } },
+    { type: 'emailheader', icon: '✉️', name: 'E-mailheader-analyse', desc: 'Traceer de echte herkomst via de Received-keten en betrap spoofing met SPF/DKIM/DMARC.', cfg: { title: 'demo-mail', from: 'Nederbank <beveiliging@nederbank.nl>', returnPath: 'retour@mail.boos.nm.lab', hops: [{ from: '[vervalst]', ip: '203.0.113.66', by: 'mail.boos.nm.lab', time: '09:58' }, { from: 'mail.boos.nm.lab', ip: '203.0.113.66', by: 'mx.nm.lab', time: '10:00' }], auth: { spf: 'fail', dkim: 'none', dmarc: 'fail' }, ask: [{ q: 'Wat is het oorspronkelijke verzend-IP?', answer: ['203.0.113.66'], hint: 'De onderste Received-regel.' }, { q: 'Is dit spoofing? (ja/nee)', answer: ['ja'], hint: 'Vergelijk From, Return-Path en SPF.' }] } },
+    { type: 'dnslog', icon: '🌫️', name: 'DNS-log-analyse', desc: 'Betrap DNS-tunneling (TXT + lange subdomeinen) en een DGA (veel NXDOMAIN).', cfg: { title: 'demo-DNS', scenario: 'Eén domein tunnelt via TXT; een reeks willekeurige namen botst op NXDOMAIN.', queries: [{ time: '02:11', name: 'k5euo63fmjtv64lomfptgmt5aib7q.exfil.nm.lab', type: 'TXT', resp: 'OK' }, { time: '02:11', name: 'nf4xq1k9plm2wdr3nxc8vbp7za9qm.exfil.nm.lab', type: 'TXT', resp: 'OK' }, { time: '02:11', name: 'w1sbt4ydxd9ko5x2tcu5zeye1lp6ab.exfil.nm.lab', type: 'TXT', resp: 'OK' }, { time: '02:12', name: 'xk3f9q2v8.nm.lab', type: 'A', resp: 'NXDOMAIN' }, { time: '02:12', name: 'p7m2v8z1a.nm.lab', type: 'A', resp: 'NXDOMAIN' }, { time: '02:13', name: 'mail.nm.lab', type: 'A', resp: 'OK' }], ask: [{ q: 'Welk domein is het tunneling-kanaal?', answer: ['exfil.nm.lab'], hint: 'Veel TXT + lange subdomeinen.' }] } },
+    { type: 'recon', icon: '📒', name: 'Reconciliatie', desc: 'Leg bankafschrift en boekhouding naast elkaar en vind de onverklaarde post.', cfg: { title: 'demo-recon', currency: '€', leftName: 'Bankafschrift', rightName: 'Boekhouding', left: [{ date: '02-03', amount: 12000, desc: 'Klantbetaling' }, { date: '02-05', amount: -3500, desc: 'Leverancier' }, { date: '02-08', amount: -4500, desc: 'Onbekende BV' }, { date: '02-28', amount: 800, desc: 'Rente' }], right: [{ date: '02-03', amount: 12000, desc: 'Klantbetaling' }, { date: '02-05', amount: -3500, desc: 'Leverancier' }, { date: '02-28', amount: 800, desc: 'Rente' }], ask: [{ q: 'Welk bedrag is onverklaard? (getal)', answer: ['4500', '4.500'], hint: 'De niet-gematchte regel.' }] } },
+    { type: 'detectrule', icon: '🧰', name: 'Detectieregel bouwen', desc: 'Bouw een regel uit voorwaarden en test hem live op TP/FP tegen events.', cfg: { title: 'demo-detectie', fields: ['Image', 'CommandLine'], events: [{ label: 'kwaadaardig', malicious: true, fields: { Image: 'powershell.exe', CommandLine: 'powershell -w hidden -enc ...' } }, { label: 'kwaadaardig', malicious: true, fields: { Image: 'powershell.exe', CommandLine: 'powershell -w hidden IEX DownloadString' } }, { label: 'legitiem', malicious: false, fields: { Image: 'powershell.exe', CommandLine: 'powershell Get-ChildItem -Hidden' } }, { label: 'normaal', malicious: false, fields: { Image: 'chrome.exe', CommandLine: 'chrome --type=renderer' } }], solution: [{ field: 'CommandLine', op: 'bevat', value: '-w hidden' }] } },
+    { type: 'fingerprint', icon: '🛰️', name: 'Infrastructuur-fingerprinting', desc: 'Cluster hosts op gedeelde kenmerken en pas de zeldzaamheidstoets toe.', cfg: { title: 'demo-cluster', scenario: 'Vier phishingdomeinen delen een zeldzaam favicon; de JARM deelt iedereen (ruis).', attrs: [{ key: 'favicon', label: 'Favicon' }, { key: 'analytics', label: 'Analytics-ID' }, { key: 'jarm', label: 'JARM' }], hosts: [{ host: 'inlog-a.nm.lab', favicon: 'f7a1c9', analytics: 'UA-66613-7', jarm: '2ad2ad00' }, { host: 'inlog-b.nm.lab', favicon: 'f7a1c9', analytics: 'UA-66613-7', jarm: '2ad2ad00' }, { host: 'inlog-c.nm.lab', favicon: 'f7a1c9', analytics: 'UA-66613-7', jarm: '2ad2ad00' }, { host: 'webshop.nm.lab', favicon: '11bb20', analytics: 'UA-20011-1', jarm: '2ad2ad00' }], ask: [{ q: 'Hoeveel hosts delen favicon f7a1c9?', answer: ['3'], hint: 'Klik de favicon-waarde aan.' }] } },
+    { type: 'scenario', icon: '🎲', name: 'Beslissimulatie', desc: 'Neem beslissingen onder druk (incident response) en zie de gevolgen.', cfg: { title: 'demo-IR', scenario: 'Een mini-incident: kies verstandig.', pass: 2, steps: [{ situation: 'Je ziet versleutelde bestanden en een losgeldbrief. Eerste actie?', choices: [{ label: 'Besmette systemen isoleren (aan laten staan)', good: true, feedback: 'Isoleren stopt verspreiding; aan laten staan behoudt bewijs.' }, { label: 'Alles uitzetten', good: false, feedback: 'Je verliest vluchtig forensisch bewijs.' }, { label: 'Direct betalen', good: false, feedback: 'Veel te vroeg en zonder garantie.' }] }, { situation: 'De directie vraagt of jullie moeten betalen.', choices: [{ label: 'Adviseer eerst herstel uit back-up te onderzoeken', good: true, feedback: 'Betalen is een laatste redmiddel.' }, { label: 'Zeg: gewoon betalen', good: false, feedback: 'Geen garantie, financiert misdaad.' }] }] } },
+    { type: 'phishing', icon: '🎣', name: 'Phishing-inbox', desc: 'Oefen vrij: klik de rode vlaggen aan en beoordeel of een mail phishing is.', cfg: { emails: [{ phishing: true, fromName: 'NederBank Beveiliging', from: 'security@nederbank-verificatie.info', to: 'jij@voorbeeld.nl', subject: 'URGENT: uw rekening wordt binnen 24 uur geblokkeerd', date: 'ma 6 okt 2026 07:12', flags: { from: 'Het domein is nederbank-verificatie.info, niet nederbank.nl.', subject: 'Haast en dreiging zijn klassieke drukmiddelen.' }, body: [[{ text: 'Geachte klant,', flag: 'Onpersoonlijke aanhef — je bank kent je naam.' }], [{ text: 'Verifieer nu uw rekening', link: 'http://nederbank.nl.verify-login.ru/inloggen', flag: 'Het echte domein is verify-login.ru, geen nederbank.nl.' }]] }, { phishing: false, fromName: 'PakketPost', from: 'noreply@pakketpost.nl', to: 'jij@voorbeeld.nl', subject: 'Je pakket PP-48213 is onderweg', date: 'ma 6 okt 2026 09:30', body: [[{ text: 'Je bestelling PP-48213 wordt vandaag bezorgd. Je hoeft niets te doen; volg het zelf via de app of pakketpost.nl.' }]] }] } },
+    { type: 'password', icon: '🔑', name: 'Wachtwoord-analyse', desc: 'Live de sterkte en kraaktijd van een wachtwoord zien.', cfg: {} },
+    { type: 'subnet', icon: '🧮', name: 'Subnet-calculator', desc: 'Subnetten uitrekenen en oefenvragen genereren.', cfg: {} },
+    { type: 'hexviewer', icon: '🔢', name: 'Hex-viewer', desc: 'Rauwe bytes lezen: magic bytes en verstopte strings.', cfg: { filename: 'voorbeeld.bin', hex: '89 50 4E 47 0D 0A 1A 0A 4A 56 54 7B 68 65 78 5F 6B 69 6A 6B 65 72 7D' } },
+    { type: 'jwt', icon: '🎫', name: 'JWT-inspecteur', desc: 'JSON Web Tokens decoderen en de handtekening controleren.', cfg: { token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJqYW4iLCJyb2xlIjoidXNlciIsImlhdCI6MTc2MDAwMDAwMH0.4t3m7nQe8m0b9Qb1Qw5m3Hc0lJjQJh2b3n4c5d6e7f8' } },
+    { type: 'regex', icon: '🔤', name: 'Regex-tester', desc: 'Reguliere expressies live testen met markering en groepen.', cfg: { text: 'Oct 1 08:12:03 srv sshd[2211]: Failed password for root from 203.0.113.9\nOct 1 08:12:07 srv sshd[2213]: Failed password for invalid user admin from 203.0.113.9\nOct 1 08:13:01 srv sshd[2219]: Accepted password for jbakker from 10.0.0.5', pattern: 'Failed password for (?:invalid user )?(\\w+)', flags: 'gm' } },
+    { type: 'cvss', icon: '🩹', name: 'CVSS-calculator', desc: 'De CVSS v3.1-basisscore uit de vector berekenen.', cfg: {} },
+    { type: 'timestamp', icon: '🕰️', name: 'Tijdstempel-omrekenaar', desc: 'Unix, FILETIME, WebKit en Cocoa-tijd omzetten.', cfg: {} },
+    { type: 'ioc', icon: '🧾', name: 'IOC-extractor', desc: 'Indicatoren uit tekst halen en defangen.', cfg: { text: 'Verdachte host 203.0.113[.]44 en hxxps://login-check[.]nineminds[.]lab/x\nMD5 44d88612fea8a8f36de82e1278abb02f — zie CVE-2021-44228.' } },
+    { type: 'url', icon: '🔗', name: 'URL-ontleder', desc: 'Een link ontleden en phishing-rode-vlaggen tonen.', cfg: { urls: ['https://www.nederbank.nl@203.0.113.45/inloggen', 'https://pakketpost.nl.bezorging-status.nm.lab/track?id=1'] } },
+    { type: 'yara', icon: '🧬', name: 'YARA-lab', desc: 'Detectieregels schrijven en op bestanden testen.', cfg: {
+      rule: 'rule Verdacht_Script {\n  strings:\n    $a = "powershell" nocase\n    $b = "-enc" nocase\n    $mz = { 4D 5A }\n  condition:\n    ($a and $b) or $mz at 0\n}',
+      files: [
+        { name: 'macro.docm', text: 'AutoOpen: powershell -enc VwByAGkA... start2' },
+        { name: 'notitie.txt', text: 'PowerShell-cursus volgende week.' },
+        { name: 'klein.exe', hex: '4D 5A 90 00 03 00 00 00' },
+      ] } },
+    { type: 'timeline', icon: '⏳', name: 'Super-timeline', desc: 'Gebeurtenissen uit vele bronnen op één tijdlijn.', cfg: {
+      title: 'voorbeeld-onderzoek', events: [
+        { t: '2026-10-01 08:44:19', src: 'Security', host: 'WS-07', user: 'adm.backup', desc: '4624 aanmelding type 10 (RDP) vanaf 203.0.113.77' },
+        { t: '2026-10-01 08:45:37', src: 'Prefetch', host: 'WS-07', desc: 'POWERSHELL.EXE — eerste uitvoering' },
+        { t: '2026-10-01 09:01:10', src: 'Proxy', host: 'WS-07', desc: 'Upload naar upload.cloudvault.example (198.51.100.140)' },
+        { t: '2026-10-01 09:25:19', src: 'Security', host: 'WS-07', desc: '1102 — audit-log gewist' },
+      ] } },
+    { type: 'chmod', icon: '🔐', name: 'chmod-calculator', desc: 'Linux-rechten ↔ octaal ↔ rwx.', cfg: { mode: '644' } },
+    { type: 'numconv', icon: '🔟', name: 'Getallen-omzetter', desc: 'Decimaal · hex · binair · octaal · ASCII.', cfg: { value: '0x4D5A' } },
+  ];
+  function renderTools() {
+    const root = $('#app'); root.innerHTML = '';
+    const wrap = el('section', { class: 'roomview wrap' });
+    wrap.append(el('div', { class: 'crumbs' }, [el('a', { text: '🏠 Home', onclick: () => go('#/') }), document.createTextNode('  ›  '), el('strong', { text: '🧰 Gereedschapskist' })]));
+    wrap.append(el('h1', { text: '🧰 Gereedschapskist' }));
+    wrap.append(el('p', { class: 'sum', style: 'color:var(--muted);max-width:680px', text: 'Alle interactieve tools uit de lessen, los te gebruiken — ook voor je eigen (ethische) oefeningen. Alles draait lokaal in je browser; er wordt niets verstuurd. Klik een gereedschap om het te openen.' }));
+
+    const nav = el('div', { class: 'chip-row', style: 'margin:14px 0 20px' });
+    TOOLBOX.forEach((t) => nav.append(el('span', { class: 'chip', text: t.icon + ' ' + t.name, onclick: () => { const node = $('#tool-' + t.type); if (node) node.scrollIntoView({ behavior: 'smooth', block: 'start' }); } })));
+    wrap.append(nav);
+
+    TOOLBOX.forEach((t) => {
+      const sec = el('div', { class: 'task', id: 'tool-' + t.type });
+      sec.append(el('h2', { text: t.icon + ' ' + t.name }));
+      sec.append(el('div', { class: 'body', html: '<p style="color:var(--muted);margin-top:0">' + esc(t.desc) + '</p>' }));
+      const box = el('div', {});
+      sec.append(box);
+      const renderer = CS.labs[t.type];
+      if (renderer) { try { renderer(box, t.cfg || {}, {}); } catch (e) { box.append(el('div', { class: 'callout danger', text: 'Tool kon niet laden: ' + e.message })); } }
+      else box.append(el('div', { class: 'callout warn', text: 'Onbekende tool: ' + t.type }));
+      wrap.append(sec);
+    });
+    root.append(wrap);
+    renderFooter(root);
+    window.scrollTo(0, 0);
+  }
+
+  // =======================================================================
+  //  Gedeelde quizkaart (voor examen & dagchallenge)
+  // =======================================================================
+  function quizCard(item, onDone) {
+    const card = el('div', { class: 'task' });
+    card.append(el('div', { style: 'color:var(--muted);font-size:.82rem;margin-bottom:6px', text: item.room.icon + ' ' + item.room.title }));
+    card.append(el('div', { class: 'qtext', style: 'font-weight:600;margin-bottom:12px', html: esc(item.q.q) }));
+    const fb = el('div', { class: 'feedback' });
+    let done = false;
+    if (Array.isArray(item.q.options)) {
+      const mc = el('div', { class: 'mc' });
+      item.q.options.forEach((opt, oi) => {
+        const bt = el('button', { html: esc(opt), onclick: () => {
+          if (done) return; done = true;
+          const ok = oi === item.q.answer;
+          bt.classList.add('chosen', ok ? 'ok' : 'no');
+          $$('button', mc).forEach((x, xi) => { x.disabled = true; if (xi === item.q.answer) x.classList.add('reveal-ok'); });
+          fb.textContent = ok ? '✓ Goed!' : '✗ Mis'; fb.className = 'feedback show ' + (ok ? 'ok' : 'no');
+          if (item.q.explain) card.append(el('div', { class: 'explain show', html: esc(item.q.explain) }));
+          onDone(ok);
+        } });
+        mc.append(bt);
+      });
+      card.append(mc);
+    } else {
+      const answers = (Array.isArray(item.q.answer) ? item.q.answer : [item.q.answer]).map(String);
+      const input = el('input', { type: 'text', placeholder: 'antwoord…', autocomplete: 'off', spellcheck: 'false' });
+      const submit = el('button', { class: 'btn small primary', text: 'Controleer' });
+      const check = () => {
+        if (done) return; const val = norm(input.value).toLowerCase(); if (!val) return;
+        const ok = answers.some((a) => norm(a).toLowerCase() === val);
+        done = true; input.disabled = true; submit.disabled = true;
+        input.classList.add(ok ? 'ok' : 'no');
+        fb.textContent = ok ? '✓ Correct!' : ('✗ Juist: ' + answers[0]); fb.className = 'feedback show ' + (ok ? 'ok' : 'no');
+        if (item.q.explain) card.append(el('div', { class: 'explain show', html: esc(item.q.explain) }));
+        onDone(ok);
+      };
+      submit.addEventListener('click', check);
+      input.addEventListener('keydown', (e) => { if (e.key === 'Enter') check(); });
+      card.append(el('div', { class: 'ans-row' }, [input, submit]));
+    }
+    card.append(fb);
+    return card;
+  }
+  function seededPick(pool, n, seed) {
+    let t = seed >>> 0;
+    const rnd = () => { t += 0x6D2B79F5; let r = Math.imul(t ^ (t >>> 15), 1 | t); r ^= r + Math.imul(r ^ (r >>> 7), 61 | r); return ((r ^ (r >>> 14)) >>> 0) / 4294967296; };
+    const idx = pool.map((_, i) => i);
+    for (let i = idx.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); const tmp = idx[i]; idx[i] = idx[j]; idx[j] = tmp; }
+    return idx.slice(0, n).map((i) => pool[i]);
+  }
+
+  // =======================================================================
+  //  EXAMEN — getimede, gescoorde toets met willekeurige vragen
+  // =======================================================================
+  function renderExam() {
+    const root = $('#app'); root.innerHTML = '';
+    const wrap = el('section', { class: 'roomview wrap' });
+    wrap.append(el('div', { class: 'crumbs' }, [el('a', { text: '🏠 Home', onclick: () => go('#/') }), document.createTextNode('  ›  '), el('strong', { text: '🎓 Examen' })]));
+    wrap.append(el('h1', { text: '🎓 Examen' }));
+    wrap.append(el('p', { class: 'sum', style: 'color:var(--muted);max-width:640px', text: 'Een getimede toets met willekeurige vragen uit alle lessen. Haal je 70% of meer, dan slaag je. Dit verandert je lesvoortgang niet.' }));
+    if (STATE.examBest) wrap.append(el('div', { class: 'found-note', text: '🏆 Jouw beste score: ' + STATE.examBest + '%' }));
+
+    let len = 20, filter = 'alles';
+    const lenRow = el('div', { class: 'chip-row' });
+    [10, 20, 30].forEach((n) => { const c = el('span', { class: 'chip' + (n === len ? ' on' : ''), text: n + ' vragen', onclick: () => { len = n; $$('.chip', lenRow).forEach((x) => x.classList.remove('on')); c.classList.add('on'); } }); lenRow.append(c); });
+    const pathRow = el('div', { class: 'chip-row' });
+    const paths = [{ id: 'alles', title: 'Alles' }].concat(PATHS.filter((p) => ROOMS.some((r) => r.path === p.id)).map((p) => ({ id: p.id, title: p.icon + ' ' + p.title })));
+    paths.forEach((p) => { const c = el('span', { class: 'chip' + (p.id === filter ? ' on' : ''), text: p.title, onclick: () => { filter = p.id; $$('.chip', pathRow).forEach((x) => x.classList.remove('on')); c.classList.add('on'); } }); pathRow.append(c); });
+    const startBtn = el('button', { class: 'btn primary', text: '▶ Start examen', style: 'margin-top:12px' });
+    const examArea = el('div', {});
+    wrap.append(el('label', { text: 'Aantal vragen' }), lenRow, el('label', { text: 'Onderwerp' }), pathRow, startBtn, examArea);
+    root.append(wrap); renderFooter(root); window.scrollTo(0, 0);
+
+    startBtn.addEventListener('click', () => {
+      const pool = shuffle(allQuestions(filter));
+      const qs = pool.slice(0, Math.min(len, pool.length));
+      if (!qs.length) { examArea.innerHTML = ''; examArea.append(el('div', { class: 'callout warn', text: 'Geen vragen in deze categorie.' })); return; }
+      startBtn.style.display = 'none'; lenRow.style.display = 'none'; pathRow.style.display = 'none';
+      let idx = 0, score = 0, answered = false;
+      const started = Date.now();
+      const progress = el('div', { class: 'found-note' });
+      const qbox = el('div', {});
+      const nav = el('div', { class: 'room-foot' });
+      examArea.innerHTML = ''; examArea.append(progress, qbox, nav);
+      function showResult() {
+        const secs = Math.round((Date.now() - started) / 1000);
+        const pctScore = Math.round((score / qs.length) * 100);
+        const pass = pctScore >= 70;
+        if (!STATE.examBest || pctScore > STATE.examBest) { STATE.examBest = pctScore; saveState(); }
+        qbox.innerHTML = ''; nav.innerHTML = ''; progress.textContent = '';
+        qbox.append(el('div', { class: 'callout ' + (pass ? 'tip' : 'warn'), html: (pass ? '🎉 <strong>Geslaagd!</strong>' : '📚 <strong>Nog niet gehaald.</strong>') + ' Je scoorde <strong>' + score + ' / ' + qs.length + '</strong> (' + pctScore + '%) in ' + Math.floor(secs / 60) + 'm ' + (secs % 60) + 's.' + (pass ? ' Mooi werk!' : ' De grens is 70% — probeer het nog eens.') }));
+        if (pass) qbox.append(el('div', { class: 'task', style: 'text-align:center' }, [
+          el('div', { style: 'font-size:2.4rem', text: '🎓' }),
+          el('div', { style: 'font-weight:800;font-size:1.2rem', text: 'NineMinds Cyber Dojo — Examencertificaat' }),
+          el('div', { class: 'found-note', text: 'Score ' + pctScore + '% · ' + qs.length + ' vragen · onderwerp: ' + (paths.find((p) => p.id === filter) || {}).title }),
+        ]));
+        nav.append(el('button', { class: 'btn', text: '↺ Opnieuw', onclick: () => renderExam() }), el('button', { class: 'btn primary', text: '🏠 Naar home', onclick: () => go('#/') }));
+      }
+      function next() {
+        if (idx >= qs.length) return showResult();
+        answered = false;
+        qbox.innerHTML = ''; nav.innerHTML = '';
+        progress.textContent = 'Vraag ' + (idx + 1) + ' / ' + qs.length + ' · score ' + score;
+        const nextBtn = el('button', { class: 'btn primary', text: idx === qs.length - 1 ? 'Afronden →' : 'Volgende →', onclick: () => { if (!answered) return; idx++; next(); } });
+        nextBtn.disabled = true;
+        qbox.append(quizCard(qs[idx], (ok) => { if (answered) return; answered = true; if (ok) score++; nextBtn.disabled = false; progress.textContent = 'Vraag ' + (idx + 1) + ' / ' + qs.length + ' · score ' + score; }));
+        nav.append(el('span', {}), nextBtn);
+      }
+      next();
+    });
+  }
+
+  // =======================================================================
+  //  DAGCHALLENGE — elke dag dezelfde 5 vragen, met streak
+  // =======================================================================
+  function renderDaily() {
+    const root = $('#app'); root.innerHTML = '';
+    const wrap = el('section', { class: 'roomview wrap' });
+    wrap.append(el('div', { class: 'crumbs' }, [el('a', { text: '🏠 Home', onclick: () => go('#/') }), document.createTextNode('  ›  '), el('strong', { text: '🔥 Dagchallenge' })]));
+    wrap.append(el('h1', { text: '🔥 Dagchallenge' }));
+    const today = new Date();
+    const key = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+    const seed = parseInt(key.replace(/-/g, ''), 10);
+    STATE.daily = STATE.daily || { last: '', streak: 0, best: 0, doneToday: '', todayScore: 0 };
+    const D = STATE.daily;
+    wrap.append(el('p', { class: 'sum', style: 'color:var(--muted);max-width:640px', text: 'Elke dag vijf nieuwe vragen — voor iedereen dezelfde. Kom elke dag terug om je reeks (streak) op te bouwen.' }));
+    wrap.append(el('div', { class: 'stat-row', style: 'margin:10px 0 16px' }, [
+      stat('🔥 ' + (D.streak || 0), 'dagen op rij'),
+      stat('🏅 ' + (D.best || 0), 'langste reeks'),
+    ]));
+
+    const pool = allQuestions('alles');
+    const qs = seededPick(pool, Math.min(5, pool.length), seed);
+    const area = el('div', {});
+    wrap.append(area);
+    root.append(wrap); renderFooter(root); window.scrollTo(0, 0);
+
+    if (D.doneToday === key) {
+      area.append(el('div', { class: 'callout tip', html: '✅ <strong>Je hebt de challenge van vandaag al gedaan</strong> (' + (D.todayScore || 0) + '/' + qs.length + '). Kom morgen terug voor vijf nieuwe vragen!' }));
+      return;
+    }
+    let idx = 0, score = 0, answered = false;
+    const progress = el('div', { class: 'found-note' });
+    const qbox = el('div', {});
+    const nav = el('div', { class: 'room-foot' });
+    area.append(progress, qbox, nav);
+    function finish() {
+      // streak-logica
+      const y = new Date(today); y.setDate(y.getDate() - 1);
+      const yk = y.getFullYear() + '-' + String(y.getMonth() + 1).padStart(2, '0') + '-' + String(y.getDate()).padStart(2, '0');
+      D.streak = (D.last === yk) ? (D.streak || 0) + 1 : 1;
+      D.last = key; D.doneToday = key; D.todayScore = score;
+      if (D.streak > (D.best || 0)) D.best = D.streak;
+      saveState();
+      qbox.innerHTML = ''; nav.innerHTML = ''; progress.textContent = '';
+      qbox.append(el('div', { class: 'callout tip', html: '🔥 <strong>Challenge klaar!</strong> ' + score + ' / ' + qs.length + ' goed. Je reeks staat nu op <strong>' + D.streak + ' dag' + (D.streak === 1 ? '' : 'en') + '</strong>. Tot morgen!' }));
+      nav.append(el('span', {}), el('button', { class: 'btn primary', text: '🏠 Naar home', onclick: () => go('#/') }));
+    }
+    function next() {
+      if (idx >= qs.length) return finish();
+      answered = false; qbox.innerHTML = ''; nav.innerHTML = '';
+      progress.textContent = 'Vraag ' + (idx + 1) + ' / ' + qs.length;
+      const nextBtn = el('button', { class: 'btn primary', text: idx === qs.length - 1 ? 'Afronden →' : 'Volgende →', onclick: () => { if (!answered) return; idx++; next(); } });
+      nextBtn.disabled = true;
+      qbox.append(quizCard(qs[idx], (ok) => { if (answered) return; answered = true; if (ok) score++; nextBtn.disabled = false; }));
+      nav.append(el('span', {}), nextBtn);
+    }
+    next();
+  }
+
+  // =======================================================================
+  //  SCOREBORD — persoonlijk voortgangsoverzicht (lokaal)
+  // =======================================================================
+  function renderScorebord() {
+    const root = $('#app'); root.innerHTML = '';
+    const wrap = el('section', { class: 'roomview wrap' });
+    wrap.append(el('div', { class: 'crumbs' }, [el('a', { text: '🏠 Home', onclick: () => go('#/') }), document.createTextNode('  ›  '), el('strong', { text: '📊 Scorebord' })]));
+    wrap.append(el('h1', { text: '📊 Scorebord' }));
+    wrap.append(el('p', { class: 'sum', style: 'color:var(--muted);max-width:640px', text: 'Jouw voortgang in één overzicht. Alles wordt lokaal op dit apparaat bewaard (in je browser).' }));
+    const L = levelFor(STATE.xp);
+    const doneRooms = ROOMS.filter(roomDone).length;
+    const doneQ = ROOMS.reduce((n, r) => n + roomAnsweredCount(r), 0);
+    const totalQ = ROOMS.reduce((n, r) => n + roomQuestionCount(r), 0);
+    wrap.append(el('div', { class: 'stat-row', style: 'margin:10px 0 18px' }, [
+      stat('Lv ' + L.lvl, STATE.xp + ' XP'),
+      stat(doneRooms + '/' + ROOMS.length, 'rooms voltooid'),
+      stat(doneQ + '/' + totalQ, 'vragen beantwoord'),
+      stat('🚩 ' + (STATE.flags || 0), 'vlaggen'),
+      stat('🏅 ' + Object.keys(STATE.badges || {}).length + '/' + BADGES.length, 'badges'),
+      stat('🎯 ' + (STATE.bestStreak || 0), 'beste arena-reeks'),
+      stat('🎓 ' + (STATE.examBest || 0) + '%', 'beste examen'),
+      stat('🔥 ' + ((STATE.daily && STATE.daily.best) || 0), 'langste dagreeks'),
+    ]));
+    wrap.append(el('h3', { text: 'Voortgang per leerpad' }));
+    PATHS.forEach((p) => {
+      const rs = ROOMS.filter((r) => r.path === p.id); if (!rs.length) return;
+      const done = rs.filter(roomDone).length;
+      wrap.append(el('div', { class: 'section-head', style: 'margin:14px 0 4px' }, [el('h2', { style: 'font-size:1.05rem', text: p.icon + ' ' + p.title }), el('span', { class: 'meta', text: done + '/' + rs.length + ' af' })]));
+      wrap.append(el('div', { class: 'pathbar', style: 'margin:0 0 6px' }, el('i', { style: 'width:' + Math.round((done / rs.length) * 100) + '%' })));
+    });
+    wrap.append(el('div', { class: 'room-foot', style: 'margin-top:18px' }, [
+      el('button', { class: 'btn', text: '🎓 Doe een examen', onclick: () => go('#/examen') }),
+      el('button', { class: 'btn', text: '🔥 Dagchallenge', onclick: () => go('#/daily') }),
+    ]));
+    root.append(wrap); renderFooter(root); window.scrollTo(0, 0);
+  }
+
+  // =======================================================================
   //  Footer + router
   // =======================================================================
   function renderFooter(root) {
     root.append(el('footer', { class: 'sitefoot' }, el('div', { class: 'wrap' }, [
-      el('div', { html: 'JVT Cyber Dojo · gemaakt om doelgericht te leren · <em>oefen aanvalstechnieken alleen in je eigen lab of met schriftelijke toestemming</em>' }),
+      el('div', { html: 'NineMinds Cyber Dojo · gemaakt om doelgericht te leren · <em>oefen aanvalstechnieken alleen in je eigen lab of met schriftelijke toestemming</em>' }),
       el('div', { text: 'Voortgang wordt lokaal in je browser bewaard.' }),
     ])));
   }
@@ -745,6 +1048,10 @@
     if (m) renderRoom(decodeURIComponent(m[1]));
     else if (h === '#/arena') renderArena();
     else if (h === '#/flashcards') renderFlashcards();
+    else if (h === '#/tools') renderTools();
+    else if (h === '#/examen') renderExam();
+    else if (h === '#/daily') renderDaily();
+    else if (h === '#/scorebord') renderScorebord();
     else renderHome();
   }
   window.addEventListener('hashchange', route);

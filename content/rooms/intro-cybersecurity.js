@@ -364,7 +364,7 @@ CS.registerRoom({
         <p>Tijd om te oefenen. Dit portaal werkt net als bekende oefenplatforms: je leest, je doet, en je bewijst dat je
         iets kunt vinden door een <strong>vlag</strong> (flag) in te leveren. Zo werkt het:</p>
         <ul>
-          <li><strong>Vlaggen</strong> hebben altijd het formaat <code>JVT{iets_met_kleine_letters}</code>. Vind je zo'n
+          <li><strong>Vlaggen</strong> hebben altijd het formaat <code>NM{iets_met_kleine_letters}</code>. Vind je zo'n
             tekst, dan plak je die in het antwoordveld. Hoofdletters en spaties aan het begin of eind maken niet uit.</li>
           <li><strong>Labs</strong> zijn kleine, veilige oefenomgevingen in je browser: een terminal, een loginformulier,
             een logviewer, enzovoort. Alles is nagebootst; je breekt dus nergens echt in.</li>
@@ -376,7 +376,7 @@ CS.registerRoom({
         <ol>
           <li>Typ <code>ls</code> om te zien welke bestanden er in je map staan.</li>
           <li>Je ziet onder andere <code>welkom.txt</code>. Typ <code>cat welkom.txt</code> om de inhoud te lezen.</li>
-          <li>In dat bestand staat jouw eerste vlag. Kopieer die (de hele tekst vanaf <code>JVT{</code> tot en met de
+          <li>In dat bestand staat jouw eerste vlag. Kopieer die (de hele tekst vanaf <code>NM{</code> tot en met de
             <code>}</code>) naar het antwoordveld.</li>
         </ol>
 
@@ -392,21 +392,21 @@ CS.registerRoom({
         type: 'terminal',
         shell: 'bash',
         user: 'student',
-        host: 'jvt-lab',
+        host: 'nm-lab',
         home: '/home/student',
         cwd: '/home/student',
         motd: 'Welkom in je eerste lab! Typ "ls" en daarna "cat welkom.txt". Typ help voor alle commando\'s.',
         fs: {
-          '/home/student/welkom.txt': 'Gefeliciteerd, je hebt je eerste bestand geopend!\n\nJouw eerste vlag is:\nJVT{jouw_eerste_vlag}\n\nPlak deze hierboven in het antwoordveld.\n',
-          '/home/student/README.txt': 'Welkom op het JVT-leerportaal.\n\n- "ls" toont de bestanden in deze map.\n- "cat <bestand>" toont de inhoud van een bestand.\n- Vlaggen zien er zo uit: JVT{...}\n- Typ "help" voor alle commando\'s.\n\nVeel plezier en blijf ethisch!\n',
+          '/home/student/welkom.txt': 'Gefeliciteerd, je hebt je eerste bestand geopend!\n\nJouw eerste vlag is:\nNM{jouw_eerste_vlag}\n\nPlak deze hierboven in het antwoordveld.\n',
+          '/home/student/README.txt': 'Welkom op het NineMinds-leerportaal.\n\n- "ls" toont de bestanden in deze map.\n- "cat <bestand>" toont de inhoud van een bestand.\n- Vlaggen zien er zo uit: NM{...}\n- Typ "help" voor alle commando\'s.\n\nVeel plezier en blijf ethisch!\n',
         },
       },
       questions: [
         {
           q: 'Wat is de vlag in welkom.txt?',
-          answer: ['JVT{jouw_eerste_vlag}'],
+          answer: ['NM{jouw_eerste_vlag}'],
           hint: 'Typ eerst ls, daarna cat welkom.txt.',
-          explain: 'Met cat welkom.txt lees je het bestand en vind je JVT{jouw_eerste_vlag}. Zo werkt "zoek de vlag".',
+          explain: 'Met cat welkom.txt lees je het bestand en vind je NM{jouw_eerste_vlag}. Zo werkt "zoek de vlag".',
         },
         {
           q: 'Welk commando gebruik je om de inhoud van een tekstbestand te tonen?',

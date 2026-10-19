@@ -1,7 +1,7 @@
 /* Room: Forensische Windows-artefacten */
 
 // Security/System-eventlog voor het logs-lab (brute force -> login -> nieuw account -> nieuwe service).
-// De vlag JVT{sporen_in_de_eventlog} zit in het pad van een 4688-proces.
+// De vlag NM{sporen_in_de_eventlog} zit in het pad van een 4688-proces.
 const WINLOG = `2026-10-01 22:14:03  Security  EventID=4624  Geslaagde aanmelding   Account=rene      Bron-IP=10.10.60.21  LogonType=2   (console)
 2026-10-01 23:02:55  Security  EventID=4634  Afmelding              Account=rene      LogonType=2
 2026-10-02 02:57:58  Security  EventID=4625  MISLUKTE aanmelding    Account=Administrator  Bron-IP=10.10.66.66  LogonType=3   Status=0xC000006A
@@ -19,7 +19,7 @@ const WINLOG = `2026-10-01 22:14:03  Security  EventID=4624  Geslaagde aanmeldin
 2026-10-02 03:01:44  Security  EventID=4672  Speciale rechten toegekend  Account=beheerder   Rechten=SeDebugPrivilege,SeBackupPrivilege
 2026-10-02 03:02:07  Security  EventID=4720  Gebruikersaccount AANGEMAAKT  NieuwAccount=hulpje  Door=beheerder
 2026-10-02 03:02:09  Security  EventID=4732  Lid toegevoegd aan groep  Groep=Administrators  Account=hulpje  Door=beheerder
-2026-10-02 03:03:20  Security  EventID=4688  Nieuw proces aangemaakt   Proces=C:\\Users\\Public\\svc\\JVT{sporen_in_de_eventlog}.exe  Account=hulpje
+2026-10-02 03:03:20  Security  EventID=4688  Nieuw proces aangemaakt   Proces=C:\\Users\\Public\\svc\\NM{sporen_in_de_eventlog}.exe  Account=hulpje
 2026-10-02 03:03:55  System    EventID=7045  Nieuwe SERVICE geïnstalleerd  Service=SvcUpdater  Pad=C:\\Users\\Public\\svc\\updater.exe  Type=own process  Start=auto
 2026-10-02 03:04:10  Security  EventID=4688  Nieuw proces aangemaakt   Proces=C:\\Windows\\System32\\cmd.exe  Account=hulpje
 2026-10-02 03:05:33  Security  EventID=1102  Beveiligingslogboek GEWIST  Door=hulpje
@@ -168,7 +168,7 @@ CS.registerRoom({
         <h3>USB-geschiedenis</h3>
         <p>Elke USB-opslag die ooit is aangesloten, laat een spoor na in de registry onder <code>SYSTEM\\...\\USBSTOR</code>: merk, model en serienummer van het apparaat, plus tijdstippen. Zo kun je een specifieke USB-stick koppelen aan een computer — en met de volume-serienummers uit LNK-bestanden zelfs aan specifieke geopende bestanden.</p>
 
-        <div class="callout info"><strong>Voorbeeld uit de praktijk:</strong> een medewerker wordt verdacht van het meenemen van bedrijfsgeheimen. Via USBSTOR zie je dat op 2 oktober om 17:58 een onbekende USB-stick (serienummer <code>JVTUSB-00FA</code>) is aangesloten. Een LNK-bestand toont dat kort daarna <code>klantenlijst.xlsx</code> werd geopend vanaf een volume met hetzelfde serienummer. De twee artefacten versterken elkaar — en samen vormen ze een sterk verhaal.</div>
+        <div class="callout info"><strong>Voorbeeld uit de praktijk:</strong> een medewerker wordt verdacht van het meenemen van bedrijfsgeheimen. Via USBSTOR zie je dat op 2 oktober om 17:58 een onbekende USB-stick (serienummer <code>NMUSB-00FA</code>) is aangesloten. Een LNK-bestand toont dat kort daarna <code>klantenlijst.xlsx</code> werd geopend vanaf een volume met hetzelfde serienummer. De twee artefacten versterken elkaar — en samen vormen ze een sterk verhaal.</div>
 
         <h3>Browser-artefacten</h3>
         <p>Vergeet de browser niet: <strong>geschiedenis</strong> (bezochte sites met tijdstip), <strong>cache</strong> (lokaal opgeslagen pagina-onderdelen) en <strong>downloads</strong> (wat en wanneer gedownload, van welke URL). Deze staan in de profielmap van de browser en zijn vaak cruciaal om online gedrag te reconstrueren.</p>
@@ -219,7 +219,7 @@ CS.registerRoom({
       questions: [
         { q: 'Vanaf welk IP-adres kwam de brute-force-aanval (veel 4625 gevolgd door een 4624)?', answer: ['10.10.66.66'], hint: 'Filter op 4625; één IP herhaalt zich en komt ook bij de geslaagde 4624 terug.', explain: 'Alle mislukte aanmeldingen en de uiteindelijke geslaagde login komen van 10.10.66.66.' },
         { q: 'Welk account maakte de aanvaller aan (event 4720)?', answer: ['hulpje'], hint: 'Filter op 4720.', explain: 'Na de geslaagde login verschijnt event 4720: het nieuwe account "hulpje", meteen toegevoegd aan Administrators.' },
-        { q: 'Welke vlag staat in de bestandsnaam van het proces in de 4688-regel?', answer: ['JVT{sporen_in_de_eventlog}'], hint: 'Filter op 4688 of op JVT; lees het pad van het gestarte proces.', explain: 'Het proces C:\\Users\\Public\\svc\\JVT{sporen_in_de_eventlog}.exe verraadt de vlag in de 4688-gebeurtenis.' },
+        { q: 'Welke vlag staat in de bestandsnaam van het proces in de 4688-regel?', answer: ['NM{sporen_in_de_eventlog}'], hint: 'Filter op 4688 of op NM; lees het pad van het gestarte proces.', explain: 'Het proces C:\\Users\\Public\\svc\\NM{sporen_in_de_eventlog}.exe verraadt de vlag in de 4688-gebeurtenis.' },
         { q: 'Welk event-ID betekent dat het beveiligingslogboek is gewist?', answer: ['1102'], hint: 'Staat onderaan het aanvalsblok; op zichzelf al verdacht.', explain: 'Event 1102 = security log cleared; aanvallers doen dit om sporen te wissen.' },
       ],
     },
@@ -262,7 +262,7 @@ Conclusie: evil.exe is 7x uitgevoerd — HARD bewijs van uitvoering (Prefetch).`
           'reg query "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run"': `
 HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run
     OneDrive          REG_SZ    C:\\Users\\rene\\AppData\\Local\\Microsoft\\OneDrive\\OneDrive.exe /background
-    SvcUpdater        REG_SZ    C:\\Users\\Public\\svc\\JVT{run_key_persistentie}.exe
+    SvcUpdater        REG_SZ    C:\\Users\\Public\\svc\\NM{run_key_persistentie}.exe
 
 Einde van zoekresultaten.`,
           'AmcacheParser.exe -f Amcache.hve --csv .': `AmcacheParser version 1.5 — Eric Zimmerman
@@ -278,7 +278,7 @@ Compiled      : 2026-09-28 20:11:44
       },
       questions: [
         { q: 'Hoe vaak is evil.exe uitgevoerd volgens PECmd (de run count)?', answer: ['7', 'zeven'], hint: 'Lees de regel "Run count" in de PECmd-uitvoer.', explain: 'PECmd toont een run count van 7 — hard bewijs dat evil.exe meerdere keren is uitgevoerd.' },
-        { q: 'Welke vlag zit verwerkt in de verdachte Run-key-vermelding?', answer: ['JVT{run_key_persistentie}'], hint: 'Draai de reg query en lees het pad van de SvcUpdater-waarde.', explain: 'De SvcUpdater-waarde wijst naar C:\\Users\\Public\\svc\\JVT{run_key_persistentie}.exe — persistentie, met de vlag erin.' },
+        { q: 'Welke vlag zit verwerkt in de verdachte Run-key-vermelding?', answer: ['NM{run_key_persistentie}'], hint: 'Draai de reg query en lees het pad van de SvcUpdater-waarde.', explain: 'De SvcUpdater-waarde wijst naar C:\\Users\\Public\\svc\\NM{run_key_persistentie}.exe — persistentie, met de vlag erin.' },
         { q: 'Waarom is de PECmd-uitkomst sterker bewijs van uitvoering dan een ShimCache-vermelding?', options: ['Omdat PowerShell betrouwbaarder is', 'Omdat Prefetch uitvoering bewijst (met run count en tijden), terwijl ShimCache alleen aanwezigheid toont', 'Omdat ShimCache versleuteld is', 'Dat is het niet'], answer: 1, explain: 'Prefetch (via PECmd) bewijst echte uitvoering; ShimCache toont slechts dat het bestand aanwezig was.' },
       ],
     },

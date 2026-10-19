@@ -368,22 +368,22 @@ PID    Process       Start VPN       Protection             Tag   Hexdump
     0x1f0008  04 00 00 00 ff ff 00 00  ........
     0x1f0010  b8 00 00 00 00 00 00 00  ........
 Bevinding: uitvoerbaar+beschrijfbaar geheugen met MZ-header, geen bestand op schijf = code-injectie.
-Forensische tag voor dit lab: JVT{code_injectie}`,
+Forensische tag voor dit lab: NM{code_injectie}`,
           'python3 vol.py -f geheugen.raw windows.cmdline': `Volatility 3 Framework 2.7.0
 
 PID    Process        Args
 636    svchost.exe    C:\\Windows\\System32\\svchost.exe -k RPCSS -p
 2456   chrome.exe     "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
 3012   OUTLOOK.EXE    "C:\\Program Files\\Microsoft Office\\root\\Office16\\OUTLOOK.EXE"
-4123   svch0st.exe    C:\\Users\\jdekker\\AppData\\Roaming\\svch0st.exe -k JVT{geheugen_liegt_niet}
+4123   svch0st.exe    C:\\Users\\jdekker\\AppData\\Roaming\\svch0st.exe -k NM{geheugen_liegt_niet}
 4666   rk_svc.exe     C:\\Users\\jdekker\\AppData\\Roaming\\rk_svc.exe --hidden`,
         },
       },
       questions: [
         { q: 'Naar welk IP-adres (de vermoedelijke C2-server) praat het verdachte proces?', answer: ['10.10.66.66'], hint: 'Kijk bij netscan naar de ForeignAddr op de svch0st.exe-regel.', explain: 'svch0st.exe (PID 4123) heeft een ESTABLISHED-verbinding naar 10.10.66.66 op poort 4444 — een klassiek C2-kanaal.' },
         { q: 'Welke poort gebruikt die verdachte uitgaande verbinding?', answer: ['4444'], hint: 'Lees de ForeignPort-kolom bij svch0st.exe.', explain: 'Poort 4444 is een beruchte standaardpoort voor reverse shells en C2.' },
-        { q: 'Wat is de vlag uit de opdrachtregel (windows.cmdline) van het verdachte proces?', answer: ['JVT{geheugen_liegt_niet}'], hint: 'Lees de Args-kolom bij svch0st.exe (PID 4123).', explain: 'De argumenten van svch0st.exe bevatten JVT{geheugen_liegt_niet}; het echte pad wijst naar AppData.' },
-        { q: 'Welke vlag staat in de malfind-bevinding (de geïnjecteerde code)?', answer: ['JVT{code_injectie}'], hint: 'Lees de forensische tag onderaan de windows.malfind-uitvoer.', explain: 'Het MZ-startblok in uitvoerbaar+beschrijfbaar geheugen zonder bestand op schijf is code-injectie: JVT{code_injectie}.' },
+        { q: 'Wat is de vlag uit de opdrachtregel (windows.cmdline) van het verdachte proces?', answer: ['NM{geheugen_liegt_niet}'], hint: 'Lees de Args-kolom bij svch0st.exe (PID 4123).', explain: 'De argumenten van svch0st.exe bevatten NM{geheugen_liegt_niet}; het echte pad wijst naar AppData.' },
+        { q: 'Welke vlag staat in de malfind-bevinding (de geïnjecteerde code)?', answer: ['NM{code_injectie}'], hint: 'Lees de forensische tag onderaan de windows.malfind-uitvoer.', explain: 'Het MZ-startblok in uitvoerbaar+beschrijfbaar geheugen zonder bestand op schijf is code-injectie: NM{code_injectie}.' },
       ],
     },
 

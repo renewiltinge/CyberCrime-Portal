@@ -1,16 +1,16 @@
 /* Room: Linux: de basis */
-const LINUX_SYSLOG = "Oct  3 10:11:09 jvt-lab systemd[1]: Started Daily apt download activities.\nOct  3 10:11:16 jvt-lab CRON[2041]: Reached target Timers.\nOct  3 10:11:23 jvt-lab sshd[1337]: Starting Clean php session files...\nOct  3 10:11:30 jvt-lab kernel: pam_unix(cron:session): session opened for user student by (uid=0)\nOct  3 10:11:37 jvt-lab NetworkManager[812]: pam_unix(cron:session): session closed for user student\nOct  3 10:11:44 jvt-lab dbus-daemon[640]: [UFW BLOCK] IN=eth0 OUT= SRC=10.10.20.9 DST=10.10.20.15 PROTO=TCP DPT=22\nOct  3 10:11:51 jvt-lab snapd[903]: Accepted password for student from 10.10.20.9 port 50122 ssh2\nOct  3 10:11:58 jvt-lab systemd-resolved[701]: wlan0: link is not ready\nOct  3 10:12:05 jvt-lab systemd[1]: Finished Rotate log files.\nOct  3 10:12:12 jvt-lab CRON[2041]: Starting Daily man-db regeneration...\nOct  3 10:12:19 jvt-lab sshd[1337]: Time has been changed\nOct  3 10:12:26 jvt-lab kernel: Mounted /boot.\nOct  3 10:12:33 jvt-lab NetworkManager[812]: Reached target Network is Online.\nOct  3 10:12:40 jvt-lab dbus-daemon[640]: Starting Message of the Day...\nOct  3 10:12:47 jvt-lab snapd[903]: apt-daily.service: Succeeded.\nOct  3 10:12:54 jvt-lab systemd-resolved[701]: Finished Message of the Day.\nOct  3 10:13:01 jvt-lab systemd[1]: Starting Cleanup of Temporary Directories...\nOct  3 10:13:08 jvt-lab CRON[2041]: DHCPACK of 10.10.20.15 from 10.10.20.2\nOct  3 10:13:15 jvt-lab sshd[1337]: Starting Refresh fwupd metadata and update motd...\nOct  3 10:13:22 jvt-lab kernel: logrotate.service: Succeeded.\nOct  3 10:13:29 jvt-lab NetworkManager[812]: Started Daily apt download activities.\nOct  3 10:17:38 jvt-lab CRON[2041]: (student) CMD (/usr/bin/printf JVT{grep_vindt_alles} > /tmp/.cache)\nOct  3 10:13:36 jvt-lab dbus-daemon[640]: Reached target Timers.\nOct  3 10:13:43 jvt-lab snapd[903]: Starting Clean php session files...\nOct  3 10:13:50 jvt-lab systemd-resolved[701]: pam_unix(cron:session): session opened for user student by (uid=0)\nOct  3 10:13:57 jvt-lab systemd[1]: pam_unix(cron:session): session closed for user student\nOct  3 10:14:04 jvt-lab CRON[2041]: [UFW BLOCK] IN=eth0 OUT= SRC=10.10.20.9 DST=10.10.20.15 PROTO=TCP DPT=22\nOct  3 10:14:11 jvt-lab sshd[1337]: Accepted password for student from 10.10.20.9 port 50122 ssh2\nOct  3 10:14:18 jvt-lab kernel: wlan0: link is not ready\nOct  3 10:14:25 jvt-lab NetworkManager[812]: Finished Rotate log files.\nOct  3 10:14:32 jvt-lab dbus-daemon[640]: Starting Daily man-db regeneration...\nOct  3 10:14:39 jvt-lab snapd[903]: Time has been changed\nOct  3 10:14:46 jvt-lab systemd-resolved[701]: Mounted /boot.\nOct  3 10:14:53 jvt-lab systemd[1]: Reached target Network is Online.\nOct  3 10:15:00 jvt-lab CRON[2041]: Starting Message of the Day...\n";
+const LINUX_SYSLOG = "Oct  3 10:11:09 nm-lab systemd[1]: Started Daily apt download activities.\nOct  3 10:11:16 nm-lab CRON[2041]: Reached target Timers.\nOct  3 10:11:23 nm-lab sshd[1337]: Starting Clean php session files...\nOct  3 10:11:30 nm-lab kernel: pam_unix(cron:session): session opened for user student by (uid=0)\nOct  3 10:11:37 nm-lab NetworkManager[812]: pam_unix(cron:session): session closed for user student\nOct  3 10:11:44 nm-lab dbus-daemon[640]: [UFW BLOCK] IN=eth0 OUT= SRC=10.10.20.9 DST=10.10.20.15 PROTO=TCP DPT=22\nOct  3 10:11:51 nm-lab snapd[903]: Accepted password for student from 10.10.20.9 port 50122 ssh2\nOct  3 10:11:58 nm-lab systemd-resolved[701]: wlan0: link is not ready\nOct  3 10:12:05 nm-lab systemd[1]: Finished Rotate log files.\nOct  3 10:12:12 nm-lab CRON[2041]: Starting Daily man-db regeneration...\nOct  3 10:12:19 nm-lab sshd[1337]: Time has been changed\nOct  3 10:12:26 nm-lab kernel: Mounted /boot.\nOct  3 10:12:33 nm-lab NetworkManager[812]: Reached target Network is Online.\nOct  3 10:12:40 nm-lab dbus-daemon[640]: Starting Message of the Day...\nOct  3 10:12:47 nm-lab snapd[903]: apt-daily.service: Succeeded.\nOct  3 10:12:54 nm-lab systemd-resolved[701]: Finished Message of the Day.\nOct  3 10:13:01 nm-lab systemd[1]: Starting Cleanup of Temporary Directories...\nOct  3 10:13:08 nm-lab CRON[2041]: DHCPACK of 10.10.20.15 from 10.10.20.2\nOct  3 10:13:15 nm-lab sshd[1337]: Starting Refresh fwupd metadata and update motd...\nOct  3 10:13:22 nm-lab kernel: logrotate.service: Succeeded.\nOct  3 10:13:29 nm-lab NetworkManager[812]: Started Daily apt download activities.\nOct  3 10:17:38 nm-lab CRON[2041]: (student) CMD (/usr/bin/printf NM{grep_vindt_alles} > /tmp/.cache)\nOct  3 10:13:36 nm-lab dbus-daemon[640]: Reached target Timers.\nOct  3 10:13:43 nm-lab snapd[903]: Starting Clean php session files...\nOct  3 10:13:50 nm-lab systemd-resolved[701]: pam_unix(cron:session): session opened for user student by (uid=0)\nOct  3 10:13:57 nm-lab systemd[1]: pam_unix(cron:session): session closed for user student\nOct  3 10:14:04 nm-lab CRON[2041]: [UFW BLOCK] IN=eth0 OUT= SRC=10.10.20.9 DST=10.10.20.15 PROTO=TCP DPT=22\nOct  3 10:14:11 nm-lab sshd[1337]: Accepted password for student from 10.10.20.9 port 50122 ssh2\nOct  3 10:14:18 nm-lab kernel: wlan0: link is not ready\nOct  3 10:14:25 nm-lab NetworkManager[812]: Finished Rotate log files.\nOct  3 10:14:32 nm-lab dbus-daemon[640]: Starting Daily man-db regeneration...\nOct  3 10:14:39 nm-lab snapd[903]: Time has been changed\nOct  3 10:14:46 nm-lab systemd-resolved[701]: Mounted /boot.\nOct  3 10:14:53 nm-lab systemd[1]: Reached target Network is Online.\nOct  3 10:15:00 nm-lab CRON[2041]: Starting Message of the Day...\n";
 
 const LINUX_PASSWD = 'root:x:0:0:root:/root:/bin/bash\ndaemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin\nwww-data:x:33:33:www-data:/var/www:/usr/sbin/nologin\nwebapp:x:1001:1001::/var/www:/usr/sbin/nologin\nstudent:x:1000:1000:Student,,,:/home/student:/bin/bash\n';
 
 const LINUX_BASE_FS = {
-  '/home/student/welkom.txt': 'Welkom bij de Linux-werkplek!\nHier oefen je met navigeren, lezen en zoeken.\nJe eerste vlag staat hieronder:\nJVT{welkom_bij_linux}\n',
-  '/home/student/.geheim/vlag.txt': 'Goed gevonden! Bestanden die met een punt beginnen zijn standaard verborgen.\nJVT{punt_voor_verborgen}\n',
+  '/home/student/welkom.txt': 'Welkom bij de Linux-werkplek!\nHier oefen je met navigeren, lezen en zoeken.\nJe eerste vlag staat hieronder:\nNM{welkom_bij_linux}\n',
+  '/home/student/.geheim/vlag.txt': 'Goed gevonden! Bestanden die met een punt beginnen zijn standaard verborgen.\nNM{punt_voor_verborgen}\n',
   '/home/student/documenten/notities.txt': 'Boodschappenlijst:\n- koffie\n- toetsenbord\nNiets spannends hier.\n',
   '/home/student/documenten/project/README.md': '# Project\nEen gewoon projectbestand, geen geheimen.\n',
   '/home/student/leeg/': null,
   '/etc/passwd': LINUX_PASSWD,
-  '/etc/hostname': 'jvt-lab\n',
+  '/etc/hostname': 'nm-lab\n',
 };
 
 CS.registerRoom({
@@ -37,8 +37,8 @@ CS.registerRoom({
 
         <h3>De shell en de prompt</h3>
         <p>De shell is het programma dat jouw getypte commando's leest en uitvoert; de bekendste is <strong>bash</strong>. Wat je ziet heet de <strong>prompt</strong>:</p>
-        <pre><code>student@jvt-lab:~$</code></pre>
-        <p>Die regel vertelt je veel: <code>student</code> is de gebruiker, <code>jvt-lab</code> de computernaam (host), <code>~</code> de huidige map (de tilde betekent je thuismap <code>/home/student</code>), en het teken aan het eind geeft je rol aan: <code>$</code> voor een gewone gebruiker en <code>#</code> voor <strong>root</strong> (de beheerder, alle rechten). Dat laatste teken is in security belangrijk: zie je een <code>#</code>, dan draai je als root.</p>
+        <pre><code>student@nm-lab:~$</code></pre>
+        <p>Die regel vertelt je veel: <code>student</code> is de gebruiker, <code>nm-lab</code> de computernaam (host), <code>~</code> de huidige map (de tilde betekent je thuismap <code>/home/student</code>), en het teken aan het eind geeft je rol aan: <code>$</code> voor een gewone gebruiker en <code>#</code> voor <strong>root</strong> (de beheerder, alle rechten). Dat laatste teken is in security belangrijk: zie je een <code>#</code>, dan draai je als root.</p>
 
         <h3>De bestandssysteemhiërarchie</h3>
         <p>In Linux is er geen <code>C:</code>-schijf. Alles hangt onder één wortel: <code>/</code> (de root van het bestandssysteem, niet te verwarren met de gebruiker root). De belangrijkste mappen:</p>
@@ -95,7 +95,7 @@ CS.registerRoom({
       lab: {
         type: 'terminal',
         shell: 'bash',
-        user: 'student', host: 'jvt-lab',
+        user: 'student', host: 'nm-lab',
         home: '/home/student', cwd: '/home/student',
         motd: 'Oefenterminal. Typ help voor de lijst commando\'s. Begin met: ls -a',
         fs: { ...LINUX_BASE_FS },
@@ -104,8 +104,8 @@ CS.registerRoom({
       },
       questions: [
         { q: 'Welk commando toont ook de verborgen bestanden (die met een punt beginnen)?', answer: ['ls -a', 'ls -la', 'ls -al', 'ls -lah', 'ls - a'], hint: 'De optie -a staat voor "all".', explain: 'ls -a toont alle bestanden, inclusief die met een punt. ls -la voegt ook de details toe.' },
-        { q: 'Lees welkom.txt. Wat is de vlag?', answer: ['JVT{welkom_bij_linux}'], hint: 'cat welkom.txt', explain: 'cat print de hele inhoud van een bestand, inclusief de vlag.' },
-        { q: 'Open de verborgen map en lees het bestand. Wat is de vlag?', answer: ['JVT{punt_voor_verborgen}'], hint: 'ls -a toont .geheim; lees daarna .geheim/vlag.txt.', explain: 'Verborgen mappen vind je met ls -a. Daarin stond de tweede vlag.' },
+        { q: 'Lees welkom.txt. Wat is de vlag?', answer: ['NM{welkom_bij_linux}'], hint: 'cat welkom.txt', explain: 'cat print de hele inhoud van een bestand, inclusief de vlag.' },
+        { q: 'Open de verborgen map en lees het bestand. Wat is de vlag?', answer: ['NM{punt_voor_verborgen}'], hint: 'ls -a toont .geheim; lees daarna .geheim/vlag.txt.', explain: 'Verborgen mappen vind je met ls -a. Daarin stond de tweede vlag.' },
       ],
     },
 
@@ -126,31 +126,31 @@ find /home -type f               # alleen gewone bestanden</code></pre>
         <p><code>grep patroon bestand</code> toont elke regel waarin het patroon voorkomt. Heel handig in grote logbestanden:</p>
         <pre><code>grep Failed /var/log/auth.log    # regels met "Failed"
 grep -i error logbestand         # -i negeert hoofd/kleine letters
-grep -n JVT bestand              # -n toont regelnummers
-grep -r JVT /var/log             # -r zoekt recursief in alle bestanden eronder
+grep -n NineMinds bestand              # -n toont regelnummers
+grep -r NM /var/log             # -r zoekt recursief in alle bestanden eronder
 grep -c Accepted auth.log        # -c telt het aantal treffers</code></pre>
 
-        <div class="callout tip"><strong>Opdracht:</strong> ergens diep onder <code>/var/www</code> staat een back-upbestand met de naam <code>config.bak</code>. Vind het met <code>find</code> en lees het met <code>cat</code>; er staat een vlag in. Zoek daarna in het grote logbestand <code>/var/log/syslog</code> naar regels met <code>JVT</code> (gebruik <code>grep JVT /var/log/syslog</code>). Ook daar is een vlag verstopt.</div>
+        <div class="callout tip"><strong>Opdracht:</strong> ergens diep onder <code>/var/www</code> staat een back-upbestand met de naam <code>config.bak</code>. Vind het met <code>find</code> en lees het met <code>cat</code>; er staat een vlag in. Zoek daarna in het grote logbestand <code>/var/log/syslog</code> naar regels met <code>NM</code> (gebruik <code>grep NM /var/log/syslog</code>). Ook daar is een vlag verstopt.</div>
 
         <p>Dit is precies wat je in echt onderzoek doet: je weet dat ergens een gevoelig gegeven staat (een wachtwoord, een API-sleutel, een spoor van een aanvaller) en je gebruikt <code>find</code> om bestanden te vinden en <code>grep</code> om de inhoud te doorzoeken.</p>
       `,
       lab: {
         type: 'terminal',
         shell: 'bash',
-        user: 'student', host: 'jvt-lab',
+        user: 'student', host: 'nm-lab',
         home: '/home/student', cwd: '/home/student',
-        motd: 'Zoekoefening. Probeer: find / -name config.bak   en   grep JVT /var/log/syslog',
+        motd: 'Zoekoefening. Probeer: find / -name config.bak   en   grep NM /var/log/syslog',
         fs: {
           ...LINUX_BASE_FS,
-          '/var/www/html/uploads/2019/backup/oud/config.bak': '# oude databaseconfiguratie (NIET in productie gebruiken)\ndb_host=localhost\ndb_user=webapp\ndb_pass=zomer2019\nflag=JVT{find_graaft_diep}\n',
+          '/var/www/html/uploads/2019/backup/oud/config.bak': '# oude databaseconfiguratie (NIET in productie gebruiken)\ndb_host=localhost\ndb_user=webapp\ndb_pass=zomer2019\nflag=NM{find_graaft_diep}\n',
           '/var/log/syslog': LINUX_SYSLOG,
         },
         denied: ['/root', '/etc/shadow'],
         owners: { '/root': 'root' },
       },
       questions: [
-        { q: 'Vind config.bak met find en lees het. Wat is de vlag?', answer: ['JVT{find_graaft_diep}'], hint: 'find / -name config.bak toont het pad; lees het daarna met cat.', explain: 'find vond het diep weggestopte back-upbestand; daarin stond een wachtwoord en de vlag.' },
-        { q: 'Doorzoek /var/log/syslog met grep. Wat is de vlag?', answer: ['JVT{grep_vindt_alles}'], hint: 'grep JVT /var/log/syslog filtert de ene interessante regel uit tientallen.', explain: 'grep filtert in een groot logbestand razendsnel de regel met JVT eruit.' },
+        { q: 'Vind config.bak met find en lees het. Wat is de vlag?', answer: ['NM{find_graaft_diep}'], hint: 'find / -name config.bak toont het pad; lees het daarna met cat.', explain: 'find vond het diep weggestopte back-upbestand; daarin stond een wachtwoord en de vlag.' },
+        { q: 'Doorzoek /var/log/syslog met grep. Wat is de vlag?', answer: ['NM{grep_vindt_alles}'], hint: 'grep NM /var/log/syslog filtert de ene interessante regel uit tientallen.', explain: 'grep filtert in een groot logbestand razendsnel de regel met NineMinds eruit.' },
       ],
     },
 
@@ -169,11 +169,11 @@ grep -c Accepted auth.log        # -c telt het aantal treffers</code></pre>
           <li><code>commando &gt; bestand</code> — schrijf de uitvoer naar een bestand (overschrijft wat er stond!).</li>
           <li><code>commando &gt;&gt; bestand</code> — voeg de uitvoer toe aan het eind van een bestand (overschrijft niet).</li>
         </ul>
-        <pre><code>grep JVT /var/log/syslog &gt; treffers.txt    # schrijf resultaat weg
+        <pre><code>grep NM /var/log/syslog &gt; treffers.txt    # schrijf resultaat weg
 echo "notitie" &gt;&gt; logboek.txt             # voeg een regel toe</code></pre>
 
         <h3>Base64: codering is geen encryptie</h3>
-        <p>Je komt vaak tekst tegen die er versleuteld uitziet maar dat niet is, zoals <code>SlZUe2Jhc2U2NF9pc19nZWVuX2VuY3J5cHRpZX0=</code>. Dat is <strong>Base64</strong>: een manier om data als nette tekst weer te geven. Iedereen kan het terugdraaien, dus het beschermt niets; het is <em>codering</em>, geen encryptie.</p>
+        <p>Je komt vaak tekst tegen die er versleuteld uitziet maar dat niet is, zoals <code>Tk17YmFzZTY0X2lzX2dlZW5fZW5jcnlwdGllfQ==</code>. Dat is <strong>Base64</strong>: een manier om data als nette tekst weer te geven. Iedereen kan het terugdraaien, dus het beschermt niets; het is <em>codering</em>, geen encryptie.</p>
         <p>Decoderen doe je met <code>base64 -d</code>:</p>
         <pre><code>cat geheim.b64 | base64 -d</code></pre>
 
@@ -182,19 +182,19 @@ echo "notitie" &gt;&gt; logboek.txt             # voeg een regel toe</code></pre
       lab: {
         type: 'terminal',
         shell: 'bash',
-        user: 'student', host: 'jvt-lab',
+        user: 'student', host: 'nm-lab',
         home: '/home/student', cwd: '/home/student',
         motd: 'Pipes en redirection. Probeer: cat geheim.b64 | base64 -d',
         fs: {
           ...LINUX_BASE_FS,
-          '/home/student/geheim.b64': 'SlZUe2Jhc2U2NF9pc19nZWVuX2VuY3J5cHRpZX0=\n',
+          '/home/student/geheim.b64': 'Tk17YmFzZTY0X2lzX2dlZW5fZW5jcnlwdGllfQ==\n',
           '/var/log/syslog': LINUX_SYSLOG,
         },
         denied: ['/root', '/etc/shadow'],
         owners: { '/root': 'root' },
       },
       questions: [
-        { q: 'Decodeer geheim.b64. Wat is de vlag?', answer: ['JVT{base64_is_geen_encryptie}'], encoded: true, hint: 'cat geheim.b64 | base64 -d', explain: 'Base64 is terug te draaien door iedereen; het is codering, geen beveiliging.' },
+        { q: 'Decodeer geheim.b64. Wat is de vlag?', answer: ['NM{base64_is_geen_encryptie}'], encoded: true, hint: 'cat geheim.b64 | base64 -d', explain: 'Base64 is terug te draaien door iedereen; het is codering, geen beveiliging.' },
         { q: 'Welke operator voegt uitvoer TOE aan het eind van een bestand zonder het te overschrijven?', answer: ['>>'], hint: 'Eén > overschrijft; twee tekens voegt toe.', explain: '>> appendt (voegt toe), terwijl een enkele > het bestand overschrijft.' },
       ],
     },

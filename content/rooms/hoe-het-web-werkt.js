@@ -19,12 +19,12 @@ CS.registerRoom({
     {
       title: 'Taak 1 — Van URL naar webpagina',
       content: `
-        <p>Je typt <code>https://shop.jvt.lab/producten?id=42#reviews</code> in je browser en drukt op Enter. In minder dan een seconde verschijnt er een pagina. Maar daartussen gebeurt verrassend veel. We lopen het stap voor stap door, want als je weet hoe het web werkt, snap je later ook veel beter waar aanvallers inhaken.</p>
+        <p>Je typt <code>https://shop.nm.lab/producten?id=42#reviews</code> in je browser en drukt op Enter. In minder dan een seconde verschijnt er een pagina. Maar daartussen gebeurt verrassend veel. We lopen het stap voor stap door, want als je weet hoe het web werkt, snap je later ook veel beter waar aanvallers inhaken.</p>
 
         <h3>Wat er gebeurt als je op Enter drukt</h3>
         <ol>
           <li><strong>URL ontleden.</strong> De browser splitst de URL in onderdelen (zie hieronder).</li>
-          <li><strong>DNS-opzoeking.</strong> De browser vraagt: welk IP-adres hoort bij <code>shop.jvt.lab</code>? Dat doet DNS (volgende taak).</li>
+          <li><strong>DNS-opzoeking.</strong> De browser vraagt: welk IP-adres hoort bij <code>shop.nm.lab</code>? Dat doet DNS (volgende taak).</li>
           <li><strong>Verbinding opzetten.</strong> De browser bouwt een TCP-verbinding op naar dat IP-adres, standaard op poort 443 voor HTTPS.</li>
           <li><strong>TLS-handshake.</strong> Bij HTTPS wordt een versleutelde tunnel opgezet en het certificaat van de server gecontroleerd.</li>
           <li><strong>HTTP-request.</strong> De browser stuurt een verzoek: <code>GET /producten?id=42</code> met wat headers.</li>
@@ -39,7 +39,7 @@ CS.registerRoom({
           <thead><tr><th>Onderdeel</th><th>Waarde</th><th>Betekenis</th></tr></thead>
           <tbody>
             <tr><td>Schema</td><td><code>https</code></td><td>Welk protocol: <code>http</code>, <code>https</code>, <code>ftp</code> ...</td></tr>
-            <tr><td>Host</td><td><code>shop.jvt.lab</code></td><td>De domeinnaam (of een IP-adres) van de server</td></tr>
+            <tr><td>Host</td><td><code>shop.nm.lab</code></td><td>De domeinnaam (of een IP-adres) van de server</td></tr>
             <tr><td>Poort</td><td><code>(443)</code></td><td>Welke deur op de server; staat er vaak niet, dan standaard 80 (http) of 443 (https)</td></tr>
             <tr><td>Pad</td><td><code>/producten</code></td><td>Welke bron op de server je wilt</td></tr>
             <tr><td>Query</td><td><code>?id=42</code></td><td>Extra parameters, als <code>sleutel=waarde</code>, gescheiden door <code>&amp;</code></td></tr>
@@ -49,7 +49,7 @@ CS.registerRoom({
 
         <div class="callout tip"><strong>Tip:</strong> het fragment (alles na <code>#</code>) blijft in de browser. De server ziet het nooit. Handig om te onthouden als je later verkeer bekijkt en je je afvraagt waarom een <code>#</code>-deel niet in de logs staat.</div>
 
-        <p>De poort schrijf je voluit als <code>shop.jvt.lab:8080</code>. Een webserver kan op elke poort draaien, maar 80 en 443 zijn de afspraken voor onversleuteld en versleuteld web.</p>
+        <p>De poort schrijf je voluit als <code>shop.nm.lab:8080</code>. Een webserver kan op elke poort draaien, maar 80 en 443 zijn de afspraken voor onversleuteld en versleuteld web.</p>
       `,
       questions: [
         { q: 'Welke poort gebruikt HTTPS standaard?', answer: '443', hint: 'Kijk in de tabel met URL-onderdelen.', explain: 'HTTPS is HTTP over TLS en draait standaard op TCP-poort 443. Onversleuteld HTTP gebruikt poort 80.' },
@@ -64,12 +64,12 @@ CS.registerRoom({
         <p>Computers praten met elkaar via IP-adressen zoals <code>10.10.20.15</code>, maar die onthoud je niet. DNS (Domain Name System) vertaalt namen naar adressen, net als een telefoonboek een naam naar een nummer vertaalt.</p>
 
         <h3>De hiërarchie</h3>
-        <p>DNS is een boom die van rechts naar links wordt gelezen. Voor <code>shop.jvt.lab</code>:</p>
+        <p>DNS is een boom die van rechts naar links wordt gelezen. Voor <code>shop.nm.lab</code>:</p>
         <ul>
           <li><strong>Recursieve resolver</strong> — meestal die van je provider of je bedrijf. Jij stelt hier je vraag; hij zoekt het voor je uit en onthoudt (cachet) het antwoord.</li>
           <li><strong>Root-servers</strong> — weten waar de TLD-servers staan.</li>
-          <li><strong>TLD-server</strong> — de server voor de topleveldomeinen zoals <code>.lab</code>, <code>.nl</code> of <code>.com</code>. Weet welke servers verantwoordelijk zijn voor <code>jvt.lab</code>.</li>
-          <li><strong>Authoritative nameserver</strong> — de baas over <code>jvt.lab</code>. Geeft het definitieve antwoord: <code>shop.jvt.lab = 10.10.20.15</code>.</li>
+          <li><strong>TLD-server</strong> — de server voor de topleveldomeinen zoals <code>.lab</code>, <code>.nl</code> of <code>.com</code>. Weet welke servers verantwoordelijk zijn voor <code>nm.lab</code>.</li>
+          <li><strong>Authoritative nameserver</strong> — de baas over <code>nm.lab</code>. Geeft het definitieve antwoord: <code>shop.nm.lab = 10.10.20.15</code>.</li>
         </ul>
 
         <figure class="diagram">
@@ -82,7 +82,7 @@ CS.registerRoom({
             <text x="302" y="66" fill="currentColor" font-size="13" text-anchor="middle">TLD .lab</text>
             <rect x="384" y="38" width="128" height="48" rx="6" stroke="var(--accent)" fill="none" />
             <text x="448" y="59" fill="currentColor" font-size="13" text-anchor="middle">Authoritative</text>
-            <text x="448" y="76" fill="currentColor" font-size="13" text-anchor="middle">jvt.lab</text>
+            <text x="448" y="76" fill="currentColor" font-size="13" text-anchor="middle">nm.lab</text>
             <line x1="98" y1="62" x2="140" y2="62" stroke="currentColor" />
             <line x1="220" y1="62" x2="262" y2="62" stroke="currentColor" />
             <line x1="342" y1="62" x2="384" y2="62" stroke="currentColor" />
@@ -105,29 +105,29 @@ CS.registerRoom({
         <p>Elk antwoord heeft een <strong>TTL</strong> (Time To Live) in seconden: zo lang mag de resolver het antwoord bewaren (cachen) voordat hij opnieuw moet vragen. Een lage TTL betekent snelle wijzigingen maar meer verkeer; een hoge TTL is efficiënter maar trager aan te passen.</p>
 
         <h3>Zelf opzoeken</h3>
-        <p>In de terminal hieronder onderzoek je <code>jvt.lab</code>. Typ <code>dig jvt.lab</code> voor het A-record, <code>dig jvt.lab MX</code> voor de mailserver en <code>dig jvt.lab TXT</code> voor de TXT-records. Probeer ook <code>nslookup jvt.lab</code> en <code>curl -I https://jvt.lab</code>, dat laatste toont alleen de response-headers. In een van de TXT-records is een vlag achtergelaten.</p>
+        <p>In de terminal hieronder onderzoek je <code>nm.lab</code>. Typ <code>dig nm.lab</code> voor het A-record, <code>dig nm.lab MX</code> voor de mailserver en <code>dig nm.lab TXT</code> voor de TXT-records. Probeer ook <code>nslookup nm.lab</code> en <code>curl -I https://nm.lab</code>, dat laatste toont alleen de response-headers. In een van de TXT-records is een vlag achtergelaten.</p>
       `,
       lab: {
         type: 'terminal',
         shell: 'bash',
-        user: 'student', host: 'jvt-lab',
+        user: 'student', host: 'nm-lab',
         home: '/home/student', cwd: '/home/student',
-        motd: 'DNS-werkplek. Probeer: dig jvt.lab | dig jvt.lab MX | dig jvt.lab TXT | nslookup jvt.lab | curl -I https://jvt.lab',
+        motd: 'DNS-werkplek. Probeer: dig nm.lab | dig nm.lab MX | dig nm.lab TXT | nslookup nm.lab | curl -I https://nm.lab',
         fs: {
-          '/home/student/opdracht.txt': 'Onderzoek het domein jvt.lab met dig, nslookup en curl.\n',
+          '/home/student/opdracht.txt': 'Onderzoek het domein nm.lab met dig, nslookup en curl.\n',
         },
         commands: {
-          'dig jvt.lab': '; <<>> DiG 9.18.24 <<>> jvt.lab\n;; global options: +cmd\n;; Got answer:\n;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 42317\n;; flags: qr rd ra; QUERY: 1, ANSWER: 1\n\n;; QUESTION SECTION:\n;jvt.lab.\t\t\tIN\tA\n\n;; ANSWER SECTION:\njvt.lab.\t\t3600\tIN\tA\t10.10.20.15\n\n;; Query time: 12 msec\n;; SERVER: 10.10.20.2#53(10.10.20.2) (UDP)\n;; MSG SIZE  rcvd: 56',
-          'dig jvt.lab MX': '; <<>> DiG 9.18.24 <<>> jvt.lab MX\n;; Got answer:\n;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 11902\n\n;; ANSWER SECTION:\njvt.lab.\t\t3600\tIN\tMX\t10 mail.jvt.lab.\n\n;; MSG SIZE  rcvd: 61',
-          'dig jvt.lab TXT': '; <<>> DiG 9.18.24 <<>> jvt.lab TXT\n;; Got answer:\n;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 30744\n\n;; ANSWER SECTION:\njvt.lab.\t\t3600\tIN\tTXT\t"v=spf1 include:_spf.jvt.lab ~all"\njvt.lab.\t\t3600\tIN\tTXT\t"JVT{txt_record_gevonden}"\n\n;; MSG SIZE  rcvd: 98',
-          'nslookup jvt.lab': 'Server:\t\t10.10.20.2\nAddress:\t10.10.20.2#53\n\nNon-authoritative answer:\nName:\tjvt.lab\nAddress: 10.10.20.15',
-          'curl -I https://jvt.lab': 'HTTP/2 200 \nserver: nginx/1.24.0\ndate: Sat, 03 Oct 2026 10:12:44 GMT\ncontent-type: text/html; charset=UTF-8\ncontent-length: 5120\nstrict-transport-security: max-age=31536000',
+          'dig nm.lab': '; <<>> DiG 9.18.24 <<>> nm.lab\n;; global options: +cmd\n;; Got answer:\n;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 42317\n;; flags: qr rd ra; QUERY: 1, ANSWER: 1\n\n;; QUESTION SECTION:\n;nm.lab.\t\t\tIN\tA\n\n;; ANSWER SECTION:\nnm.lab.\t\t3600\tIN\tA\t10.10.20.15\n\n;; Query time: 12 msec\n;; SERVER: 10.10.20.2#53(10.10.20.2) (UDP)\n;; MSG SIZE  rcvd: 56',
+          'dig nm.lab MX': '; <<>> DiG 9.18.24 <<>> nm.lab MX\n;; Got answer:\n;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 11902\n\n;; ANSWER SECTION:\nnm.lab.\t\t3600\tIN\tMX\t10 mail.nm.lab.\n\n;; MSG SIZE  rcvd: 61',
+          'dig nm.lab TXT': '; <<>> DiG 9.18.24 <<>> nm.lab TXT\n;; Got answer:\n;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 30744\n\n;; ANSWER SECTION:\nnm.lab.\t\t3600\tIN\tTXT\t"v=spf1 include:_spf.nm.lab ~all"\nnm.lab.\t\t3600\tIN\tTXT\t"NM{txt_record_gevonden}"\n\n;; MSG SIZE  rcvd: 98',
+          'nslookup nm.lab': 'Server:\t\t10.10.20.2\nAddress:\t10.10.20.2#53\n\nNon-authoritative answer:\nName:\tnm.lab\nAddress: 10.10.20.15',
+          'curl -I https://nm.lab': 'HTTP/2 200 \nserver: nginx/1.24.0\ndate: Sat, 03 Oct 2026 10:12:44 GMT\ncontent-type: text/html; charset=UTF-8\ncontent-length: 5120\nstrict-transport-security: max-age=31536000',
         },
       },
       questions: [
         { q: 'Welk recordtype koppelt een domeinnaam aan een IPv4-adres?', answer: ['A', 'A-record'], hint: 'Niet AAAA, dat is voor IPv6.', explain: 'Een A-record wijst een naam naar een IPv4-adres. AAAA doet hetzelfde voor IPv6.' },
-        { q: 'Draai dig jvt.lab MX. Wat is de hostnaam van de mailserver?', answer: ['mail.jvt.lab', 'mail.jvt.lab.'], hint: 'Kijk in de ANSWER SECTION; het getal 10 is de prioriteit, niet de naam.', explain: 'Het MX-record wijst naar mail.jvt.lab met prioriteit 10.' },
-        { q: 'Draai dig jvt.lab TXT en vind de vlag.', answer: ['JVT{txt_record_gevonden}'], hint: 'Er staan twee TXT-records; een ervan is geen echte SPF-regel.', explain: 'Beheerders zetten soms verificatiewaarden in TXT-records; hier stond een vlag verstopt.' },
+        { q: 'Draai dig nm.lab MX. Wat is de hostnaam van de mailserver?', answer: ['mail.nm.lab', 'mail.nm.lab.'], hint: 'Kijk in de ANSWER SECTION; het getal 10 is de prioriteit, niet de naam.', explain: 'Het MX-record wijst naar mail.nm.lab met prioriteit 10.' },
+        { q: 'Draai dig nm.lab TXT en vind de vlag.', answer: ['NM{txt_record_gevonden}'], hint: 'Er staan twee TXT-records; een ervan is geen echte SPF-regel.', explain: 'Beheerders zetten soms verificatiewaarden in TXT-records; hier stond een vlag verstopt.' },
       ],
     },
 
@@ -220,7 +220,7 @@ Cookie: session=8f2a3c</code></pre>
         <p>Gewoon HTTP stuurt alles als leesbare tekst over de lijn. Iedereen die het verkeer kan onderscheppen (bijv. op openbare wifi) leest je wachtwoord mee. HTTPS lost dat op door HTTP door een versleutelde tunnel te sturen met <strong>TLS</strong> (Transport Layer Security).</p>
         <p>TLS doet twee dingen:</p>
         <ol>
-          <li><strong>Identiteit controleren.</strong> De server toont een <strong>certificaat</strong> dat is ondertekend door een vertrouwde instantie (Certificate Authority). Zo weet je browser dat je echt met <code>shop.jvt.lab</code> praat en niet met een nepsite.</li>
+          <li><strong>Identiteit controleren.</strong> De server toont een <strong>certificaat</strong> dat is ondertekend door een vertrouwde instantie (Certificate Authority). Zo weet je browser dat je echt met <code>shop.nm.lab</code> praat en niet met een nepsite.</li>
           <li><strong>Versleutelen.</strong> Client en server spreken via een handshake een gedeelde sleutel af. Daarna is al het verkeer onleesbaar voor meelezers.</li>
         </ol>
         <p>Het hangslotje in je browser betekent: de verbinding is versleuteld en het certificaat is geldig. Het zegt niets over of de site zelf te vertrouwen is; ook phishingsites gebruiken tegenwoordig HTTPS.</p>
@@ -234,7 +234,7 @@ Cookie: session=8f2a3c</code></pre>
     {
       title: 'Taak 5 — Zelf verzoeken sturen',
       content: `
-        <p>Tijd om het echt te doen. Hieronder staat een nep-webwinkel op <code>shop.jvt.lab</code>. Je kunt zelf requests sturen: kies een methode, een pad en pas desgewenst de headers aan. De server antwoordt met een statuscode, headers en een body, precies zoals een echte server.</p>
+        <p>Tijd om het echt te doen. Hieronder staat een nep-webwinkel op <code>shop.nm.lab</code>. Je kunt zelf requests sturen: kies een methode, een pad en pas desgewenst de headers aan. De server antwoordt met een statuscode, headers en een body, precies zoals een echte server.</p>
 
         <h3>Je opdracht</h3>
         <ol>
@@ -250,20 +250,20 @@ Cookie: session=8f2a3c</code></pre>
       `,
       lab: {
         type: 'http',
-        host: 'shop.jvt.lab',
-        start: { method: 'GET', path: '/', headers: { 'Host': 'shop.jvt.lab', 'User-Agent': 'jvt-browser/1.0', 'Cookie': 'session=7fa91c; role=klant' }, body: '' },
+        host: 'shop.nm.lab',
+        start: { method: 'GET', path: '/', headers: { 'Host': 'shop.nm.lab', 'User-Agent': 'nineminds-browser/1.0', 'Cookie': 'session=7fa91c; role=klant' }, body: '' },
         routes: [
           { method: 'GET', path: '/robots.txt', status: 200, headers: { 'Content-Type': 'text/plain' }, body: 'User-agent: *\nDisallow: /intern-beheer\nDisallow: /oud-beheer\n' },
-          { method: 'GET', path: '/', status: 200, headers: { 'Content-Type': 'text/html', 'Server': 'nginx/1.24.0' }, body: '<h1>JVT Webwinkel</h1><p>Welkom! Bekijk onze producten op /producten.</p>' },
+          { method: 'GET', path: '/', status: 200, headers: { 'Content-Type': 'text/html', 'Server': 'nginx/1.24.0' }, body: '<h1>NineMinds Webwinkel</h1><p>Welkom! Bekijk onze producten op /producten.</p>' },
           { method: 'GET', path: '/producten', status: 200, headers: { 'Content-Type': 'text/html' }, body: '<h1>Producten</h1><ul><li>USB-stick</li><li>Toetsenbord</li></ul>' },
           { method: 'GET', path: '/oud-beheer', status: 301, headers: { 'Location': '/intern-beheer' }, body: 'Deze pagina is permanent verplaatst naar /intern-beheer' },
-          { method: 'GET', path: '/intern-beheer', when: [{ header: 'Cookie', contains: 'role=admin' }], status: 200, headers: { 'Content-Type': 'text/html', 'Server': 'nginx/1.24.0' }, body: '<h1>Beheerpaneel</h1><p>Welkom, admin. Je vlag: JVT{cookie_admin_toegang}</p>' },
+          { method: 'GET', path: '/intern-beheer', when: [{ header: 'Cookie', contains: 'role=admin' }], status: 200, headers: { 'Content-Type': 'text/html', 'Server': 'nginx/1.24.0' }, body: '<h1>Beheerpaneel</h1><p>Welkom, admin. Je vlag: NM{cookie_admin_toegang}</p>' },
           { method: 'GET', path: '/intern-beheer', status: 403, headers: { 'Content-Type': 'text/html' }, body: '<h1>403 Forbidden</h1><p>Je rol (klant) heeft geen toegang tot deze pagina.</p>' },
         ],
       },
       questions: [
         { q: 'Welk pad staat als eerste op Disallow in robots.txt?', answer: ['/intern-beheer', 'intern-beheer'], hint: 'Vraag GET /robots.txt op.', explain: 'robots.txt verbiedt zoekmachines /intern-beheer, maar wijst nieuwsgierige onderzoekers juist de weg.' },
-        { q: 'Pas je Cookie aan naar role=admin en bezoek /intern-beheer. Wat is de vlag?', answer: ['JVT{cookie_admin_toegang}'], hint: 'De server vertrouwt blind op de role-waarde in je cookie.', explain: 'De server controleerde alleen de cookie, die de client zelf kan aanpassen: een klassieke toegangsfout.' },
+        { q: 'Pas je Cookie aan naar role=admin en bezoek /intern-beheer. Wat is de vlag?', answer: ['NM{cookie_admin_toegang}'], hint: 'De server vertrouwt blind op de role-waarde in je cookie.', explain: 'De server controleerde alleen de cookie, die de client zelf kan aanpassen: een klassieke toegangsfout.' },
         { q: 'Welke statuscode hoort bij de permanente omleiding van /oud-beheer?', options: ['200', '301', '403', '404'], answer: 1, explain: 'Een 301 is een permanente omleiding; de Location-header wijst naar de nieuwe URL.' },
       ],
     },
@@ -305,7 +305,7 @@ Allow: /</code></pre>
 
   terms: [
     { term: 'URL', def: 'Uniform Resource Locator: het volledige adres van een bron op het web, opgebouwd uit schema, host, poort, pad, query en fragment.' },
-    { term: 'DNS', def: 'Domain Name System: vertaalt domeinnamen (shop.jvt.lab) naar IP-adressen (10.10.20.15).' },
+    { term: 'DNS', def: 'Domain Name System: vertaalt domeinnamen (shop.nm.lab) naar IP-adressen (10.10.20.15).' },
     { term: 'Resolver', def: 'De DNS-server (vaak van je provider of bedrijf) die namens jou een naam opzoekt en het antwoord cachet.' },
     { term: 'TTL', def: 'Time To Live: hoelang (in seconden) een DNS-antwoord gecachet mag worden voordat opnieuw gevraagd moet worden.' },
     { term: 'A-record', def: 'DNS-record dat een domeinnaam koppelt aan een IPv4-adres (AAAA doet dat voor IPv6).' },

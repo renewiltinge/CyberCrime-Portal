@@ -10,9 +10,15 @@ const vm = require('vm');
 const crypto = require('crypto');
 
 const ROOT = path.join(__dirname, '..');
-const PATHS = ['fundamenten', 'security-kern', 'offensief', 'defensief', 'forensie', 'eindopdracht'];
+const PATHS = ['fundamenten', 'security-kern', 'offensief', 'defensief', 'forensie', 'intelligence', 'datastromen', 'puzzels', 'eindopdracht'];
 const DIFFS = ['Makkelijk', 'Gemiddeld', 'Moeilijk'];
-const LABS = ['terminal', 'cyberchef', 'hashcrack', 'password', 'phishing', 'logs', 'http', 'sqli', 'subnet', 'hexviewer', 'pcap'];
+const LABS = ['terminal', 'cyberchef', 'hashcrack', 'password', 'phishing', 'logs', 'http', 'sqli', 'subnet', 'hexviewer', 'pcap',
+  'jwt', 'regex', 'cvss', 'timestamp', 'ioc', 'url', 'yara', 'timeline', 'chmod', 'numconv',
+  'hashid', 'cipher', 'crackme', 'multidecode', 'rainbow',
+  'ach', 'crimescript', 'admiralty', 'probability', 'attackmap', 'pivot', 'bluf',
+  'flow', 'ordering', 'regexgolf', 'osintpuzzle', 'connections', 'chaintrace',
+  'netflow', 'structuring', 'emailheader', 'dnslog', 'recon', 'detectrule',
+  'fingerprint', 'scenario'];
 
 const args = process.argv.slice(2);
 const files = args.length
@@ -52,13 +58,51 @@ function labText(lab) {
   return JSON.stringify(lab);
 }
 
+// Zelfstandige MD4 (Node-crypto heeft md4 niet altijd) voor NTLM-controle.
+function md4Bytes(bytes) {
+  const add = (a, b) => (a + b) & 0xffffffff;
+  const rol = (x, s) => ((x << s) | (x >>> (32 - s))) & 0xffffffff;
+  const F = (x, y, z) => (x & y) | (~x & z);
+  const G = (x, y, z) => (x & y) | (x & z) | (y & z);
+  const H = (x, y, z) => x ^ y ^ z;
+  const msg = bytes.slice(); const bitLen = msg.length * 8;
+  msg.push(0x80); while (msg.length % 64 !== 56) msg.push(0);
+  for (let i = 0; i < 8; i++) msg.push((Math.floor(bitLen / Math.pow(2, 8 * i))) & 0xff);
+  let A = 0x67452301, B = 0xefcdab89, C = 0x98badcfe, D = 0x10325476;
+  for (let off = 0; off < msg.length; off += 64) {
+    const X = [];
+    for (let i = 0; i < 16; i++) X[i] = (msg[off + i * 4] | (msg[off + i * 4 + 1] << 8) | (msg[off + i * 4 + 2] << 16) | (msg[off + i * 4 + 3] << 24)) >>> 0;
+    let a = A, b = B, c = C, d = D;
+    const ff = (a, b, c, d, k, s) => rol(add(add(a, F(b, c, d)), X[k]), s);
+    const gg = (a, b, c, d, k, s) => rol(add(add(add(a, G(b, c, d)), X[k]), 0x5a827999), s);
+    const hh = (a, b, c, d, k, s) => rol(add(add(add(a, H(b, c, d)), X[k]), 0x6ed9eba1), s);
+    for (let k = 0; k < 16; k += 4) { a = ff(a, b, c, d, k, 3); d = ff(d, a, b, c, k + 1, 7); c = ff(c, d, a, b, k + 2, 11); b = ff(b, c, d, a, k + 3, 19); }
+    for (let j = 0; j < 4; j++) { a = gg(a, b, c, d, j, 3); d = gg(d, a, b, c, j + 4, 5); c = gg(c, d, a, b, j + 8, 9); b = gg(b, c, d, a, j + 12, 13); }
+    const r3 = [0, 8, 4, 12, 2, 10, 6, 14, 1, 9, 5, 13, 3, 11, 7, 15];
+    for (let i = 0; i < 16; i += 4) { a = hh(a, b, c, d, r3[i], 3); d = hh(d, a, b, c, r3[i + 1], 9); c = hh(c, d, a, b, r3[i + 2], 11); b = hh(b, c, d, a, r3[i + 3], 15); }
+    A = add(A, a); B = add(B, b); C = add(C, c); D = add(D, d);
+  }
+  const le = (n) => { let s = ''; for (let i = 0; i < 4; i++) s += ((n >>> (i * 8)) & 0xff).toString(16).padStart(2, '0'); return s; };
+  return le(A) + le(B) + le(C) + le(D);
+}
 function hashOf(algo, s) {
+  algo = String(algo).toLowerCase();
+  if (algo === 'ntlm') { const bytes = []; for (let i = 0; i < s.length; i++) { const code = s.charCodeAt(i); bytes.push(code & 0xff, (code >>> 8) & 0xff); } return md4Bytes(bytes); }
+  if (algo === 'md4') return md4Bytes(Array.from(Buffer.from(s, 'utf8')));
   return crypto.createHash(algo).update(s, 'utf8').digest('hex');
 }
 
 const seenIds = new Set();
+const globalDecls = {}; // naam -> [bestanden] : top-level const/let/var/function (botst in de browser-globalscope)
 for (const file of files) {
   const rel = path.relative(ROOT, file);
+  try {
+    const src = fs.readFileSync(file, 'utf8');
+    const re = /^(?:const|let|var|function)\s+([A-Za-z_$][\w$]*)/gm;
+    const seenHere = new Set();
+    let mm;
+    while ((mm = re.exec(src))) { const nm = mm[1]; if (seenHere.has(nm)) continue; seenHere.add(nm); (globalDecls[nm] = globalDecls[nm] || []).push(path.basename(file)); }
+  } catch (e) { /* lezen mislukt; de parser hieronder meldt het wel */ }
   console.log(`• ${rel}`);
   const rooms = [];
   const sandbox = { CS: { registerRoom: (r) => rooms.push(r) }, console };
@@ -105,8 +149,10 @@ for (const file of files) {
       }
       if (t.lab.type === 'hashcrack') {
         const algo = t.lab.algo || 'md5';
-        const hit = (t.lab.wordlist || []).find((w) => hashOf(algo, (t.lab.salt || '') + w) === String(t.lab.hash).toLowerCase());
-        if (!hit) warn(rel, `${where}: hash wordt door geen enkel woord uit de wordlist gekraakt`);
+        const salt = t.lab.salt || '';
+        const withSalt = (w) => (t.lab.saltPos === 'suffix' ? w + salt : salt + w);
+        const hit = (t.lab.wordlist || []).find((w) => hashOf(algo, withSalt(w)) === String(t.lab.hash).toLowerCase());
+        if (!hit) warn(rel, `${where}: hash wordt door geen enkel woord uit de wordlist gekraakt (controleer algo/salt/saltPos, of zet een crackbaar woord in de wordlist)`);
         else console.log(`    (hashcrack: wachtwoord = "${hit}")`);
       }
       if (t.lab.type === 'phishing') {
@@ -133,7 +179,7 @@ for (const file of files) {
       if (!answers.length || answers.some((a) => typeof a !== 'string' || !a.trim())) { err(rel, `${w}: answer ontbreekt of is leeg`); return; }
       if (answers[0].length > 60) warn(rel, `${w}: lang antwoord (${answers[0].length} tekens) — kan het korter?`);
       for (const a of answers) {
-        if (/^JVT\{/.test(a) && !/^JVT\{[a-z0-9_]+\}$/.test(a)) warn(rel, `${w}: vlag "${a}" volgt niet JVT{kleine_letters_underscores}`);
+        if (/^NM\{/.test(a) && !/^NM\{[a-z0-9_]+\}$/.test(a)) warn(rel, `${w}: vlag "${a}" volgt niet NM{kleine_letters_underscores}`);
       }
     });
     // Vlaggen moeten ergens in deze room (tekst of lab) te vinden zijn, eventueel gecodeerd.
@@ -142,13 +188,20 @@ for (const file of files) {
   r.tasks.forEach((t, ti) => (t.questions || []).forEach((q, qi) => {
     if (q.noAnswer || Array.isArray(q.options)) return;
     const answers = Array.isArray(q.answer) ? q.answer : [q.answer];
-    const flag = answers.find((a) => /^JVT\{/.test(a));
+    const flag = answers.find((a) => /^NM\{/.test(a));
     if (flag && !corpus.includes(flag) && !q.encoded) {
       warn(rel, `taak ${ti + 1} vraag ${qi + 1}: vlag ${flag} komt niet letterlijk voor in tekst/lab (gecodeerd? zet dan encoded: true)`);
     }
   }));
   console.log(`    ${r.tasks.length} taken, ${qCount} vragen`);
 }
+
+// Cross-file: top-level declaraties die in meer dan één bestand voorkomen botsen
+// in de globale scope van de browser (alle rooms laden als losse <script>).
+Object.keys(globalDecls).forEach((nm) => {
+  const fs2 = globalDecls[nm];
+  if (fs2.length > 1) { errors++; console.log(`  ✗ top-level naam "${nm}" is in meerdere bestanden gedeclareerd (botst in de browser): ${fs2.join(', ')} — hernoem of maak uniek per room`); }
+});
 
 console.log(`\n${files.length} bestand(en), ${errors} fout(en), ${warnings} waarschuwing(en)`);
 process.exit(errors ? 1 : 0);

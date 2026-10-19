@@ -401,11 +401,11 @@ CS.registerRoom({
           <li><code>ip a</code> &mdash; toont de netwerkkaarten met hun IP- en MAC-adres. Zoek bij <code>eth0</code>
             naar de regel die begint met <code>inet</code> (dat is het IPv4-adres) en <code>link/ether</code> (dat is
             het MAC-adres).</li>
-          <li><code>ping -c 4 jvt.lab</code> &mdash; stuurt vier testpakketjes naar een server en meet de reactietijd.</li>
+          <li><code>ping -c 4 nm.lab</code> &mdash; stuurt vier testpakketjes naar een server en meet de reactietijd.</li>
           <li><code>arp -a</code> &mdash; toont de ARP-tabel: welk IP-adres hoort bij welk MAC-adres in je netwerk,
             inclusief je <em>gateway</em> (de router).</li>
           <li><code>ss -tuln</code> &mdash; toont welke poorten op deze machine <em>luisteren</em> (openstaan).</li>
-          <li><code>traceroute jvt.lab</code> &mdash; toont de route (de "hops") die je pakketjes afleggen naar de
+          <li><code>traceroute nm.lab</code> &mdash; toont de route (de "hops") die je pakketjes afleggen naar de
             server. Lees elke hop; ergens onderweg is een vlag verstopt in een hostnaam.</li>
         </ol>
 
@@ -421,10 +421,10 @@ CS.registerRoom({
         type: 'terminal',
         shell: 'bash',
         user: 'student',
-        host: 'jvt-lab',
+        host: 'nm-lab',
         home: '/home/student',
         cwd: '/home/student',
-        motd: 'Netwerk-lab. Typ: ip a | ping -c 4 jvt.lab | arp -a | ss -tuln | traceroute jvt.lab',
+        motd: 'Netwerk-lab. Typ: ip a | ping -c 4 nm.lab | arp -a | ss -tuln | traceroute nm.lab',
         commands: {
           'ip a': `1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
@@ -438,30 +438,30 @@ CS.registerRoom({
        valid_lft 86309sec preferred_lft 86309sec
     inet6 fe80::5054:ff:fea3:1f6b/64 scope link
        valid_lft forever preferred_lft forever`,
-          'ping -c 4 jvt.lab': `PING jvt.lab (10.10.20.1) 56(84) bytes of data.
+          'ping -c 4 nm.lab': `PING nm.lab (10.10.20.1) 56(84) bytes of data.
 64 bytes from 10.10.20.1: icmp_seq=1 ttl=63 time=11.8 ms
 64 bytes from 10.10.20.1: icmp_seq=2 ttl=63 time=12.1 ms
 64 bytes from 10.10.20.1: icmp_seq=3 ttl=63 time=11.9 ms
 64 bytes from 10.10.20.1: icmp_seq=4 ttl=63 time=12.0 ms
 
---- jvt.lab ping statistics ---
+--- nm.lab ping statistics ---
 4 packets transmitted, 4 received, 0% packet loss, time 3005ms
 rtt min/avg/max/mdev = 11.802/11.950/12.100/0.112 ms`,
           'arp -a': `gateway (192.168.1.1) at aa:bb:cc:11:22:33 [ether] on eth0
-printer.jvt.lab (192.168.1.50) at de:ad:be:ef:00:21 [ether] on eth0
-nas.jvt.lab (192.168.1.60) at de:ad:be:ef:00:3c [ether] on eth0`,
+printer.nm.lab (192.168.1.50) at de:ad:be:ef:00:21 [ether] on eth0
+nas.nm.lab (192.168.1.60) at de:ad:be:ef:00:3c [ether] on eth0`,
           'ss -tuln': `Netid  State   Recv-Q  Send-Q   Local Address:Port    Peer Address:Port  Process
 udp    UNCONN  0       0            0.0.0.0:68           0.0.0.0:*
 udp    UNCONN  0       0      127.0.0.53%lo:53           0.0.0.0:*
 tcp    LISTEN  0       128          0.0.0.0:22           0.0.0.0:*
 tcp    LISTEN  0       128        127.0.0.1:631          0.0.0.0:*
 tcp    LISTEN  0       511          0.0.0.0:80           0.0.0.0:*`,
-          'traceroute jvt.lab': `traceroute to jvt.lab (10.10.20.1), 30 hops max, 60 byte packets
+          'traceroute nm.lab': `traceroute to nm.lab (10.10.20.1), 30 hops max, 60 byte packets
  1  gateway (192.168.1.1)  0.482 ms  0.451 ms  0.603 ms
  2  10.0.0.1 (10.0.0.1)  4.112 ms  4.087 ms  4.201 ms
- 3  core-rtr.jvt.lab (10.10.0.1)  8.774 ms  8.690 ms  8.812 ms
- 4  JVT{netwerk_verkend}.hop.jvt.lab (10.10.20.254)  11.902 ms  11.880 ms  12.004 ms
- 5  jvt.lab (10.10.20.1)  12.110 ms  12.201 ms  12.088 ms`,
+ 3  core-rtr.nm.lab (10.10.0.1)  8.774 ms  8.690 ms  8.812 ms
+ 4  NM{netwerk_verkend}.hop.nm.lab (10.10.20.254)  11.902 ms  11.880 ms  12.004 ms
+ 5  nm.lab (10.10.20.1)  12.110 ms  12.201 ms  12.088 ms`,
         },
       },
       questions: [
@@ -484,10 +484,10 @@ tcp    LISTEN  0       511          0.0.0.0:80           0.0.0.0:*`,
           explain: 'De regel tcp LISTEN 0.0.0.0:22 laat zien dat SSH op poort 22 luistert.',
         },
         {
-          q: 'Welke vlag is verstopt in de uitvoer van traceroute jvt.lab?',
-          answer: ['JVT{netwerk_verkend}'],
+          q: 'Welke vlag is verstopt in de uitvoer van traceroute nm.lab?',
+          answer: ['NM{netwerk_verkend}'],
           hint: 'Kijk goed naar de hostnaam bij hop 4.',
-          explain: 'Bij hop 4 staat de hostnaam JVT{netwerk_verkend}.hop.jvt.lab; dat is de vlag.',
+          explain: 'Bij hop 4 staat de hostnaam NM{netwerk_verkend}.hop.nm.lab; dat is de vlag.',
         },
       ],
     },

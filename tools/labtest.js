@@ -27,7 +27,7 @@ const url = 'file://' + path.join(__dirname, '..', 'index.html');
   }
   await termType(1, 'nmap -sV 10.10.60.42');
   let termText = await page.$eval('#task-1 .term', (e) => e.textContent);
-  ok('Terminal nmap toont vlag JVT{poorten_in_kaart}', termText.includes('JVT{poorten_in_kaart}'));
+  ok('Terminal nmap toont vlag NM{poorten_in_kaart}', termText.includes('NM{poorten_in_kaart}'));
   ok('Terminal nmap toont Tomcat 9.0.30', termText.includes('Tomcat 9.0.30'));
 
   // ---- SQLi (taak 3) ----
@@ -40,7 +40,7 @@ const url = 'file://' + path.join(__dirname, '..', 'index.html');
   await page.click('#task-2 .sqlform button.primary');
   await page.waitForTimeout(100);
   let sqlOut = await page.$eval('#task-2 .lab-out', (e) => e.textContent);
-  ok('SQLi "admin\' --" logt in als admin + toont vlag', sqlOut.includes('JVT{sql_injectie_werkt}'));
+  ok('SQLi "admin\' --" logt in als admin + toont vlag', sqlOut.includes('NM{sql_injectie_werkt}'));
   // prepared statements aan -> injectie faalt
   await page.click('#task-2 .switch .track');
   await page.click('#task-2 .sqlform button.primary');
@@ -63,14 +63,14 @@ const url = 'file://' + path.join(__dirname, '..', 'index.html');
   });
   await page.waitForTimeout(100);
   const ccOut = await page.$eval('#task-3 .lab-out', (e) => e.textContent);
-  ok('CyberChef Base64->ROT13 geeft JVT{cyberchef_kampioen}', ccOut.includes('JVT{cyberchef_kampioen}'));
+  ok('CyberChef Base64->ROT13 geeft NM{cyberchef_kampioen}', ccOut.includes('NM{cyberchef_kampioen}'));
 
   // ---- Hashcrack (taak 5) ----
   await page.click('#task-4 .lab-pad button.primary'); // start aanval
-  await page.waitForFunction(() => /Wachtwoord gevonden|Niet gekraakt/.test(document.querySelector('#task-4 .lab-pad').textContent), { timeout: 10000 }).catch(() => {});
+  await page.waitForFunction(() => /Gekraakt|Niet gekraakt/.test(document.querySelector('#task-4 .lab-pad').textContent), { timeout: 10000 }).catch(() => {});
   await page.waitForTimeout(200);
   const hcText = await page.$eval('#task-4', (e) => e.textContent);
-  ok('Hashcrack vindt wachtwoord koffie!2026', hcText.includes('koffie!2026') && hcText.includes('gevonden'));
+  ok('Hashcrack vindt wachtwoord koffie!2026', hcText.includes('koffie!2026') && hcText.includes('Gekraakt'));
 
   // ---- Logs (taak 6): filter op Accepted ----
   const logFilter = await page.$('#task-5 .lab-pad input[type=text]');
@@ -85,10 +85,10 @@ const url = 'file://' + path.join(__dirname, '..', 'index.html');
   ok('ls -a toont verborgen map .verborgen', t7.includes('.verborgen'));
   await termType(6, 'cat /home/koffie/.verborgen/buit.b64 | base64 -d');
   t7 = await page.$eval('#task-6 .term', (e) => e.textContent);
-  ok('base64 -d van buit.b64 geeft JVT{dojo_voltooid}', t7.includes('JVT{dojo_voltooid}'));
-  await termType(6, 'grep -r JVT /home/koffie');
+  ok('base64 -d van buit.b64 geeft NM{dojo_voltooid}', t7.includes('NM{dojo_voltooid}'));
+  await termType(6, 'grep -r NM /home/koffie');
   t7 = await page.$eval('#task-6 .term', (e) => e.textContent);
-  ok('grep -r JVT vindt het .b64-bestand', t7.includes('buit.b64'));
+  ok('grep -r NM vindt het .b64-bestand', t7.includes('buit.b64'));
 
   console.log('\n' + (fails.length ? '✗ ' + fails.length + ' labtest(s) GEFAALD' : '✓ Alle labtests geslaagd'));
   await browser.close();

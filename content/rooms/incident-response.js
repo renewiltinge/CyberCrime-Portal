@@ -1,24 +1,24 @@
 /* Room: Incident response (NIST CSF 2.0) */
 
-const EDR_LOG = `2026-10-03 01:58:12  JVT-FS01  Sysmon  EventID=1  ProcessCreate  Image=C:\\Windows\\explorer.exe  User=JVT\\mkoster
-2026-10-03 02:03:44  JVT-FS01  Sysmon  EventID=1  ProcessCreate  Image=C:\\Users\\mkoster\\Downloads\\factuur_oktober.pdf.exe  User=JVT\\mkoster  CommandLine="factuur_oktober.pdf.exe"
-2026-10-03 02:03:46  JVT-FS01  Sysmon  EventID=3  NetworkConnect  Image=factuur_oktober.pdf.exe  DestinationIp=203.0.113.66  DestinationPort=443
-2026-10-03 02:04:01  JVT-FS01  Sysmon  EventID=1  ProcessCreate  Image=C:\\Windows\\System32\\vssadmin.exe  CommandLine="vssadmin.exe delete shadows /all /quiet"  User=JVT\\mkoster
-2026-10-03 02:04:02  JVT-FS01  Sysmon  EventID=1  ProcessCreate  Image=C:\\Windows\\System32\\wbadmin.exe  CommandLine="wbadmin delete catalog -quiet"  User=JVT\\mkoster
-2026-10-03 02:04:03  JVT-FS01  Sysmon  EventID=1  ProcessCreate  Image=C:\\Windows\\System32\\bcdedit.exe  CommandLine="bcdedit /set {default} recoveryenabled No"  User=JVT\\mkoster
-2026-10-03 02:04:30  JVT-FS01  EDR  ALERT  Severity=HIGH  Detection=Ransom.Generic.Locker  Process=factuur_oktober.pdf.exe  incident-tag=JVT{schaduwkopieen_gewist}
-2026-10-03 02:04:41  JVT-FS01  FileAudit  FileRename  C:\\Shares\\Financien\\begroting_2026.xlsx -> begroting_2026.xlsx.jvtlock
-2026-10-03 02:04:41  JVT-FS01  FileAudit  FileRename  C:\\Shares\\Financien\\jaarrekening.docx -> jaarrekening.docx.jvtlock
-2026-10-03 02:04:42  JVT-FS01  FileAudit  FileRename  C:\\Shares\\Financien\\salarissen.xlsx -> salarissen.xlsx.jvtlock
-2026-10-03 02:04:42  JVT-FS01  FileAudit  FileRename  C:\\Shares\\HR\\contracten.docx -> contracten.docx.jvtlock
-2026-10-03 02:04:43  JVT-FS01  FileAudit  FileRename  C:\\Shares\\HR\\verzuim.xlsx -> verzuim.xlsx.jvtlock
-2026-10-03 02:04:43  JVT-FS01  FileAudit  FileRename  C:\\Shares\\Projecten\\offerte.pdf -> offerte.pdf.jvtlock
-2026-10-03 02:04:44  JVT-FS01  FileAudit  FileRename  C:\\Shares\\Projecten\\planning.xlsx -> planning.xlsx.jvtlock
-2026-10-03 02:04:58  JVT-FS01  FileAudit  FileCreate  C:\\Shares\\Financien\\LEES_DIT_HERSTEL.txt
-2026-10-03 02:05:10  JVT-FS01  FileAudit  FileCreate  C:\\Shares\\HR\\LEES_DIT_HERSTEL.txt
-2026-10-03 02:05:22  JVT-FS01  Sysmon  EventID=3  NetworkConnect  Image=factuur_oktober.pdf.exe  DestinationIp=203.0.113.66  DestinationPort=443
-2026-10-03 02:06:00  JVT-FS01  EDR  ALERT  Severity=HIGH  Detection=Behavior.MassFileEncrypt  Process=factuur_oktober.pdf.exe  Files=1284
-2026-10-03 02:06:05  JVT-FS01  EDR  ACTION  Host-Isolation=ENABLED  Reason=automatic-containment
+const EDR_LOG = `2026-10-03 01:58:12  NM-FS01  Sysmon  EventID=1  ProcessCreate  Image=C:\\Windows\\explorer.exe  User=NM\\mkoster
+2026-10-03 02:03:44  NM-FS01  Sysmon  EventID=1  ProcessCreate  Image=C:\\Users\\mkoster\\Downloads\\factuur_oktober.pdf.exe  User=NM\\mkoster  CommandLine="factuur_oktober.pdf.exe"
+2026-10-03 02:03:46  NM-FS01  Sysmon  EventID=3  NetworkConnect  Image=factuur_oktober.pdf.exe  DestinationIp=203.0.113.66  DestinationPort=443
+2026-10-03 02:04:01  NM-FS01  Sysmon  EventID=1  ProcessCreate  Image=C:\\Windows\\System32\\vssadmin.exe  CommandLine="vssadmin.exe delete shadows /all /quiet"  User=NM\\mkoster
+2026-10-03 02:04:02  NM-FS01  Sysmon  EventID=1  ProcessCreate  Image=C:\\Windows\\System32\\wbadmin.exe  CommandLine="wbadmin delete catalog -quiet"  User=NM\\mkoster
+2026-10-03 02:04:03  NM-FS01  Sysmon  EventID=1  ProcessCreate  Image=C:\\Windows\\System32\\bcdedit.exe  CommandLine="bcdedit /set {default} recoveryenabled No"  User=NM\\mkoster
+2026-10-03 02:04:30  NM-FS01  EDR  ALERT  Severity=HIGH  Detection=Ransom.Generic.Locker  Process=factuur_oktober.pdf.exe  incident-tag=NM{schaduwkopieen_gewist}
+2026-10-03 02:04:41  NM-FS01  FileAudit  FileRename  C:\\Shares\\Financien\\begroting_2026.xlsx -> begroting_2026.xlsx.kryptlock
+2026-10-03 02:04:41  NM-FS01  FileAudit  FileRename  C:\\Shares\\Financien\\jaarrekening.docx -> jaarrekening.docx.kryptlock
+2026-10-03 02:04:42  NM-FS01  FileAudit  FileRename  C:\\Shares\\Financien\\salarissen.xlsx -> salarissen.xlsx.kryptlock
+2026-10-03 02:04:42  NM-FS01  FileAudit  FileRename  C:\\Shares\\HR\\contracten.docx -> contracten.docx.kryptlock
+2026-10-03 02:04:43  NM-FS01  FileAudit  FileRename  C:\\Shares\\HR\\verzuim.xlsx -> verzuim.xlsx.kryptlock
+2026-10-03 02:04:43  NM-FS01  FileAudit  FileRename  C:\\Shares\\Projecten\\offerte.pdf -> offerte.pdf.kryptlock
+2026-10-03 02:04:44  NM-FS01  FileAudit  FileRename  C:\\Shares\\Projecten\\planning.xlsx -> planning.xlsx.kryptlock
+2026-10-03 02:04:58  NM-FS01  FileAudit  FileCreate  C:\\Shares\\Financien\\LEES_DIT_HERSTEL.txt
+2026-10-03 02:05:10  NM-FS01  FileAudit  FileCreate  C:\\Shares\\HR\\LEES_DIT_HERSTEL.txt
+2026-10-03 02:05:22  NM-FS01  Sysmon  EventID=3  NetworkConnect  Image=factuur_oktober.pdf.exe  DestinationIp=203.0.113.66  DestinationPort=443
+2026-10-03 02:06:00  NM-FS01  EDR  ALERT  Severity=HIGH  Detection=Behavior.MassFileEncrypt  Process=factuur_oktober.pdf.exe  Files=1284
+2026-10-03 02:06:05  NM-FS01  EDR  ACTION  Host-Isolation=ENABLED  Reason=automatic-containment
 `;
 
 CS.registerRoom({
@@ -178,7 +178,7 @@ CS.registerRoom({
       content: `
         <p>Tijd voor de praktijk van de DETECT-functie. Hieronder zie je een tijdlijn uit de <strong>EDR</strong>
         (Endpoint Detection and Response: beveiligingssoftware op een werkplek/server die processen en
-        bestandsacties bewaakt) van bestandsserver <code>JVT-FS01</code>. Er is iets grondig mis. Gebruik het filter
+        bestandsacties bewaakt) van bestandsserver <code>NM-FS01</code>. Er is iets grondig mis. Gebruik het filter
         van de viewer om het verhaal te reconstrueren.</p>
 
         <h3>Het patroon van ransomware</h3>
@@ -193,7 +193,7 @@ CS.registerRoom({
           <em>volume shadow copies</em> (schaduwkopieen) van Windows. Ook <code>wbadmin</code> en <code>bcdedit</code>
           worden misbruikt om herstel onmogelijk te maken.</li>
           <li><strong>Versleutelen.</strong> Daarna hernoemt en versleutelt ze massaal bestanden. Filter op
-          <code>jvtlock</code>: alle bestanden krijgen die extensie. Er verschijnt ook overal een losgeldbrief
+          <code>kryptlock</code>: alle bestanden krijgen die extensie. Er verschijnt ook overal een losgeldbrief
           (filter op <code>LEES_DIT_HERSTEL</code>).</li>
           <li><strong>Detectie en containment.</strong> De EDR herkent het gedrag, slaat alarm en isoleert
           automatisch de host.</li>
@@ -202,7 +202,7 @@ CS.registerRoom({
         <div class="callout tip">
           <strong>Filtertip:</strong> filter op <code>ALERT</code> om meteen naar de twee EDR-meldingen te springen.
           De eerste alert (<code>Detection=Ransom.Generic.Locker</code>) heeft een <code>incident-tag</code>: daarin
-          staat de vlag. Filter daarna eens op <code>vssadmin</code> en op <code>.jvtlock</code> om te zien wat er
+          staat de vlag. Filter daarna eens op <code>vssadmin</code> en op <code>.kryptlock</code> om te zien wat er
           gebeurde.
         </div>
 
@@ -211,21 +211,21 @@ CS.registerRoom({
       `,
       lab: {
         type: "logs",
-        title: "EDR-tijdlijn — JVT-FS01 (bestandsserver)",
+        title: "EDR-tijdlijn — NM-FS01 (bestandsserver)",
         lines: EDR_LOG,
       },
       questions: [
         { q: "Welk verdacht bestand werd uitgevoerd dat zich voordeed als een PDF?", answer: ["factuur_oktober.pdf.exe", "factuur_oktober.pdf.exe"], hint: "Let op de dubbele extensie; het eindigt niet op .pdf maar op .exe.", explain: "factuur_oktober.pdf.exe is een programma vermomd als PDF: de dubbele extensie is een klassieke truc." },
         { q: "Welk commando wiste de schaduwkopieen (volume shadow copies) om herstel te saboteren?", answer: ["vssadmin delete shadows /all /quiet", "vssadmin", "vssadmin.exe delete shadows /all /quiet"], hint: "Filter op vssadmin.", explain: "'vssadmin.exe delete shadows /all /quiet' verwijdert de Windows-schaduwkopieen, zodat lokaal terugdraaien niet meer kan." },
-        { q: "Welke extensie kregen de versleutelde bestanden?", answer: [".jvtlock", "jvtlock"], hint: "Filter op jvtlock.", explain: "Alle bestanden werden hernoemd naar ...jvtlock: het kenmerk van deze ransomware." },
-        { q: "Wat is de vlag in de incident-tag van de eerste EDR-alert?", answer: ["JVT{schaduwkopieen_gewist}"], hint: "Filter op ALERT en lees de incident-tag bij Ransom.Generic.Locker.", explain: "De EDR tagde het incident: JVT{schaduwkopieen_gewist}." },
+        { q: "Welke extensie kregen de versleutelde bestanden?", answer: [".kryptlock", "kryptlock"], hint: "Filter op kryptlock.", explain: "Alle bestanden werden hernoemd naar ...kryptlock: het kenmerk van deze ransomware." },
+        { q: "Wat is de vlag in de incident-tag van de eerste EDR-alert?", answer: ["NM{schaduwkopieen_gewist}"], hint: "Filter op ALERT en lees de incident-tag bij Ransom.Generic.Locker.", explain: "De EDR tagde het incident: NM{schaduwkopieen_gewist}." },
       ],
     },
 
     {
       title: "Taak 5 — Containment, eradication en recovery",
       content: `
-        <p>Je hebt de ransomware op <code>JVT-FS01</code> gedetecteerd en geanalyseerd. Nu het echte werk van de
+        <p>Je hebt de ransomware op <code>NM-FS01</code> gedetecteerd en geanalyseerd. Nu het echte werk van de
         RESPOND- en RECOVER-functies. We lopen de stappen langs met concrete do's en don'ts.</p>
 
         <h3>1. Containment — stop de verspreiding</h3>
@@ -281,7 +281,7 @@ CS.registerRoom({
 
         <h3>1. Datalek? Melden bij de Autoriteit Persoonsgegevens</h3>
         <p>Zijn er <strong>persoonsgegevens</strong> gelekt, vernietigd of ingezien (zoals de HR- en
-        salarisbestanden op <code>JVT-FS01</code>), dan is er sprake van een <strong>datalek</strong>. Onder de
+        salarisbestanden op <code>NM-FS01</code>), dan is er sprake van een <strong>datalek</strong>. Onder de
         <strong>AVG</strong> (Algemene verordening gegevensbescherming; Engels: GDPR) moet je zo'n datalek in beginsel
         <strong>binnen 72 uur</strong> melden bij de <strong>Autoriteit Persoonsgegevens</strong> (AP), tenzij het
         waarschijnlijk geen risico voor de betrokkenen oplevert. Is het risico voor de betrokkenen hoog, dan moet je

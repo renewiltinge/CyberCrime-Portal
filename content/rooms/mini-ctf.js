@@ -18,7 +18,7 @@ CS.registerRoom({
   ],
   terms: [
     { term: 'CTF', def: 'Capture The Flag: een spel waarin je beveiligingsuitdagingen oplost en "vlaggen" (geheime codes) verzamelt.' },
-    { term: 'Vlag (flag)', def: 'Een unieke code die bewijst dat je een uitdaging hebt opgelost, hier in het formaat JVT{...}.' },
+    { term: 'Vlag (flag)', def: 'Een unieke code die bewijst dat je een uitdaging hebt opgelost, hier in het formaat NM{...}.' },
     { term: 'Enumeratie', def: 'Systematisch in kaart brengen wat er draait: poorten, diensten, gebruikers, bestanden.' },
     { term: 'Exploit', def: 'Een techniek of stukje code dat een kwetsbaarheid daadwerkelijk misbruikt.' },
     { term: 'Pivot', def: 'Van het ene gekraakte systeem verder springen naar het volgende.' },
@@ -35,7 +35,7 @@ CS.registerRoom({
       content: `
         <p>Welkom bij je eindproef. <strong>KoffieKlap B.V.</strong> (volledig fictief) heeft je ingehuurd omdat ze vermoeden dat hun systemen niet op orde zijn. Je hebt <em>schriftelijke toestemming</em> om hun testomgeving <code>10.10.60.0/24</code> te onderzoeken — en dat is cruciaal: zonder die toestemming zou alles wat je hierna doet strafbaar zijn (art. 138ab Sr, computervredebreuk).</p>
         <div class="callout danger"><strong>Ethiek, nog één keer:</strong> alle technieken in deze CTF oefen je in dit afgeschermde lab of op systemen waarvoor je uitdrukkelijk toestemming hebt. Nooit daarbuiten.</div>
-        <p>Je verzamelt in de komende taken <strong>zes vlaggen</strong>. Elke vlag heeft het formaat <code>JVT{...}</code>. Je gebruikt alles uit de eerdere rooms: verkenning, webhacking, cryptografie, wachtwoorden kraken, logs lezen en de Linux-terminal.</p>
+        <p>Je verzamelt in de komende taken <strong>zes vlaggen</strong>. Elke vlag heeft het formaat <code>NM{...}</code>. Je gebruikt alles uit de eerdere rooms: verkenning, webhacking, cryptografie, wachtwoorden kraken, logs lezen en de Linux-terminal.</p>
         <p>Een goede analist houdt een <strong>write-up</strong> bij: noteer per stap wat je deed en wat je vond. Dat is precies hoe je in het echt rapporteert aan een klant. Pak er desnoods kladpapier bij.</p>
         <div class="callout tip"><strong>Tip:</strong> lees bij elke taak eerst rustig wat er gevraagd wordt, en gebruik de hints als je vastloopt. Vastlopen hoort erbij — doorzetten is de belangrijkste hackersvaardigheid.</div>
       `,
@@ -67,7 +67,7 @@ PORT     STATE SERVICE VERSION
 22/tcp   open  ssh     OpenSSH 8.2p1 Ubuntu
 80/tcp   open  http    Apache httpd 2.4.41
 8080/tcp open  http    Apache Tomcat 9.0.30
-|_http-title: KoffieKlap beheer - JVT{poorten_in_kaart}
+|_http-title: KoffieKlap beheer - NM{poorten_in_kaart}
 
 Service detection performed.
 Nmap done: 1 IP address (1 host up) scanned in 7.21 seconds`,
@@ -81,7 +81,7 @@ Tip: gebruik -sV voor versies en titels.`,
         },
       },
       questions: [
-        { q: 'Welke vlag staat in de http-title van de dienst op poort 8080?', answer: 'JVT{poorten_in_kaart}', hint: 'Draai "nmap -sV 10.10.60.42" en lees de |_http-title regel.', explain: 'De -sV-scan toont de titel van de Tomcat-webapp, met de vlag erin.' },
+        { q: 'Welke vlag staat in de http-title van de dienst op poort 8080?', answer: 'NM{poorten_in_kaart}', hint: 'Draai "nmap -sV 10.10.60.42" en lees de |_http-title regel.', explain: 'De -sV-scan toont de titel van de Tomcat-webapp, met de vlag erin.' },
         { q: 'Welke dienst (met versie) draait er op poort 8080?', answer: ['apache tomcat 9.0.30', 'tomcat 9.0.30', 'apache tomcat', 'tomcat'], hint: 'Kijk in de VERSION-kolom bij 8080/tcp.', explain: 'Apache Tomcat 9.0.30 — een Java-webserver.' },
       ],
     },
@@ -95,10 +95,10 @@ Tip: gebruik -sV voor versies en titels.`,
       `,
       lab: {
         type: 'sqli',
-        flag: 'JVT{sql_injectie_werkt}',
+        flag: 'NM{sql_injectie_werkt}',
       },
       questions: [
-        { q: 'Welke vlag krijg je als je als admin bent ingelogd?', answer: 'JVT{sql_injectie_werkt}', hint: 'Log met injectie in als admin; de vlag verschijnt bij adminrechten.', explain: 'Met bijvoorbeeld admin\' -- omzeil je de wachtwoordcontrole en krijg je adminrechten + de vlag.' },
+        { q: 'Welke vlag krijg je als je als admin bent ingelogd?', answer: 'NM{sql_injectie_werkt}', hint: 'Log met injectie in als admin; de vlag verschijnt bij adminrechten.', explain: 'Met bijvoorbeeld admin\' -- omzeil je de wachtwoordcontrole en krijg je adminrechten + de vlag.' },
         { q: 'Welke invoer bij gebruikersnaam logt je in als admin (zonder wachtwoord te weten)?', answer: ["admin' --", "admin'--", "admin' -- ", "' or '1'='1", "' or '1'='1' --"], hint: 'Of je commentarieert de rest weg (--), of je maakt de voorwaarde altijd waar (OR 1=1).', explain: 'admin\' -- sluit de gebruikersnaam-string en commentarieert de wachtwoordcheck weg. De query vindt dan simpelweg de admin-rij.' },
         { q: 'Wat is de juiste structurele fix tegen SQL-injectie?', options: ['Langere wachtwoorden eisen', 'Prepared statements / geparametriseerde queries', 'De foutmeldingen verbergen', 'HTTPS gebruiken'], answer: 1, explain: 'Prepared statements scheiden code van data, zodat invoer nooit als SQL wordt uitgevoerd.' },
       ],
@@ -108,17 +108,17 @@ Tip: gebruik -sV voor versies en titels.`,
       content: `
         <p>In het beheerpaneel vind je een "beveiligde" notitie. De beheerder dacht slim te zijn en heeft hem "versleuteld" — maar in werkelijkheid is het alleen maar <em>gecodeerd</em>. Jij weet inmiddels dat codering geen bescherming is.</p>
         <p>De notitie luidt:</p>
-        <pre><code>V0lHe3Bsb3JlcHVyc194bnpjdmJyYX0=</code></pre>
+        <pre><code>QVp7cGxvcmVwdXJzX3huemN2YnJhfQ==</code></pre>
         <p>Dat eindigt op een <code>=</code> — een sterke aanwijzing voor <strong>Base64</strong>. Maar als je het decodeert, krijg je nog geen leesbare vlag: er is een tweede laag. De letters zijn ook nog verschoven (denk aan ROT13 uit de cryptografie-room).</p>
         <p>Gebruik CyberChef hieronder: bouw een recept dat <strong>eerst Base64 decodeert en daarna ROT13</strong> toepast. De invoer staat er al in.</p>
         <div class="callout tip"><strong>Aanpak:</strong> klik op "Base64 decoderen", dan op "ROT13". Zie je de vlag verschijnen in de uitvoer?</div>
       `,
       lab: {
         type: 'cyberchef',
-        input: 'V0lHe3Bsb3JlcHVyc194bnpjdmJyYX0=',
+        input: 'QVp7cGxvcmVwdXJzX3huemN2YnJhfQ==',
       },
       questions: [
-        { q: 'Wat is de vlag na Base64-decoderen + ROT13?', answer: 'JVT{cyberchef_kampioen}', encoded: true, hint: 'Recept: eerst "Base64 decoderen", dan "ROT13".', explain: 'Base64 was de eerste laag, ROT13 de tweede. Twee lagen codering zijn nog steeds geen encryptie.' },
+        { q: 'Wat is de vlag na Base64-decoderen + ROT13?', answer: 'NM{cyberchef_kampioen}', encoded: true, hint: 'Recept: eerst "Base64 decoderen", dan "ROT13".', explain: 'Base64 was de eerste laag, ROT13 de tweede. Twee lagen codering zijn nog steeds geen encryptie.' },
         { q: 'Waarom is dit géén echte versleuteling?', options: ['Omdat er geen geheime sleutel nodig is om het terug te draaien', 'Omdat het te kort is', 'Omdat Base64 verboden is', 'Dat is het wel'], answer: 0, explain: 'Codering (Base64, ROT13) is omkeerbaar zonder sleutel. Echte encryptie vereist een geheime sleutel.' },
       ],
     },
@@ -168,7 +168,7 @@ Oct  2 03:11:33 koffieklap sshd[2051]: Accepted password for koffie from 198.51.
 Oct  2 03:11:33 koffieklap sshd[2051]: pam_unix(sshd:session): session opened for user koffie
 Oct  2 03:12:01 koffieklap sshd[2051]: koffie : TTY=pts/0 ; PWD=/home/koffie ; USER=root ; COMMAND=/bin/bash
 Oct  2 03:12:40 koffieklap CRON[2088]: pam_unix(cron:session): session opened for user root
-Oct  2 03:14:02 koffieklap sshd[2051]: # notitie van de aanvaller: JVT{brute_force_in_de_logs}
+Oct  2 03:14:02 koffieklap sshd[2051]: # notitie van de aanvaller: NM{brute_force_in_de_logs}
 Oct  2 07:45:10 koffieklap sshd[3301]: Accepted password for jan from 10.10.60.9 port 44122 ssh2
 Oct  2 08:02:55 koffieklap sshd[3340]: Accepted publickey for fatima from 10.10.60.12 port 44580 ssh2
 Oct  2 09:15:19 koffieklap sudo:   jan : TTY=pts/1 ; PWD=/home/jan ; USER=root ; COMMAND=/usr/bin/apt update`,
@@ -176,7 +176,7 @@ Oct  2 09:15:19 koffieklap sudo:   jan : TTY=pts/1 ; PWD=/home/jan ; USER=root ;
       questions: [
         { q: 'Vanaf welk IP-adres kwam de brute-force-aanval (en de geslaagde login)?', answer: '198.51.100.7', hint: 'Filter op "Failed password" — één IP herhaalt zich tientallen keren, en komt ook terug bij "Accepted".', explain: 'Alle mislukte pogingen én de geslaagde login op gebruiker "koffie" komen van 198.51.100.7.' },
         { q: 'Welk account werd uiteindelijk succesvol gekraakt?', answer: 'koffie', hint: 'Zoek op "Accepted password" vanaf het aanvaller-IP.', explain: 'Na vele pogingen lukte "Accepted password for koffie". Daarna werd zelfs root benaderd.' },
-        { q: 'Welke vlag liet de aanvaller achter in het logbestand?', answer: 'JVT{brute_force_in_de_logs}', hint: 'Filter op "JVT" of lees de regel rond 03:14.', explain: 'In een commentaarregel kort na de inbraak staat de vlag.' },
+        { q: 'Welke vlag liet de aanvaller achter in het logbestand?', answer: 'NM{brute_force_in_de_logs}', hint: 'Filter op "NM" of lees de regel rond 03:14.', explain: 'In een commentaarregel kort na de inbraak staat de vlag.' },
       ],
     },
     {
@@ -186,7 +186,7 @@ Oct  2 09:15:19 koffieklap sudo:   jan : TTY=pts/1 ; PWD=/home/jan ; USER=root ;
         <p>Werk systematisch:</p>
         <ol>
           <li>Kijk welke bestanden er staan, <strong>ook de verborgen</strong>: <code>ls -a</code></li>
-          <li>Zoek door de hele thuismap naar iets verdachts, bv.: <code>grep -r JVT /home/koffie</code></li>
+          <li>Zoek door de hele thuismap naar iets verdachts, bv.: <code>grep -r NM /home/koffie</code></li>
           <li>Vind je een <code>.b64</code>-bestand? Decodeer het: <code>cat /home/koffie/.verborgen/buit.b64 | base64 -d</code></li>
         </ol>
         <div class="callout tip"><strong>Onthoud:</strong> <code>-a</code> toont verborgen bestanden (die met een punt beginnen), <code>grep -r</code> zoekt recursief in alle bestanden, en <code>base64 -d</code> decodeert. Precies de gereedschappen uit de Linux-room.</div>
@@ -199,14 +199,14 @@ Oct  2 09:15:19 koffieklap sudo:   jan : TTY=pts/1 ; PWD=/home/jan ; USER=root ;
         fs: {
           '/home/koffie/welkom.txt': 'Welkom op de KoffieKlap-server.\nNiets bijzonders hier te zien... of toch?\n',
           '/home/koffie/.bash_history': 'ls\ncd .verborgen\ncat buit.b64\nbase64 -d buit.b64\nclear\n',
-          '/home/koffie/.verborgen/buit.b64': 'SlZUe2Rvam9fdm9sdG9vaWR9\n',
+          '/home/koffie/.verborgen/buit.b64': 'Tk17ZG9qb192b2x0b29pZH0=\n',
           '/home/koffie/.verborgen/leesmij.txt': 'Als je dit leest, ben je verder gekomen dan de meesten.\nDe echte buit staat in buit.b64 — decodeer hem.\n',
           '/home/koffie/documenten/factuur.txt': 'Factuur 2026-0442 — 3 zakken koffiebonen.\n',
         },
         denied: ['/root', '/etc/shadow'],
       },
       questions: [
-        { q: 'Wat is de laatste vlag (na base64-decoderen van het verborgen bestand)?', answer: 'JVT{dojo_voltooid}', encoded: true, hint: 'ls -a → cd .verborgen → cat buit.b64 | base64 -d (of base64 -d /home/koffie/.verborgen/buit.b64).', explain: 'SlZUe2Rvam9fdm9sdG9vaWR9 is Base64 voor JVT{dojo_voltooid}. Je hebt alle zes vlaggen!' },
+        { q: 'Wat is de laatste vlag (na base64-decoderen van het verborgen bestand)?', answer: 'NM{dojo_voltooid}', encoded: true, hint: 'ls -a → cd .verborgen → cat buit.b64 | base64 -d (of base64 -d /home/koffie/.verborgen/buit.b64).', explain: 'Tk17ZG9qb192b2x0b29pZH0= is Base64 voor NM{dojo_voltooid}. Je hebt alle zes vlaggen!' },
         { q: 'Welk commando toont ook verborgen bestanden (die met een punt beginnen)?', answer: ['ls -a', 'ls -la', 'ls -al', 'ls --all'], hint: 'Een vlag bij ls.', explain: 'ls -a toont alle bestanden, inclusief de verborgen (dotfiles).' },
         { q: 'Ik heb alle zes vlaggen gevonden en de Mini-CTF voltooid. 🏆', noAnswer: true },
       ],
