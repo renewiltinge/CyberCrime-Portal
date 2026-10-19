@@ -355,10 +355,10 @@
           const inp = el('input', { type: 'text', value: step.argVal, style: 'width:70px;margin-left:6px;padding:2px 6px;font-size:.78rem', oninput: (e) => { step.argVal = e.target.value; compute(); } });
           chip.append(inp);
         }
-        chip.append(el('span', { text: '  ✕', style: 'cursor:pointer;color:var(--bad)', onclick: (e) => { e.stopPropagation(); recipe.splice(i, 1); renderRecipe(); compute(); } }));
+        chip.append(el('span', { text: '  ×', title: 'Stap verwijderen', style: 'cursor:pointer;color:var(--muted)', onclick: (e) => { e.stopPropagation(); recipe.splice(i, 1); renderRecipe(); compute(); } }));
         recipeBox.append(chip);
       });
-      recipeBox.append(el('span', { class: 'chip', text: '🗑 Wissen', onclick: () => { recipe.length = 0; renderRecipe(); compute(); } }));
+      recipeBox.append(el('span', { class: 'chip', text: 'Wissen', onclick: () => { recipe.length = 0; renderRecipe(); compute(); } }));
     }
     function compute() {
       let s = input.value;
@@ -390,8 +390,8 @@
     let mode = 'dict';
     const modeRow = el('div', { class: 'chip-row', style: 'margin-top:10px' });
     const dictPane = el('div', {}), bfPane = el('div', { class: 'hide' });
-    const mDict = el('span', { class: 'chip on', text: '📖 Woordenlijst' });
-    const mBf = el('span', { class: 'chip', text: '🔡 Brute-force (masker)' });
+    const mDict = el('span', { class: 'chip on', text: 'Woordenlijst' });
+    const mBf = el('span', { class: 'chip', text: 'Brute-force (masker)' });
     mDict.addEventListener('click', () => { mode = 'dict'; mDict.classList.add('on'); mBf.classList.remove('on'); dictPane.classList.remove('hide'); bfPane.classList.add('hide'); });
     mBf.addEventListener('click', () => { mode = 'bf'; mBf.classList.add('on'); mDict.classList.remove('on'); bfPane.classList.remove('hide'); dictPane.classList.add('hide'); });
     modeRow.append(mDict, mBf);
@@ -454,19 +454,19 @@
     lenSel.addEventListener('change', bfInfo);
 
     wrap.append(dictPane, bfPane);
-    const runBtn = el('button', { class: 'btn primary', text: '▶ Start kraken', style: 'margin-top:12px' });
+    const runBtn = el('button', { class: 'btn primary', text: 'Start kraken', style: 'margin-top:12px' });
     const stat = el('div', { class: 'found-note', style: 'margin-top:8px' });
     const result = el('div', { class: 'lab-out', style: 'margin-top:8px' });
     wrap.append(runBtn, stat, result);
 
     let running = false;
     function finish(found, cand, tried, t0) {
-      running = false; runBtn.disabled = false; runBtn.textContent = '▶ Start kraken';
+      running = false; runBtn.disabled = false; runBtn.textContent = 'Start kraken';
       const secs = Math.max((performance.now() - t0) / 1000, 0.001);
       stat.textContent = tried.toLocaleString('nl-NL') + ' pogingen · ' + Math.round(tried / secs).toLocaleString('nl-NL') + ' hashes/s · ' + secs.toFixed(1) + 's';
       result.innerHTML = '';
-      if (found != null) result.append(el('div', { html: '<strong>🔓 Gekraakt! Wachtwoord: <code>' + esc(found) + '</code></strong>', style: 'color:var(--good)' }));
-      else result.append(el('div', { text: '✗ Niet gekraakt binnen de geprobeerde kandidaten. Kies een grotere lijst, zet regels aan, of verleng het masker.', style: 'color:var(--bad)' }));
+      if (found != null) result.append(el('div', { html: '<strong>Gekraakt! Wachtwoord: <code>' + esc(found) + '</code></strong>', style: 'color:var(--good)' }));
+      else result.append(el('div', { text: 'Niet gekraakt binnen de geprobeerde kandidaten. Kies een grotere lijst, zet regels aan, of verleng het masker.', style: 'color:var(--bad)' }));
     }
     runBtn.addEventListener('click', () => {
       if (running) return; running = true; runBtn.disabled = true; runBtn.textContent = '… bezig';
@@ -477,7 +477,7 @@
       if (mode === 'dict') { gen = candidates(); }
       else {
         const cs = bfCharset();
-        if (!cs) { running = false; runBtn.disabled = false; runBtn.textContent = '▶ Start kraken'; result.append(el('div', { class: 'callout warn', text: 'Kies minstens één tekenset.' })); return; }
+        if (!cs) { running = false; runBtn.disabled = false; runBtn.textContent = 'Start kraken'; result.append(el('div', { class: 'callout warn', text: 'Kies minstens één tekenset.' })); return; }
         const L = +lenSel.value;
         gen = (function* () {
           const idx = [];
@@ -554,7 +554,7 @@
       if (!inp.value.trim()) return;
       const res = identify(inp.value);
       res.forEach(([name, note, strong]) => {
-        out.append(el('div', { class: 'callout ' + (strong ? 'tip' : 'info'), html: '<strong>' + esc(name) + '</strong>' + (strong ? ' 🛡️ <em>(traag / gesalt — moeilijk te kraken)</em>' : '') + '<br>' + esc(note) }));
+        out.append(el('div', { class: 'callout ' + (strong ? 'tip' : 'info'), html: '<strong>' + esc(name) + '</strong>' + (strong ? ' <em>(traag / gesalt — moeilijk te kraken)</em>' : '') + '<br>' + esc(note) }));
       });
       out.append(el('div', { class: 'found-note', text: 'Lengte: ' + inp.value.trim().length + ' tekens. Let op: lengte alleen is niet bewijzend — meerdere functies delen dezelfde lengte.' }));
     }
@@ -603,9 +603,9 @@
         const rows = [];
         for (let n = 0; n <= 25; n++) { const dec = shiftText(s, (26 - n) % 26); rows.push({ n, dec, sc: score(dec) }); }
         const best = rows.slice().sort((a, b) => b.sc - a.sc)[0];
-        out.append(el('div', { class: 'callout tip', html: '🔓 <strong>Beste gok: ROT' + best.n + '</strong> (verschuiving ' + best.n + ')<br><code>' + esc(best.dec.slice(0, 160)) + '</code>' }));
+        out.append(el('div', { class: 'callout tip', html: '<strong>Beste gok: ROT' + best.n + '</strong> (verschuiving ' + best.n + ')<br><code>' + esc(best.dec.slice(0, 160)) + '</code>' }));
         const box = el('div', { class: 'logview', style: 'max-height:260px' });
-        rows.forEach((r) => { const ln = el('div', { class: 'ln' }); ln.append(el('span', { class: 'n', text: 'ROT' + r.n }), el('span', { text: r.dec, style: r === best ? 'color:#8ec7ab' : '' })); box.append(ln); });
+        rows.forEach((r) => { const ln = el('div', { class: 'ln' }); ln.append(el('span', { class: 'n', text: 'ROT' + r.n }), el('span', { text: r.dec, style: r === best ? 'color:var(--syn-key)' : '' })); box.append(ln); });
         out.append(box);
       } else if (method === 'xor') {
         const bytes = []; const u = unescape(encodeURIComponent(s)); for (let i = 0; i < u.length; i++) bytes.push(u.charCodeAt(i) & 0xff);
@@ -615,7 +615,7 @@
         const cands = [];
         for (let k = 0; k < 256; k++) { const dec = data.map((b) => String.fromCharCode(b ^ k)).join(''); cands.push({ k, dec, sc: score(dec) }); }
         cands.sort((a, b) => b.sc - a.sc);
-        out.append(el('div', { class: 'callout tip', html: '🔓 <strong>Beste sleutel: 0x' + cands[0].k.toString(16).padStart(2, '0') + ' (' + cands[0].k + ')</strong><br><code>' + esc(cands[0].dec.slice(0, 160)) + '</code>' }));
+        out.append(el('div', { class: 'callout tip', html: '<strong>Beste sleutel: 0x' + cands[0].k.toString(16).padStart(2, '0') + ' (' + cands[0].k + ')</strong><br><code>' + esc(cands[0].dec.slice(0, 160)) + '</code>' }));
         out.append(el('label', { text: 'Top 6 kandidaten' }));
         const box = el('div', { class: 'logview', style: 'max-height:200px' });
         cands.slice(0, 6).forEach((c) => { const ln = el('div', { class: 'ln' }); ln.append(el('span', { class: 'n', text: '0x' + c.k.toString(16).padStart(2, '0') }), el('span', { text: c.dec.slice(0, 120) })); box.append(ln); });
@@ -743,8 +743,8 @@
 
       nav.innerHTML = '';
       nav.append(
-        el('button', { class: 'btn', text: '🚩 Dit is phishing', onclick: () => verdict(true) }),
-        el('button', { class: 'btn', text: '✅ Dit is legitiem', onclick: () => verdict(false) }),
+        el('button', { class: 'btn', text: 'Dit is phishing', onclick: () => verdict(true) }),
+        el('button', { class: 'btn', text: 'Dit is legitiem', onclick: () => verdict(false) }),
         el('span', { class: 'found-note', text: 'E-mail ' + (idx + 1) + '/' + emails.length }),
       );
     }
@@ -752,12 +752,12 @@
     function flag(node, reason) {
       if (flagged.has(node)) return;
       flagged.add(node); node.classList.add('flagged'); found++;
-      CS.toast('🔍 Rode vlag gevonden', reason);
+      CS.toast('Rode vlag gevonden', reason);
     }
     function verdict(saysPhish) {
       const m = emails[idx];
       const correct = saysPhish === !!m.phishing;
-      CS.toast(correct ? '✓ Klopt!' : '✗ Mis', (m.phishing ? 'Dit WAS phishing. ' : 'Dit was legitiem. ') + (m.phishing ? 'Rode vlaggen gevonden: ' + found : ''));
+      CS.toast(correct ? 'Klopt!' : 'Mis', (m.phishing ? 'Dit WAS phishing. ' : 'Dit was legitiem. ') + (m.phishing ? 'Rode vlaggen gevonden: ' + found : ''));
       if (idx < emails.length - 1) { idx++; found = 0; render(); }
       else { box.innerHTML = ''; box.append(el('div', { class: 'callout tip', html: '<strong>Klaar!</strong> Je hebt alle ' + emails.length + ' mails beoordeeld. Onthoud de rode vlaggen: afzenderadres, haast/dreiging, vreemde links, onpersoonlijke aanhef, en verzoeken om gegevens.' })); nav.innerHTML = ''; }
     }
@@ -825,7 +825,7 @@
     left.append(el('label', { text: 'Headers (één per regel, "Naam: waarde")' }), headersArea);
     const bodyArea = el('textarea', { rows: '2', spellcheck: 'false' }); bodyArea.value = (cfg.start && cfg.start.body) || '';
     left.append(el('label', { text: 'Body (voor POST/PUT)' }), bodyArea);
-    left.append(el('button', { class: 'btn primary', text: '➤ Verstuur verzoek', style: 'margin-top:10px', onclick: send }));
+    left.append(el('button', { class: 'btn primary', text: 'Verstuur verzoek', style: 'margin-top:10px', onclick: send }));
 
     const respBox = el('div', { class: 'lab-out resp', style: 'min-height:120px' });
     right.append(el('label', { text: 'Antwoord van server' }), respBox);
@@ -880,7 +880,7 @@
     const queryView = el('div', { class: 'sqlquery' });
     wrap.append(el('label', { text: 'Query die de server uitvoert:' }), queryView);
     const result = el('div', { class: 'lab-out' });
-    wrap.append(el('button', { class: 'btn primary', text: '🔑 Inloggen', style: 'margin:10px 0', onclick: attempt }), result);
+    wrap.append(el('button', { class: 'btn primary', text: 'Inloggen', style: 'margin:10px 0', onclick: attempt }), result);
 
     function sqlEsc(s) { return s.replace(/'/g, "''"); }
     function updateQuery() {
@@ -906,10 +906,10 @@
       result.innerHTML = '';
       if (matched.length) {
         const asAdmin = matched.some((m) => m.role === 'admin');
-        result.append(el('div', { html: '<strong style="color:var(--good)">✓ Ingelogd als ' + esc(matched[0].username) + ' (' + matched[0].role + ')</strong>' }));
-        if (asAdmin) result.append(el('div', { html: '🏴 Admin-toegang! Vlag: <code>' + esc(flag) + '</code>', style: 'margin-top:6px;color:var(--good)' }));
+        result.append(el('div', { html: '<strong style="color:var(--good)">Ingelogd als ' + esc(matched[0].username) + ' (' + matched[0].role + ')</strong>' }));
+        if (asAdmin) result.append(el('div', { html: 'Admin-toegang! Vlag: <code>' + esc(flag) + '</code>', style: 'margin-top:6px;color:var(--good)' }));
       } else {
-        result.append(el('div', { text: '✗ Ongeldige gebruikersnaam of wachtwoord.', style: 'color:var(--bad)' }));
+        result.append(el('div', { text: 'Ongeldige gebruikersnaam of wachtwoord.', style: 'color:var(--bad)' }));
       }
     }
     // zeer kleine "SQL"-evaluator die ' OR '1'='1 en -- comments begrijpt
@@ -963,7 +963,7 @@
     wrap.append(outp);
     wrap.append(el('hr', { style: 'border:0;border-top:1px solid var(--border);margin:14px 0' }));
     const quiz = el('div', {});
-    wrap.append(el('button', { class: 'btn small', text: '🎲 Geef me een oefenvraag', onclick: newQ }), quiz);
+    wrap.append(el('button', { class: 'btn small', text: 'Geef me een oefenvraag', onclick: newQ }), quiz);
 
     function parse(s) {
       const m = s.trim().match(/^(\d+)\.(\d+)\.(\d+)\.(\d+)\/(\d+)$/);
@@ -1004,7 +1004,7 @@
       const a = el('input', { type: 'text', placeholder: 'jouw antwoord', spellcheck: 'false' });
       const fb = el('div', { class: 'found-note' });
       quiz.append(el('div', { class: 'ans-row' }, [a, el('button', { class: 'btn small primary', text: 'Check', onclick: () => {
-        fb.textContent = a.value.trim() === answer ? '✓ Correct!' : '✗ Het juiste antwoord is ' + answer;
+        fb.textContent = a.value.trim() === answer ? 'Correct!' : 'Fout. Het juiste antwoord is ' + answer;
         fb.style.color = a.value.trim() === answer ? 'var(--good)' : 'var(--bad)';
       } })]), fb);
     }
@@ -1030,15 +1030,15 @@
       const ascii = row.map((b) => (b >= 0x20 && b <= 0x7e) ? String.fromCharCode(b) : '.').join('');
       const line = el('div', { class: 'ln' });
       line.append(
-        el('span', { style: 'color:#7f8db5;flex:none', text: off.toString(16).padStart(8, '0') }),
-        el('span', { style: 'color:#8ec7ab;white-space:pre', text: ' ' + hexPad + ' ' }),
-        el('span', { style: 'color:#d6e2ff;white-space:pre', text: ascii }),
+        el('span', { style: 'color:var(--syn-dim);flex:none', text: off.toString(16).padStart(8, '0') }),
+        el('span', { style: 'color:var(--syn-key);white-space:pre', text: ' ' + hexPad + ' ' }),
+        el('span', { style: 'color:var(--syn-text);white-space:pre', text: ascii }),
       );
       dump.append(line);
     }
     if (!bytes.length) dump.append(el('div', { text: '(leeg)' }));
     wrap.append(dump);
-    wrap.append(el('details', { html: '<summary>📑 Spiekbrief: veelvoorkomende magic bytes (bestandssignaturen)</summary>' +
+    wrap.append(el('details', { html: '<summary>Spiekbrief: veelvoorkomende magic bytes (bestandssignaturen)</summary>' +
       '<table style="width:100%;font-size:.82rem;margin-top:8px"><thead><tr><th>Bestandstype</th><th>Eerste bytes (hex)</th><th>ASCII</th></tr></thead><tbody>' +
       '<tr><td>PNG-afbeelding</td><td><code>89 50 4E 47 0D 0A 1A 0A</code></td><td>.PNG….</td></tr>' +
       '<tr><td>JPEG-afbeelding</td><td><code>FF D8 FF</code></td><td>ÿØÿ</td></tr>' +
@@ -1078,7 +1078,7 @@
     function render() {
       const f = filter.value.trim();
       table.innerHTML = '';
-      const head = el('div', { class: 'ln', style: 'position:sticky;top:0;background:#141c33;color:#9aa6c8;font-weight:700' });
+      const head = el('div', { class: 'ln', style: 'position:sticky;top:0;background:inherit;color:var(--syn-dim);font-weight:700' });
       head.append(
         el('span', { style: 'flex:none;width:34px', text: '#' }),
         el('span', { style: 'flex:none;width:58px', text: 'tijd' }),
@@ -1094,11 +1094,11 @@
         shown++;
         const row = el('div', { class: 'ln', style: 'cursor:pointer', onclick: () => showDetail(p) });
         row.append(
-          el('span', { style: 'flex:none;width:34px;color:#7f8db5', text: String(p.no) }),
-          el('span', { style: 'flex:none;width:58px;color:#7f8db5', text: String(p.time) }),
+          el('span', { style: 'flex:none;width:34px;color:var(--syn-dim)', text: String(p.no) }),
+          el('span', { style: 'flex:none;width:58px;color:var(--syn-dim)', text: String(p.time) }),
           el('span', { style: 'flex:none;width:112px', text: p.src }),
           el('span', { style: 'flex:none;width:112px', text: p.dst }),
-          el('span', { style: 'flex:none;width:52px;color:#8ec7ab', text: p.proto }),
+          el('span', { style: 'flex:none;width:52px;color:var(--syn-key)', text: p.proto }),
           el('span', { style: 'flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis', text: p.info }),
         );
         table.append(row);
@@ -1187,19 +1187,19 @@
       if (pay) {
         const notes = [];
         ['exp', 'iat', 'nbf', 'auth_time'].forEach((k) => { if (pay[k] != null) notes.push(k + ': ' + pay[k] + human(pay[k])); });
-        if (pay.exp != null) { const expd = Number(pay.exp) * 1000; notes.push(Date.now() > expd ? '⏰ Dit token is VERLOPEN.' : '✓ Nog geldig (exp in de toekomst).'); }
+        if (pay.exp != null) { const expd = Number(pay.exp) * 1000; notes.push(Date.now() > expd ? 'Dit token is VERLOPEN.' : 'Nog geldig (exp in de toekomst).'); }
         if (notes.length) out.append(el('div', { class: 'found-note', html: notes.map(esc).join('<br>') }));
       }
       // waarschuwingen
       const warns = [];
       if (head) {
         const alg = String(head.alg || '').toLowerCase();
-        if (alg === 'none') warns.push('⚠️ alg = "none": dit token heeft geen handtekening. Een server die dit accepteert is ernstig kwetsbaar — de inhoud is dan niet te vertrouwen.');
-        if (alg === 'hs256') warns.push('ℹ️ HS256 gebruikt één gedeeld geheim (symmetrisch). Is dat geheim zwak of gelekt, dan kan iedereen geldige tokens maken.');
+        if (alg === 'none') warns.push({ kind: 'warn', text: 'Let op: alg = "none": dit token heeft geen handtekening. Een server die dit accepteert is ernstig kwetsbaar — de inhoud is dan niet te vertrouwen.' });
+        if (alg === 'hs256') warns.push({ kind: 'info', text: 'HS256 gebruikt één gedeeld geheim (symmetrisch). Is dat geheim zwak of gelekt, dan kan iedereen geldige tokens maken.' });
       }
-      if (pay && pay.exp == null) warns.push('⚠️ Geen exp-claim: dit token verloopt nooit. Dat vergroot de schade bij diefstal.');
-      if (parts.length === 2 || !parts[2]) warns.push('⚠️ Geen handtekening aanwezig.');
-      warns.forEach((w) => out.append(el('div', { class: 'callout ' + (w[0] === '⚠' ? 'warn' : 'info'), text: w })));
+      if (pay && pay.exp == null) warns.push({ kind: 'warn', text: 'Let op: geen exp-claim. Dit token verloopt nooit; dat vergroot de schade bij diefstal.' });
+      if (parts.length === 2 || !parts[2]) warns.push({ kind: 'warn', text: 'Let op: geen handtekening aanwezig.' });
+      warns.forEach((w) => out.append(el('div', { class: 'callout ' + w.kind, text: w.text })));
     }
     secBtn.addEventListener('click', () => {
       const parts = input.value.trim().split('.');
@@ -1208,7 +1208,7 @@
       if (!head || String(head.alg).toLowerCase() !== 'hs256') { secOut.textContent = 'Controle werkt hier alleen voor alg=HS256.'; secOut.style.color = 'var(--warn)'; return; }
       const calc = jwtSignHS256(secInp.value, parts[0], parts[1]);
       const ok = calc === parts[2];
-      secOut.textContent = ok ? '✓ Handtekening klopt met dit geheim — het token is authentiek en onveranderd.' : '✗ Handtekening klopt NIET met dit geheim.';
+      secOut.textContent = ok ? 'Handtekening klopt met dit geheim — het token is authentiek en onveranderd.' : 'Handtekening klopt NIET met dit geheim.';
       secOut.style.color = ok ? 'var(--good)' : 'var(--bad)';
     });
     input.addEventListener('input', render);
@@ -1273,7 +1273,7 @@
       }
     }
     [pat, flags, text].forEach((n) => n.addEventListener('input', run));
-    wrap.append(el('details', { html: '<summary>📑 Regex-spiekbrief</summary>' +
+    wrap.append(el('details', { html: '<summary>Regex-spiekbrief</summary>' +
       '<table style="width:100%;font-size:.82rem;margin-top:8px"><tbody>' +
       '<tr><td><code>.</code></td><td>elk teken (behalve nieuwe regel)</td></tr>' +
       '<tr><td><code>\\d \\w \\s</code></td><td>cijfer · woordteken · witruimte (hoofdletter = negatie)</td></tr>' +
@@ -1395,9 +1395,9 @@
     function row(name, d, extra) {
       const f = fmt(d);
       const r = el('div', { class: 'logview', style: 'max-height:none;padding:8px 10px;margin:6px 0' });
-      r.append(el('div', { html: '<strong style="color:#8ec7ab">' + esc(name) + '</strong>' + (extra ? ' <span style="color:#7f8db5">' + esc(extra) + '</span>' : '') }));
-      if (f) { r.append(el('div', { text: f.iso + '  (UTC)' })); if (f.nl) r.append(el('div', { style: 'color:#9aa6c8', text: f.nl + '  (NL)' })); }
-      else r.append(el('div', { style: 'color:#7f8db5', text: '— geen plausibele datum —' }));
+      r.append(el('div', { html: '<strong style="color:var(--syn-key)">' + esc(name) + '</strong>' + (extra ? ' <span style="color:var(--syn-dim)">' + esc(extra) + '</span>' : '') }));
+      if (f) { r.append(el('div', { text: f.iso + '  (UTC)' })); if (f.nl) r.append(el('div', { style: 'color:var(--syn-dim)', text: f.nl + '  (NL)' })); }
+      else r.append(el('div', { style: 'color:var(--syn-dim)', text: '— geen plausibele datum —' }));
       return r;
     }
     const EPOCH_1601 = -11644473600000; // ms vanaf Unix-epoch tot 1601-01-01
@@ -1448,8 +1448,8 @@
     const ta = el('textarea', { rows: '8', spellcheck: 'false' }); ta.value = cfg.text || '';
     wrap.append(ta);
     const btns = el('div', { class: 'chip-row' });
-    const defangBtn = el('span', { class: 'chip', text: '🛡️ Defang (veilig delen)' });
-    const refangBtn = el('span', { class: 'chip', text: '↩️ Refang' });
+    const defangBtn = el('span', { class: 'chip', text: 'Defang (veilig delen)' });
+    const refangBtn = el('span', { class: 'chip', text: 'Refang' });
     btns.append(defangBtn, refangBtn);
     wrap.append(btns);
     const out = el('div', {});
@@ -1564,8 +1564,8 @@
       ];
       const tbl = el('table', { style: 'width:100%;font-size:.84rem' }, el('tbody', {}, rows.map(([k, v]) => el('tr', {}, [el('td', { style: 'color:var(--muted);width:38%', text: k }), el('td', { style: 'font-family:var(--mono);word-break:break-all', text: v })]))));
       box.append(tbl);
-      if (info.flags.length) { const ul = el('ul', { style: 'margin:8px 0 0;padding-left:18px' }); info.flags.forEach((f) => ul.append(el('li', { style: 'color:var(--bad);font-size:.84rem', text: f }))); box.append(el('div', { style: 'margin-top:8px;font-weight:600;color:var(--bad)', text: '🚩 Rode vlaggen (' + info.flags.length + ')' }), ul); }
-      else box.append(el('div', { class: 'found-note', style: 'color:var(--good)', text: '✓ Geen duidelijke rode vlaggen gevonden.' }));
+      if (info.flags.length) { const ul = el('ul', { style: 'margin:8px 0 0;padding-left:18px' }); info.flags.forEach((f) => ul.append(el('li', { style: 'color:var(--bad);font-size:.84rem', text: f }))); box.append(el('div', { style: 'margin-top:8px;font-weight:600;color:var(--bad)', text: 'Rode vlaggen (' + info.flags.length + ')' }), ul); }
+      else box.append(el('div', { class: 'found-note', style: 'color:var(--good)', text: 'Geen duidelijke rode vlaggen gevonden.' }));
       return box;
     }
     function add(raw) { if (!raw.trim()) return; out.insertBefore(card(raw.trim()), out.firstChild); }
@@ -1583,7 +1583,7 @@
     wrap.append(el('label', { text: 'YARA-regel(s)' }));
     const ta = el('textarea', { rows: '12', spellcheck: 'false', style: 'font-size:.82rem' }); ta.value = cfg.rule || '';
     wrap.append(ta);
-    const runBtn = el('button', { class: 'btn primary', text: '▶ Scan bestanden', style: 'margin-top:10px' });
+    const runBtn = el('button', { class: 'btn primary', text: 'Scan bestanden', style: 'margin-top:10px' });
     wrap.append(runBtn);
     const out = el('div', { style: 'margin-top:12px' });
     wrap.append(out);
@@ -1722,7 +1722,7 @@
           const res = r.cond ? evalCondition(r.cond, myCtx) : false;
           const hitStrs = r.strings.filter((s) => myCtx.match[s.id].count > 0);
           const line = el('div', { style: 'margin-top:6px' });
-          line.append(el('span', { style: 'font-weight:700;color:' + (res === true ? 'var(--good)' : res === 'ERR' ? 'var(--warn)' : 'var(--muted)'), text: (res === true ? '✓ RAAK' : res === 'ERR' ? '⚠ fout in condition' : '· geen match') + '  — regel ' + r.name }));
+          line.append(el('span', { style: 'font-weight:700;color:' + (res === true ? 'var(--good)' : res === 'ERR' ? 'var(--warn)' : 'var(--muted)'), text: (res === true ? 'RAAK' : res === 'ERR' ? 'fout in condition' : 'geen match') + '  — regel ' + r.name }));
           if (hitStrs.length) line.append(el('div', { class: 'found-note', text: 'strings gevonden: ' + hitStrs.map((s) => '$' + s.id + ' (' + myCtx.match[s.id].count + '×)').join(', ') }));
           fileBox.append(line);
         });
@@ -1781,12 +1781,12 @@
         if (prev != null && tms != null) { const d = Math.round((tms - prev) / 1000); if (d >= 0) { delta = d < 60 ? ('+' + d + 's') : d < 3600 ? ('+' + Math.floor(d / 60) + 'm' + (d % 60 ? (d % 60) + 's' : '')) : ('+' + Math.floor(d / 3600) + 'u' + (Math.floor((d % 3600) / 60)) + 'm'); } }
         prev = tms != null ? tms : prev;
         const row = el('div', { class: 'ln', style: 'cursor:pointer;align-items:baseline' });
-        const star = el('span', { style: 'flex:none;width:18px;color:' + (marks[i] ? 'var(--warn)' : '#566288'), text: marks[i] ? '⭐' : '☆', onclick: (ev) => { ev.stopPropagation(); marks[i] = !marks[i]; render(); } });
+        const star = el('span', { style: 'flex:none;width:18px', title: marks[i] ? 'Markering weghalen' : 'Markeren', text: marks[i] ? '★' : '☆', onclick: (ev) => { ev.stopPropagation(); marks[i] = !marks[i]; render(); } });
         row.append(star,
-          el('span', { style: 'flex:none;width:150px;color:#8ec7ab', text: e.t }),
-          el('span', { style: 'flex:none;width:60px;color:#7f8db5', text: delta }),
-          el('span', { style: 'flex:none;width:92px;color:#c9a6ff', text: e.src || '' }),
-          el('span', { style: 'flex:1;min-width:0', html: (e.host ? '<span style="color:#7f8db5">' + esc(e.host) + (e.user ? '\\' + esc(e.user) : '') + '</span> ' : '') + esc(e.desc || '') }));
+          el('span', { style: 'flex:none;width:150px;color:var(--syn-key)', text: e.t }),
+          el('span', { style: 'flex:none;width:60px;color:var(--syn-dim)', text: delta }),
+          el('span', { style: 'flex:none;width:92px;color:var(--syn-alt)', text: e.src || '' }),
+          el('span', { style: 'flex:1;min-width:0', html: (e.host ? '<span style="color:var(--syn-dim)">' + esc(e.host) + (e.user ? '\\' + esc(e.user) : '') + '</span> ' : '') + esc(e.desc || '') }));
         view.append(row);
       });
       cnt.textContent = shown + ' / ' + events.length + ' gebeurtenissen';
@@ -1812,7 +1812,7 @@
     function build() {
       grid.innerHTML = '';
       classes.forEach((c, ci) => {
-        const col = el('div', { style: 'background:var(--bg-2);border:1px solid var(--border);border-radius:8px;padding:10px' });
+        const col = el('div', { style: 'background:var(--bg-2);border:1px solid var(--border);padding:10px' });
         col.append(el('div', { style: 'font-weight:700;margin-bottom:6px', text: c }));
         perms.forEach((p, pi) => {
           const lab = el('label', { class: 'switch', style: 'display:flex;margin:4px 0' });
@@ -1905,7 +1905,7 @@
     wrap.append(el('label', { text: 'Jouw poging' }));
     const row = el('div', { class: 'ans-row' });
     const inp = el('input', { type: 'text', placeholder: 'wachtwoord / sleutel…', style: 'flex:1', autocomplete: 'off', spellcheck: 'false' });
-    const btn = el('button', { class: 'btn small primary', text: '🔓 Probeer' });
+    const btn = el('button', { class: 'btn small primary', text: 'Probeer' });
     row.append(inp, btn);
     wrap.append(row);
     const out = el('div', { class: 'lab-out', style: 'margin-top:10px' });
@@ -1921,12 +1921,12 @@
       stat.textContent = tries + ' poging' + (tries === 1 ? '' : 'en');
       out.innerHTML = '';
       if (ok) {
-        out.append(el('div', { html: '<strong style="color:var(--good)">✓ TOEGANG VERLEEND</strong>' + (cfg.flag ? ' — vlag: <code>' + esc(cfg.flag) + '</code>' : '') }));
+        out.append(el('div', { html: '<strong style="color:var(--good)">TOEGANG VERLEEND</strong>' + (cfg.flag ? ' — vlag: <code>' + esc(cfg.flag) + '</code>' : '') }));
         if (cfg.reveal) out.append(el('div', { style: 'margin-top:4px', text: cfg.reveal }));
         inp.classList.add('ok');
       } else {
-        out.append(el('div', { style: 'color:var(--bad)', text: '✗ Geweigerd. Lees de controle nog eens — welke invoer zou slagen?' }));
-        if (cfg.hint && tries >= 3) out.append(el('div', { class: 'found-note', text: '💡 ' + cfg.hint }));
+        out.append(el('div', { style: 'color:var(--bad)', text: 'Geweigerd. Lees de controle nog eens — welke invoer zou slagen?' }));
+        if (cfg.hint && tries >= 3) out.append(el('div', { class: 'found-note', text: 'Hint: ' + cfg.hint }));
       }
     }
     btn.addEventListener('click', attempt);
@@ -1960,7 +1960,7 @@
     const ta = el('textarea', { rows: '3', spellcheck: 'false' }); ta.value = cfg.input || '';
     wrap.append(ta);
     const btnRow = el('div', { class: 'chip-row' });
-    const magic = el('span', { class: 'chip on', text: '✨ Auto-ontleed (ketting)' });
+    const magic = el('span', { class: 'chip on', text: 'Auto-ontleed (ketting)' });
     btnRow.append(magic);
     wrap.append(btnRow);
     const out = el('div', {});
@@ -2004,7 +2004,7 @@
       if (!input.trim()) return;
       const best = searchChain(input);
       if (best && best.path.length && (hasFlag(best.s) || best.sc > score(input) + 1)) {
-        out.append(el('div', { class: 'callout tip', html: '✨ <strong>Waarschijnlijke ketting:</strong> ' + best.path.map((n) => esc(n)).join(' → ') + '<br><code>' + esc(best.s.slice(0, 200)) + '</code>' }));
+        out.append(el('div', { class: 'callout tip', html: '<strong>Waarschijnlijke ketting:</strong> ' + best.path.map((n) => esc(n)).join(' → ') + '<br><code>' + esc(best.s.slice(0, 200)) + '</code>' }));
       } else {
         out.append(el('div', { class: 'found-note', text: 'Geen duidelijke ketting gevonden — pel hieronder handmatig af (klik een kandidaat) of gebruik CyberChef.' }));
       }
@@ -2014,7 +2014,7 @@
       if (!layer.length) box.append(el('div', { text: '(geen enkele decoder gaf iets zinnigs)' }));
       layer.forEach((r) => {
         const ln = el('div', { class: 'ln', style: 'cursor:pointer', onclick: () => { ta.value = r.out; render(); } });
-        ln.append(el('span', { class: 'n', style: 'width:64px', text: r.name }), el('span', { text: r.out.slice(0, 120), style: /NM\{/.test(r.out) ? 'color:#8ec7ab' : '' }));
+        ln.append(el('span', { class: 'n', style: 'width:64px', text: r.name }), el('span', { text: r.out.slice(0, 120), style: /NM\{/.test(r.out) ? 'color:var(--good)' : '' }));
         box.append(ln);
       });
       out.append(box);
@@ -2049,8 +2049,8 @@
       const h = inp.value.trim().toLowerCase();
       const hit = table.find((r) => r.h === h);
       out.innerHTML = '';
-      if (hit) out.append(el('div', { html: '<strong style="color:var(--good)">⚡ Direct gevonden:</strong> <code>' + esc(hit.w) + '</code> — geen kraakwerk, puur opzoeken.' }));
-      else out.append(el('div', { style: 'color:var(--bad)', text: '✗ Niet in de tabel. (Onbekend wachtwoord, ander algoritme, of … gesalt.)' }));
+      if (hit) out.append(el('div', { html: '<strong style="color:var(--good)">Direct gevonden:</strong> <code>' + esc(hit.w) + '</code> — geen kraakwerk, puur opzoeken.' }));
+      else out.append(el('div', { style: 'color:var(--bad)', text: 'Niet in de tabel. (Onbekend wachtwoord, ander algoritme, of … gesalt.)' }));
     }
     btn.addEventListener('click', lookup);
     inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') lookup(); });
@@ -2122,12 +2122,12 @@
     build();
     const btnRow = el('div', { class: 'chip-row' });
     if (evid.some((e) => e && e.expert)) {
-      btnRow.append(el('span', { class: 'chip', text: '👓 Vergelijk met expert', onclick: () => {
+      btnRow.append(el('span', { class: 'chip', text: 'Vergelijk met expert', onclick: () => {
         evid.forEach((e, ei) => { if (e.expert) e.expert.forEach((v, hi) => { state[ei][hi] = v; }); });
         build(); recalc();
       } }));
     }
-    btnRow.append(el('span', { class: 'chip', text: '↺ Leegmaken', onclick: () => { state.forEach((r) => r.fill('')); build(); recalc(); } }));
+    btnRow.append(el('span', { class: 'chip', text: 'Leegmaken', onclick: () => { state.forEach((r) => r.fill('')); build(); recalc(); } }));
     tableWrap.append(table);
     wrap.append(tableWrap, el('label', { text: 'Inconsistentie-score per hypothese (lager = houdbaarder)' }), scoreRow, diag, btnRow);
     recalc();
@@ -2146,7 +2146,7 @@
     if (cfg.scenario) wrap.append(el('div', { class: 'callout info', html: '<strong>Scenario:</strong> ' + esc(cfg.scenario) }));
     wrap.append(el('div', { class: 'found-note', text: 'Beschrijf het delict als een script: per fase wie wat doet, met welke middelen, waar, onder welke randvoorwaarden en welke sporen het nalaat. Bedenk per fase ook een interventie die de keten breekt.' }));
     phases.forEach((ph, pi) => {
-      const box = el('div', { style: 'background:var(--bg-2);border:1px solid var(--border);border-radius:9px;padding:10px 12px;margin:10px 0' });
+      const box = el('div', { style: 'background:var(--bg-2);border:1px solid var(--border);padding:10px 12px;margin:10px 0' });
       box.append(el('div', { style: 'font-weight:700;margin-bottom:6px', text: ph }));
       fields.forEach((f, fi) => {
         box.append(el('label', { text: f, style: 'margin:6px 0 2px' }));
@@ -2154,13 +2154,13 @@
         box.append(inp);
       });
       if (askInterv) {
-        box.append(el('label', { text: '🛡️ Interventie in deze fase', style: 'margin:6px 0 2px;color:var(--accent)' }));
+        box.append(el('label', { text: 'Interventie in deze fase', style: 'margin:6px 0 2px;color:var(--accent)' }));
         const iv = el('input', { type: 'text', placeholder: 'maatregel die de keten hier breekt…', oninput: (e) => { state[pi].interv = e.target.value; } });
         box.append(iv);
       }
       wrap.append(box);
     });
-    const btn = el('button', { class: 'btn primary', text: '✓ Controleer volledigheid' });
+    const btn = el('button', { class: 'btn primary', text: 'Controleer volledigheid' });
     const out = el('div', { class: 'lab-out', style: 'margin-top:8px' });
     wrap.append(btn, out);
     btn.addEventListener('click', () => {
@@ -2171,7 +2171,7 @@
       });
       out.innerHTML = '';
       if (!missing.length) {
-        out.append(el('div', { html: '<strong style="color:var(--good)">✓ Compleet script.</strong> Elke fase heeft een handeling, actoren, middelen, locatie, randvoorwaarden en sporen — én een interventie. Nu kun je de zwakste schakel kiezen.' }));
+        out.append(el('div', { html: '<strong style="color:var(--good)">Compleet script.</strong> Elke fase heeft een handeling, actoren, middelen, locatie, randvoorwaarden en sporen — én een interventie. Nu kun je de zwakste schakel kiezen.' }));
       } else {
         out.append(el('div', { html: '<strong style="color:var(--warn)">Nog ' + missing.length + ' veld(en) leeg:</strong>' }));
         out.append(el('div', { class: 'found-note', text: missing.slice(0, 12).join('  ·  ') + (missing.length > 12 ? ' …' : '') }));
@@ -2189,7 +2189,7 @@
     const CRED = { 1: 'Bevestigd door andere bronnen', 2: 'Waarschijnlijk waar', 3: 'Mogelijk waar', 4: 'Twijfelachtig', 5: 'Onwaarschijnlijk', 6: 'Niet te beoordelen' };
     const items = cfg.items || [];
     const wrap = el('div', { class: 'lab-pad' });
-    wrap.append(el('details', { html: '<summary>📑 Admiralty Code — spiekbrief</summary>' +
+    wrap.append(el('details', { html: '<summary>Admiralty Code — spiekbrief</summary>' +
       '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px">' +
       '<div><strong>Betrouwbaarheid van de bron (A–F)</strong><ul style="margin:4px 0;padding-left:18px;font-size:.84rem">' + Object.entries(REL).map(([k, v]) => '<li><code>' + k + '</code> ' + v + '</li>').join('') + '</ul></div>' +
       '<div><strong>Geloofwaardigheid van de informatie (1–6)</strong><ul style="margin:4px 0;padding-left:18px;font-size:.84rem">' + Object.entries(CRED).map(([k, v]) => '<li><code>' + k + '</code> ' + v + '</li>').join('') + '</ul></div></div>' +
@@ -2197,7 +2197,7 @@
     const score = el('div', { class: 'found-note' });
     let done = 0, correct = 0;
     items.forEach((it, i) => {
-      const box = el('div', { style: 'background:var(--bg-2);border:1px solid var(--border);border-radius:9px;padding:10px 12px;margin:10px 0' });
+      const box = el('div', { style: 'background:var(--bg-2);border:1px solid var(--border);padding:10px 12px;margin:10px 0' });
       box.append(el('div', { html: '<strong>Bron:</strong> ' + esc(it.source || '') }));
       box.append(el('div', { style: 'margin:3px 0', html: '<strong>Informatie:</strong> ' + esc(it.info || '') }));
       let selRel = '', selCred = '';
@@ -2213,7 +2213,7 @@
         if (!selRel || !selCred) { fb.className = 'feedback show no'; fb.textContent = 'Kies een letter én een cijfer.'; return; }
         const ok = selRel === it.reliability && selCred === String(it.credibility);
         fb.className = 'feedback show ' + (ok ? 'ok' : 'no');
-        fb.innerHTML = (ok ? '✓ Juist: ' : '✗ Expert: ') + '<code>' + esc(it.reliability) + esc(String(it.credibility)) + '</code> — ' + esc(it.explain || '');
+        fb.innerHTML = (ok ? 'Juist: ' : 'Fout. Expert: ') + '<code>' + esc(it.reliability) + esc(String(it.credibility)) + '</code> — ' + esc(it.explain || '');
         if (!scored) { scored = true; done++; if (ok) correct++; score.textContent = done + ' beoordeeld · ' + correct + ' exact goed'; }
       });
       box.append(btn, fb);
@@ -2234,7 +2234,7 @@
     ];
     const items = cfg.items || BANDS.map((b) => ({ term: b[0], low: b[1], high: b[2] }));
     const wrap = el('div', { class: 'lab-pad' });
-    wrap.append(el('details', { html: '<summary>📑 Waarschijnlijkheidstaal — de yardstick</summary><table style="width:100%;font-size:.84rem;margin-top:8px"><tbody>' +
+    wrap.append(el('details', { html: '<summary>Waarschijnlijkheidstaal — de yardstick</summary><table style="width:100%;font-size:.84rem;margin-top:8px"><tbody>' +
       BANDS.map((b) => '<tr><td><strong>' + b[0] + '</strong></td><td>' + b[1] + '–' + b[2] + '%</td></tr>').join('') +
       '</tbody></table><div class="found-note" style="margin-top:6px">De banden hebben bewust gaten: zo dwing je jezelf tot één term en voorkom je schijnprecisie. Geef het betrouwbaarheidsniveau (van je bron/analyse) <strong>apart</strong> aan.</div>' }));
     wrap.append(el('div', { class: 'found-note', text: 'Zet de schuif op een percentage dat bij de term past (binnen de band).' }));
@@ -2252,7 +2252,7 @@
       let scored = false;
       btn.addEventListener('click', () => {
         const v = +slider.value; const good = v >= it.low && v <= it.high;
-        fb.textContent = good ? '✓ binnen de band (' + it.low + '–' + it.high + '%)' : '✗ hoort bij ' + it.low + '–' + it.high + '%';
+        fb.textContent = good ? 'Goed: binnen de band (' + it.low + '–' + it.high + '%)' : 'Fout: hoort bij ' + it.low + '–' + it.high + '%';
         fb.style.color = good ? 'var(--good)' : 'var(--bad)';
         if (!scored) { scored = true; done++; if (good) ok++; score.textContent = done + ' gecheckt · ' + ok + ' goed'; }
       });
@@ -2300,7 +2300,7 @@
     wrap.append(el('div', { class: 'found-note', text: 'Koppel elke waarneming aan de juiste ATT&CK-techniek. Kies de techniek, niet alleen de tactiek.' }));
     let done = 0, ok = 0; const score = el('div', { class: 'found-note' });
     items.forEach((it) => {
-      const box = el('div', { style: 'background:var(--bg-2);border:1px solid var(--border);border-radius:9px;padding:10px 12px;margin:10px 0' });
+      const box = el('div', { style: 'background:var(--bg-2);border:1px solid var(--border);padding:10px 12px;margin:10px 0' });
       box.append(el('div', { text: it.desc }));
       const sel = el('select', {}, [el('option', { value: '', text: '— kies techniek —' })].concat(
         BANK.slice().sort((a, b) => a.code.localeCompare(b.code)).map((b) => el('option', { value: b.code, text: b.code + ' — ' + b.name }))));
@@ -2312,7 +2312,7 @@
         const good = sel.value === it.code;
         const exp = byCode[it.code];
         fb.className = 'feedback show ' + (good ? 'ok' : 'no');
-        fb.innerHTML = (good ? '✓ Juist. ' : '✗ Juiste techniek: ') + '<code>' + esc(it.code) + '</code> ' + esc(exp ? exp.name : '') + (exp ? ' <span style="color:var(--muted)">(' + esc(exp.tactic) + ')</span>' : '') + (it.explain ? '<br>' + esc(it.explain) : '');
+        fb.innerHTML = (good ? 'Juist. ' : 'Fout. Juiste techniek: ') + '<code>' + esc(it.code) + '</code> ' + esc(exp ? exp.name : '') + (exp ? ' <span style="color:var(--muted)">(' + esc(exp.tactic) + ')</span>' : '') + (it.explain ? '<br>' + esc(it.explain) : '');
         if (!scored) { scored = true; done++; if (good) ok++; score.textContent = done + ' gekoppeld · ' + ok + ' goed'; }
       });
       box.append(el('div', { class: 'ans-row', style: 'margin-top:6px' }, [sel, btn]), fb);
@@ -2329,7 +2329,6 @@
     const ents = cfg.entities || [];
     const edges = cfg.edges || [];
     const byId = {}; ents.forEach((e) => (byId[e.id] = e));
-    const ICON = { ip: '🌐', domain: '🔗', cert: '📜', hash: '#️⃣', wallet: '💰', alias: '🎭', email: '✉️', asn: '🏢', file: '📄' };
     const wrap = el('div', { class: 'lab-pad' });
     if (cfg.scenario) wrap.append(el('div', { class: 'callout info', html: esc(cfg.scenario) }));
     wrap.append(el('div', { class: 'found-note', text: 'Klik een entiteit om zijn relaties te zien, en pivoteer verder naar buren. Zoek het kenmerk dat twee zaken verbindt. Let op herkomst en tijd — en of een kenmerk zeldzaam genoeg is om een echte link te zijn.' }));
@@ -2340,7 +2339,7 @@
     const groups = {};
     ents.forEach((e) => { (groups[e.type] = groups[e.type] || []).push(e); });
     Object.keys(groups).forEach((t) => {
-      left.append(el('div', { class: 'found-note', style: 'margin-top:6px', text: (ICON[t] || '•') + ' ' + t }));
+      left.append(el('div', { class: 'found-note', style: 'margin-top:6px', text: t }));
       const row = el('div', { class: 'chip-row', style: 'margin:2px 0' });
       groups[t].forEach((e) => row.append(el('span', { class: 'chip', text: e.label, onclick: () => show(e.id) })));
       left.append(row);
@@ -2350,14 +2349,14 @@
     function show(id) {
       const e = byId[id]; if (!e) return;
       detail.innerHTML = '';
-      detail.append(el('div', { html: '<strong>' + (ICON[e.type] || '•') + ' ' + esc(e.label) + '</strong> <span style="color:var(--muted)">(' + esc(e.type) + ')</span>' }));
+      detail.append(el('div', { html: '<strong>' + esc(e.label) + '</strong> <span style="color:var(--muted)">(' + esc(e.type) + ')</span>' }));
       const nb = edges.filter((x) => x.from === id || x.to === id);
       if (!nb.length) { detail.append(el('div', { class: 'found-note', text: 'geen relaties' })); return; }
       nb.forEach((x) => {
         const otherId = x.from === id ? x.to : x.from;
         const other = byId[otherId]; if (!other) return;
         const line = el('div', { style: 'margin-top:6px;cursor:pointer', onclick: () => show(otherId) });
-        line.innerHTML = '→ <strong>' + (ICON[other.type] || '•') + ' ' + esc(other.label) + '</strong> <span style="color:var(--muted)">' + esc(x.rel || 'gelinkt') + (x.time ? ' · ' + esc(x.time) : '') + (x.source ? ' · bron: ' + esc(x.source) : '') + '</span>';
+        line.innerHTML = '→ <strong>' + esc(other.label) + '</strong> <span style="color:var(--muted)">(' + esc(other.type) + ') ' + esc(x.rel || 'gelinkt') + (x.time ? ' · ' + esc(x.time) : '') + (x.source ? ' · bron: ' + esc(x.source) : '') + '</span>';
         detail.append(line);
       });
     }
@@ -2369,7 +2368,7 @@
       const btn = el('button', { class: 'btn small primary', text: 'Controleer' });
       const fb = el('span', { class: 'found-note' });
       const accept = (Array.isArray(cfg.bridge) ? cfg.bridge : [cfg.bridge]).map((s) => String(s).toLowerCase());
-      const check = () => { const v = inp.value.trim().toLowerCase(); const good = accept.some((a) => a === v); fb.textContent = good ? '✓ Juist — dit kenmerk bruggt de twee zaken.' : '✗ Nog niet. Pivoteer verder en let op een kenmerk dat in beide zaken terugkomt.'; fb.style.color = good ? 'var(--good)' : 'var(--bad)'; };
+      const check = () => { const v = inp.value.trim().toLowerCase(); const good = accept.some((a) => a === v); fb.textContent = good ? 'Juist — dit kenmerk bruggt de twee zaken.' : 'Nog niet. Pivoteer verder en let op een kenmerk dat in beide zaken terugkomt.'; fb.style.color = good ? 'var(--good)' : 'var(--bad)'; };
       btn.addEventListener('click', check);
       inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') check(); });
       row.append(inp, btn);
@@ -2389,7 +2388,7 @@
     wrap.append(el('label', { text: 'Jouw herschrijving (conclusie eerst, dan onderbouwing, met waarschijnlijkheidstaal en een eigenaar per advies)' }));
     const ta = el('textarea', { rows: '7', spellcheck: 'false' });
     wrap.append(ta);
-    const btn = el('button', { class: 'btn primary', text: '✓ Toets tegen de rubric' });
+    const btn = el('button', { class: 'btn primary', text: 'Toets tegen de rubric' });
     const out = el('div', { style: 'margin-top:8px' });
     wrap.append(btn, out);
     wrap.append(el('div', { class: 'found-note', text: 'Let op: dit is een heuristische checklist (geen AI-beoordeling). Hij kijkt naar structuur en signaalwoorden; de inhoudelijke kwaliteit beoordeel je zelf of met een peer.' }));
@@ -2408,7 +2407,7 @@
       checks.push(['Betrouwbaarheid/onzekerheid apart benoemd', /(betrouwbaar|onzeker|aanname|afgeleid|bron|low confidence|high confidence|betrouwbaarheid)/i.test(txt)]);
       out.innerHTML = '';
       const passed = checks.filter((c) => c[1]).length;
-      checks.forEach((c) => out.append(el('div', { style: 'margin:3px 0', html: (c[1] ? '✅' : '⬜') + ' ' + esc(c[0]) })));
+      checks.forEach((c) => out.append(el('div', { style: 'margin:3px 0', html: (c[1] ? '<strong style="color:var(--good)">goed</strong>' : '<strong style="color:var(--bad)">mist</strong>') + ' · ' + esc(c[0]) })));
       out.append(el('div', { class: 'found-note', style: 'margin-top:6px', text: passed + ' / ' + checks.length + ' punten geraakt.' }));
       if (cfg.model) out.append(el('details', { style: 'margin-top:6px', html: '<summary>Toon een modelantwoord</summary><div class="lab-out" style="white-space:pre-wrap;margin-top:6px">' + esc(cfg.model) + '</div>' }));
     });
@@ -2433,7 +2432,7 @@
         const v = inp.value.trim().toLowerCase();
         if (!v) return;
         const ok = answers.some((x) => x === v);
-        fb.textContent = ok ? ('✓ ' + (a.explain || 'Juist!')) : '✗ Nog niet. ' + (a.hint ? 'Tip: ' + a.hint : '');
+        fb.textContent = ok ? ('Goed: ' + (a.explain || 'Juist!')) : 'Nog niet. ' + (a.hint ? 'Tip: ' + a.hint : '');
         fb.style.color = ok ? 'var(--good)' : 'var(--bad)';
         if (ok) { inp.disabled = true; btn.disabled = true; solved[i] = true; if (solved.every(Boolean) && onAllSolved) onAllSolved(); }
       };
@@ -2454,7 +2453,6 @@
     const nodes = cfg.nodes || [];
     const edges = cfg.edges || [];
     const byId = {}; nodes.forEach((n) => (byId[n.id] = n));
-    const ICON = { source: '🎯', victim: '😟', account: '🏦', wallet: '💰', mule: '🐴', mixer: '🌀', exchange: '🏛️', merchant: '🛒', service: '🧩', cashout: '💸' };
     const fmt = (n) => (unit === '€' ? '€ ' : '') + (Math.round(n * 1e8) / 1e8) + (unit !== '€' ? ' ' + unit : '');
     const wrap = el('div', { class: 'lab-pad' });
     if (cfg.scenario) wrap.append(el('div', { class: 'callout info', html: esc(cfg.scenario) }));
@@ -2466,7 +2464,7 @@
     const groups = {}; nodes.forEach((n) => { (groups[n.type] = groups[n.type] || []).push(n); });
     left.append(el('label', { text: 'Knopen (klik om te volgen)' }));
     Object.keys(groups).forEach((t) => {
-      left.append(el('div', { class: 'found-note', style: 'margin-top:4px', text: (ICON[t] || '•') + ' ' + t }));
+      left.append(el('div', { class: 'found-note', style: 'margin-top:4px', text: t }));
       const row = el('div', { class: 'chip-row', style: 'margin:2px 0' });
       groups[t].forEach((n) => row.append(el('span', { class: 'chip', text: n.label, onclick: () => showNode(n.id) })));
       left.append(row);
@@ -2478,7 +2476,7 @@
       const ins = edges.filter((e) => e.to === id), outs = edges.filter((e) => e.from === id);
       const sin = ins.reduce((s, e) => s + (+e.amount || 0), 0), sout = outs.reduce((s, e) => s + (+e.amount || 0), 0);
       detail.innerHTML = '';
-      detail.append(el('div', { html: '<strong>' + (ICON[n.type] || '•') + ' ' + esc(n.label) + '</strong> <span style="color:var(--muted)">(' + esc(n.type) + ')</span>' }));
+      detail.append(el('div', { html: '<strong>' + esc(n.label) + '</strong> <span style="color:var(--muted)">(' + esc(n.type) + ')</span>' }));
       detail.append(el('div', { class: 'found-note', html: 'in: <strong style="color:var(--good)">' + fmt(sin) + '</strong> · uit: <strong style="color:var(--bad)">' + fmt(sout) + '</strong> · saldo: <strong>' + fmt(sin - sout) + '</strong>' }));
       ins.forEach((e) => detail.append(el('div', { style: 'margin-top:3px;cursor:pointer', onclick: () => showNode(e.from), html: '← ' + fmt(+e.amount) + ' van <strong>' + esc((byId[e.from] || {}).label || e.from) + '</strong>' + (e.note ? ' <span style="color:var(--muted)">' + esc(e.note) + '</span>' : '') })));
       outs.forEach((e) => detail.append(el('div', { style: 'margin-top:3px;cursor:pointer', onclick: () => showNode(e.to), html: '→ ' + fmt(+e.amount) + ' naar <strong>' + esc((byId[e.to] || {}).label || e.to) + '</strong>' + (e.note ? ' <span style="color:var(--muted)">' + esc(e.note) + '</span>' : '') })));
@@ -2489,7 +2487,7 @@
     const ledger = el('div', { class: 'logview', style: 'max-height:220px' });
     edges.slice().sort((a, b) => String(a.time || '').localeCompare(String(b.time || ''))).forEach((e, i) => {
       const ln = el('div', { class: 'ln' });
-      ln.append(el('span', { class: 'n', text: String(i + 1) }), el('span', { html: esc((byId[e.from] || {}).label || e.from) + ' <span style="color:var(--muted)">→</span> ' + esc((byId[e.to] || {}).label || e.to) + '  <strong>' + fmt(+e.amount) + '</strong>' + (e.time ? ' <span style="color:#7f8db5">' + esc(e.time) + '</span>' : '') + (e.note ? ' <span style="color:var(--muted)">· ' + esc(e.note) + '</span>' : '') }));
+      ln.append(el('span', { class: 'n', text: String(i + 1) }), el('span', { html: esc((byId[e.from] || {}).label || e.from) + ' <span style="color:var(--muted)">→</span> ' + esc((byId[e.to] || {}).label || e.to) + '  <strong>' + fmt(+e.amount) + '</strong>' + (e.time ? ' <span style="color:var(--syn-dim)">' + esc(e.time) + '</span>' : '') + (e.note ? ' <span style="color:var(--muted)">· ' + esc(e.note) + '</span>' : '') }));
       ledger.append(ln);
     });
     wrap.append(ledger);
@@ -2514,7 +2512,7 @@
     function render() {
       list.innerHTML = '';
       order.forEach((id, idx) => {
-        const row = el('div', { style: 'display:flex;gap:8px;align-items:center;background:var(--bg-2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;margin:5px 0' });
+        const row = el('div', { style: 'display:flex;gap:8px;align-items:center;background:var(--bg-2);border:1px solid var(--border);padding:8px 10px;margin:5px 0' });
         const btns = el('div', { style: 'display:flex;flex-direction:column;gap:2px' });
         btns.append(
           el('button', { class: 'btn small', text: '▲', disabled: idx === 0, onclick: () => { const t = order[idx - 1]; order[idx - 1] = order[idx]; order[idx] = t; render(); } }),
@@ -2525,12 +2523,12 @@
       });
     }
     render();
-    const btn = el('button', { class: 'btn primary', text: '✓ Controleer volgorde', style: 'margin-top:8px' });
+    const btn = el('button', { class: 'btn primary', text: 'Controleer volgorde', style: 'margin-top:8px' });
     btn.addEventListener('click', () => {
       let good = 0; order.forEach((id, idx) => { if (id === correct[idx]) good++; });
       out.innerHTML = '';
       if (good === correct.length) {
-        out.append(el('div', { html: '<strong style="color:var(--good)">✓ Perfect — alles in de juiste volgorde!</strong>' + (cfg.flag ? ' Vlag: <code>' + esc(cfg.flag) + '</code>' : '') }));
+        out.append(el('div', { html: '<strong style="color:var(--good)">Perfect — alles in de juiste volgorde!</strong>' + (cfg.flag ? ' Vlag: <code>' + esc(cfg.flag) + '</code>' : '') }));
         if (cfg.explain) out.append(el('div', { class: 'found-note', html: esc(cfg.explain) }));
       } else {
         out.append(el('div', { html: '<strong style="color:var(--warn)">' + good + ' / ' + correct.length + ' op de juiste plek.</strong> Blijf schuiven.' }));
@@ -2557,8 +2555,8 @@
     const cols = el('div', { class: 'lab-grid2' });
     const mcol = el('div', {}), acol = el('div', {});
     cols.append(mcol, acol);
-    mcol.append(el('label', { text: '✅ Moet matchen' }));
-    acol.append(el('label', { text: '⛔ Mag niet matchen' }));
+    mcol.append(el('label', { text: 'Moet matchen' }));
+    acol.append(el('label', { text: 'Mag niet matchen' }));
     const mbox = el('div', { class: 'logview', style: 'max-height:200px' }), abox = el('div', { class: 'logview', style: 'max-height:200px' });
     mcol.append(mbox); acol.append(abox);
     wrap.append(status, cols);
@@ -2567,15 +2565,15 @@
       if (pat.value) { try { re = new RegExp(pat.value, (flags.value || '').replace(/[^gimsuy]/g, '')); } catch (e) { err = e.message; } }
       mbox.innerHTML = ''; abox.innerHTML = '';
       let okCount = 0, total = match.length + avoid.length;
-      match.forEach((s) => { const hit = re ? re.test(s) : false; if (hit) okCount++; const ln = el('div', { class: 'ln' }); ln.append(el('span', { style: 'width:20px;color:' + (hit ? '#8ec7ab' : '#d18a8a'), text: hit ? '✓' : '✗' }), el('span', { text: s })); mbox.append(ln); });
-      avoid.forEach((s) => { const hit = re ? re.test(s) : false; if (!hit) okCount++; const ln = el('div', { class: 'ln' }); ln.append(el('span', { style: 'width:20px;color:' + (!hit ? '#8ec7ab' : '#d18a8a'), text: !hit ? '✓' : '✗' }), el('span', { text: s })); abox.append(ln); });
+      match.forEach((s) => { const hit = re ? re.test(s) : false; if (hit) okCount++; const ln = el('div', { class: 'ln' }); ln.append(el('span', { style: 'width:20px;color:' + (hit ? 'var(--good)' : 'var(--bad)'), text: hit ? '✓' : '✗' }), el('span', { text: s })); mbox.append(ln); });
+      avoid.forEach((s) => { const hit = re ? re.test(s) : false; if (!hit) okCount++; const ln = el('div', { class: 'ln' }); ln.append(el('span', { style: 'width:20px;color:' + (!hit ? 'var(--good)' : 'var(--bad)'), text: !hit ? '✓' : '✗' }), el('span', { text: s })); abox.append(ln); });
       if (err) { status.textContent = 'Ongeldige regex: ' + err; status.style.color = 'var(--bad)'; return; }
       const solved = okCount === total && pat.value;
-      status.innerHTML = solved ? ('<strong style="color:var(--good)">✓ Opgelost!</strong> Lengte: ' + pat.value.length + ' tekens.' + (cfg.flag ? ' Vlag: <code>' + esc(cfg.flag) + '</code>' : '')) : (okCount + ' / ' + total + ' regels correct · patroonlengte ' + pat.value.length);
+      status.innerHTML = solved ? ('<strong style="color:var(--good)">Opgelost!</strong> Lengte: ' + pat.value.length + ' tekens.' + (cfg.flag ? ' Vlag: <code>' + esc(cfg.flag) + '</code>' : '')) : (okCount + ' / ' + total + ' regels correct · patroonlengte ' + pat.value.length);
       status.style.color = solved ? '' : 'var(--muted)';
     }
     [pat, flags].forEach((n) => n.addEventListener('input', run));
-    wrap.append(el('details', { html: '<summary>📑 Regex-spiekbrief</summary><div class="found-note" style="margin-top:6px"><code>\\d</code> cijfer · <code>\\w</code> woordteken · <code>.</code> elk teken · <code>[abc]</code> klasse · <code>[^..]</code> negatie · <code>+ * ?</code> herhaling · <code>{n,m}</code> aantal · <code>^ $</code> begin/eind · <code>( | )</code> groep/of · <code>\\b</code> woordgrens</div>' }));
+    wrap.append(el('details', { html: '<summary>Regex-spiekbrief</summary><div class="found-note" style="margin-top:6px"><code>\\d</code> cijfer · <code>\\w</code> woordteken · <code>.</code> elk teken · <code>[abc]</code> klasse · <code>[^..]</code> negatie · <code>+ * ?</code> herhaling · <code>{n,m}</code> aantal · <code>^ $</code> begin/eind · <code>( | )</code> groep/of · <code>\\b</code> woordgrens</div>' }));
     run();
     container.append(shell('<b>Regex-golf</b> — ' + esc(cfg.title || 'match A, mijd B'), wrap, false));
   });
@@ -2617,12 +2615,13 @@
     const solvedWrap = el('div', {});
     const board = el('div', { style: 'display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:8px 0' });
     const status = el('div', { class: 'found-note' });
-    const COLORS = ['var(--good)', 'var(--info)', 'var(--warn)', 'var(--accent)'];
     function render() {
       solvedWrap.innerHTML = ''; board.innerHTML = '';
       solvedGroups.forEach((gi) => {
         const g = groups[gi];
-        solvedWrap.append(el('div', { style: 'background:' + COLORS[solvedGroups.indexOf(gi) % 4] + ';color:#06140f;border-radius:8px;padding:8px 10px;margin:5px 0;font-weight:700', html: esc(g.name) + ': <span style="font-weight:500">' + g.items.map(esc).join(' · ') + '</span>' }));
+        // volgnummer + klasse group-1…group-4 (de stijl tekent het verschil), geen kleur
+        const no = (solvedGroups.indexOf(gi) % 4) + 1;
+        solvedWrap.append(el('div', { class: 'solved-group group-' + no, style: 'padding:8px 10px;margin:5px 0;font-weight:700', html: 'Groep ' + no + ' · ' + esc(g.name) + ': <span style="font-weight:500">' + g.items.map(esc).join(' · ') + '</span>' }));
       });
       pool.forEach((item) => {
         const on = selected.indexOf(item) >= 0;
@@ -2643,13 +2642,13 @@
         solvedGroups.push(gi);
         pool = pool.filter((x) => x.gi !== gi);
         selected = [];
-        if (solvedGroups.length === groups.length) { status.innerHTML = '<strong style="color:var(--good)">✓ Alle groepen gevonden!</strong> Fouten: ' + mistakes + (cfg.flag ? ' · vlag: <code>' + esc(cfg.flag) + '</code>' : ''); }
+        if (solvedGroups.length === groups.length) { status.innerHTML = '<strong style="color:var(--good)">Alle groepen gevonden!</strong> Fouten: ' + mistakes + (cfg.flag ? ' · vlag: <code>' + esc(cfg.flag) + '</code>' : ''); }
         else { status.textContent = 'Groep goed! Nog ' + (groups.length - solvedGroups.length) + ' te gaan.'; status.style.color = 'var(--good)'; }
       } else {
         mistakes++;
         const cnt = {}; gis.forEach((g) => (cnt[g] = (cnt[g] || 0) + 1));
         const near = Math.max.apply(null, Object.values(cnt)) === 3;
-        status.textContent = '✗ Niet goed' + (near ? ' — maar drie horen bij elkaar (eentje te veel).' : '.') + ' Fouten: ' + mistakes;
+        status.textContent = 'Niet goed' + (near ? ' — maar drie horen bij elkaar (eentje te veel).' : '.') + ' Fouten: ' + mistakes;
         status.style.color = 'var(--bad)';
       }
       render();
@@ -2706,7 +2705,7 @@
       const ins = (tx.inputs || []).map((a) => lab(a)).join(' + ');
       const outs = (tx.outputs || []).map((o) => lab(o.addr) + ' (' + fmt(o.amount) + ')').join(', ');
       const ln = el('div', { class: 'ln' });
-      ln.append(el('span', { class: 'n', text: String(i + 1) }), el('span', { html: '<strong>' + esc(ins) + '</strong> <span style="color:var(--muted)">→</span> ' + esc(outs) + (tx.time ? ' <span style="color:#7f8db5">' + esc(tx.time) + '</span>' : '') }));
+      ln.append(el('span', { class: 'n', text: String(i + 1) }), el('span', { html: '<strong>' + esc(ins) + '</strong> <span style="color:var(--muted)">→</span> ' + esc(outs) + (tx.time ? ' <span style="color:var(--syn-dim)">' + esc(tx.time) + '</span>' : '') }));
       ledger.append(ln);
     });
     wrap.append(ledger);
@@ -2716,7 +2715,7 @@
     const rows = Array.from(allAddr).filter((a) => (bal[a] || 0) > 1e-9).sort((a, b) => (taint[b] || 0) - (taint[a] || 0));
     const tbl = el('table', { style: 'width:100%;font-size:.84rem' }, el('tbody', {}, [el('tr', {}, [el('th', { text: 'Adres' }), el('th', { text: 'Saldo' }), el('th', { text: 'Taint' }), el('th', { text: '' })])].concat(
       rows.map((a) => el('tr', {}, [
-        el('td', { html: esc(lab(a)) + (exchanges.has(a) ? ' <span style="color:var(--warn)">🏛️ exchange</span>' : '') }),
+        el('td', { html: esc(lab(a)) + (exchanges.has(a) ? ' <span style="color:var(--warn)">exchange</span>' : '') }),
         el('td', { text: fmt(bal[a] || 0) }),
         el('td', { html: '<strong style="color:' + ((taint[a] || 0) / (bal[a] || 1) > 0.5 ? 'var(--bad)' : 'var(--muted)') + '">' + pct((taint[a] || 0) / (bal[a] || 1)) + '</strong> (' + fmt(taint[a] || 0) + ')' }),
         el('td', { text: (taint[a] || 0) > 1e-9 && exchanges.has(a) ? '← vuil geld bereikt cash-out' : '' }),
@@ -2726,7 +2725,7 @@
 
     // clusters
     if (clusterList.length) {
-      wrap.append(el('details', { html: '<summary>🔗 Clusters (common-input-heuristiek) — ' + clusterList.length + ' gevonden</summary>' +
+      wrap.append(el('details', { html: '<summary>Clusters (common-input-heuristiek) — ' + clusterList.length + ' gevonden</summary>' +
         '<div style="margin-top:6px">' + clusterList.map((c, i) => '<div class="found-note">Cluster ' + (i + 1) + ': ' + c.map((a) => esc(lab(a))).join(' = ') + ' (waarschijnlijk één eigenaar)</div>').join('') + '</div>' }));
     }
     // samenvatting vuil geld bij exchanges
@@ -2746,7 +2745,7 @@
     if (cfg.scenario) wrap.append(el('div', { class: 'callout info', html: esc(cfg.scenario) }));
     wrap.append(el('div', { class: 'found-note', html: 'Lees de flows als een rechercheur. <strong>Beaconing (C2)</strong> = een strak <em>ritme</em> (lage jitter) met kleine, gelijke pakketjes die telkens terugkeren. <strong>Exfiltratie</strong> = een groot <em>uitgaand</em> volume naar één bestemming. <strong>Normaal</strong> verkeer is onregelmatig en vooral inkomend.' }));
     const mb = (n) => (n >= 1e9 ? (n / 1e9).toFixed(1) + ' GB' : n >= 1e6 ? (n / 1e6).toFixed(1) + ' MB' : n >= 1e3 ? (n / 1e3).toFixed(0) + ' kB' : n + ' B');
-    const ritme = (j) => j == null ? '—' : j <= 8 ? '🟥 zeer strak (' + j + '%)' : j <= 25 ? '🟧 regelmatig (' + j + '%)' : '🟩 grillig (' + j + '%)';
+    const ritme = (j) => j == null ? '—' : j <= 8 ? 'zeer strak (' + j + '%)' : j <= 25 ? 'regelmatig (' + j + '%)' : 'grillig (' + j + '%)';
     const tbl = el('table', { style: 'width:100%;font-size:.82rem;border-collapse:collapse;margin-top:8px' });
     tbl.innerHTML = '<thead><tr style="text-align:left;color:var(--muted)">' +
       ['Bestemming', 'Poort', 'Verb.', 'Interval', 'Jitter (ritme)', 'Uit', 'In'].map((h) => '<th style="padding:4px 6px;border-bottom:1px solid var(--border)">' + h + '</th>').join('') +
@@ -2795,13 +2794,13 @@
       const amt = +t.amount || 0;
       const isStruct = amt >= thr * lo && amt < thr;
       if (isStruct) { flagged++; flaggedSum += amt; if (t.date) days.add(String(t.date).slice(0, 10)); }
-      const tr = el('tr', { style: 'border-bottom:1px solid var(--border)' + (isStruct ? ';background:rgba(240,110,110,.10)' : '') });
+      const tr = el('tr', { style: 'border-bottom:1px solid var(--border)' + (isStruct ? ';background:var(--bg-2)' : '') });
       [
         esc(t.date || ''),
         esc(t.who || ''),
         '<strong' + (isStruct ? ' style="color:var(--bad)"' : '') + '>' + fmt(amt) + '</strong>',
         esc(t.kind || 'storting'),
-        isStruct ? '⚠️ net onder grens' : (amt >= thr ? '↑ boven grens (meldplichtig)' : ''),
+        isStruct ? 'let op: net onder grens' : (amt >= thr ? '↑ boven grens (meldplichtig)' : ''),
       ].forEach((c) => tr.append(el('td', { style: 'padding:5px 6px', html: c })));
       tb.append(tr);
     });
@@ -2828,7 +2827,7 @@
       const isOrigin = i === hops.length - 1;
       const ln = el('div', { class: 'ln' });
       ln.append(el('span', { class: 'n', text: String(hops.length - i) }),
-        el('span', { html: 'van <strong>' + esc(h.from || '?') + '</strong>' + (h.ip ? ' <code>' + esc(h.ip) + '</code>' : '') + ' door <span style="color:var(--muted)">' + esc(h.by || '?') + '</span>' + (h.time ? ' <span style="color:#7f8db5">' + esc(h.time) + '</span>' : '') + (isOrigin ? ' <span style="color:var(--warn)">← oorsprong</span>' : '') }));
+        el('span', { html: 'van <strong>' + esc(h.from || '?') + '</strong>' + (h.ip ? ' <code>' + esc(h.ip) + '</code>' : '') + ' door <span style="color:var(--muted)">' + esc(h.by || '?') + '</span>' + (h.time ? ' <span style="color:var(--syn-dim)">' + esc(h.time) + '</span>' : '') + (isOrigin ? ' <span style="color:var(--warn)">← oorsprong</span>' : '') }));
       ladder.append(ln);
     });
     wrap.append(el('label', { text: 'Received-keten (onderste = oorspronkelijke verzender)' }), ladder);
@@ -2862,7 +2861,7 @@
       const susp = /txt/i.test(q.type) || sl > 24 || /nxdomain/i.test(q.resp || '');
       const ln = el('div', { class: 'ln' });
       ln.append(el('span', { class: 'n', text: String(i + 1) }),
-        el('span', { html: (susp ? '⚠️ ' : '') + '<code>' + esc(q.name) + '</code> <span style="color:#8ec7ab">' + esc(q.type || 'A') + '</span>' + (q.resp ? ' <span style="color:' + (/nxdomain/i.test(q.resp) ? 'var(--bad)' : 'var(--muted)') + '">' + esc(q.resp) + '</span>' : '') + (q.time ? ' <span style="color:#7f8db5">' + esc(q.time) + '</span>' : '') }));
+        el('span', { html: (susp ? '<strong>verdacht</strong> · ' : '') + '<code>' + esc(q.name) + '</code> <span style="color:var(--syn-key)">' + esc(q.type || 'A') + '</span>' + (q.resp ? ' <span style="color:' + (/nxdomain/i.test(q.resp) ? 'var(--bad)' : 'var(--muted)') + '">' + esc(q.resp) + '</span>' : '') + (q.time ? ' <span style="color:var(--syn-dim)">' + esc(q.time) + '</span>' : '') }));
       log.append(ln);
     });
     wrap.append(log);
@@ -2873,8 +2872,8 @@
     const tb = el('tbody');
     Object.values(groups).sort((a, b) => b.n - a.n).forEach((g) => {
       const tunnel = g.txt >= 3 && g.maxsub > 24;
-      const tr = el('tr', { style: 'border-bottom:1px solid var(--border)' + (tunnel ? ';background:rgba(240,110,110,.10)' : '') });
-      [esc(g.par) + (tunnel ? ' ⚠️' : ''), String(g.n), String(g.txt), String(g.nx), String(g.maxsub)].forEach((c) => tr.append(el('td', { style: 'padding:5px 6px', html: c })));
+      const tr = el('tr', { style: 'border-bottom:1px solid var(--border)' + (tunnel ? ';background:var(--bg-2)' : '') });
+      [esc(g.par) + (tunnel ? ' <strong>(tunnel?)</strong>' : ''), String(g.n), String(g.txt), String(g.nx), String(g.maxsub)].forEach((c) => tr.append(el('td', { style: 'padding:5px 6px', html: c })));
       tb.append(tr);
     });
     tbl.append(tb);
@@ -2912,9 +2911,9 @@
       const box = el('div', { class: 'logview', style: 'max-height:240px' });
       rows.forEach((r, i) => {
         const matched = matchArr[i];
-        const ln = el('div', { class: 'ln', style: matched ? '' : 'background:rgba(240,110,110,.12)' });
-        ln.append(el('span', { class: 'n', html: matched ? '✓' : '⚠️' }),
-          el('span', { html: '<strong>' + fmt(+r.amount) + '</strong> <span style="color:var(--muted)">' + esc(r.desc || '') + '</span>' + (r.date ? ' <span style="color:#7f8db5">' + esc(r.date) + '</span>' : '') }));
+        const ln = el('div', { class: 'ln', style: matched ? '' : 'font-weight:700' });
+        ln.append(el('span', { class: 'n', html: matched ? '✓' : '✗' }),
+          el('span', { html: '<strong>' + fmt(+r.amount) + '</strong> <span style="color:var(--muted)">' + esc(r.desc || '') + '</span>' + (r.date ? ' <span style="color:var(--syn-dim)">' + esc(r.date) + '</span>' : '') }));
         box.append(ln);
       });
       c.append(box);
@@ -2969,7 +2968,7 @@
     function renderConds() {
       condBox.innerHTML = '';
       if (!conds.length) { condBox.append(el('span', { class: 'found-note', text: 'Nog geen voorwaarden — voeg er één toe.' })); return; }
-      conds.forEach((c, i) => condBox.append(el('span', { class: 'chip on', html: esc(c.field + ' ' + c.op + ' "' + c.value + '"') + ' ✕', onclick: () => { conds.splice(i, 1); renderConds(); evaluate(); } })));
+      conds.forEach((c, i) => condBox.append(el('span', { class: 'chip on', html: esc(c.field + ' ' + c.op + ' "' + c.value + '"') + ' ×', title: 'Voorwaarde verwijderen', onclick: () => { conds.splice(i, 1); renderConds(); evaluate(); } })));
     }
     function evaluate() {
       let tp = 0, fp = 0, fn = 0, tn = 0; const hits = [];
@@ -2982,21 +2981,21 @@
       out.innerHTML = '';
       out.append(el('div', { html: '<strong>Resultaat:</strong> ' + '<span style="color:var(--good)">TP ' + tp + '</span> · <span style="color:var(--bad)">FP ' + fp + '</span> · <span style="color:var(--warn)">FN ' + fn + '</span> · TN ' + tn }));
       const perfect = conds.length && tp === totMal && fp === 0;
-      out.append(el('div', { class: 'found-note', html: perfect ? '✅ Perfect: alle ' + totMal + ' kwaadaardige events gevangen, geen vals-positieven.' + (cfg.flag ? ' Vlag: <code>' + esc(cfg.flag) + '</code>' : '') : (conds.length ? (fp > 0 ? '⚠️ ' + fp + ' vals-positief(ven): je regel is te breed — maak hem specifieker.' : (fn > 0 ? '⚠️ ' + fn + ' gemist: je regel is te smal.' : '—')) : 'Voeg voorwaarden toe en test.') }));
+      out.append(el('div', { class: 'found-note', html: perfect ? 'Perfect: alle ' + totMal + ' kwaadaardige events gevangen, geen vals-positieven.' + (cfg.flag ? ' Vlag: <code>' + esc(cfg.flag) + '</code>' : '') : (conds.length ? (fp > 0 ? 'Let op: ' + fp + ' vals-positief(ven): je regel is te breed — maak hem specifieker.' : (fn > 0 ? 'Let op: ' + fn + ' gemist: je regel is te smal.' : '—')) : 'Voeg voorwaarden toe en test.') }));
       if (hits.length) {
         out.append(el('label', { text: 'Gematchte events' }));
-        hits.forEach((h) => { out.append(el('div', { class: 'ln', html: (h.malicious ? '🟥' : '🟩') + ' ' + esc(h.label || (h.fields && h.fields.CommandLine) || '') })); });
+        hits.forEach((h) => { out.append(el('div', { class: 'ln', html: (h.malicious ? '[kwaadaardig]' : '[onschuldig]') + ' ' + esc(h.label || (h.fields && h.fields.CommandLine) || '') })); });
       }
     }
     addBtn.addEventListener('click', () => { if (!vInp.value.trim() && oSel.value !== '>' && oSel.value !== '<') return; conds.push({ field: fSel.value, op: oSel.value, value: vInp.value.trim() }); vInp.value = ''; renderConds(); evaluate(); });
     vInp.addEventListener('keydown', (e) => { if (e.key === 'Enter') addBtn.click(); });
     // events-overzicht
-    wrap.append(el('details', { html: '<summary>📋 Toon de events (' + events.length + ')</summary>' }, [(function () {
+    wrap.append(el('details', { html: '<summary>Toon de events (' + events.length + ')</summary>' }, [(function () {
       const d = el('div', { class: 'logview', style: 'max-height:200px;margin-top:6px' });
-      events.forEach((ev) => d.append(el('div', { class: 'ln', html: (ev.malicious ? '🟥' : '🟩') + ' ' + esc(Object.keys(ev.fields || {}).map((k) => k + '=' + ev.fields[k]).join('  ')) })));
+      events.forEach((ev) => d.append(el('div', { class: 'ln', html: (ev.malicious ? '[kwaadaardig]' : '[onschuldig]') + ' ' + esc(Object.keys(ev.fields || {}).map((k) => k + '=' + ev.fields[k]).join('  ')) })));
       return d;
     })()]));
-    if (cfg.solution) wrap.append(el('div', { class: 'chip-row' }, [el('span', { class: 'chip', text: '💡 Toon een voorbeeldregel', onclick: () => { conds.length = 0; cfg.solution.forEach((c) => conds.push(Object.assign({}, c))); renderConds(); evaluate(); } })]));
+    if (cfg.solution) wrap.append(el('div', { class: 'chip-row' }, [el('span', { class: 'chip', text: 'Toon een voorbeeldregel', onclick: () => { conds.length = 0; cfg.solution.forEach((c) => conds.push(Object.assign({}, c))); renderConds(); evaluate(); } })]));
     renderConds(); evaluate();
     container.append(shell('<b>Detectieregel bouwen</b> — ' + esc(cfg.title || 'van IOC naar regel'), wrap, false));
   });
@@ -3025,12 +3024,12 @@
       const tb = el('tbody');
       hosts.forEach((h) => {
         const rowSel = sel && h[sel.key] === sel.value;
-        const tr = el('tr', { style: 'border-bottom:1px solid var(--border)' + (rowSel ? ';background:rgba(110,180,240,.12)' : '') });
+        const tr = el('tr', { style: 'border-bottom:1px solid var(--border)' + (rowSel ? ';background:var(--bg-2)' : '') });
         tr.append(el('td', { style: 'padding:4px 6px;font-family:var(--mono)', html: '<code>' + esc(h.host) + '</code>' }));
         attrs.forEach((a) => {
           const v = h[a.key];
           const isSel = sel && sel.key === a.key && sel.value === v;
-          const td = el('td', { style: 'padding:4px 6px;cursor:pointer' + (isSel ? ';background:rgba(110,180,240,.28);font-weight:700' : ''), html: v != null && v !== '' ? esc(String(v)) : '<span style="color:var(--faint)">—</span>', onclick: () => { sel = (v != null && v !== '') ? { key: a.key, value: v } : null; render(); } });
+          const td = el('td', { style: 'padding:4px 6px;cursor:pointer' + (isSel ? ';outline:1px solid currentColor;outline-offset:-1px;font-weight:700' : ''), html: v != null && v !== '' ? esc(String(v)) : '<span style="color:var(--faint)">—</span>', onclick: () => { sel = (v != null && v !== '') ? { key: a.key, value: v } : null; render(); } });
           tr.append(td);
         });
         tb.append(tr);
@@ -3040,11 +3039,11 @@
       if (sel) {
         const c = counts[sel.key][sel.value] || 0;
         let rar;
-        if (c <= 1) rar = '⬜ uniek — (nog) geen link';
-        else if (c === n) rar = '🟩 iedereen deelt dit — ruis';
-        else if (c <= 3 || c <= Math.floor(n / 2)) rar = '🟥 onderscheidend — een clusterkenmerk';
-        else if (c >= Math.ceil(n * 0.7)) rar = '🟩 te algemeen — waarschijnlijk ruis';
-        else rar = '🟧 matig onderscheidend';
+        if (c <= 1) rar = 'uniek — (nog) geen link';
+        else if (c === n) rar = 'iedereen deelt dit — ruis';
+        else if (c <= 3 || c <= Math.floor(n / 2)) rar = 'onderscheidend — een clusterkenmerk';
+        else if (c >= Math.ceil(n * 0.7)) rar = 'te algemeen — waarschijnlijk ruis';
+        else rar = 'matig onderscheidend';
         const lab = (attrs.find((a) => a.key === sel.key) || {}).label || sel.key;
         info.append(el('div', { html: '<strong>' + esc(lab) + '</strong> = <code>' + esc(String(sel.value)) + '</code> → gedeeld door <strong>' + c + '</strong> van ' + n + ' hosts · ' + rar }));
       } else { info.append(el('div', { class: 'found-note', text: 'Klik een kenmerk om te zien hoeveel hosts het delen.' })); }
@@ -3073,14 +3072,14 @@
       progress.textContent = '';
       const ok = good >= pass;
       card.append(el('div', { class: 'lab-out', html: '<strong>Afgerond.</strong> Goede beslissingen: <strong style="color:' + (ok ? 'var(--good)' : 'var(--warn)') + '">' + good + ' / ' + steps.length + '</strong>' + (ok ? ' — sterk gehandeld!' + (cfg.flag ? ' Vlag: <code>' + esc(cfg.flag) + '</code>' : '') : ' — haalbaar, maar een paar keuzes kunnen beter. Probeer het nog eens.') }));
-      card.append(el('button', { class: 'btn', style: 'margin-top:8px', text: '↺ Opnieuw', onclick: () => { idx = 0; good = 0; answered = 0; renderStep(); } }));
+      card.append(el('button', { class: 'btn', style: 'margin-top:8px', text: 'Opnieuw', onclick: () => { idx = 0; good = 0; answered = 0; renderStep(); } }));
     }
     function renderStep() {
       if (idx >= steps.length) { finish(); return; }
       const s = steps[idx];
       progress.textContent = 'Beslissing ' + (idx + 1) + ' van ' + steps.length + ' · ' + good + ' goed tot nu toe';
       card.innerHTML = '';
-      card.append(el('div', { class: 'callout', style: 'border-left:3px solid var(--accent)', html: esc(s.situation) }));
+      card.append(el('div', { class: 'callout', html: esc(s.situation) }));
       const fb = el('div', { class: 'feedback', style: 'margin-top:6px' });
       const btns = el('div', { style: 'display:flex;flex-direction:column;gap:6px;margin-top:8px' });
       let chosen = false;
@@ -3092,7 +3091,7 @@
           [...btns.children].forEach((b) => (b.disabled = true));
           btn.style.borderColor = c.good ? 'var(--good)' : 'var(--bad)';
           fb.className = 'feedback show ' + (c.good ? 'ok' : 'no');
-          fb.innerHTML = (c.good ? '✓ ' : '✗ ') + esc(c.feedback || (c.good ? 'Goede keuze.' : 'Dat kan beter.'));
+          fb.innerHTML = (c.good ? 'Goed: ' : 'Fout: ') + esc(c.feedback || (c.good ? 'Goede keuze.' : 'Dat kan beter.'));
           const next = el('button', { class: 'btn primary', style: 'margin-top:8px', text: idx + 1 < steps.length ? 'Volgende →' : 'Afronden', onclick: () => { idx++; renderStep(); } });
           card.append(next);
         });

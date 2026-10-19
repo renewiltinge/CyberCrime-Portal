@@ -13,7 +13,7 @@ CS.registerRoom({
   path: 'fundamenten',              // 'fundamenten' | 'security-kern' | 'offensief' | 'defensief' | 'forensie' | 'intelligence' | 'datastromen' | 'puzzels' | 'eindopdracht'
   order: 2,                         // volgorde binnen het leerpad
   title: 'Netwerken: de basis',
-  icon: '🌐',                       // één emoji
+  icon: '🌐',                       // optioneel; de interface toont het niet meer (een leerpad heeft een getekend teken, zie docs/adr/0001)
   difficulty: 'Makkelijk',          // 'Makkelijk' | 'Gemiddeld' | 'Moeilijk'
   minutes: 60,                      // geschatte tijd
   summary: 'Eén of twee zinnen die op de roomkaart staan.',

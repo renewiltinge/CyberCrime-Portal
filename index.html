@@ -1,18 +1,26 @@
 <!doctype html>
-<html lang="nl" data-theme="dark">
+<html lang="nl">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>NineMinds Cyber Dojo — leer cybersecurity</title>
-  <meta name="description" content="Een doelgericht, Nederlandstalig leerportaal voor cybersecurity: korte uitleg, interactieve browser-labs en oefenvragen met vlaggen. Van de basis tot je eerste hacks en verdedigingen.">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%97%88%3C/text%3E%3C/svg%3E">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Cyber Dojo · NineMinds</title>
+  <meta name="description" content="Leer cybersecurity door het te doen: korte uitleg, interactieve labs in je browser en vragen met vlaggen. In het Nederlands, van de basis tot je eerste onderzoek naar cybercrime. Een product van NineMinds.">
+  <meta name="color-scheme" content="light dark">
+  <link rel="icon" href="nineminds/brand/favicon.svg" type="image/svg+xml">
+  <!-- De NineMinds-huislaag (nineminds/, gesynct door nineminds/sync.ps1): letters, tokens, beweging. -->
+  <link rel="stylesheet" href="nineminds/brand/fonts/fonts.css">
+  <link rel="stylesheet" href="nineminds/brand/tokens.css">
+  <link rel="stylesheet" href="nineminds/brand/motion/mark-animation.css">
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
+  <a class="skip" href="#app">Naar de inhoud</a>
   <header id="topbar" class="topbar"></header>
-  <main id="app"></main>
+  <main id="app" tabindex="-1"></main>
 
   <!-- Engine -->
+  <script src="assets/js/house.js"></script>
+  <script src="assets/js/icons.js"></script>
   <script src="assets/js/app.js"></script>
   <script src="assets/js/labs.js"></script>
 
