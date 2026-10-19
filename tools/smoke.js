@@ -3,7 +3,7 @@
  * rendert elke room, test labs en het beantwoorden van een vraag.
  * Gebruik: node tools/smoke.js */
 const path = require('path');
-const { chromium } = require('/opt/node-tools/node_modules/playwright');
+const { chromium } = require('./_playwright');
 
 (async () => {
   const browser = await chromium.launch();
@@ -16,10 +16,19 @@ const { chromium } = require('/opt/node-tools/node_modules/playwright');
   await page.goto(url, { waitUntil: 'networkidle' });
 
   // homepage
-  await page.waitForSelector('.card', { timeout: 5000 });
-  const roomIds = await page.evaluate(() => window.CS && window.CS.util ? null : null);
-  const cards = await page.$$('.card');
-  console.log('Homepage: ' + cards.length + ' room-kaarten.');
+  // De startpagina toont de leerpaden als lijst; elk pad heeft een eigen pagina met zijn rooms.
+  await page.waitForSelector('.pathrow', { timeout: 5000 });
+  const pathLinks = await page.$$eval('.pathrow', (as) => as.map((a) => a.getAttribute('href')));
+  console.log('Homepage: ' + pathLinks.length + ' leerpaden.');
+  if (!(await page.$('.brand .mark svg'))) errors.push('[home] het NineMinds-teken staat niet in de topbalk');
+  if (!(await page.$('.sitefoot .wordmark svg'))) errors.push('[home] "Een product van NineMinds" ontbreekt in de voet');
+  let pathRoomCount = 0;
+  for (const href of pathLinks) {
+    await page.goto(url + href);
+    await page.waitForSelector('.roomrow', { timeout: 5000 });
+    pathRoomCount += (await page.$$('.roomrow')).length;
+  }
+  console.log('Leerpaden: ' + pathRoomCount + ' rooms in totaal.');
 
   // haal alle room-id's op
   const ids = await page.evaluate(() => {

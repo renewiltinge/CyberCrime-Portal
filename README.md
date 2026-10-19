@@ -1,4 +1,10 @@
-# 🥷 NineMinds Cyber Dojo
+# Cyber Dojo
+
+Een product van NineMinds.
+
+De dojo draagt de NineMinds-huisstijl: de letters, kleuren en het teken komen uit
+[`nineminds/`](nineminds/README.md), de toepassing op een leerportaal staat in
+[`DESIGN.md`](DESIGN.md), en waarom in [ADR-0001](docs/adr/0001-de-dojo-draagt-de-nineminds-huisstijl.md).
 
 Een **doelgericht, Nederlandstalig leerportaal voor cybersecurity** — in de stijl van TryHackMe, maar helemaal van jou. Korte uitleg, veel oefenen in **echte interactieve browser-labs**, en oefenvragen met **vlaggen** (flags) om te vinden. Van de absolute basis tot je eerste hacks én verdedigingen.
 
@@ -190,7 +196,7 @@ Alle labs draaien **volledig in je browser** — veilig, offline, zonder dat er 
 | 🛰️ **Infrastructuur-fingerprinting** | Hosts clusteren op gedeelde kenmerken (favicon, analytics, JARM) met de zeldzaamheidstoets. |
 | 🎲 **Beslissimulatie** | Beslissingen nemen onder druk (incident response/onderhandeling) en de gevolgen zien. |
 
-Alle tools zijn ook los te gebruiken via de **🧰 Gereedschapskist** (knop op de startpagina, of `#/tools`) — handig voor je eigen, ethische oefeningen.
+Alle tools zijn ook los te gebruiken via de **Gereedschapskist** (Gereedschap in de topbalk, of `#/tools`) — handig voor je eigen, ethische oefeningen.
 
 Je verdient **XP** en **badges**, en je voortgang wordt per vraag bewaard (lokaal, in `localStorage`).
 
@@ -213,19 +219,38 @@ Elke room is één bestand in [`content/rooms/`](content/rooms/). De volledige h
 Werkwijze:
 1. Maak `content/rooms/<mijn-room>.js` (kopieer een bestaande room als voorbeeld).
 2. Controleer het: `node tools/validate.js content/rooms/<mijn-room>.js`
-3. Werk de scriptlijst in `index.html` bij: `node tools/build.js`
+3. Werk de scriptlijst in `index.html` bij: `node tools/build.js` (schrijft ook `assets/js/house.js` opnieuw uit `nineminds/`)
 4. (Optioneel) test in een echte browser: `node tools/smoke.js` en `node tools/labtest.js`
 
 ### Hulpscripts
 | Script | Doel |
 |--------|------|
 | `node tools/validate.js [bestand…]` | Controleert rooms op structuur, vragen, vlaggen en labs. Rekent hashes na. |
-| `node tools/build.js` | Zet alle rooms (gesorteerd op leerpad + volgorde) in `index.html`. |
-| `node tools/build-artifact.js` | Bouwt de losse versie `dist/nineminds-cyber-dojo.html` (alles in één bestand). |
-| `node tools/smoke.js` | Laadt het portaal in een headless browser en controleert dat alles rendert. |
+| `node tools/build.js` | Zet alle rooms (gesorteerd op leerpad + volgorde) in `index.html`, en het NineMinds-teken uit `nineminds/` in `assets/js/house.js`. |
+| `node tools/build-artifact.js` | Bouwt de losse versie `dist/nineminds-cyber-dojo.html` (alles in één bestand, ook de letters). |
+| `node tools/smoke.js` | Laadt het portaal in een headless browser en controleert dat alles rendert: de leerpaden, elke room, het NineMinds-teken. |
 | `node tools/labtest.js` + `labtest-extra.js` | Bedienen de labs echt en controleren de uitkomsten. |
 
 *(De testscripts gebruiken Node + Playwright; de validator en build werken met alleen Node.)*
+
+Playwright staat niet in deze repository. `tools/_playwright.js` zoekt het: eerst
+`PLAYWRIGHT_MODULE` (pad naar `playwright` of `playwright-core`), dan de vaste plek in de
+cloud-omgeving, dan een gewone `require('playwright')`. Met `CHROMIUM_PATH` wijs je een eigen
+Chromium aan, bijvoorbeeld een die Playwright eerder downloadde:
+
+```bash
+export PLAYWRIGHT_MODULE=/pad/naar/node_modules/playwright-core
+export CHROMIUM_PATH="$LOCALAPPDATA/ms-playwright/chromium-1234/chrome-win64/chrome.exe"
+node tools/smoke.js
+```
+
+### De huislaag van NineMinds bijwerken
+
+```powershell
+.\nineminds\sync.ps1 -Check   # loopt de kopie achter op ..\NineMinds?
+.\nineminds\sync.ps1          # ophalen
+node tools/build.js           # house.js opnieuw
+```
 
 ---
 
@@ -233,13 +258,18 @@ Werkwijze:
 
 ```
 index.html              # het portaal (start hier)
+DESIGN.md               # hoe de NineMinds-huisstijl hier is toegepast
 assets/
-  css/style.css         # thema (licht/donker) en opmaak
-  js/app.js             # engine: routering, voortgang, XP, badges, zoeken
+  css/style.css         # opmaak op de NineMinds-tokens (licht/donker volgt het systeem)
+  js/house.js           # het NineMinds-teken, gegenereerd uit nineminds/ (niet bewerken)
+  js/icons.js           # getekende iconen, één per leerpad en voor de bediening
+  js/app.js             # engine: routering, leerpaden, voortgang, XP, badges, zoeken
   js/labs.js            # alle interactieve labs + crypto-helpers
 content/
   rooms/*.js            # de lesinhoud (één bestand per room)
 docs/CONTENT-SPEC.md    # handleiding om content te schrijven
+docs/adr/               # beslissingen
+nineminds/              # de NineMinds-huislaag: tokens, letters, teken (niet met de hand bewerken)
 tools/                  # validate / build / smoke / labtest
 ```
 

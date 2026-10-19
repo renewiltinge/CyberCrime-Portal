@@ -118,7 +118,9 @@ for (const file of files) {
   if (r.id !== base) err(rel, `id "${r.id}" komt niet overeen met bestandsnaam "${base}"`);
   if (seenIds.has(r.id)) err(rel, `dubbele id ${r.id}`);
   seenIds.add(r.id);
-  for (const k of ['title', 'icon', 'summary']) if (!r[k] || typeof r[k] !== 'string') err(rel, `veld ${k} ontbreekt`);
+  for (const k of ['title', 'summary']) if (!r[k] || typeof r[k] !== 'string') err(rel, `veld ${k} ontbreekt`);
+  // icon is optioneel sinds de huisstijl van NineMinds (docs/adr/0001): de interface toont het niet.
+  if (r.icon != null && typeof r.icon !== 'string') err(rel, 'veld icon moet tekst zijn');
   if (!PATHS.includes(r.path)) err(rel, `onbekend path "${r.path}"`);
   if (!DIFFS.includes(r.difficulty)) err(rel, `onbekende difficulty "${r.difficulty}"`);
   if (typeof r.order !== 'number') err(rel, 'order moet een getal zijn');
@@ -202,6 +204,13 @@ Object.keys(globalDecls).forEach((nm) => {
   const fs2 = globalDecls[nm];
   if (fs2.length > 1) { errors++; console.log(`  ✗ top-level naam "${nm}" is in meerdere bestanden gedeclareerd (botst in de browser): ${fs2.join(', ')} — hernoem of maak uniek per room`); }
 });
+
+// De huislaag: assets/js/house.js moet zijn wat nineminds/ nu oplevert, anders toont de
+// pagina een ander NineMinds-teken dan de huislaag zegt.
+if (!require('./house').upToDate()) {
+  errors++;
+  console.log('  ✗ assets/js/house.js loopt achter op nineminds/ — draai node tools/build.js');
+}
 
 console.log(`\n${files.length} bestand(en), ${errors} fout(en), ${warnings} waarschuwing(en)`);
 process.exit(errors ? 1 : 0);

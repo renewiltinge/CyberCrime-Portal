@@ -1,0 +1,20 @@
+{
+  "source": "NineMinds",
+  "commit": "873d93acc34eaf3d12409523702661d98df6d7ad",
+  "synced": "2026-10-19",
+  "files": {
+    "brand/tokens/tokens.css": "brand/tokens.css",
+    "brand/fonts/fonts.css": "brand/fonts/fonts.css",
+    "brand/fonts/archivo-latin.woff2": "brand/fonts/archivo-latin.woff2",
+    "brand/fonts/archivo-latin-ext.woff2": "brand/fonts/archivo-latin-ext.woff2",
+    "brand/fonts/martian-mono-latin.woff2": "brand/fonts/martian-mono-latin.woff2",
+    "brand/fonts/martian-mono-latin-ext.woff2": "brand/fonts/martian-mono-latin-ext.woff2",
+    "brand/fonts/OFL-Archivo.txt": "brand/fonts/OFL-Archivo.txt",
+    "brand/fonts/OFL-MartianMono.txt": "brand/fonts/OFL-MartianMono.txt",
+    "brand/logo/mark-mono.svg": "brand/logo/mark-mono.svg",
+    "brand/logo/wordmark.svg": "brand/logo/wordmark.svg",
+    "brand/motion/mark-animated-inline.svg": "brand/motion/mark-animated-inline.svg",
+    "brand/motion/mark-animation.css": "brand/motion/mark-animation.css",
+    "brand/favicon/favicon.svg": "brand/favicon.svg"
+  }
+}

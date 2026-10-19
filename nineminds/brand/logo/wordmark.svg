@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 8.5 329 50" role="img" aria-label="NineMinds">
+  <g fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="butt" stroke-linejoin="round">
+    <path d="M4.5 58V10L38.5 58V10"></path>
+    <path d="M52.5 24V58"></path>
+    <path d="M66.5 58V41A13 13 0 0 1 92.5 41V58"></path>
+    <path d="M108 41H134A13 13 0 1 0 127.1 52.48"></path>
+    <path d="M149.5 58V10L171.5 44L193.5 10V58"></path>
+    <path d="M207.5 24V58"></path>
+    <path d="M221.5 58V41A13 13 0 0 1 247.5 41V58"></path>
+    <path d="M289 10V58"></path>
+    <path d="M289 41A13 13 0 1 1 263 41A13 13 0 1 1 289 41"></path>
+    <path d="M324.5 34.5A10 6.5 0 1 0 314.5 41A10 6.5 0 1 1 304.5 47.5"></path>
+  </g>
+  <g fill="currentColor">
+    <circle cx="52.5" cy="13.75" r="3.75"></circle>
+    <circle cx="207.5" cy="13.75" r="3.75"></circle>
+  </g>
+</svg>

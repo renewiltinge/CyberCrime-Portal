@@ -3,6 +3,7 @@
  * Scant content/rooms/*.js, sorteert op leerpad + order, en schrijft de
  * <script>-lijst tussen <!-- ROOMS:START --> en <!-- ROOMS:END --> in index.html.
  * Draai dit na het toevoegen of hernoemen van een room:  node tools/build.js
+ * Schrijft ook assets/js/house.js opnieuw uit nineminds/ (na een sync van de huislaag).
  */
 const fs = require('fs');
 const path = require('path');
@@ -31,6 +32,10 @@ const re = /(<!-- ROOMS:START -->)[\s\S]*?(<!-- ROOMS:END -->)/;
 if (!re.test(html)) { console.error('Markers <!-- ROOMS:START/END --> niet gevonden in index.html'); process.exit(1); }
 html = html.replace(re, '$1\n' + block + '\n  $2');
 fs.writeFileSync(INDEX, html);
+
+// Het NineMinds-teken uit de huislaag, als script (zie tools/house.js).
+require('./house').write();
+console.log('assets/js/house.js bijgewerkt uit nineminds/.');
 
 console.log('index.html bijgewerkt met ' + metas.length + ' rooms:');
 let cur = '';

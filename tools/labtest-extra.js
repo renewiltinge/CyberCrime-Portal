@@ -2,7 +2,7 @@
 /* Aanvullende labtest: http, phishing, subnet en password labs.
  * Gebruik: node tools/labtest-extra.js */
 const path = require('path');
-const { chromium } = require('/opt/node-tools/node_modules/playwright');
+const { chromium } = require('./_playwright');
 const url = 'file://' + path.join(__dirname, '..', 'index.html');
 
 (async () => {

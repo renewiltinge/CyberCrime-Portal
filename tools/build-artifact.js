@@ -36,12 +36,20 @@ rooms.sort((a, b) => {
   return (pa < 0 ? 99 : pa) - (pb < 0 ? 99 : pb) || a.room.order - b.room.order || a.f.localeCompare(b.f);
 });
 
-const css = read('assets/css/style.css');
+// De NineMinds-huislaag gaat mee: de letters als data-URI (één bestand kan geen
+// fontbestanden naast zich hebben), de tokens en de beweging van het teken.
+const fontsDir = path.join(ROOT, 'nineminds', 'brand', 'fonts');
+const fonts = read('nineminds/brand/fonts/fonts.css').replace(/url\('([^']+\.woff2)'\)/g, (m, f) =>
+  "url('data:font/woff2;base64," + fs.readFileSync(path.join(fontsDir, f)).toString('base64') + "')");
+const css = [fonts, read('nineminds/brand/tokens.css'), read('nineminds/brand/motion/mark-animation.css'), read('assets/css/style.css')].join('\n');
+require('./house').write(); // het teken uit nineminds/, actueel
+const house = read('assets/js/house.js');
+const icons = read('assets/js/icons.js');
 const app = read('assets/js/app.js');
 const labs = read('assets/js/labs.js');
 const roomScripts = rooms.map((x) => '<script>\n' + safeJs(fs.readFileSync(path.join(dir, x.f), 'utf8')) + '\n</script>').join('\n');
 
-const html = `<title>NineMinds Cyber Dojo</title>
+const html = `<title>Cyber Dojo · NineMinds</title>
 <style>
 ${css}
 </style>
@@ -49,6 +57,12 @@ ${css}
 <header id="topbar" class="topbar"></header>
 <main id="app"></main>
 
+<script>
+${safeJs(house)}
+</script>
+<script>
+${safeJs(icons)}
+</script>
 <script>
 ${safeJs(app)}
 </script>
