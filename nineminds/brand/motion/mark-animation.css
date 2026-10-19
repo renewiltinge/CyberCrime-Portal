@@ -1,0 +1,110 @@
+/* NineMinds mark animation.
+   Pairs with mark-animated-inline.svg (inline the SVG, then load this file).
+   Colour comes from the surrounding text colour; the core ring follows --nm-mark-core. */
+
+/* The verdict variants need these two tokens. Load brand/tokens/tokens.css and they
+   come from there; the block below is the standalone fallback so the file never
+   resolves to a wrong-mode colour on its own. */
+:root {
+  --nm-verdict-verified: #5230C1;
+  --nm-verdict-failed: #BE2517;
+}
+[data-theme="dark"] {
+  --nm-verdict-verified: #A79BFF;
+  --nm-verdict-failed: #FF8A80;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --nm-verdict-verified: #A79BFF;
+    --nm-verdict-failed: #FF8A80;
+  }
+}
+
+.nm-mark-animated {
+  --nm-pulse-duration: 2.8s;
+  --nm-pulse-stagger: 0.16s;
+  --nm-pulse-low: 0.22;
+  display: block;
+}
+
+.nm-mark-animated .nm-ring {
+  animation: nm-pulse var(--nm-pulse-duration) ease-in-out infinite;
+}
+.nm-mark-animated .nm-ring[data-ring="2"] { animation-delay: calc(var(--nm-pulse-stagger) * 1); }
+.nm-mark-animated .nm-ring[data-ring="3"] { animation-delay: calc(var(--nm-pulse-stagger) * 2); }
+.nm-mark-animated .nm-ring[data-ring="4"] { animation-delay: calc(var(--nm-pulse-stagger) * 3); }
+
+.nm-mark-animated .nm-mark-core {
+  animation: nm-core var(--nm-pulse-duration) ease-in-out infinite;
+}
+
+@keyframes nm-pulse {
+  0%, 100% { opacity: var(--nm-pulse-low) }
+  14%      { opacity: 1 }
+  48%      { opacity: var(--nm-pulse-low) }
+}
+@keyframes nm-core {
+  0%, 100% { opacity: 0.5 }
+  50%      { opacity: 1 }
+}
+
+/* ---- Verdict variants: one-shot, for the moment a tag is read ---------------- */
+
+/* A successful read: the signal runs outward once and settles bright. */
+.nm-mark-animated[data-state="verified"] .nm-ring {
+  animation: nm-sweep-out 0.72s cubic-bezier(0.2, 0, 0.2, 1) 1 both;
+}
+/* The shorthand above resets animation-delay, so the stagger is restated here:
+   without it all four rings flash together instead of propagating outward. */
+.nm-mark-animated[data-state="verified"] .nm-ring[data-ring="2"] { animation-delay: calc(var(--nm-pulse-stagger) * 1); }
+.nm-mark-animated[data-state="verified"] .nm-ring[data-ring="3"] { animation-delay: calc(var(--nm-pulse-stagger) * 2); }
+.nm-mark-animated[data-state="verified"] .nm-ring[data-ring="4"] { animation-delay: calc(var(--nm-pulse-stagger) * 3); }
+.nm-mark-animated[data-state="verified"] .nm-mark-core {
+  animation: none;
+  opacity: 1;
+  stroke: var(--nm-verdict-verified);
+}
+@keyframes nm-sweep-out {
+  0%   { opacity: 0.22 }
+  40%  { opacity: 1 }
+  100% { opacity: 1 }
+}
+
+/* A failed read: the outer rings never light up. */
+.nm-mark-animated[data-state="failed"] .nm-ring {
+  animation: nm-stall 0.56s ease-out 1 both;
+}
+.nm-mark-animated[data-state="failed"] .nm-ring[data-ring="2"] { animation-delay: calc(var(--nm-pulse-stagger) * 1); }
+.nm-mark-animated[data-state="failed"] .nm-ring[data-ring="3"],
+.nm-mark-animated[data-state="failed"] .nm-ring[data-ring="4"] {
+  animation: nm-stall-fade 0.56s ease-out 1 both;
+  animation-delay: calc(var(--nm-pulse-stagger) * 2);
+}
+.nm-mark-animated[data-state="failed"] .nm-mark-core {
+  animation: none;
+  opacity: 1;
+  stroke: var(--nm-verdict-failed);
+}
+@keyframes nm-stall      { 0% { opacity: 0.22 } 100% { opacity: 1 } }
+@keyframes nm-stall-fade { 0% { opacity: 0.22 } 100% { opacity: 0.22 } }
+
+/* Awaiting a read: slower, no colour change. */
+.nm-mark-animated[data-state="pending"] {
+  --nm-pulse-duration: 4.4s;
+  --nm-pulse-low: 0.3;
+}
+
+/* Paused: identical geometry, no motion. Use for print, PDF and screenshots. */
+.nm-mark-animated[data-state="static"] .nm-ring,
+.nm-mark-animated[data-state="static"] .nm-mark-core {
+  animation: none;
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nm-mark-animated .nm-ring,
+  .nm-mark-animated .nm-mark-core {
+    animation: none !important;
+    opacity: 1;
+  }
+}

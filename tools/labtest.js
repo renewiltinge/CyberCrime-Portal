@@ -3,7 +3,7 @@
  * http, logs) in de Mini-CTF en controleert de uitkomsten.
  * Gebruik: node tools/labtest.js */
 const path = require('path');
-const { chromium } = require('/opt/node-tools/node_modules/playwright');
+const { chromium } = require('./_playwright');
 const url = 'file://' + path.join(__dirname, '..', 'index.html');
 
 (async () => {
