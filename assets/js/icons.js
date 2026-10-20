@@ -37,6 +37,8 @@
     chart: '<path d="M4 20h16M7 20v-6M12 20V8M17 20v-9"/>',
     user: '<circle cx="12" cy="8.5" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/>',
     reset: '<path d="M4 12a8 8 0 1 0 2.3-5.6M4 4v4h4"/>',
+    download: '<path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 19h14"/>',
+    upload: '<path d="M12 15V4M7.5 8.5 12 4l4.5 4.5M5 19h14"/>',
     target: '<circle cx="12" cy="12" r="8"/><path d="M12 4v4M12 16v4M4 12h4M16 12h4"/>',
     play: '<path d="M8 5.5v13l10-6.5-10-6.5Z"/>',
     menu: '<path d="M4 7h16M4 12h16M4 17h16"/>',

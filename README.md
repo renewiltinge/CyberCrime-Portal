@@ -17,10 +17,19 @@ Een **doelgericht, Nederlandstalig leerportaal voor cybersecurity** — in de st
 **Optie A — lokaal openen**
 Dubbelklik `index.html`. Klaar. Alles werkt direct, ook je voortgang (die wordt lokaal in je browser bewaard).
 
-**Optie B — online via GitHub Pages**
-1. Ga in deze repo naar **Settings → Pages**.
-2. Kies bij *Source*: **Deploy from a branch**, branch **main** (of de branch waar dit op staat), map **/ (root)**.
-3. Na een minuutje staat je Dojo op `https://<jouw-gebruikersnaam>.github.io/<repo-naam>/`.
+**Optie B — online via Cloudflare Pages (aanbevolen)**
+Gratis, valt nooit in slaap, eigen domein met HTTPS, en ook zakelijk gebruik is toegestaan.
+1. Log in op [dash.cloudflare.com](https://dash.cloudflare.com) → **Workers & Pages** → **Create** → **Pages** → **Connect to Git**.
+2. Kies deze repository en de branch **main**.
+3. Bij *Build settings*: Framework preset **None**, Build command **leeg laten**, Build output directory **`/`**.
+4. **Save and Deploy**. Je Dojo staat daarna op `https://<projectnaam>.pages.dev`; elke push naar main zet hem automatisch opnieuw online.
+5. Eigen (sub)domein, bijvoorbeeld `dojo.nineminds.nl`: in het project → **Custom domains**.
+
+Het bestand [`_headers`](_headers) geeft Cloudflare een paar veilige HTTP-headers mee; andere hosts negeren het.
+
+> **Kies één vast adres en blijf daarbij.** Je voortgang staat in de browser, per adres. `*.pages.dev`, je eigen domein en `index.html` lokaal openen zijn voor de browser drie aparte plekken. Wissel je toch? Maak eerst een back-up (zie hieronder).
+
+GitHub Pages werkt ook (*Settings → Pages → Deploy from a branch*, map **/ (root)**), maar is niet bedoeld als hosting voor een zakelijk product.
 
 **Optie C — lokale webserver** (handig tijdens het ontwikkelen)
 ```bash
@@ -200,6 +209,8 @@ Alle tools zijn ook los te gebruiken via de **Gereedschapskist** (Gereedschap in
 
 Je verdient **XP** en **badges**, en je voortgang wordt per vraag bewaard (lokaal, in `localStorage`).
 
+**Back-up van je voortgang.** Klik rechtsboven op je XP → **Back-up downloaden**. Je krijgt een `.json`-bestand dat je via **Back-up terugzetten** weer inleest: na het wissen van je browser, in een andere browser of op een ander apparaat. Zet het bestand bijvoorbeeld in OneDrive of Google Drive.
+
 ---
 
 ## ⚖️ Ethiek — lees dit
@@ -269,6 +280,8 @@ content/
   rooms/*.js            # de lesinhoud (één bestand per room)
 docs/CONTENT-SPEC.md    # handleiding om content te schrijven
 docs/adr/               # beslissingen
+docs/deploy-advies-prompt.md  # prompt om per project de beste gratis hosting te kiezen
+_headers                # HTTP-headers voor Cloudflare Pages
 nineminds/              # de NineMinds-huislaag: tokens, letters, teken (niet met de hand bewerken)
 tools/                  # validate / build / smoke / labtest
 ```
