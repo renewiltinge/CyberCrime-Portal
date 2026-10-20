@@ -1126,6 +1126,8 @@ hr { border: 0; border-top: 1px solid var(--border); margin: 24px 0; }
     chart: '<path d="M4 20h16M7 20v-6M12 20V8M17 20v-9"/>',
     user: '<circle cx="12" cy="8.5" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/>',
     reset: '<path d="M4 12a8 8 0 1 0 2.3-5.6M4 4v4h4"/>',
+    download: '<path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 19h14"/>',
+    upload: '<path d="M12 15V4M7.5 8.5 12 4l4.5 4.5M5 19h14"/>',
     target: '<circle cx="12" cy="12" r="8"/><path d="M12 4v4M12 16v4M4 12h4M16 12h4"/>',
     play: '<path d="M8 5.5v13l10-6.5-10-6.5Z"/>',
     menu: '<path d="M4 7h16M4 12h16M4 17h16"/>',
@@ -2055,14 +2057,60 @@ hr { border: 0; border-top: 1px solid var(--border); margin: 24px 0; }
     body.append(el('h3', { class: 'label', style: 'margin:22px 0 0', text: 'Badges · ' + Object.keys(STATE.badges).length + ' van ' + BADGES.length }));
     body.append(badgeGrid());
     body.append(el('hr', {}));
-    body.append(el('p', { class: 'found-note', text: 'Je voortgang staat alleen in deze browser. Wissen kan niet ongedaan worden gemaakt.' }));
+    body.append(el('p', { class: 'found-note', text: 'Je voortgang staat alleen in deze browser, op dit adres. Bewaar af en toe een back-up: daarmee zet je hem terug na het wissen van je browser, of neem je hem mee naar een ander apparaat.' }));
     const dlg = modal('Jouw voortgang', body);
+    const fileIn = el('input', { type: 'file', accept: '.json,application/json', hidden: '' });
+    fileIn.addEventListener('change', () => {
+      const f = fileIn.files && fileIn.files[0];
+      if (f) importProgress(f, () => { dlg.close(); route(); });
+      fileIn.value = '';
+    });
+    body.append(el('div', { style: 'display:flex;flex-wrap:wrap;gap:8px' }, [
+      el('button', { class: 'btn small', onclick: exportProgress }, [CS.icon('download', 16), el('span', { text: 'Back-up downloaden' })]),
+      el('button', { class: 'btn small', onclick: () => fileIn.click() }, [CS.icon('upload', 16), el('span', { text: 'Back-up terugzetten' })]),
+      fileIn,
+    ]));
+    body.append(el('p', { class: 'found-note', style: 'margin-top:16px', text: 'Wissen kan niet ongedaan worden gemaakt.' }));
     body.append(el('button', { class: 'btn small', onclick: () => {
       if (confirm('Weet je het zeker? Al je voortgang, XP en badges worden gewist.')) {
         STATE = { answered: {}, xp: 0, badges: {}, flags: 0 }; saveState(); renderXP();
         dlg.close(); route();
       }
     } }, [CS.icon('reset', 16), el('span', { text: 'Voortgang wissen' })]));
+  }
+
+  // Back-up: de hele STATE als JSON-bestand, met een kopje zodat we bij het
+  // terugzetten kunnen zien dat het echt een dojo-back-up is.
+  const BACKUP_APP = 'nineminds-cyber-dojo';
+  function exportProgress() {
+    const data = { app: BACKUP_APP, version: 1, exportedAt: new Date().toISOString(), state: STATE };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const a = el('a', { href: URL.createObjectURL(blob), download: 'cyber-dojo-voortgang-' + new Date().toISOString().slice(0, 10) + '.json' });
+    document.body.append(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    toast('Back-up gedownload', 'Bewaar het bestand op een veilige plek.');
+  }
+  function importProgress(file, done) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      let data;
+      try { data = JSON.parse(reader.result); } catch (e) { data = null; }
+      const st = data && data.app === BACKUP_APP && data.state;
+      if (!st || typeof st !== 'object' || typeof st.answered !== 'object') {
+        toast('Dit is geen dojo-back-up', 'Kies een bestand dat je met "Back-up downloaden" hebt gemaakt.');
+        return;
+      }
+      const n = Object.keys(st.answered || {}).length;
+      if (!confirm('Je huidige voortgang wordt vervangen door de back-up (' + n + ' vragen, ' + (st.xp || 0) + ' XP). Doorgaan?')) return;
+      STATE = st;
+      STATE.answered = STATE.answered || {};
+      STATE.xp = STATE.xp || 0;
+      STATE.badges = STATE.badges || {};
+      saveState(); renderXP();
+      toast('Back-up teruggezet', n + ' vragen, ' + STATE.xp + ' XP.', 'proof');
+      done();
+    };
+    reader.readAsText(file);
   }
 
   // =======================================================================
