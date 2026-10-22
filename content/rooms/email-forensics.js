@@ -42,9 +42,9 @@ CS.registerRoom({
   ],
   terms: [
     { term: 'Header', def: 'De technische kop van een e-mail: afzender, ontvanger, onderwerp én het volledige reisverslag (Received-regels).' },
-    { term: 'Received-keten', def: 'Elke mailserver plakt onderaan een Received-regel. Lees van onder (oorspronkelijke verzender) naar boven (jouw server).' },
+    { term: 'Received-keten', def: 'Elke mailserver zet bovenaan een nieuwe Received-regel. Lees van onder (oorspronkelijke verzender) naar boven (jouw server).' },
     { term: 'From vs. Return-Path', def: 'From is de zichtbare afzender en vrij in te vullen; Return-Path is waar bounces heen gaan. Verschillen ze sterk, dan is spoofing waarschijnlijk.' },
-    { term: 'SPF', def: 'Sender Policy Framework: controleert of het verzendende IP namens dat domein mág versturen (via een DNS-record). Fail = verdacht.' },
+    { term: 'SPF', def: 'Sender Policy Framework: controleert via een DNS-record of het verzendende IP namens het envelope-domein (MAIL FROM / Return-Path) mág versturen. DMARC koppelt dat aan het zichtbare From-domein. Fail = verdacht.' },
     { term: 'DKIM', def: 'DomainKeys Identified Mail: een digitale handtekening over de mail. Klopt de handtekening niet (of ontbreekt), dan is de afzender niet bewezen.' },
     { term: 'DMARC', def: 'Beleid dat SPF/DKIM combineert met "alignment" (past het domein bij de From?) en zegt wat te doen bij een mismatch (afwijzen/quarantaine).' },
     { term: 'Spoofing', def: 'Een afzender vervalsen zodat de mail van een vertrouwde partij lijkt te komen.' },
@@ -64,7 +64,7 @@ CS.registerRoom({
       content: `
         <p>De <strong>From</strong>-regel van een e-mail is als de afzender op een envelop: iedereen kan er invullen wat hij
         wil. Gelukkig draagt elke mail een <em>reisverslag</em> mee: de <strong>Received</strong>-keten. Elke server die de
-        mail doorgeeft, plakt er onderaan een regel bij. Je leest de keten dus <strong>van onder naar boven</strong>: de
+        mail doorgeeft, zet er bovenaan een regel bij, boven de regels die er al stonden. Je leest de keten dus <strong>van onder naar boven</strong>: de
         onderste regel is de oorspronkelijke verzender, de bovenste is jouw eigen server.</p>
         <p>Om spoofing te betrappen vergelijk je drie dingen:</p>
         <ul>
@@ -78,9 +78,9 @@ CS.registerRoom({
         <code>NM{van_onder_naar_boven}</code>.</div>
       `,
       questions: [
-        { q: 'In welke richting lees je de Received-keten om de oorspronkelijke verzender te vinden?', options: ['Van onder naar boven (onderste = oorsprong)', 'Van boven naar onder (bovenste = oorsprong)', 'Alfabetisch', 'Dat maakt niet uit'], answer: 0, explain: 'Elke server plakt zijn regel onderaan; de onderste Received-regel is dus de oorspronkelijke verzender.' },
+        { q: 'In welke richting lees je de Received-keten om de oorspronkelijke verzender te vinden?', options: ['Van onder naar boven (onderste = oorsprong)', 'Van boven naar onder (bovenste = oorsprong)', 'Alfabetisch', 'Dat maakt niet uit'], answer: 0, explain: 'Elke server zet zijn regel bovenaan; de onderste Received-regel is dus van de eerste server, het dichtst bij de oorspronkelijke verzender.' },
         { q: 'Waarom is de From-regel alleen onvoldoende bewijs voor de afzender?', options: ['Omdat de From vrij in te vullen is en dus vervalst kan worden', 'Omdat de From versleuteld is', 'Omdat de From altijd klopt', 'Omdat de From door de ontvanger wordt ingevuld'], answer: 0, explain: 'From is cosmetisch; pas SPF/DKIM/DMARC en de Received-keten geven uitsluitsel.' },
-        { q: 'Wat controleert SPF?', options: ['Of het verzendende IP namens dat domein mag versturen', 'Of de mail een virus bevat', 'Of de ontvanger bestaat', 'Of de mail te groot is'], answer: 0, explain: 'SPF toetst via een DNS-record of dit IP een toegestane verzender is voor het From-domein.' },
+        { q: 'Wat controleert SPF?', options: ['Of het verzendende IP namens dat domein mag versturen', 'Of de mail een virus bevat', 'Of de ontvanger bestaat', 'Of de mail te groot is'], answer: 0, explain: 'SPF toetst via een DNS-record of dit IP een toegestane verzender is voor het envelope-domein (Return-Path). Pas DMARC eist dat dat domein overeenkomt met het zichtbare From-domein (alignment).' },
         { q: 'Welke vlag staat in de tip-callout?', answer: ['NM{van_onder_naar_boven}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{van_onder_naar_boven}.' },
       ],
     },

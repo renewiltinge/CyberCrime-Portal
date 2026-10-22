@@ -55,7 +55,7 @@ CS.registerRoom({
         domeinen eindigen op <code>.nm.lab</code> en je werkt met bewijs dat rechtmatig is veiliggesteld.</p>
 
         <p>Je bent <strong>geautoriseerd</strong>: er ligt een bevel en je blijft binnen de wettelijke kaders (zoals
-        art.&nbsp;126j&nbsp;Sv en de Wet politiegegevens). Dat is cruciaal, want precies dezelfde handelingen zonder
+        art.&nbsp;126nba&nbsp;Sv voor het binnendringen in een geautomatiseerd werk, en de Wet politiegegevens). Dat is cruciaal, want precies dezelfde handelingen zonder
         toestemming zijn strafbaar: inbreken op een computer is <strong>computervredebreuk</strong>
         (art.&nbsp;138ab&nbsp;Sr). Jij valt niets aan en betaalt nooit blind losgeld; je <em>analyseert</em> en
         <em>volgt het spoor</em>.</p>
@@ -77,7 +77,7 @@ CS.registerRoom({
         met een rechtmatige grondslag. Buiten je opdracht ben je geen onderzoeker maar een verdachte (art.&nbsp;138ab&nbsp;Sr).</div>
       `,
       questions: [
-        { q: 'Wat maakt jouw onderzoek rechtmatig in plaats van strafbaar?', options: ['Dat de bende fictief is', 'Een rechtmatige grondslag/bevel binnen de wettelijke kaders (art. 126j Sv, Wpg)', 'Dat je tien vlaggen zoekt', 'Dat je het snel doet'], answer: 1, explain: 'Een wettelijke grondslag is de grens tussen rechtmatig onderzoek en computervredebreuk (art. 138ab Sr). Zonder bevel zou je zelf strafbaar zijn.' },
+        { q: 'Wat maakt jouw onderzoek rechtmatig in plaats van strafbaar?', options: ['Dat de bende fictief is', 'Een rechtmatige grondslag/bevel binnen de wettelijke kaders (art. 126nba Sv, Wpg)', 'Dat je tien vlaggen zoekt', 'Dat je het snel doet'], answer: 1, explain: 'Een wettelijke grondslag is de grens tussen rechtmatig onderzoek en computervredebreuk (art. 138ab Sr). Zonder bevel zou je zelf strafbaar zijn.' },
         { q: 'Decodeer de Base64-campagne-tag. Welke vlag staat erin?', answer: ['NM{stille_vennoot}'], encoded: true, hint: 'Haal de string door een Base64-decoder; er staat "campagne-tag: ..." voor.', explain: 'De Base64 decodeert naar "campagne-tag: NM{stille_vennoot}".' },
         { q: 'Wat is de startvlag van deze operatie?', answer: ['NM{spookgeld_gestart}'], hint: 'Staat in de tip-callout als startschot.', explain: 'De startvlag is NM{spookgeld_gestart}.' },
         { q: 'Ik heb een rechtmatige grondslag en werk de dump station voor station uit, zonder blind te betalen.', noAnswer: true },

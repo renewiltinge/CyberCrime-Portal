@@ -249,7 +249,7 @@ echo "notitie" &gt;&gt; logboek.txt             # voeg een regel toe</code></pre
         <p>Alle accounts staan in <code>/etc/passwd</code>, één gebruiker per regel. Een regel ziet er zo uit:</p>
         <pre><code>student:x:1000:1000:Student,,,:/home/student:/bin/bash</code></pre>
         <p>Van links naar rechts: gebruikersnaam, een <code>x</code> (de wachtwoord-hash staat elders), het gebruikers-ID (UID), het groeps-ID (GID), een omschrijving, de thuismap en de shell. <strong>root</strong> heeft altijd UID 0: dat is de almachtige beheerder.</p>
-        <p>De versleutelde wachtwoorden staan NIET in <code>/etc/passwd</code> (dat mag iedereen lezen) maar in <code>/etc/shadow</code>, dat alleen root mag inzien. Vandaar dat je in het lab "Permission denied" krijgt op <code>/etc/shadow</code>.</p>
+        <p>De wachtwoord-hashes (gehasht met salt, niet versleuteld) staan NIET in <code>/etc/passwd</code> (dat mag iedereen lezen) maar in <code>/etc/shadow</code>, dat alleen root mag inzien. Vandaar dat je in het lab "Permission denied" krijgt op <code>/etc/shadow</code>.</p>
         <p>Een gewone gebruiker voert beheertaken uit met <code>sudo</code> ervoor: <code>sudo apt update</code> draait dat commando tijdelijk als root, mits je daar toestemming voor hebt. Zo hoeft niemand permanent als root in te loggen.</p>
 
         <h3>Processen</h3>

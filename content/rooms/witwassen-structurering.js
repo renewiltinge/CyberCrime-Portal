@@ -14,7 +14,7 @@ const WS_TX = [
   { date: '2026-03-04', who: 'K. Visser (katvanger)', amount: 9700, kind: 'contant', note: 'kantoor Rotterdam' },
   { date: '2026-03-04', who: 'S. el Amrani', amount: 1200, kind: 'overboeking', note: 'salaris (normaal)' },
   { date: '2026-03-05', who: 'M. de Groot (katvanger)', amount: 9600, kind: 'contant', note: 'kantoor Eindhoven' },
-  { date: '2026-03-05', who: 'K. Visser (katvanger)', amount: 12000, kind: 'overboeking', note: 'boven de grens — hier geldt juist de meldplicht' },
+  { date: '2026-03-05', who: 'K. Visser (katvanger)', amount: 12000, kind: 'contant', note: 'contant boven de grens — hier geldt juist de meldplicht' },
 ];
 
 // --- Flow: de gestructureerde buit (€48.500) wordt gelaagd en uitbetaald ---
@@ -132,7 +132,7 @@ CS.registerRoom({
         { q: 'Wat is structurering (smurfing)?', options: ['Eén groot bedrag opknippen in stortingen net onder de meldgrens om een melding te ontlopen', 'Geld in het buitenland parkeren', 'Een rekening op een valse naam openen', 'Contant geld omwisselen voor crypto'], answer: 0, explain: 'Smurfing = bewust onder de grens blijven met veel kleine stortingen. Het patroon zelf is het signaal.' },
         { q: 'Hoeveel stortingen passen in het structurering-patroon?', answer: ['5', 'vijf'], hint: 'De gemarkeerde rijen in het lab.', explain: 'Vijf stortingen (9800, 9500, 9900, 9700, 9600) liggen net onder de grens van € 10.000.' },
         { q: 'Wat is het totale gestructureerde bedrag?', answer: ['48500', '48.500', '€ 48.500', '€48500'], hint: 'Tel de vijf gemarkeerde bedragen op.', explain: '9800 + 9500 + 9900 + 9700 + 9600 = € 48.500.' },
-        { q: 'De storting van € 12.000 valt juist bóven de grens. Wat betekent dat?', options: ['Daar geldt juist de meldplicht — die transactie hoort gemeld te worden', 'Die is per definitie legaal', 'Die telt mee als structurering', 'Die mag genegeerd worden'], answer: 0, explain: 'Boven de meldgrens geldt de meldplicht. Structurering is juist het vermijden daarvan door eronder te blijven.' },
+        { q: 'De contante storting van € 12.000 valt juist bóven de grens. Wat betekent dat?', options: ['Daar geldt juist de meldplicht — die transactie hoort gemeld te worden', 'Die is per definitie legaal', 'Die telt mee als structurering', 'Die mag genegeerd worden'], answer: 0, explain: 'Boven de meldgrens geldt de meldplicht. Structurering is juist het vermijden daarvan door eronder te blijven.' },
         { q: 'Bij welke instantie worden ongebruikelijke transacties gemeld?', answer: ['FIU-Nederland', 'fiu', 'fiu nederland', 'fiu-nederland'], hint: 'De Financial Intelligence Unit.', explain: 'FIU-Nederland ontvangt en analyseert ongebruikelijke transacties en kan ze verdacht verklaren.' },
         { q: 'Welke vlag staat in de tip-callout van deze taak?', answer: ['NM{net_onder_de_grens}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{net_onder_de_grens}.' },
       ],

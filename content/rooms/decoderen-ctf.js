@@ -271,7 +271,7 @@ CS.registerRoom({
       questions: [
         { q: 'Je krijgt een blob die alleen uit nullen en enen bestaat, keurig in groepjes van acht. Wat is je eerste gok?', options: ['Binaire ASCII — elk groepje van 8 bits is één teken', 'Base32, want dat gebruikt ook cijfers', 'Een JPEG-afbeelding'], answer: 0, explain: 'Alleen 0 en 1 in groepjes van 8 is het handtekeningpatroon van binaire ASCII.' },
         { q: 'Hoe heet de eerste paar bytes van een bestand waarmee je het bestandstype herkent, los van de extensie?', answer: ['magic bytes', 'magicbytes', 'bestandssignatuur', 'magic number'], hint: 'Bijvoorbeeld 89 50 4E 47 voor een PNG.', explain: 'Magic bytes (de bestandssignatuur) verraden het echte type, ook als de extensie liegt.' },
-        { q: 'Wat is in een CTF de slimste eerste zet bij een onbekende stuk gecodeerde tekst?', options: ['Een multi-decoder / CyberChef "Magic" laten raden, en pas daarna zelf een recept bouwen', 'Meteen beginnen met het brute-forcen van AES-sleutels', 'De tekst negeren omdat codering geen beveiliging is'], answer: 0, explain: 'De automaat pelt de meeste lagen gratis af; handmatig werk in CyberChef bewaar je voor de lastige gevallen.' },
+        { q: 'Wat is in een CTF de slimste eerste zet bij een onbekend stuk gecodeerde tekst?', options: ['Een multi-decoder / CyberChef "Magic" laten raden, en pas daarna zelf een recept bouwen', 'Meteen beginnen met het brute-forcen van AES-sleutels', 'De tekst negeren omdat codering geen beveiliging is'], answer: 0, explain: 'De automaat pelt de meeste lagen gratis af; handmatig werk in CyberChef bewaar je voor de lastige gevallen.' },
       ],
     },
   ],

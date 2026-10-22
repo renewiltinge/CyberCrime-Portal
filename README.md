@@ -187,7 +187,7 @@ Alle labs draaien **volledig in je browser** — veilig, offline, zonder dat er 
 | 🔐 **chmod & getallen** | Linux-rechten en getalstelsels (hex/binair/octaal) omrekenen. |
 | 🔃 **Crackme** | Reverse-engineering puzzel: lees de controlefunctie en vind de sleutel. |
 | ✨ **Multi-decoder** | Herkent en pelt lagen codering af (Base64/32, hex, binair, Morse, ROT13, URL…) en zoekt automatisch de vlag. |
-| 🌈 **Rainbow table** | Zie waarom onvergezouten hashes direct op te zoeken zijn — en hoe salt dat breekt. |
+| 🌈 **Rainbow table** | Zie waarom ongezouten hashes direct op te zoeken zijn — en hoe salt dat breekt. |
 | 🧮 **ACH-matrix** | Concurrerende hypothesen afwegen door bewijs te scoren (C/I/N) — de houdbaarste wint. |
 | 🎬 **Crime script-builder** | Een delict ontleden in zes fasen met een interventie per fase. |
 | 📊 **Bronbeoordeling** | Betrouwbaarheid (A–F) en geloofwaardigheid (1–6) apart beoordelen (Admiralty Code). |

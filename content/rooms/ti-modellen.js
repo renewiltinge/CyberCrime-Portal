@@ -157,7 +157,7 @@ CS.registerRoom({
           "inloggegevens stelen" (Credential Access). ATT&amp;CK kent 14 van deze tactieken, van Reconnaissance tot Impact.</li>
           <li>Een <strong>techniek</strong> is het <em>hoe</em>: de manier waarop hij dat doel bereikt, bijvoorbeeld
           "het geheugen van processen uitlezen". Sommige technieken zijn verder opgesplitst in <strong>sub-technieken</strong>.</li>
-          <li>Een <strong>procedure</strong> is de <em>precieze uitvoering</em> door een bepaalde groep: welk tool, welke
+          <li>Een <strong>procedure</strong> is de <em>precieze uitvoering</em> door een bepaalde groep: welke tool, welke
           commando's, welke opties. Dezelfde techniek, maar groep A doet het net anders dan groep B.</li>
         </ul>
 
@@ -201,7 +201,7 @@ CS.registerRoom({
         type: 'attackmap',
         items: [
           { desc: 'Een medewerker opent de bijlage factuur_sep.zip uit een mail van een nep-leverancier; in het archief zit een kwaadaardige snelkoppeling.', code: 'T1566.001', explain: 'Een gerichte phishingmail met een kwaadaardige bijlage is Spearphishing Attachment, tactiek Initial Access.' },
-          { desc: 'Vanuit het Word-document start een verborgen powershell.exe met een gecodeerd (-enc) commando.', code: 'T1059.001', explain: 'PowerShell als uitvoerder van kwaadaardige code valt onder Command and Scripting Interpreter, tactiek Execution.' },
+          { desc: 'Vanuit de snelkoppeling start een verborgen powershell.exe met een gecodeerd (-enc) commando.', code: 'T1059.001', explain: 'PowerShell als uitvoerder van kwaadaardige code valt onder Command and Scripting Interpreter, tactiek Execution.' },
           { desc: 'De loader leest het geheugen van het proces lsass.exe uit om wachtwoorden en hashes te bemachtigen.', code: 'T1003.001', explain: 'LSASS Memory is een sub-techniek van OS Credential Dumping, tactiek Credential Access.' },
           { desc: 'Met een gestolen, geldig beheerdersaccount logt de aanvaller via RDP in op een fileserver.', code: 'T1021.001', explain: 'Inloggen via Remote Desktop Protocol is een sub-techniek van Remote Services, tactiek Lateral Movement.' },
           { desc: 'De aanvaller stopt de buitgemaakte bestanden in een met wachtwoord beveiligd 7z-archief voordat ze naar buiten gaan.', code: 'T1560', explain: 'Data inpakken voor exfiltratie is Archive Collected Data, tactiek Collection.' },
@@ -386,7 +386,7 @@ CS.registerRoom({
         <div class="callout info">
           <strong>Waarneming (bekend):</strong> De aanvaller stuurt een nepfactuur met een kwaadaardige ZIP-bijlage
           (MD5 <code>3abad12a9579508025468c528c47a68c</code>) naar een medewerker. De mail komt binnen vanaf het account
-          <code>facturen[at]boos[.]nineminds[.]lab</code> en wordt in de inbox afgeleverd.
+          <code>facturen[at]boos[.]nm[.]lab</code> en wordt in de inbox afgeleverd.
         </div>
 
         <h3>Dezelfde gebeurtenis, vier lenzen</h3>
@@ -430,7 +430,7 @@ CS.registerRoom({
     { term: 'MITRE ATT&CK', def: 'Openbare kennisbank van aanvalsgedrag, geordend in tactieken (waarom) en technieken (hoe) met vaste ID\'s zoals T1566.' },
     { term: 'Tactiek (ATT&CK)', def: 'Het doel van de aanvaller in een stap, bijvoorbeeld Credential Access. ATT&CK Enterprise kent er 14.' },
     { term: 'Techniek en sub-techniek', def: 'De manier waarop een aanvaller een tactiek bereikt, met een ID als T1059; een sub-techniek krijgt er een punt bij, zoals T1059.001 (PowerShell).' },
-    { term: 'Procedure', def: 'De precieze, concrete uitvoering van een techniek door een bepaalde groep: welk tool, welke commando\'s en opties.' },
+    { term: 'Procedure', def: 'De precieze, concrete uitvoering van een techniek door een bepaalde groep: welke tool, welke commando\'s en opties.' },
     { term: 'ATT&CK Navigator', def: 'Gratis webtool om de ATT&CK-matrix in te kleuren als heatmap, bijvoorbeeld om detectiedekking of blinde vlekken te tonen.' },
     { term: 'Diamond Model', def: 'Model dat één gebeurtenis beschrijft met vier hoekpunten: Adversary, Capability, Infrastructure en Victim, plus meta-kenmerken.' },
     { term: 'Meta-kenmerken', def: 'Extra gegevens rond een diamant, zoals tijd, fase, resultaat, methode en de herkomst en betrouwbaarheid van elk gegeven.' },

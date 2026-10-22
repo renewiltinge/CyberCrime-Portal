@@ -432,7 +432,7 @@ de velden af, en koppelt een interventie aan elke fase (basis voor de interventi
 
 ```js
 lab: { type: 'admiralty', items: [
-  { source: 'Anonieme tip via Meld Misdaad Anoniem', info: 'X plant een ransomware-aanval', reliability: 'E', credibility: '4', explain: 'Onbekende bron, niet te verifiëren.' },
+  { source: 'Anonieme tip via Meld Misdaad Anoniem', info: 'X plant een ransomware-aanval', reliability: 'F', credibility: '4', explain: 'Onbekende bron: betrouwbaarheid niet te beoordelen.' },
 ] }
 ```
 De leerling kiest betrouwbaarheid van de bron (A–F) én geloofwaardigheid van de info (1–6), apart; het lab vergelijkt met
@@ -526,7 +526,7 @@ lab: {
   saltExample: { word: 'welkom', salt: 'Xy7' }, // toont plain-hash vs gesalte hash (optioneel)
 }
 ```
-Toont een voorberekende tabel (hash → woord) en een opzoekveld: een onvergezouten hash wordt direct gevonden, een gesalte
+Toont een voorberekende tabel (hash → woord) en een opzoekveld: een ongezouten hash wordt direct gevonden, een gesalte
 hash niet — zo zie je waarom salt precomputatie breekt. Hashes worden met de echte lab-hashfunctie berekend.
 
 ### `flow`: geld-/datastroom volgen (follow the money/data)

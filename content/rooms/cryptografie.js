@@ -87,7 +87,7 @@ CS.registerRoom({
         <h3>ROT13</h3>
         <p>ROT13 is een Caesarcijfer met een vaste verschuiving van 13. Omdat het alfabet 26 letters heeft,
         is ROT13 <strong>zijn eigen omkering</strong>: tweemaal ROT13 toepassen geeft de oorspronkelijke tekst.
-        Je ziet het vroeger op forums om spoilers te verbergen — níet om iets echt geheim te houden.</p>
+        Je zag het vroeger op forums om spoilers te verbergen — níet om iets echt geheim te houden.</p>
         <div class="callout info">
           <strong>Let op:</strong> ROT13 en Caesar raken alleen letters. Cijfers, de accolades
           <code>{ }</code> en underscores in een vlag blijven staan. Een versleutelde vlag ziet er daarom
@@ -111,7 +111,7 @@ CS.registerRoom({
       `,
       lab: { type: 'cyberchef', input: 'AZ{xynffvrxr_pvwsref_mvwa_mjnx}' },
       questions: [
-        { q: 'Decodeer jhkhlp met een Caesarcijfer (verschuiving 3 terug). Welk Nederlandse woord krijg je?', answer: ['geheim'], hint: 'Schuif elke letter drie plaatsen terug: j -> g, h -> e ...', explain: 'jhkhlp met drie terug is "geheim". Zo makkelijk is Caesar te kraken.' },
+        { q: 'Decodeer jhkhlp met een Caesarcijfer (verschuiving 3 terug). Welk Nederlands woord krijg je?', answer: ['geheim'], hint: 'Schuif elke letter drie plaatsen terug: j -> g, h -> e ...', explain: 'jhkhlp met drie terug is "geheim". Zo makkelijk is Caesar te kraken.' },
         { q: 'Pas ROT13 toe op de string in het lab. Wat is de vlag?', answer: ['NM{klassieke_cijfers_zijn_zwak}'], encoded: true, hint: 'ROT13 is zijn eigen omkering; één keer toepassen is genoeg.', explain: 'ROT13 verbergt niets; het is binnen één klik leesbaar.' },
         { q: 'Meerstaps: neem QVp7Z2pycl9tam54eHJfeW50cmF9, kies eerst "Van Base64" en daarna "ROT13". Wat is de vlag?', answer: ['NM{twee_zwakke_lagen}'], encoded: true, hint: 'Twee zwakke lagen stapelen maakt het niet sterk. Eerst Base64 eraf, dan ROT13.', explain: 'Twee omkeerbare bewerkingen stapelen levert nog steeds geen echte beveiliging op.' },
         { q: 'Hoeveel zinvolle sleutels (verschuivingen) heeft een Caesarcijfer op het Latijnse alfabet?', answer: ['25'], hint: 'Een verschuiving van 0 verandert niets; alle andere letters van het alfabet min die ene.', explain: 'Met 25 mogelijkheden is brute-forcen een fluitje van een cent.' },

@@ -7,11 +7,11 @@ CS.registerRoom({
   icon: '🌈',
   difficulty: 'Gemiddeld',
   minutes: 55,
-  summary: 'Begrijp de precomputatie-aanval (tijd-geheugen-afweging), zie met een rainbow table waarom onvergezouten hashes direct op te zoeken zijn, en leer hoe salt, peper en trage hashes dat breken.',
+  summary: 'Begrijp de precomputatie-aanval (tijd-geheugen-afweging), zie met een rainbow table waarom ongezouten hashes direct op te zoeken zijn, en leer hoe salt, peper en trage hashes dat breken.',
   objectives: [
     'Uitleggen wat een precomputatie-aanval is en welke tijd-geheugen-afweging eraan ten grondslag ligt',
     'Het verschil benoemen tussen een simpele opzoektabel en een echte rainbow table (reductiefuncties en ketens)',
-    'Met een rainbow table een onvergezouten MD5-hash direct opzoeken',
+    'Met een rainbow table een ongezouten MD5-hash direct opzoeken',
     'Uitleggen waarom een per-gebruiker unieke, willekeurige salt precomputatie onbruikbaar maakt',
     'Peper, trage hashes (bcrypt/scrypt/Argon2) en de werkfactor herkennen en uitleggen',
     'Beschrijven hoe moderne wachtwoordopslag (Argon2id + salt + peper) en wachtwoordbeleid samen verdedigen',
@@ -35,7 +35,7 @@ CS.registerRoom({
         rekentijd én veel opslag, en krijgt daarvoor in de plaats dat elke latere aanval razendsnel is. Je ruilt dus
         <em>tijd</em> (tijdens de aanval) in tegen <em>geheugen</em> (opslag van de tabel). De simpele variant hiervan is
         een platte <strong>opzoektabel</strong>: letterlijk een enorm bestand met voor elk bedacht wachtwoord zijn hash.
-        Eerlijk is eerlijk — die opzoektabel is juist het probleem: alle onvergezouten MD5's van alle wachtwoorden tot
+        Eerlijk is eerlijk — die opzoektabel is juist het probleem: alle ongezouten MD5's van alle wachtwoorden tot
         acht tekens opslaan kost al snel vele terabytes. Puur opzoeken is dan onbetaalbaar qua opslag.</p>
 
         <h3>Wat een echte rainbow table slimmer doet: ketens</h3>
@@ -97,17 +97,17 @@ CS.registerRoom({
     },
 
     {
-      title: 'Taak 2 — Het rainbow-lab: zoek een onvergezouten hash op',
+      title: 'Taak 2 — Het rainbow-lab: zoek een ongezouten hash op',
       content: `
         <p>Tijd om het te voelen. In het lab hieronder staat een kleine, vooraf berekende tabel: links de MD5-hash,
         rechts het wachtwoord. Dit is precies de simpele opzoektabel-variant uit taak 1 — alleen veel korter, zodat je
         hem in één oogopslag overziet. In het echt zou zo'n tabel miljarden rijen tellen.</p>
 
         <h3>Opzoeken, niet kraken</h3>
-        <p>Neem de hash <code>371620aa75830b1388b63305b0d42f06</code>. Dat is de onvergezouten MD5 van een heel gewoon
+        <p>Neem de hash <code>371620aa75830b1388b63305b0d42f06</code>. Dat is de ongezouten MD5 van een heel gewoon
         wachtwoord. Plak hem in het opzoekveld en klik op <strong>Opzoeken</strong>. Er wordt niets gegokt of gekraakt:
         de tool kijkt simpelweg of de hash in de tabel staat en geeft meteen het bijbehorende wachtwoord terug. Dat is de
-        hele kracht (en het hele gevaar) van precomputatie: voor onvergezouten hashes is kraken teruggebracht tot een
+        hele kracht (en het hele gevaar) van precomputatie: voor ongezouten hashes is kraken teruggebracht tot een
         opzoekactie van een fractie van een seconde.</p>
 
         <p>Onder het opzoekveld zie je een blauw kader dat alvast vooruitwijst naar de volgende taak. Daar staat dezelfde
@@ -120,7 +120,7 @@ CS.registerRoom({
 
         <h3>Je beloning</h3>
         <details><summary>Toon de vlag (pas openen nadat je het wachtwoord hebt opgezocht)</summary>
-          <p>Je verdiende vlag: <code>NM{rainbow_zoekt_direct}</code>. Onthoud het gevoel: voor een onvergezouten,
+          <p>Je verdiende vlag: <code>NM{rainbow_zoekt_direct}</code>. Onthoud het gevoel: voor een ongezouten,
           snelle hash hoef je niet te kraken — je zoekt gewoon op.</p>
         </details>
       `,
@@ -132,17 +132,17 @@ CS.registerRoom({
         saltExample: { word: 'welkom', salt: 'Xy7' },
       },
       questions: [
-        { q: 'Zoek de hash 371620aa75830b1388b63305b0d42f06 op. Welk wachtwoord hoort erbij?', answer: ['welkom'], hint: 'Plak de hash in het opzoekveld en klik op Opzoeken; de tabel geeft het meteen.', explain: 'De onvergezouten MD5 van "welkom" is 371620aa75830b1388b63305b0d42f06 — direct terug te vinden in de tabel.' },
+        { q: 'Zoek de hash 371620aa75830b1388b63305b0d42f06 op. Welk wachtwoord hoort erbij?', answer: ['welkom'], hint: 'Plak de hash in het opzoekveld en klik op Opzoeken; de tabel geeft het meteen.', explain: 'De ongezouten MD5 van "welkom" is 371620aa75830b1388b63305b0d42f06 — direct terug te vinden in de tabel.' },
         { q: 'Waarom is het opzoeken "direct" en voelt het niet als kraken?', options: ['Omdat het rekenwerk al vooraf is gedaan en als hash → woord is opgeslagen', 'Omdat MD5 omkeerbaar is', 'Omdat de hash wordt ontsleuteld met een sleutel', 'Omdat de tabel het wachtwoord raadt'], answer: 0, explain: 'Alle hashes zijn vooraf berekend en opgeslagen. Opzoeken is daardoor een simpele lookup, geen gokwerk.' },
         { q: 'Plak de gesalte hash 329f3abf574738de33a01f7c630b1fb7. Wordt die in de tabel gevonden?', answer: ['nee', 'niet', 'niet gevonden', 'niet in de tabel'], hint: 'Deze hash is berekend met een salt; de tabel is dat niet.', explain: 'Nee — de gesalte hash staat niet in de voorberekende tabel, dus opzoeken faalt. Dat is de brug naar taak 3.' },
-        { q: 'Wat is de vlag die je hier verdient?', answer: ['NM{rainbow_zoekt_direct}'], hint: 'Staat in het inklapbare blok onderaan de taak.', explain: 'NM{rainbow_zoekt_direct} bevestigt dat je een onvergezouten hash rechtstreeks hebt opgezocht.' },
+        { q: 'Wat is de vlag die je hier verdient?', answer: ['NM{rainbow_zoekt_direct}'], hint: 'Staat in het inklapbare blok onderaan de taak.', explain: 'NM{rainbow_zoekt_direct} bevestigt dat je een ongezouten hash rechtstreeks hebt opgezocht.' },
       ],
     },
 
     {
       title: 'Taak 3 — Salt: per gebruiker, uniek en willekeurig',
       content: `
-        <p>Je zag het in taak 2: een onvergezouten hash is zo opgezocht. De tegenmaatregel is verrassend simpel en heet
+        <p>Je zag het in taak 2: een ongezouten hash is zo opgezocht. De tegenmaatregel is verrassend simpel en heet
         <strong>salt</strong>. Een salt is een stukje willekeurige data dat je vóór het hashen aan het wachtwoord plakt.
         In plaats van <code>hash(wachtwoord)</code> bewaar je <code>hash(salt + wachtwoord)</code>, samen met het salt
         zelf. Bij het inloggen plak je hetzelfde salt er weer voor, hasht, en vergelijkt.</p>
@@ -166,7 +166,7 @@ CS.registerRoom({
         (een enkel zwak wachtwoord blijft kraakbaar), maar het dwingt de aanvaller terug naar traag, per-hash gokken.</p>
 
         <h3>Zie het in het lab</h3>
-        <p>In het lab staat de hash <code>21232f297a57a5a743894a0e4a801fc3</code> alvast ingevuld: de onvergezouten MD5
+        <p>In het lab staat de hash <code>21232f297a57a5a743894a0e4a801fc3</code> alvast ingevuld: de ongezouten MD5
         van <code>admin</code>. Die wordt direct gevonden. Plak daarna de gesalte variant
         <code>633c923b634754ecb6ef73b3308c3418</code> — dat is <code>md5("s4lt" + "admin")</code>. Zelfde wachtwoord,
         maar hij staat <em>niet</em> in de tabel. Het blauwe kader onderin laat de twee hashes naast elkaar zien.</p>
@@ -260,7 +260,7 @@ CS.registerRoom({
       title: 'Taak 5 — Zonder salt werkt een woordenlijst meteen',
       content: `
         <p>We hebben gezien waarom salt en trage hashes verdedigen. Laten we nu voelen wat er misgaat <em>zonder</em> die
-        verdediging. Stel een dienst slaat wachtwoorden op als kale, onvergezouten MD5 — en die database lekt. Dan is niet
+        verdediging. Stel een dienst slaat wachtwoorden op als kale, ongezouten MD5 — en die database lekt. Dan is niet
         alleen precomputatie mogelijk; zelfs een gewone <strong>woordenlijstaanval</strong> rolt er in een oogwenk
         doorheen.</p>
 
@@ -277,13 +277,13 @@ CS.registerRoom({
         effectief maakt.</p>
 
         <h3>Aan de slag</h3>
-        <p>In het lab staat een onvergezouten MD5-hash en een korte woordenlijst — net als bij een echte dump, alleen
+        <p>In het lab staat een ongezouten MD5-hash en een korte woordenlijst — net als bij een echte dump, alleen
         veel korter. Start de woordenlijstaanval en laat de tool de lijst aflopen. De hash is zo gekraakt, want hij is
-        onvergezouten én van een alledaags wachtwoord. Denk er bij elke treffer aan: was deze hash met een unieke salt én
+        ongezouten én van een alledaags wachtwoord. Denk er bij elke treffer aan: was deze hash met een unieke salt én
         een trage hash opgeslagen, dan had deze aanval geen schijn van kans gehad.</p>
 
         <div class="callout danger"><strong>De les:</strong> "we hashen de wachtwoorden toch?" is geen verdediging als het
-        om een kale, snelle, onvergezouten hash gaat. MD5 zonder salt is in de praktijk nauwelijks beter dan platte tekst.</div>
+        om een kale, snelle, ongezouten hash gaat. MD5 zonder salt is in de praktijk nauwelijks beter dan platte tekst.</div>
 
         <h3>Je beloning</h3>
         <details><summary>Toon de vlag (pas openen nadat je het wachtwoord hebt gekraakt)</summary>
@@ -299,9 +299,9 @@ CS.registerRoom({
         wordlist: ['123456', 'welkom', 'qwerty', 'liefde', 'voetbal', 'admin', 'maandag', 'computer'],
       },
       questions: [
-        { q: 'Start de woordenlijstaanval. Welk wachtwoord hoort bij de hash?', answer: ['voetbal'], hint: 'Laat de tool de hele lijst aflopen; één woord geeft precies dezelfde MD5.', explain: 'De onvergezouten MD5 van "voetbal" is d9898c6cad232125606d4ceea5a35e41 — een klassieke woordenlijst-treffer.' },
+        { q: 'Start de woordenlijstaanval. Welk wachtwoord hoort bij de hash?', answer: ['voetbal'], hint: 'Laat de tool de hele lijst aflopen; één woord geeft precies dezelfde MD5.', explain: 'De ongezouten MD5 van "voetbal" is d9898c6cad232125606d4ceea5a35e41 — een klassieke woordenlijst-treffer.' },
         { q: 'Waarom helpt een per-gebruiker unieke salt juist hier als verdediging?', options: ['De aanvaller kan één woordenlijst niet meer tegen alle hashes tegelijk gebruiken; hij moet per salt opnieuw hashen', 'De salt maakt het wachtwoord geheim', 'De salt versleutelt de database', 'De salt maakt MD5 trager'], answer: 0, explain: 'Door de unieke salt levert hetzelfde wachtwoord bij iedereen een andere hash op, dus de aanvaller moet per hash opnieuw rekenen.' },
-        { q: 'Waarom is een kale, onvergezouten MD5 nauwelijks beter dan platte tekst?', options: ['MD5 is snel en zonder salt werken opzoeken én woordenlijsten direct', 'MD5 is omkeerbaar met een sleutel', 'Omdat MD5 te kort is om op te slaan', 'Dat klopt niet, MD5 is juist veilig'], answer: 0, explain: 'Een snelle, onvergezouten hash valt zowel voor precomputatie als voor een simpele woordenlijstaanval — een open deur.' },
+        { q: 'Waarom is een kale, ongezouten MD5 nauwelijks beter dan platte tekst?', options: ['MD5 is snel en zonder salt werken opzoeken én woordenlijsten direct', 'MD5 is omkeerbaar met een sleutel', 'Omdat MD5 te kort is om op te slaan', 'Dat klopt niet, MD5 is juist veilig'], answer: 0, explain: 'Een snelle, ongezouten hash valt zowel voor precomputatie als voor een simpele woordenlijstaanval — een open deur.' },
         { q: 'Wat is de vlag die je hier verdient?', answer: ['NM{zonder_salt_valt_het}'], hint: 'Staat in het inklapbare blok onderaan de taak.', explain: 'NM{zonder_salt_valt_het} — zonder salt en met een snelle hash valt het wachtwoord meteen.' },
       ],
     },
@@ -350,7 +350,7 @@ CS.registerRoom({
         <p>Je kunt nu uitleggen wat een precomputatie-aanval is, waarom een platte opzoektabel en een echte rainbow table
         met ketens hetzelfde doel dienen, en vooral: waarom salt wint. Een unieke salt breekt precomputatie, een peper
         legt daar een geheim bovenop, en een trage hash met hoge werkfactor maakt elke gok duur. Combineer dat met lengte,
-        uniciteit, MFA en lekcontrole, en je hebt wachtwoordopslag die stand houdt. Gebruik deze kennis verantwoord:
+        uniciteit, MFA en lekcontrole, en je hebt wachtwoordopslag die standhoudt. Gebruik deze kennis verantwoord:
         kraken oefen je alleen op je eigen hashes, op oefenhashes, of binnen een getekende opdracht.</p>
         <div class="callout info"><strong>Verder lezen?</strong> De OWASP Password Storage Cheat Sheet geeft concrete
         parameters voor Argon2, bcrypt en scrypt, en het NCSC heeft praktisch wachtwoordadvies.</div>

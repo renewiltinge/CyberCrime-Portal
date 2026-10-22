@@ -46,7 +46,7 @@ CS.registerRoom({
     'Fingerprints (JARM, JA3/JA4, favicon-hash, response-headers) herkennen en gebruiken om infrastructuur te clusteren',
     'Pivoten als iteratief proces uitvoeren en elk kenmerk toetsen op zeldzaamheid voordat je het een echte link noemt',
     'Een onderzoek als relatietabel (met tijd en herkomst) vastleggen en uitleggen hoe pandas/networkx bruggen en centrale knopen vinden',
-    'De blockchain-basis (common-input- en change-heuristiek, exchanges als knelpunt) en de juridische/opsec-grenzen (art. 126j Sv, Wet politiegegevens) toepassen',
+    'De blockchain-basis (common-input- en change-heuristiek, exchanges als knelpunt) en de juridische/opsec-grenzen (art. 126g en 126j Sv, Wet politiegegevens) toepassen',
   ],
   tasks: [
     {
@@ -290,7 +290,7 @@ nx.betweenness_centrality(G)              # welke knoop is de spil?</code></pre>
         <h3>De grenzen: wet en opsec</h3>
         <p>Infrastructuur-OSINT lijkt vrijblijvend, maar je werkt met persoonsgegevens en raakt aan opsporingsbevoegdheden. Twee kaders:</p>
         <ul>
-          <li><strong>Stelselmatig observeren (art. 126j Sv-sfeer).</strong> Af en toe iets opzoeken is iets anders dan iemand <em>stelselmatig</em> volgen tot je een compleet beeld van zijn leven krijgt. Stelselmatige informatie-inwinning door opsporing is een bevoegdheid met voorwaarden; zie <a href="https://wetten.overheid.nl/BWBR0001903" target="_blank" rel="noopener">het Wetboek van Strafvordering</a>. Als leerling of burger doe je dit niet op eigen houtje.</li>
+          <li><strong>Stelselmatig observeren (art. 126g Sv; met heimelijke interactie art. 126j Sv).</strong> Af en toe iets opzoeken is iets anders dan iemand <em>stelselmatig</em> volgen tot je een compleet beeld van zijn leven krijgt. Stelselmatige informatie-inwinning door opsporing is een bevoegdheid met voorwaarden; zie <a href="https://wetten.overheid.nl/BWBR0001903" target="_blank" rel="noopener">het Wetboek van Strafvordering</a>. Als leerling of burger doe je dit niet op eigen houtje.</li>
           <li><strong>Wet politiegegevens (Wpg).</strong> Politiegegevens mogen alleen voor een bepaald doel worden verwerkt en bewaard; zie <a href="https://wetten.overheid.nl/BWBR0022463" target="_blank" rel="noopener">de Wet politiegegevens</a>. Verzamel niet meer dan nodig (dataminimalisatie) en leg je grondslag vast.</li>
           <li><strong>Passief vs. actief.</strong> Een archief bevragen (crt.sh, passive DNS, RIPEstat) is <em>passief</em>: de dader merkt er niets van. De verdachte server zélf benaderen (hem bezoeken, scannen, een JARM nemen) is <em>actief</em> en kan je verraden of zelfs strafbaar zijn.</li>
         </ul>
@@ -327,6 +327,6 @@ nx.betweenness_centrality(G)              # welke knoop is de spil?</code></pre>
     { title: 'crt.sh — Certificate Transparency search', url: 'https://crt.sh/' },
     { title: 'RIPEstat — data over IP-adressen, ASN\'s en domeinen', url: 'https://stat.ripe.net/' },
     { title: 'abuse.ch — threat-intel-feeds (URLhaus, ThreatFox, SSLBL)', url: 'https://abuse.ch/' },
-    { title: 'Wetboek van Strafvordering (art. 126j Sv) & Wet politiegegevens — wetten.overheid.nl', url: 'https://wetten.overheid.nl/BWBR0001903' },
+    { title: 'Wetboek van Strafvordering (art. 126g en 126j Sv) & Wet politiegegevens — wetten.overheid.nl', url: 'https://wetten.overheid.nl/BWBR0001903' },
   ],
 });
