@@ -51,6 +51,32 @@ const url = 'file://' + path.join(__dirname, '..', 'index.html');
     }
   } else ok('Tijdstempeltaak in forensie-room', false);
 
+  // Benford: de referentie is aanvaardbaar, de inkoopfacturen hebben te veel vieren.
+  await p.goto(url + '#/room/fraude-in-de-cijfers', { waitUntil: 'networkidle' });
+  await p.waitForSelector('.lab');
+  const bf = await p.evaluate(() => [...document.querySelectorAll('.task')].findIndex((t) => /Benford-analyse/.test(t.textContent) && t.querySelector('.lab')));
+  ok('Benford-lab aanwezig', bf >= 0);
+  if (bf >= 0) {
+    ok('Benford: referentiejaar geeft "aanvaardbare overeenkomst"', /aanvaardbare overeenkomst/.test(await text('#task-' + bf + ' .lab-out')));
+    await p.click('#task-' + bf + ' .chip:has-text("Inkoopfacturen")');
+    const inkoop = await text('#task-' + bf + ' .lab-out');
+    ok('Benford: inkoopfacturen hebben cijfer 4 sterkst oververtegenwoordigd', /cijfer 4 \(\+22\.0/.test(inkoop) && /geen overeenkomst/.test(inkoop));
+  }
+
+  // Bayes: de kansen uit de rooms (84% insider, 16% en 92% bij de dreigmail).
+  const bayesFinal = async (room, title, boxes) => {
+    await p.goto(url + '#/room/' + room, { waitUntil: 'networkidle' });
+    await p.waitForSelector('.lab');
+    const ti = await p.evaluate((t) => [...document.querySelectorAll('.task')].findIndex((x) => x.querySelector('.lab') && x.textContent.includes(t)), title);
+    const cbs = await p.$$('#task-' + ti + ' .lab input[type=checkbox]');
+    for (const i of boxes) await cbs[i].check();
+    return text('#task-' + ti + ' .lab-out');
+  };
+  ok('Bayes: insider 84,00% na drie bewijsstukken', /\+ MFA\s+Insider 84\.00%/.test(await bayesFinal('redeneren-met-kansen', 'Gemeente Zeeweide', [0, 1, 2])));
+  ok('Bayes: crimineel 83,33% na alleen de brief', /Crimineel 83\.33%/.test(await bayesFinal('redeneren-met-kansen', 'Ingenieursbureau', [0])));
+  ok('Bayes: dreigmail 15,97% na het IP-bewijs', /Hp \(P\.\) 15\.97%/.test(await bayesFinal('bewijs-in-de-rechtszaal', 'De dreigmail', [0])));
+  ok('Bayes: dreigmail 91,94% na beide bewijsstukken', /Hp \(P\.\) 91\.94%/.test(await bayesFinal('bewijs-in-de-rechtszaal', 'De dreigmail', [0, 1])));
+
   // Gereedschapskist: RSA-werkbank en Nachtwacht-VM.
   await p.goto(url + '#/tools', { waitUntil: 'networkidle' });
   await p.waitForSelector('#tool-rsa');

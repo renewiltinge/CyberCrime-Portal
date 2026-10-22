@@ -149,6 +149,9 @@ Leren door te doen — veel plezier met oplosbare cybercrime-puzzels.
 Voor wie de puzzels te makkelijk vond: zwaardere opgaven met meer achtergrond.
 1. **Cryptanalyse: Vigenère en de many-time pad kraken** — de sleutellengte vinden met Kasiski, de index of coincidence en Friedman, per kolom kraken met chi-kwadraat (inclusief een statistisch twijfelgeval), een hergebruikt one-time pad openbreken met crib dragging, en de moderne lessen (nonce-hergebruik, repeating-key XOR, Kerckhoffs).
 2. **Forensie gevorderd: tegenstrijdige sporen en misleidend bewijs** — timestomping betrappen via $SI, $FN, het USN-journaal en Prefetch, tijdstempels uit vijf formaten en tijdzones omrekenen, data achter het einde van een PNG vinden, false flags herkennen met ACH en rapporteren met bronbeoordeling.
+3. **Fraude in de cijfers: Benford, drempels en verzonnen bedragen** — de wet van Benford met MAD en chi-kwadraat, opgesplitste facturen onder een goedkeuringsgrens, verzonnen declaraties herkennen en een signaal uitwerken tot dossier.
+4. **Redeneren met kansen: Bayes voor analisten** — basispercentages, likelihood ratios en de odds-vorm van Bayes, meerdere hypothesen en afhankelijk bewijs, kalibratie met de Brier-score en een Key Assumptions Check.
+5. **Bewijs in de rechtszaal: digitaal bewijs wegen en rapporteren** — bron-, activiteits- en delictsniveau, de prosecutor's fallacy (Sally Clark, Lucia de Berk), de likelihood ratio met verbale schaal, het forensisch rapport en contextuele bias.
 
 ### 🏁 Eindopdracht
 1. **Mini-CTF: Operatie KoffieKlap** — breng alles samen in een afsluitende Capture The Flag met zes vlaggen.
@@ -211,6 +214,8 @@ Alle labs draaien **volledig in je browser** — veilig, offline, zonder dat er 
 | 🗝️ **Vigenère-werkbank** | Vigenère kraken zonder sleutel: Kasiski-afstanden, IoC per sleutellengte en chi-kwadraat per kolom, met live ontsleutelen. |
 | ⊕ **Many-time pad** | Twee berichten met dezelfde sleutelstroom: een crib langs C1 ⊕ C2 slepen en beide berichten reconstrueren. |
 | 🔢 **RSA-werkbank** | RSA narekenen met grote getallen: factoriseren (proefdeling, Fermat, Pollard-rho, GCD), φ, d en ontsleutelen. |
+| 📊 **Benford-analyse** | De eerste cijfers van bedragen vergelijken met de wet van Benford, met MAD, chi-kwadraat en het afwijkende cijfer. |
+| 🎲 **Bayes-rekenaar** | Hypothesen bijwerken met bewijs: prior, likelihoods, likelihood ratio en posterior, stap voor stap. |
 | 🦉 **Nachtwacht-VM** | Een mini-assembler: lees de code, stap erdoorheen met registers en trace, en vind de invoer die `ok` bereikt. |
 | 🎲 **Beslissimulatie** | Beslissingen nemen onder druk (incident response/onderhandeling) en de gevolgen zien. |
 
@@ -250,7 +255,7 @@ Werkwijze:
 | `node tools/build-artifact.js` | Bouwt de losse versie `dist/nineminds-cyber-dojo.html` (alles in één bestand, ook de letters). |
 | `node tools/smoke.js` | Laadt het portaal in een headless browser en controleert dat alles rendert: de leerpaden, elke room, het NineMinds-teken. |
 | `node tools/labtest.js` + `labtest-extra.js` | Bedienen de labs echt en controleren de uitkomsten. |
-| `node tools/labtest-meester.js` | Test de labs van Meesterproeven (Vigenère, many-time pad, RSA, VM) en de antwoorden van die rooms. |
+| `node tools/labtest-meester.js` | Test de labs van Meesterproeven (Vigenère, many-time pad, Benford, Bayes, RSA, VM) en de antwoorden van die rooms. |
 
 *(De testscripts gebruiken Node + Playwright; de validator en build werken met alleen Node.)*
 

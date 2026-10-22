@@ -18,7 +18,7 @@ const LABS = ['terminal', 'cyberchef', 'hashcrack', 'password', 'phishing', 'log
   'ach', 'crimescript', 'admiralty', 'probability', 'attackmap', 'pivot', 'bluf',
   'flow', 'ordering', 'regexgolf', 'osintpuzzle', 'connections', 'chaintrace',
   'netflow', 'structuring', 'emailheader', 'dnslog', 'recon', 'detectrule',
-  'fingerprint', 'scenario', 'vigenere', 'xorcrib', 'rsa', 'vm'];
+  'fingerprint', 'scenario', 'vigenere', 'xorcrib', 'rsa', 'vm', 'benford', 'bayes'];
 
 const args = process.argv.slice(2);
 const files = args.length

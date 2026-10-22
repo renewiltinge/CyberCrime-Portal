@@ -752,3 +752,24 @@ Registers `a b c d i j`; instructies `mov add sub mul mod xor and or shl shr rol
 labels als `naam:`, data als `data naam: 1, 0x2a, 'x', "tekst"`, en `ld r, in[i]` / `ld r, naam[i]`. De leerling voert
 uit of stapt door de code met registers en trace. Controleer met Node (`CS.vm.run(program, invoer).status === 'ok'`)
 dat jouw bedoelde invoer slaagt.
+
+### `benford`: eerste-cijferanalyse (wet van Benford)
+
+```js
+lab: { type: 'benford', title: '...', scenario: '<intro>', sets: [ { name: 'Referentie', amounts: [ ... ] }, { name: 'Verdacht', amounts: [ ... ] } ], ask: [ ... ] }
+// of één reeks: amounts: [ ... ]
+```
+Toont per eerste cijfer het waargenomen en het verwachte percentage (log10(1 + 1/d)), de MAD met het oordeel volgens
+Nigrini (≤ 0,006 · ≤ 0,012 · ≤ 0,015), χ² met de 5%-grens (15,51 bij 8 vrijheidsgraden) en het sterkst
+oververtegenwoordigde cijfer. **Genereer datasets deterministisch en reken de uitkomst na** met `CS.stats.benfordStats`.
+Bedenk dat de MAD-grenzen voor grote reeksen bedoeld zijn: bij een paar honderd bedragen is ruis normaal.
+
+### `bayes`: hypothesen bijwerken met bewijs
+
+```js
+lab: { type: 'bayes', title: '...', scenario: '<intro>', hypotheses: ['Insider', 'Extern'], prior: [0.2, 0.8],
+  evidence: [ { short: 'thuis-IP', text: '...', likelihood: [0.7, 0.05] } ], ask: [ ... ] }
+```
+De leerling past de prior aan en vinkt bewijs aan; het lab toont na elke stap de posteriors en (bij twee hypothesen)
+de LR per bewijsstuk en de eind-odds. `likelihood[i]` is P(bewijs | hypothese i). Reken antwoorden na met
+`CS.stats.bayesUpdate(prior, likelihood)`.

@@ -3342,6 +3342,100 @@
   });
 
   // =====================================================================
+  //  BENFORD — eerste-cijferanalyse van bedragen (fraudedetectie)
+  // =====================================================================
+  const BENFORD = [1, 2, 3, 4, 5, 6, 7, 8, 9].map((d) => Math.log10(1 + 1 / d));
+  function firstDigit(x) { const s = String(Math.abs(+x)).replace(/^[0.]+/, ''); const d = parseInt(s[0], 10); return d >= 1 && d <= 9 ? d : null; }
+  function benfordStats(amounts) {
+    const counts = new Array(9).fill(0); let n = 0;
+    amounts.forEach((a) => { const d = firstDigit(a); if (d) { counts[d - 1]++; n++; } });
+    const obs = counts.map((c) => (n ? c / n : 0));
+    const mad = obs.reduce((s, p, i) => s + Math.abs(p - BENFORD[i]), 0) / 9;
+    const chi = counts.reduce((s, c, i) => { const e = n * BENFORD[i]; return s + (c - e) * (c - e) / e; }, 0);
+    const verdict = mad <= 0.006 ? 'sterke overeenkomst' : mad <= 0.012 ? 'aanvaardbare overeenkomst' : mad <= 0.015 ? 'twijfelachtige overeenkomst' : 'geen overeenkomst';
+    return { counts, n, obs, mad, chi, verdict };
+  }
+  CS.stats = Object.assign(CS.stats || {}, { BENFORD, firstDigit, benfordStats });
+
+  CS.registerLab('benford', function (container, cfg) {
+    const sets = cfg.sets || [{ name: 'Bedragen', amounts: cfg.amounts || [] }];
+    let cur = 0;
+    const wrap = el('div', { class: 'lab-pad' });
+    if (cfg.scenario) wrap.append(el('div', { class: 'callout info', html: esc(cfg.scenario) }));
+    const chips = el('div', { class: 'chip-row' });
+    sets.forEach((s, i) => { const c = el('span', { class: 'chip' + (i === cur ? ' on' : ''), text: s.name + ' (' + s.amounts.length + ')', onclick: () => { cur = i; [...chips.children].forEach((x) => x.classList.remove('on')); c.classList.add('on'); render(); } }); chips.append(c); });
+    if (sets.length > 1) wrap.append(chips);
+    const out = el('div', {});
+    wrap.append(out);
+    function render() {
+      out.innerHTML = '';
+      const st = benfordStats(sets[cur].amounts);
+      const grid = el('div', { style: 'display:grid;grid-template-columns:auto 1fr auto auto;gap:3px 10px;font-family:var(--mono);font-size:.78rem;align-items:center;margin-top:6px' });
+      grid.append(el('strong', { text: 'cijfer' }), el('strong', { text: 'waargenomen (balk) · verwacht (streep)' }), el('strong', { text: 'aantal' }), el('strong', { text: 'w% / v%' }));
+      let maxDev = 0, maxD = 1;
+      st.obs.forEach((p, i) => {
+        const dev = p - BENFORD[i]; if (dev > maxDev) { maxDev = dev; maxD = i + 1; }
+        const scale = (v) => Math.min(100, v / 0.45 * 100);
+        const bar = el('div', { style: 'position:relative;height:12px;background:var(--surface-2);border:1px solid var(--border)' });
+        bar.append(el('div', { style: 'height:100%;width:' + scale(p) + '%;background:' + (Math.abs(dev) > 0.04 ? 'var(--bad)' : 'var(--muted)') }));
+        bar.append(el('div', { style: 'position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--text);left:' + scale(BENFORD[i]) + '%' }));
+        grid.append(el('span', { text: String(i + 1) }), bar, el('span', { text: String(st.counts[i]) }), el('span', { text: (p * 100).toFixed(1) + ' / ' + (BENFORD[i] * 100).toFixed(1) }));
+      });
+      out.append(grid);
+      out.append(el('div', { class: 'lab-out', style: 'margin-top:8px', text: 'n = ' + st.n + ' bedragen\nMAD (gemiddelde absolute afwijking) = ' + st.mad.toFixed(4) + '  →  ' + st.verdict + '\nχ² (8 vrijheidsgraden) = ' + st.chi.toFixed(1) + (st.chi > 15.51 ? '  (> 15,51: significant bij 5%)' : '  (≤ 15,51: niet significant bij 5%)') + '\nSterkst oververtegenwoordigd: cijfer ' + maxD + ' (+' + (maxDev * 100).toFixed(1) + ' procentpunt)' }));
+      out.append(el('div', { class: 'found-note', html: 'Drempels voor de MAD bij het eerste cijfer (Nigrini): ≤ 0,006 sterk · ≤ 0,012 aanvaardbaar · ≤ 0,015 twijfelachtig · daarboven geen overeenkomst. Een afwijking is een <strong>reden om te kijken</strong>, geen bewijs van fraude.' }));
+    }
+    render();
+    puzzleAsk(wrap, cfg.ask);
+    container.append(shell('<b>Benford-analyse</b> — ' + esc(cfg.title || 'eerste cijfers van bedragen'), wrap, false));
+  });
+
+  // =====================================================================
+  //  BAYES — hypothesen bijwerken met bewijs (likelihoods en posteriors)
+  // =====================================================================
+  function bayesUpdate(prior, likelihoods) {
+    const un = prior.map((p, i) => p * likelihoods[i]);
+    const z = un.reduce((a, b) => a + b, 0);
+    return z > 0 ? un.map((x) => x / z) : prior.slice();
+  }
+  CS.stats.bayesUpdate = bayesUpdate;
+
+  CS.registerLab('bayes', function (container, cfg) {
+    const H = cfg.hypotheses || ['H1', 'H2'];
+    const E = cfg.evidence || [];
+    const prior = (cfg.prior || H.map(() => 1 / H.length)).slice();
+    const used = E.map(() => false);
+    const wrap = el('div', { class: 'lab-pad' });
+    if (cfg.scenario) wrap.append(el('div', { class: 'callout info', html: esc(cfg.scenario) }));
+    wrap.append(el('label', { text: 'Startkans (prior) per hypothese, in %' }));
+    const priorRow = el('div', { class: 'ans-row', style: 'flex-wrap:wrap' });
+    const priorInps = H.map((h, i) => { const inp = el('input', { type: 'number', min: '0', max: '100', step: '0.1', style: 'width:90px' }); inp.value = String(+(prior[i] * 100).toFixed(4)); inp.addEventListener('input', render); priorRow.append(el('span', { class: 'found-note', style: 'margin:0;align-self:center', text: h + ':' }), inp); return inp; });
+    wrap.append(priorRow);
+    wrap.append(el('label', { text: 'Bewijs (vink aan in de volgorde waarin het binnenkomt)' }));
+    const evBox = el('div', {});
+    E.forEach((e, k) => {
+      const cb = el('input', { type: 'checkbox' });
+      cb.addEventListener('change', () => { used[k] = cb.checked; render(); });
+      const lr = H.length === 2 && e.likelihood[1] > 0 ? ' · LR = ' + (e.likelihood[0] / e.likelihood[1]).toLocaleString('nl-NL', { maximumFractionDigits: 2 }) : '';
+      evBox.append(el('label', { style: 'display:flex;gap:8px;align-items:flex-start;font-weight:400;margin:4px 0' }, [cb, el('span', { html: esc(e.text) + '<br><span style="color:var(--muted);font-size:.8rem">' + H.map((h, i) => 'P(E | ' + esc(h) + ') = ' + e.likelihood[i]).join(' · ') + lr + '</span>' })]));
+    });
+    wrap.append(evBox);
+    const out = el('div', { class: 'lab-out', style: 'margin-top:8px' });
+    wrap.append(out);
+    function render() {
+      let p = priorInps.map((x) => Math.max(0, parseFloat(x.value) || 0));
+      const s = p.reduce((a, b) => a + b, 0) || 1; p = p.map((x) => x / s);
+      const lines = ['Start:      ' + H.map((h, i) => h + ' ' + (p[i] * 100).toFixed(2) + '%').join('   ')];
+      E.forEach((e, k) => { if (!used[k]) return; p = bayesUpdate(p, e.likelihood); lines.push('+ ' + (e.short || ('bewijs ' + (k + 1))).padEnd(9).slice(0, 9) + ' ' + H.map((h, i) => h + ' ' + (p[i] * 100).toFixed(2) + '%').join('   ')); });
+      if (H.length === 2) { const odds = p[0] / Math.max(p[1], 1e-12); lines.push('', 'Kansverhouding (odds) ' + H[0] + ' : ' + H[1] + ' = ' + (odds >= 1 ? odds.toLocaleString('nl-NL', { maximumFractionDigits: 2 }) + ' : 1' : '1 : ' + (1 / odds).toLocaleString('nl-NL', { maximumFractionDigits: 2 }))); }
+      out.textContent = lines.join('\n');
+    }
+    render();
+    puzzleAsk(wrap, cfg.ask);
+    container.append(shell('<b>Bayes-rekenaar</b> — ' + esc(cfg.title || 'bewijs wegen'), wrap, false));
+  });
+
+  // =====================================================================
   //  VM — mini-assembler voor reverse engineering (Nachtwacht-VM)
   // =====================================================================
   const VM_REGS = ['a', 'b', 'c', 'd', 'i', 'j'];
