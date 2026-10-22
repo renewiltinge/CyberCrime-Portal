@@ -226,7 +226,7 @@ CS.registerRoom({
         <ul>
           <li><strong>M — Modified</strong>: wanneer de inhoud voor het laatst is gewijzigd.</li>
           <li><strong>A — Accessed</strong>: wanneer het bestand voor het laatst is geopend/gelezen.</li>
-          <li><strong>C — Created</strong>: wanneer het bestand is aangemaakt op deze schijf.</li>
+          <li><strong>C — Changed/Created</strong>: op NTFS de wijziging van de MFT-record; op ext4/POSIX de <em>ctime</em> (laatste metadata-wijziging). Het aanmaakmoment heet in de MACB-notatie <strong>B</strong> (Born).</li>
         </ul>
         <p>Met MAC-tijden bouw je een <strong>tijdlijn</strong> van wat er wanneer gebeurde — onmisbaar in een onderzoek. Maar wees kritisch, om twee redenen:</p>
         <div class="callout warn"><strong>Let op tijdzones:</strong> tijdstempels worden soms in UTC bewaard en soms in lokale tijd. Reken altijd om naar één referentie (bijvoorbeeld Nederlandse tijd), anders trek je verkeerde conclusies over "wie was wanneer actief".</div>
@@ -278,21 +278,21 @@ CS.registerRoom({
           'strings verdacht.bin': `PNG
 IHDR
 tEXtComment
-verborgen vlag: NM{strings_onthult_sporen}
+verborgen vlag: NM{png_magic_bytes}
 Software: NineMinds CameraApp v2.1
 Created with care op het NFI-oefenlab
 IEND`,
           'xxd verdacht.bin': `00000000: 8950 4e47 0d0a 1a0a 0000 000d 4948 4452  .PNG........IHDR
 00000010: 0000 0040 0000 0040 0806 0000 0000 0000  ...@...@........
 00000020: 2c74 4558 7443 6f6d 6d65 6e74 0076 6572  ,tEXtComment.ver
-00000030: 626f 7267 656e 2076 6c61 673a 204a 5654  borgen vlag: NineMinds`,
+00000030: 626f 7267 656e 2076 6c61 673a 204e 4d7b  borgen vlag: NM{`,
           'sha256sum bewijs.dd': 'ae3e49d8b680d40b2d626d96e037e4c72d30abde93ee581aa6c6544fe92fca11  bewijs.dd',
           'sha256sum verdacht.bin': '4fdbd68914075174b2282d75f6c47ae08d4b7b1627ea23b31537b0deb08e6669  verdacht.bin',
         },
       },
       questions: [
         { q: 'Wat meldt "file verdacht.bin" als werkelijk bestandstype?', answer: ['png', 'png image data', 'png image', 'een png'], hint: 'file kijkt naar de magic bytes, niet naar de extensie.', explain: 'file leest 89 50 4E 47 en rapporteert "PNG image data", ongeacht de .bin-extensie.' },
-        { q: 'Welke vlag vind je in de uitvoer van "strings verdacht.bin"?', answer: ['NM{strings_onthult_sporen}'], hint: 'strings haalt alle leesbare tekst uit het bestand; lees de regels.', explain: 'strings toont de verstopte tekstregel met de vlag NM{strings_onthult_sporen}.' },
+        { q: 'Welke vlag vind je in de uitvoer van "strings verdacht.bin"?', answer: ['NM{png_magic_bytes}'], hint: 'strings haalt alle leesbare tekst uit het bestand; lees de regels.', explain: 'strings toont de verstopte tekstregel met de vlag NM{png_magic_bytes}: dezelfde vlag als in de hex-dump, maar nu zonder dat je hex hoeft te lezen. Eén bestand, één inhoud.' },
         { q: 'Welk commando bewijst dat de schijfkopie niet is veranderd sinds de inbeslagname?', answer: ['sha256sum bewijs.dd', 'sha256sum', 'sha256sum ./bewijs.dd'], hint: 'Een hash-commando over het .dd-bestand.', explain: 'sha256sum bewijs.dd berekent de vingerafdruk; die moet gelijk zijn aan de hash uit de chain of custody.' },
       ],
     },

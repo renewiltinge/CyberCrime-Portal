@@ -10,11 +10,11 @@ const PCAP_EXFIL = [
   { no: 6, time: '0.088', src: '10.10.50.10', dst: '10.10.80.5', proto: 'HTTP', len: 1240, info: 'HTTP/1.1 200 OK (text/html)' },
   { no: 7, time: '0.140', src: '10.10.80.5', dst: '10.10.50.10', proto: 'HTTP', len: 398, info: 'GET /css/stijl.css HTTP/1.1' },
   { no: 8, time: '0.160', src: '10.10.50.10', dst: '10.10.80.5', proto: 'HTTP', len: 980, info: 'HTTP/1.1 200 OK (text/css)' },
-  { no: 9, time: '42.510', src: '10.10.80.5', dst: '10.10.90.20', proto: 'DNS', len: 78, info: 'Standaardquery A upload.nm.lab' },
-  { no: 10, time: '42.522', src: '10.10.80.5', dst: '10.10.90.20', proto: 'TCP', len: 74, info: '51044 -> 80 [SYN]' },
-  { no: 11, time: '42.534', src: '10.10.90.20', dst: '10.10.80.5', proto: 'TCP', len: 74, info: '80 -> 51044 [SYN, ACK]' },
+  { no: 9, time: '42.510', src: '10.10.80.5', dst: '203.0.113.20', proto: 'DNS', len: 78, info: 'Standaardquery A upload.nm.lab' },
+  { no: 10, time: '42.522', src: '10.10.80.5', dst: '203.0.113.20', proto: 'TCP', len: 74, info: '51044 -> 80 [SYN]' },
+  { no: 11, time: '42.534', src: '203.0.113.20', dst: '10.10.80.5', proto: 'TCP', len: 74, info: '80 -> 51044 [SYN, ACK]' },
   {
-    no: 12, time: '42.540', src: '10.10.80.5', dst: '10.10.90.20', proto: 'HTTP', len: 4312,
+    no: 12, time: '42.540', src: '10.10.80.5', dst: '203.0.113.20', proto: 'HTTP', len: 4312,
     info: 'POST /upload HTTP/1.1  (data 4.096 bytes!)',
     stream: `POST /upload HTTP/1.1
 Host: upload.nm.lab
@@ -31,8 +31,8 @@ Content-Length: 2
 
 ok`,
   },
-  { no: 13, time: '42.690', src: '10.10.90.20', dst: '10.10.80.5', proto: 'HTTP', len: 215, info: 'HTTP/1.1 200 OK (text/plain)' },
-  { no: 14, time: '42.701', src: '10.10.80.5', dst: '10.10.90.20', proto: 'TCP', len: 66, info: '51044 -> 80 [ACK]' },
+  { no: 13, time: '42.690', src: '203.0.113.20', dst: '10.10.80.5', proto: 'HTTP', len: 215, info: 'HTTP/1.1 200 OK (text/plain)' },
+  { no: 14, time: '42.701', src: '10.10.80.5', dst: '203.0.113.20', proto: 'TCP', len: 66, info: '51044 -> 80 [ACK]' },
   { no: 15, time: '55.100', src: '10.10.80.5', dst: '10.10.50.10', proto: 'HTTP', len: 402, info: 'GET /nieuws HTTP/1.1' },
   { no: 16, time: '55.130', src: '10.10.50.10', dst: '10.10.80.5', proto: 'HTTP', len: 1560, info: 'HTTP/1.1 200 OK (text/html)' },
 ];
@@ -41,19 +41,19 @@ ok`,
 const PCAP_DNS = [
   { no: 1, time: '0.000', src: '10.10.80.5', dst: '10.10.80.1', proto: 'DNS', len: 80, info: 'Standaardquery A tijd.nm.lab' },
   { no: 2, time: '0.015', src: '10.10.80.1', dst: '10.10.80.5', proto: 'DNS', len: 96, info: 'Antwoord A tijd.nm.lab = 10.10.50.3' },
-  { no: 3, time: '8.200', src: '10.10.80.5', dst: '10.10.90.53', proto: 'DNS', len: 142, info: 'Standaardquery TXT mz2wk3-chunk00-aegh5t7q.exfil.nm.lab' },
-  { no: 4, time: '8.240', src: '10.10.90.53', dst: '10.10.80.5', proto: 'DNS', len: 188, info: 'Antwoord TXT (geen A) exfil.nm.lab' },
-  { no: 5, time: '8.900', src: '10.10.80.5', dst: '10.10.90.53', proto: 'DNS', len: 146, info: 'Standaardquery TXT nf4xq1-chunk01-k9plm2wd.exfil.nm.lab' },
-  { no: 6, time: '8.945', src: '10.10.90.53', dst: '10.10.80.5', proto: 'DNS', len: 190, info: 'Antwoord TXT (geen A) exfil.nm.lab' },
-  { no: 7, time: '9.610', src: '10.10.80.5', dst: '10.10.90.53', proto: 'DNS', len: 150, info: 'Standaardquery TXT pq7za9-chunk02-r3nxc8vb.exfil.nm.lab' },
-  { no: 8, time: '9.655', src: '10.10.90.53', dst: '10.10.80.5', proto: 'DNS', len: 192, info: 'Antwoord TXT (geen A) exfil.nm.lab' },
-  { no: 9, time: '10.320', src: '10.10.80.5', dst: '10.10.90.53', proto: 'DNS', len: 148, info: 'Standaardquery TXT ub6yh2-chunk03-t5mwe1qz.exfil.nm.lab' },
-  { no: 10, time: '10.366', src: '10.10.90.53', dst: '10.10.80.5', proto: 'DNS', len: 194, info: 'Antwoord TXT (geen A) exfil.nm.lab' },
-  { no: 11, time: '11.010', src: '10.10.80.5', dst: '10.10.90.53', proto: 'DNS', len: 152, info: 'Standaardquery TXT wc8ij4-chunk04-v7qra3xs.exfil.nm.lab' },
+  { no: 3, time: '8.200', src: '10.10.80.5', dst: '203.0.113.53', proto: 'DNS', len: 142, info: 'Standaardquery TXT mz2wk3-chunk00-aegh5t7q.exfil.nm.lab' },
+  { no: 4, time: '8.240', src: '203.0.113.53', dst: '10.10.80.5', proto: 'DNS', len: 188, info: 'Antwoord TXT (geen A) exfil.nm.lab' },
+  { no: 5, time: '8.900', src: '10.10.80.5', dst: '203.0.113.53', proto: 'DNS', len: 146, info: 'Standaardquery TXT nf4xq1-chunk01-k9plm2wd.exfil.nm.lab' },
+  { no: 6, time: '8.945', src: '203.0.113.53', dst: '10.10.80.5', proto: 'DNS', len: 190, info: 'Antwoord TXT (geen A) exfil.nm.lab' },
+  { no: 7, time: '9.610', src: '10.10.80.5', dst: '203.0.113.53', proto: 'DNS', len: 150, info: 'Standaardquery TXT pq7za9-chunk02-r3nxc8vb.exfil.nm.lab' },
+  { no: 8, time: '9.655', src: '203.0.113.53', dst: '10.10.80.5', proto: 'DNS', len: 192, info: 'Antwoord TXT (geen A) exfil.nm.lab' },
+  { no: 9, time: '10.320', src: '10.10.80.5', dst: '203.0.113.53', proto: 'DNS', len: 148, info: 'Standaardquery TXT ub6yh2-chunk03-t5mwe1qz.exfil.nm.lab' },
+  { no: 10, time: '10.366', src: '203.0.113.53', dst: '10.10.80.5', proto: 'DNS', len: 194, info: 'Antwoord TXT (geen A) exfil.nm.lab' },
+  { no: 11, time: '11.010', src: '10.10.80.5', dst: '203.0.113.53', proto: 'DNS', len: 152, info: 'Standaardquery TXT wc8ij4-chunk04-v7qra3xs.exfil.nm.lab' },
   {
-    no: 12, time: '11.058', src: '10.10.90.53', dst: '10.10.80.5', proto: 'DNS', len: 210,
+    no: 12, time: '11.058', src: '203.0.113.53', dst: '10.10.80.5', proto: 'DNS', len: 210,
     info: 'Antwoord TXT (geen A) exfil.nm.lab',
-    stream: `DNS-tunnel — gereconstrueerde TXT-conversatie met 10.10.90.53 (rogue nameserver)
+    stream: `DNS-tunnel — gereconstrueerde TXT-conversatie met 203.0.113.53 (rogue nameserver)
 
 Query  TXT  mz2wk3-chunk00-aegh5t7q.exfil.nm.lab
 Reply  TXT  "ack=0"
@@ -67,18 +67,18 @@ Analist: het "domein" exfil.nm.lab wordt misbruikt als datakanaal. De lange,
 willekeurige subdomeinen zijn stukjes (chunks) van gestolen data, gecodeerd en
 uitgesmokkeld via DNS-queries. Normale clients vragen geen tientallen TXT-records op.`,
   },
-  { no: 13, time: '11.700', src: '10.10.80.5', dst: '10.10.90.53', proto: 'DNS', len: 150, info: 'Standaardquery TXT xd9ko5-chunk05-w1sbt4yd.exfil.nm.lab' },
-  { no: 14, time: '11.744', src: '10.10.90.53', dst: '10.10.80.5', proto: 'DNS', len: 196, info: 'Antwoord TXT (geen A) exfil.nm.lab' },
-  { no: 15, time: '12.400', src: '10.10.80.5', dst: '10.10.90.53', proto: 'DNS', len: 154, info: 'Standaardquery TXT ye1lp6-chunk06-x2tcu5ze.exfil.nm.lab' },
-  { no: 16, time: '12.448', src: '10.10.90.53', dst: '10.10.80.5', proto: 'DNS', len: 198, info: 'Antwoord TXT (geen A) exfil.nm.lab' },
+  { no: 13, time: '11.700', src: '10.10.80.5', dst: '203.0.113.53', proto: 'DNS', len: 150, info: 'Standaardquery TXT xd9ko5-chunk05-w1sbt4yd.exfil.nm.lab' },
+  { no: 14, time: '11.744', src: '203.0.113.53', dst: '10.10.80.5', proto: 'DNS', len: 196, info: 'Antwoord TXT (geen A) exfil.nm.lab' },
+  { no: 15, time: '12.400', src: '10.10.80.5', dst: '203.0.113.53', proto: 'DNS', len: 154, info: 'Standaardquery TXT ye1lp6-chunk06-x2tcu5ze.exfil.nm.lab' },
+  { no: 16, time: '12.448', src: '203.0.113.53', dst: '10.10.80.5', proto: 'DNS', len: 198, info: 'Antwoord TXT (geen A) exfil.nm.lab' },
 ];
 
 // --- pcap C: C2-beaconing ---
 const PCAP_C2 = [
-  { no: 1, time: '0.000', src: '10.10.80.5', dst: '10.10.70.13', proto: 'TCP', len: 74, info: '52880 -> 443 [SYN]' },
-  { no: 2, time: '0.031', src: '10.10.70.13', dst: '10.10.80.5', proto: 'TCP', len: 74, info: '443 -> 52880 [SYN, ACK]' },
-  { no: 3, time: '0.060', src: '10.10.80.5', dst: '10.10.70.13', proto: 'TLS', len: 281, info: 'Application Data (check-in)',
-    stream: `C2-baken — gereconstrueerde check-in naar 10.10.70.13:443 (elke ~30s identiek)
+  { no: 1, time: '0.000', src: '10.10.80.5', dst: '198.51.100.13', proto: 'TCP', len: 74, info: '52880 -> 443 [SYN]' },
+  { no: 2, time: '0.031', src: '198.51.100.13', dst: '10.10.80.5', proto: 'TCP', len: 74, info: '443 -> 52880 [SYN, ACK]' },
+  { no: 3, time: '0.060', src: '10.10.80.5', dst: '198.51.100.13', proto: 'TLS', len: 281, info: 'Application Data (check-in)',
+    stream: `C2-baken — gereconstrueerde check-in naar 198.51.100.13:443 (elke ~30s identiek)
 
 >> POST /gate.php HTTP/1.1
 >> Host: cdn-sync.nm.lab
@@ -94,17 +94,17 @@ const PCAP_C2 = [
 Analist: elke 30 seconden exact dezelfde kleine verbinding naar hetzelfde IP.
 Dat regelmatige ritme ("beaconing") is typisch voor malware die bij zijn
 command-and-control-server om opdrachten vraagt.` },
-  { no: 4, time: '30.061', src: '10.10.80.5', dst: '10.10.70.13', proto: 'TLS', len: 281, info: 'Application Data (check-in)' },
-  { no: 5, time: '30.094', src: '10.10.70.13', dst: '10.10.80.5', proto: 'TLS', len: 140, info: 'Application Data (antwoord)' },
-  { no: 6, time: '60.062', src: '10.10.80.5', dst: '10.10.70.13', proto: 'TLS', len: 281, info: 'Application Data (check-in)' },
-  { no: 7, time: '60.095', src: '10.10.70.13', dst: '10.10.80.5', proto: 'TLS', len: 140, info: 'Application Data (antwoord)' },
-  { no: 8, time: '90.063', src: '10.10.80.5', dst: '10.10.70.13', proto: 'TLS', len: 281, info: 'Application Data (check-in)' },
-  { no: 9, time: '90.096', src: '10.10.70.13', dst: '10.10.80.5', proto: 'TLS', len: 140, info: 'Application Data (antwoord)' },
-  { no: 10, time: '120.064', src: '10.10.80.5', dst: '10.10.70.13', proto: 'TLS', len: 281, info: 'Application Data (check-in)' },
-  { no: 11, time: '120.097', src: '10.10.70.13', dst: '10.10.80.5', proto: 'TLS', len: 140, info: 'Application Data (antwoord)' },
+  { no: 4, time: '30.061', src: '10.10.80.5', dst: '198.51.100.13', proto: 'TLS', len: 281, info: 'Application Data (check-in)' },
+  { no: 5, time: '30.094', src: '198.51.100.13', dst: '10.10.80.5', proto: 'TLS', len: 140, info: 'Application Data (antwoord)' },
+  { no: 6, time: '60.062', src: '10.10.80.5', dst: '198.51.100.13', proto: 'TLS', len: 281, info: 'Application Data (check-in)' },
+  { no: 7, time: '60.095', src: '198.51.100.13', dst: '10.10.80.5', proto: 'TLS', len: 140, info: 'Application Data (antwoord)' },
+  { no: 8, time: '90.063', src: '10.10.80.5', dst: '198.51.100.13', proto: 'TLS', len: 281, info: 'Application Data (check-in)' },
+  { no: 9, time: '90.096', src: '198.51.100.13', dst: '10.10.80.5', proto: 'TLS', len: 140, info: 'Application Data (antwoord)' },
+  { no: 10, time: '120.064', src: '10.10.80.5', dst: '198.51.100.13', proto: 'TLS', len: 281, info: 'Application Data (check-in)' },
+  { no: 11, time: '120.097', src: '198.51.100.13', dst: '10.10.80.5', proto: 'TLS', len: 140, info: 'Application Data (antwoord)' },
   { no: 12, time: '122.300', src: '10.10.80.5', dst: '10.10.50.10', proto: 'HTTP', len: 420, info: 'GET /intranet HTTP/1.1 (normaal verkeer)' },
-  { no: 13, time: '150.065', src: '10.10.80.5', dst: '10.10.70.13', proto: 'TLS', len: 281, info: 'Application Data (check-in)' },
-  { no: 14, time: '150.098', src: '10.10.70.13', dst: '10.10.80.5', proto: 'TLS', len: 140, info: 'Application Data (antwoord)' },
+  { no: 13, time: '150.065', src: '10.10.80.5', dst: '198.51.100.13', proto: 'TLS', len: 281, info: 'Application Data (check-in)' },
+  { no: 14, time: '150.098', src: '198.51.100.13', dst: '10.10.80.5', proto: 'TLS', len: 140, info: 'Application Data (antwoord)' },
 ];
 
 CS.registerRoom({
@@ -146,9 +146,9 @@ CS.registerRoom({
         <div class="callout danger">
           <strong>Ethiek en wet:</strong> netwerkverkeer afluisteren raakt direct aan het telecommunicatiegeheim en de
           privacy. Je doet dit alleen op je eigen netwerk, in je eigen lab, of met een geldige
-          <strong>machtiging</strong>. Bij de politie (<strong>Team Cybercrime</strong>) gebeurt een tap op last van de
-          rechter-commissaris. Onbevoegd aftappen is strafbaar. In deze room werk je op gesimuleerde pcaps in een
-          afgeschermd lab met fictieve adressen (<code>10.10.x.x</code>) en domeinen (<code>*.nm.lab</code>).
+          <strong>machtiging</strong>. Bij de politie (<strong>Team Cybercrime</strong>) geeft de officier van justitie een tapbevel, na
+          machtiging van de rechter-commissaris. Onbevoegd aftappen is strafbaar. In deze room werk je op gesimuleerde pcaps in een
+          afgeschermd lab met fictieve adressen (<code>10.10.x.x</code> intern, documentatie-adressen zoals <code>203.0.113.x</code> extern) en domeinen (<code>*.nm.lab</code>).
         </div>
 
         <div class="callout info">
@@ -168,7 +168,7 @@ CS.registerRoom({
     {
       title: 'Taak 2 — De Wireshark-workflow',
       content: `
-        <p>Een pcap kan miljoenen pakketten bevatten. Zonder methode verdrink je. Profis volgen een vast stramien. Drie
+        <p>Een pcap kan miljoenen pakketten bevatten. Zonder methode verdrink je. Pro's volgen een vast stramien. Drie
         onderdelen van Wireshark gebruik je bijna altijd.</p>
 
         <h3>1. Statistics &rarr; Conversations</h3>
@@ -214,7 +214,7 @@ CS.registerRoom({
           <tbody>
             <tr><td><code>http</code></td><td>Alleen HTTP-verkeer (webverzoeken en -antwoorden)</td></tr>
             <tr><td><code>dns</code></td><td>Alleen DNS-verkeer (naamopvragingen)</td></tr>
-            <tr><td><code>ip.addr==10.10.90.20</code></td><td>Alles van of naar dat IP-adres</td></tr>
+            <tr><td><code>ip.addr==203.0.113.20</code></td><td>Alles van of naar dat IP-adres</td></tr>
             <tr><td><code>tcp.port==443</code></td><td>Alleen verkeer op poort 443 (HTTPS)</td></tr>
             <tr><td><code>http.request.method=="POST"</code></td><td>Alleen HTTP-POST-verzoeken (vaak: data die naar buiten gaat)</td></tr>
           </tbody>
@@ -238,7 +238,7 @@ CS.registerRoom({
       `,
       questions: [
         { q: 'Welk display filter toont alleen HTTP-POST-verzoeken?', answer: ['http.request.method=="POST"', 'http.request.method == "POST"'], hint: 'Begin met http.request.method en vergelijk met "POST".', explain: 'http.request.method=="POST" isoleert alle POST-verzoeken, vaak de plek waar data naar buiten gaat.' },
-        { q: 'Welk filter toont alles van en naar het IP-adres 10.10.90.20?', answer: ['ip.addr==10.10.90.20', 'ip.addr == 10.10.90.20'], hint: 'Gebruik het veld ip.addr met ==.', explain: 'ip.addr==10.10.90.20 isoleert één host: alles wat die verstuurde en ontving.' },
+        { q: 'Welk filter toont alles van en naar het IP-adres 203.0.113.20?', answer: ['ip.addr==203.0.113.20', 'ip.addr == 203.0.113.20'], hint: 'Gebruik het veld ip.addr met ==.', explain: 'ip.addr==203.0.113.20 isoleert één host: alles wat die verstuurde en ontving.' },
         { q: 'Waarom is inloggen over platte http:// gevaarlijk in een pcap-onderzoek?', options: ['De gebruikersnaam en het wachtwoord staan leesbaar in de pakketten', 'HTTP werkt niet met wachtwoorden', 'Het is te langzaam', 'DNS blokkeert het'], answer: 0, explain: 'Zonder TLS reist de inhoud (ook wachtwoorden) onversleuteld mee en is die in de pcap te lezen.' },
       ],
     },
@@ -263,7 +263,7 @@ CS.registerRoom({
         </ol>
 
         <div class="callout tip">
-          <strong>Tip:</strong> het exfil-pakket gaat naar het externe IP <code>10.10.90.20</code> (host
+          <strong>Tip:</strong> het exfil-pakket gaat naar het externe IP <code>203.0.113.20</code> (host
           <code>upload.nm.lab</code>) — géén intern adres uit <code>10.10.50.x</code>. De meegestuurde <code>data=</code>
           is Base64; dat is de buit (een klantenexport), alleen even gecodeerd zodat het niet opvalt. Codering is geen
           encryptie: je zou het zo kunnen terugdraaien.
@@ -272,7 +272,7 @@ CS.registerRoom({
       lab: { type: 'pcap', title: 'zaak-042-exfil.pcap', packets: PCAP_EXFIL },
       questions: [
         { q: 'Met welke HTTP-methode werd de data naar buiten gestuurd?', answer: ['POST', 'post'], hint: 'Niet GET (ophalen), maar de methode die data verstuurt.', explain: 'Een POST stuurt data naar de server; het grote POST-pakket is de exfiltratie.' },
-        { q: 'Naar welk extern IP-adres werd de data geexfiltreerd?', answer: ['10.10.90.20'], hint: 'Kijk naar de bestemming (dst) van het grote POST-pakket; het is geen 10.10.50.x-adres.', explain: 'Het POST-pakket ging naar 10.10.90.20 (upload.nm.lab), buiten het normale intranetbereik.' },
+        { q: 'Naar welk extern IP-adres werd de data geëxfiltreerd?', answer: ['203.0.113.20'], hint: 'Kijk naar de bestemming (dst) van het grote POST-pakket; het is geen 10.10.50.x-adres.', explain: 'Het POST-pakket ging naar 203.0.113.20 (upload.nm.lab), buiten het normale intranetbereik.' },
         { q: 'Welke vlag staat in de HTTP-kop van de POST (Follow stream)?', answer: ['NM{http_exfiltratie}'], encoded: true, hint: 'Open Follow stream op het POST-pakket en lees de X-Note-regel.', explain: 'In de header X-Note staat NM{http_exfiltratie}; de data= eronder is de Base64-gecodeerde buit.' },
         { q: 'Hoe kun je aan de pakketlijst alleen al zien welk pakket de exfiltratie is?', options: ['Het is veel groter (len) dan de andere en is een POST naar een extern IP', 'Het is het eerste pakket', 'Het gebruikt DNS', 'Het heeft de laagste lengte'], answer: 0, explain: 'Een opvallend grote uitgaande POST naar een onbekend extern IP is de klassieke signatuur van exfiltratie.' },
       ],
@@ -314,7 +314,7 @@ CS.registerRoom({
       lab: { type: 'pcap', title: 'zaak-042-dns.pcap', packets: PCAP_DNS },
       questions: [
         { q: 'Welke techniek zie je hier: data weglekken via DNS-queries?', answer: ['DNS-tunneling', 'dns-tunneling', 'dns tunneling', 'dns-tunnel'], hint: 'Data wordt door DNS heen "getunneld".', explain: 'DNS-tunneling verpakt gestolen data in (sub)domeinnamen en TXT-queries die door de firewall mogen.' },
-        { q: 'Welk "domein" wordt misbruikt als datakanaal (het deel achter de willekeurige subdomeinen)?', answer: ['exfil.nm.lab'], hint: 'Kijk wat er steeds achter de rare chunk-namen staat.', explain: 'Alle TXT-queries eindigen op exfil.nm.lab: dat is het exfiltratiekanaal naar de rogue nameserver 10.10.90.53.' },
+        { q: 'Welk "domein" wordt misbruikt als datakanaal (het deel achter de willekeurige subdomeinen)?', answer: ['exfil.nm.lab'], hint: 'Kijk wat er steeds achter de rare chunk-namen staat.', explain: 'Alle TXT-queries eindigen op exfil.nm.lab: dat is het exfiltratiekanaal naar de rogue nameserver 203.0.113.53.' },
         { q: 'Welk DNS-recordtype wordt misbruikt om willekeurige tekst te vervoeren?', answer: ['TXT', 'txt'], hint: 'Niet A of MX; het type dat vrije tekst kan bevatten.', explain: 'Het TXT-record mag willekeurige tekst bevatten en is daardoor geliefd voor tunneling.' },
         { q: 'Welke vlag staat in de gereconstrueerde DNS-conversatie (Follow stream)?', answer: ['NM{dns_tunnel_betrapt}'], encoded: true, hint: 'Open Follow stream op het DNS-antwoord en lees de laatste TXT-reply (tag=...).', explain: 'In het laatste TXT-antwoord staat tag=NM{dns_tunnel_betrapt}.' },
       ],
@@ -354,7 +354,7 @@ CS.registerRoom({
       lab: { type: 'pcap', title: 'zaak-042-c2.pcap', packets: PCAP_C2 },
       questions: [
         { q: 'Hoe heet het patroon van regelmatige kleine verbindingen naar de C2-server?', answer: ['beaconing', 'beacon', 'c2-beaconing', 'c2 beaconing'], hint: 'Als een baken dat steeds "knippert".', explain: 'Beaconing: het besmette systeem checkt op vaste intervallen in bij zijn command-and-control-server.' },
-        { q: 'Naar welk extern IP-adres gaat het C2-baken (elke ~30 seconden)?', answer: ['10.10.70.13'], hint: 'Welk extern IP keert op vaste tijden met dezelfde pakketlengte terug?', explain: 'Alle check-ins van 10.10.80.5 gaan naar 10.10.70.13:443, telkens 281 bytes — een strak ritme.' },
+        { q: 'Naar welk extern IP-adres gaat het C2-baken (elke ~30 seconden)?', answer: ['198.51.100.13'], hint: 'Welk extern IP keert op vaste tijden met dezelfde pakketlengte terug?', explain: 'Alle check-ins van 10.10.80.5 gaan naar 198.51.100.13:443, telkens 281 bytes — een strak ritme.' },
         { q: 'Waardoor valt dit baken op, ook al is het verkeer versleuteld (TLS)?', options: ['Het vaste interval en de vaste pakketgrootte (metadata)', 'De leesbare inhoud', 'Een foutmelding', 'De gebruikersnaam'], answer: 0, explain: 'De metadata (regelmatig interval, constante grootte, vast doel) verraadt het baken, zelfs zonder de inhoud te zien.' },
         { q: 'Welke vlag staat in de gereconstrueerde C2-check-in (Follow stream)?', answer: ['NM{c2_baken}'], encoded: true, hint: 'Open Follow stream op het eerste check-in-pakket en lees de serverrespons (tag=...).', explain: 'De C2-server antwoordt met sleep=30; tag=NM{c2_baken}.' },
       ],
@@ -378,7 +378,7 @@ CS.registerRoom({
 
         <h3>Van pcap naar rapport</h3>
         <p>Net als bij geheugenforensie scheid je in je verslag <strong>feiten</strong> van <strong>interpretatie</strong>.
-        Feit: "werkstation 10.10.80.5 stuurde om 42,5 s een HTTP-POST van 4 KB naar 10.10.90.20". Interpretatie: "dit
+        Feit: "werkstation 10.10.80.5 stuurde om 42,5 s een HTTP-POST van 4 KB naar 203.0.113.20". Interpretatie: "dit
         duidt vermoedelijk op exfiltratie van een klantenexport". Je werk is <strong>reproduceerbaar</strong>: vermeld
         de pcap, de hash ervan, en de exacte filters die je gebruikte, zodat een collega bij dezelfde pcap tot dezelfde
         conclusie komt.</p>
@@ -406,7 +406,7 @@ CS.registerRoom({
     { term: 'Pakket (packet)', def: 'Een eenheid netwerkverkeer met o.a. bron-IP, bestemmings-IP, protocol en (vaak) inhoud.' },
     { term: 'Wireshark', def: 'Grafische tool om netwerkverkeer op te nemen en te analyseren (met filters, streams en objecten).' },
     { term: 'tcpdump', def: 'Commandoregeltool om netwerkverkeer op te nemen naar een pcap.' },
-    { term: 'Display filter', def: 'Zoekregel in Wireshark die alleen de passende pakketten toont, bijv. http of ip.addr==10.10.90.20.' },
+    { term: 'Display filter', def: 'Zoekregel in Wireshark die alleen de passende pakketten toont, bijv. http of ip.addr==203.0.113.20.' },
     { term: 'Conversations', def: 'Wireshark-overzicht per gesprek (IP naar IP) met pakketten en bytes; sorteren op bytes legt grote overdrachten bloot.' },
     { term: 'Follow Stream', def: 'Functie die de losse pakketten van een conversatie samenvoegt tot een leesbaar geheel.' },
     { term: 'Export Objects', def: 'Functie die overgedragen bestanden (bijv. via HTTP) uit de pcap reconstrueert en opslaat.' },

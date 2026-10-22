@@ -692,7 +692,7 @@ test live tegen de events. Toont TP/FP/FN/TN. Doel: alle `malicious:true` vangen
 lab: {
   type: 'fingerprint', title: '...', scenario: '<intro>',
   attrs: [ { key: 'favicon', label: 'Favicon-hash' }, { key: 'analytics', label: 'Analytics-ID' }, { key: 'jarm', label: 'JARM' } ],
-  hosts: [ { host: 'a.nm.lab', favicon: 'f7a1c9', analytics: 'UA-66613-7', jarm: '2ad2ad00' }, ... ],
+  hosts: [ { host: 'a.nm.lab', favicon: 'f7a1c9', analytics: 'G-6M61Q37X', jarm: '2ad2ad00' }, ... ],
   ask: [ { q: 'Hoeveel hosts delen favicon f7a1c9?', answer: ['4'] } ],
 }
 ```

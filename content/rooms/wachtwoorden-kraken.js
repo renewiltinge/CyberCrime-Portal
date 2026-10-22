@@ -274,8 +274,8 @@ CS.registerRoom({
         </ul>
         <p>Elk extra teken vermenigvuldigt het totaal met 26. Gebruik je álle 95 tekens (<code>?a</code>), dan is dat
         zelfs maal 95 per positie. Daarom is een kort wachtwoord met brute force zo gekraakt, maar wordt het bij
-        voldoende lengte <em>onhaalbaar</em>: bij 12+ willekeurige tekens duurt het langer dan het bestaan van het
-        heelal, zelfs op snelle hardware. Lengte is je beste verdediging — de kern van taak 7.</p>
+        voldoende lengte <em>onhaalbaar</em>: bij 12 willekeurige tekens gaat het al om tienduizenden jaren op een snelle kraakmachine (bij een snelle
+        hash als MD5 of NTLM), en bij 16+ tekens om langer dan het heelal bestaat. Lengte is je beste verdediging — de kern van taak 7.</p>
 
         <h3>Aan de slag</h3>
         <p>In het lab staat een MD5-hash van een kort wachtwoord van 3 tekens: een kleine letter, een cijfer en een

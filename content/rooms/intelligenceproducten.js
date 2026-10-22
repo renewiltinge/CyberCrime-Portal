@@ -155,7 +155,7 @@ CS.registerRoom({
         </ul>
 
         <div class="callout info">
-          <strong>Omgekeerde piramide:</strong> journalisten schrijven zo al eeuwen. Het belangrijkste eerst, daarna
+          <strong>Omgekeerde piramide:</strong> journalisten schrijven zo al zo'n 150 jaar. Het belangrijkste eerst, daarna
           aflopend in belang. Snijdt de redactie onderaan iets weg, dan verlies je alleen detail — nooit de kern.
         </div>
 

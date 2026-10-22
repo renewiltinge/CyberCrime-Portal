@@ -165,7 +165,7 @@ CS.registerRoom({
         <strong>dojo</strong> gebruikt. Gebruik het cijfer-lab hieronder, kies de methode <strong>Vigenère</strong> en vul
         de sleutel <code>dojo</code> in. Het bericht wordt dan leesbaar Nederlands, met daarin de vlag.</p>
 
-        <p>Omdat de vlag pas <em>ná</em> ontsleutelen verschijnt (in de ciphertext staat <code>MJC{...}</code>, niet de
+        <p>Omdat de vlag pas <em>ná</em> ontsleutelen verschijnt (in de ciphertext staat <code>QA{...}</code>, niet de
         echte vlag), is dit precies een geval waarin je de vraag met <code>encoded</code> markeert: je leidt de vlag zelf
         af.</p>
 
@@ -336,7 +336,7 @@ CS.registerRoom({
         bridge: ['A1B2C3D4', 'cert', 'certificaat'],
       },
       questions: [
-        { q: 'Welk zeldzaam kenmerk bruggt Zaak Alpha en Zaak Bravo?', answer: ['certificaat', 'cert', 'A1B2C3D4', 'het certificaat', 'tls-certificaat'], hint: 'Hetzelfde kenmerk staat in crt.sh bij beide domeinen; de IP-adressen verschillen juist.', explain: 'Beide domeinen presenteren hetzelfde TLS-certificaat A1B2C3D4 (bekend). Een hergebruikt certificaat is zeldzaam, dus een sterke brug.' },
+        { q: 'Welk zeldzaam kenmerk verbindt Zaak Alpha en Zaak Bravo?', answer: ['certificaat', 'cert', 'A1B2C3D4', 'het certificaat', 'tls-certificaat'], hint: 'Hetzelfde kenmerk staat in crt.sh bij beide domeinen; de IP-adressen verschillen juist.', explain: 'Beide domeinen presenteren hetzelfde TLS-certificaat A1B2C3D4 (bekend). Een hergebruikt certificaat is zeldzaam, dus een sterke brug.' },
         { q: 'Beide IP-adressen horen bij dezelfde hostingprovider (AS64500). Waarom is dat geen sterke brug?', options: ['Omdat heel veel onschuldige sites dezelfde hostingprovider delen — het kenmerk is niet zeldzaam', 'Omdat ASN-nummers altijd nep zijn', 'Omdat hosting niets met IP-adressen te maken heeft', 'Dat is wél een sterke brug'], answer: 0, explain: 'Een gedeelde hoster is te algemeen: de zeldzaamheidstoets bepaalt of een gedeeld kenmerk echt bewijs is.' },
         { q: 'Welke vlag verdien je door de zeldzaamheidstoets juist toe te passen?', answer: ['NM{cert_is_de_brug}'], hint: 'Staat in de uitleg van deze taak.', explain: 'Kies het zeldzame dwarsverband (het certificaat), niet het toevallige (de hoster): NM{cert_is_de_brug}.' },
       ],
@@ -421,7 +421,7 @@ CS.registerRoom({
       `,
       lab: {
         type: 'bluf',
-        source: 'Op svc-herstel na kwam de bende binnen met gekochte VPN-toegang (zonder MFA). Via RDP werd doorgesprongen; met een Base64-gecodeerd PowerShell-commando werd een volgende fase geladen en LSASS uitgelezen. Data uit de map klantcontracten werd met 7-Zip ingepakt en 6 GB werd naar een clouddienst geüpload. Daarna werden de bestanden versleuteld en volgde een losgeldeis in BTC via een Tor-portaal. Het losgeld (4,0 BTC) is gesplitst over twee katvangers, door een mixer gehaald en voor 3,80 BTC uitbetaald bij een exchange. Een hergebruikt TLS-certificaat (A1B2C3D4) verbindt de phishinginfrastructuur met een tweede zaak. Uit de ACH blijkt dat de waarnemingen het best passen bij een financieel gemotiveerde cybercrimebende die toegang kocht bij een IAB; de gebruikte RaaS wordt door veel affiliates gehuurd, dus een specifieke groep is niet aan te wijzen.',
+        source: 'Via svc-herstel kwam de bende binnen met gekochte VPN-toegang (zonder MFA). Via RDP werd doorgesprongen; met een Base64-gecodeerd PowerShell-commando werd een volgende fase geladen en LSASS uitgelezen. Data uit de map klantcontracten werd met 7-Zip ingepakt en 6 GB werd naar een clouddienst geüpload. Daarna werden de bestanden versleuteld en volgde een losgeldeis in BTC via een Tor-portaal. Het losgeld (4,0 BTC) is gesplitst over twee katvangers, door een mixer gehaald en voor 3,80 BTC uitbetaald bij een exchange. Een hergebruikt TLS-certificaat (A1B2C3D4) verbindt de phishinginfrastructuur met een tweede zaak. Uit de ACH blijkt dat de waarnemingen het best passen bij een financieel gemotiveerde cybercrimebende die toegang kocht bij een IAB; de gebruikte RaaS wordt door veel affiliates gehuurd, dus een specifieke groep is niet aan te wijzen.',
         model: 'BEOORDELING (BLUF): Spoedbouw Nederland is zeer waarschijnlijk getroffen door een financieel gemotiveerde cybercrimebende die gekochte VPN-toegang (IAB) gebruikte; er is sprake van dubbele afpersing (data geëxfiltreerd vóór versleuteling). Een specifieke groep is niet met zekerheid aan te wijzen (dezelfde RaaS kent veel affiliates).\n\nADVIES (met eigenaar):\n1. MFA afdwingen op alle (service)accounts en svc-herstel resetten — eigenaar: IT, binnen 24 uur.\n2. C2- en exfil-hosts blokkeren en takedown aanvragen — eigenaar: SOC + hostingpartij.\n3. Offline/immutable back-ups verifiëren en herstel starten; niet betalen — eigenaar: CISO.\n4. De losgeld-wallet volgen tot aan de exchange (KYC-knelpunt) en bevriezing/aangifte voorbereiden — eigenaar: opsporing.\n\nONDERBOUWING: bekend = logs (gekochte login zonder MFA, LSASS-toegang, 6 GB exfil, versleuteling) en de geldstroom (4,0 BTC in, 3,80 BTC bij de exchange). Afgeleid = cybercrimebende met gekochte toegang (ACH: unieke laagste inconsistentie-score). Betrouwbaarheid: hoog voor de techniek en de geldstroom, lager voor de exacte dader.',
       },
       questions: [

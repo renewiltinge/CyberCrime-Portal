@@ -24,7 +24,7 @@ const EXFIL_PROXY_LOG = `# egress-proxy  nm.lab  2026-10-11   kolommen: tijd | c
 2026-10-11 02:40:33  WS-HR-02   allow  GET   mail.google.com                      up=2110       down=19877
 2026-10-11 02:55:46  WS-MKT-04  allow  GET   cdn.jsdelivr.net                     up=175        down=64012
 2026-10-11 03:01:58  WS-FIN-03  allow  GET   o365.portal.nm.lab                  up=880        down=14003
-2026-10-11 03:05:02  WS-FIN-03  ALERT  PUT   opslag-x9f3.nm.lab                  up=471859200  down=512    note=exfil.7z_zeldzame_bestemming_nooit_eerder_gezien  soc_note=NM{egress_betrapt}
+2026-10-11 03:05:02  SRV-ARCHIEF ALERT PUT   opslag-x9f3.nm.lab                  up=471859200  down=512    note=exfil.7z_zeldzame_bestemming_nooit_eerder_gezien  soc_note=NM{egress_betrapt}
 2026-10-11 03:05:49  WS-FIN-03  allow  GET   intranet.nm.lab                     up=402        down=11890
 2026-10-11 03:09:12  WS-MKT-04  ALERT  POST  cdn-telemetry.c2relay.nm.lab        up=230        down=96     note=klein_vast_pakketje`;
 
@@ -87,8 +87,8 @@ CS.registerRoom({
         <p>Een netwerkmonitor telt per verbinding het aantal verstuurde bytes. Dat maak je leesbaar met eenheden:
         1 <strong>KB</strong> ≈ duizend bytes, 1 <strong>MB</strong> ≈ miljoen bytes, 1 <strong>GB</strong> ≈ miljard
         bytes. Een enkele e-mail is kilobytes; een gestolen klantenbestand of een map vol documenten is al snel honderden
-        megabytes. Omdat exacte bytes lastig lezen, reken je ze om: 471.859.200 bytes zijn ongeveer 450 MB
-        (deel door 1.048.576).</p>
+        megabytes. Omdat exacte bytes lastig lezen, reken je ze om: 471.859.200 bytes zijn precies 450 <strong>MiB</strong> (deel door 1.048.576 = 1024²), ofwel ongeveer 472 MB (deel
+        door een miljoen). Veel tools tonen MiB maar schrijven "MB": let er in een rapport op welke je bedoelt.</p>
 
         <h3>Poort: via welk kanaal?</h3>
         <p>Elke stroom kiest een <strong>poort</strong>, een genummerd kanaal. Een paar die je vaak tegenkomt:</p>
@@ -115,7 +115,7 @@ CS.registerRoom({
       questions: [
         { q: 'Hoe heet verkeer dat jouw netwerk verlaat (naar buiten gaat)?', answer: ['egress'], hint: 'Het tegenovergestelde van ingress.', explain: 'Egress = uitgaand verkeer. Bij exfiltratie is juist de egress-stroom ongewoon groot.' },
         { q: 'Waarom is een plotseling grote uitgaande stroom verdacht?', options: ['Bij normaal surfen download je veel meer dan je upload; veel egress kan datadiefstal zijn', 'Omdat upload altijd verboden is', 'Omdat DNS dan niet meer werkt', 'Omdat poort 443 kapot is'], answer: 0, explain: 'Normaal is ingress >> egress. Een grote egress-piek draait dat om en wijst mogelijk op exfiltratie.' },
-        { q: 'Ongeveer hoeveel MB is 471.859.200 bytes (deel door 1.048.576)?', answer: ['450', '450 MB', '450 mb'], hint: '471.859.200 ÷ 1.048.576.', explain: '471.859.200 ÷ 1.048.576 = precies 450 MB. Bytes omrekenen maakt volumes leesbaar.' },
+        { q: 'Hoeveel MiB is 471.859.200 bytes (deel door 1.048.576)?', answer: ['450', '450 MB', '450 mb'], hint: '471.859.200 ÷ 1.048.576.', explain: '471.859.200 ÷ 1.048.576 = precies 450 MiB (≈ 472 MB). Bytes omrekenen maakt volumes leesbaar.' },
         { q: 'Welke poort gebruiken aanvallers graag omdat het verkeer versleuteld is en overal naar buiten mag?', answer: ['443'], hint: 'De standaardpoort voor HTTPS/TLS.', explain: 'Poort 443 (HTTPS/TLS): de inhoud is verborgen, dus C2 en exfil vallen minder op — maar de metadata verraadt ze alsnog.' },
       ],
     },
@@ -333,7 +333,7 @@ pq7za9-chunk02-r3nxc8vb.exfil.nm.lab</code></pre>
       questions: [
         { q: 'Naar welk domein stuurt WS-MKT-04 ongeveer elke 60 seconden een klein, bijna even groot pakketje (beaconing)?', answer: ['cdn-telemetry.c2relay.nm.lab'], hint: 'Filter op c2relay of op ALERT en kijk naar het herhaalde kleine POST-verkeer.', explain: 'De regelmatige kleine POSTs van ~230 bytes gaan naar cdn-telemetry.c2relay.nm.lab: een C2-baken met jitter.' },
         { q: 'Wat is de vlag in het gedecodeerde C2-antwoord (de baken-regel met tag=)?', answer: ['NM{baken_ritme}'], encoded: true, hint: 'Filter op c2relay en zoek de regel met down=140 en een tag=.', explain: 'In het gedecodeerde antwoord "sleep=60;jitter=10" staat tag=NM{baken_ritme}.' },
-        { q: 'Ongeveer hoeveel MB was de grote upload (up=471859200 bytes ÷ 1.048.576)?', answer: ['450', '450 MB', '450 mb'], hint: 'Filter op PUT of op /up=\\d{7,}/ en reken de bytes om.', explain: '471.859.200 ÷ 1.048.576 = 450 MB — exact het gecomprimeerde exfil.7z uit het flow-lab.' },
+        { q: 'Ongeveer hoeveel MB was de grote upload (up=471859200 bytes ÷ 1.048.576)?', answer: ['450', '450 MB', '450 mb'], hint: 'Filter op PUT of op /up=\\d{7,}/ en reken de bytes om.', explain: '471.859.200 ÷ 1.048.576 = 450 MiB — exact het gecomprimeerde exfil.7z uit het flow-lab.' },
         { q: 'Wat is de vlag in de soc_note bij de exfil-regel (de grote PUT)?', answer: ['NM{egress_betrapt}'], encoded: true, hint: 'Filter op PUT of op opslag-x9f3 en lees het einde van die regel.', explain: 'De analist markeerde de upload naar de zeldzame bestemming met soc_note=NM{egress_betrapt}.' },
         { q: 'Waardoor is opslag-x9f3.nm.lab op zichzelf al verdacht?', options: ['Het is een zeldzame bestemming die verder nergens in de log voorkomt en nooit eerder is bezocht', 'Het staat op de witte lijst', 'Het is een bekende zoekmachine', 'Het gebruikt poort 53'], answer: 0, explain: 'Een nooit eerder geziene bestemming (rare/newly-seen destination) is een rode vlag, zeker samen met een enorme upload.' },
       ],
@@ -369,7 +369,7 @@ pq7za9-chunk02-r3nxc8vb.exfil.nm.lab</code></pre>
         <div class="callout info">
           <strong>In het echt:</strong> zo'n lijst met "known-bad" domeinen komt uit threat intelligence. Nog sterker is
           detecteren op <em>newly-seen domains</em> (domeinen die je organisatie nooit eerder bezocht) en op de
-          <em>entropie</em> van namen (veel willekeurige tekens = mogelijk een DGA, een domeingenerende algoritme). Een
+          <em>entropie</em> van namen (veel willekeurige tekens = mogelijk een DGA, een domeingenererend algoritme). Een
           patroon op vaste woorden is een begin, geen eindstation: aanvallers wisselen domeinen snel.
         </div>
       `,
@@ -417,7 +417,7 @@ pq7za9-chunk02-r3nxc8vb.exfil.nm.lab</code></pre>
 
         <h3>Van sporen naar rapport</h3>
         <p>Scheid in je verslag <strong>feiten</strong> van <strong>interpretatie</strong>. Feit: "om 03:05 verstuurde
-        WS-FIN-03 een PUT van 471.859.200 bytes (±450 MB) naar het nooit eerder geziene domein opslag-x9f3.nm.lab."
+        SRV-ARCHIEF een PUT van 471.859.200 bytes (450 MiB) naar het nooit eerder geziene domein opslag-x9f3.nm.lab."
         Interpretatie: "dit is vermoedelijk de exfiltratie van een gecomprimeerd, versleuteld archief met klant- en
         HR-gegevens." Maak je werk <strong>reproduceerbaar</strong>: noem de bron (de pcap of het log), de hash ervan en de
         exacte filters die je gebruikte, zodat een collega bij dezelfde data tot dezelfde conclusie komt.</p>

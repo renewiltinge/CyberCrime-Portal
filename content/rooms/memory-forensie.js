@@ -89,7 +89,7 @@ CS.registerRoom({
           <li>Op Linux bestaan er varianten zoals <strong>LiME</strong> en <strong>AVML</strong>.</li>
         </ul>
 
-        <h3>Het dilemma van de observer effect</h3>
+        <h3>Het dilemma van het observer effect</h3>
         <p>Er zit een addertje onder het gras: om een dump te maken, moet je software <em>op het verdachte systeem
         draaien</em>. Die software gebruikt zelf ook een beetje geheugen en verandert het systeem dus minimaal. Dat heet
         het <strong>observer effect</strong> (het meten verandert het gemetene). Je kunt het niet helemaal vermijden,
@@ -356,10 +356,10 @@ Proto  LocalAddr     LocalPort  ForeignAddr    ForeignPort  State        PID    
 TCPv4  10.10.80.5    139        0.0.0.0        0            LISTENING    4      System
 TCPv4  10.10.80.5    50122      10.10.1.1      443          ESTABLISHED  2456   chrome.exe
 TCPv4  10.10.80.5    50140      10.10.1.1      443          ESTABLISHED  3012   OUTLOOK.EXE
-TCPv4  10.10.80.5    49871      10.10.66.66    4444         ESTABLISHED  4123   svch0st.exe
+TCPv4  10.10.80.5    49871      198.51.100.66    4444         ESTABLISHED  4123   svch0st.exe
 UDPv4  10.10.80.5    53         *              *            *            720    svchost.exe
 
-(!) Opvallend: svch0st.exe (PID 4123) heeft een uitgaande verbinding naar 10.10.66.66:4444 — mogelijk C2.`,
+(!) Opvallend: svch0st.exe (PID 4123) heeft een uitgaande verbinding naar 198.51.100.66:4444 — mogelijk C2.`,
           'python3 vol.py -f geheugen.raw windows.malfind': `Volatility 3 Framework 2.7.0
 
 PID    Process       Start VPN       Protection             Tag   Hexdump
@@ -380,7 +380,7 @@ PID    Process        Args
         },
       },
       questions: [
-        { q: 'Naar welk IP-adres (de vermoedelijke C2-server) praat het verdachte proces?', answer: ['10.10.66.66'], hint: 'Kijk bij netscan naar de ForeignAddr op de svch0st.exe-regel.', explain: 'svch0st.exe (PID 4123) heeft een ESTABLISHED-verbinding naar 10.10.66.66 op poort 4444 — een klassiek C2-kanaal.' },
+        { q: 'Naar welk IP-adres (de vermoedelijke C2-server) praat het verdachte proces?', answer: ['198.51.100.66'], hint: 'Kijk bij netscan naar de ForeignAddr op de svch0st.exe-regel.', explain: 'svch0st.exe (PID 4123) heeft een ESTABLISHED-verbinding naar 198.51.100.66 op poort 4444 — een klassiek C2-kanaal.' },
         { q: 'Welke poort gebruikt die verdachte uitgaande verbinding?', answer: ['4444'], hint: 'Lees de ForeignPort-kolom bij svch0st.exe.', explain: 'Poort 4444 is een beruchte standaardpoort voor reverse shells en C2.' },
         { q: 'Wat is de vlag uit de opdrachtregel (windows.cmdline) van het verdachte proces?', answer: ['NM{geheugen_liegt_niet}'], hint: 'Lees de Args-kolom bij svch0st.exe (PID 4123).', explain: 'De argumenten van svch0st.exe bevatten NM{geheugen_liegt_niet}; het echte pad wijst naar AppData.' },
         { q: 'Welke vlag staat in de malfind-bevinding (de geïnjecteerde code)?', answer: ['NM{code_injectie}'], hint: 'Lees de forensische tag onderaan de windows.malfind-uitvoer.', explain: 'Het MZ-startblok in uitvoerbaar+beschrijfbaar geheugen zonder bestand op schijf is code-injectie: NM{code_injectie}.' },
@@ -414,7 +414,7 @@ PID    Process        Args
         <h3>Van bevinding naar rapport</h3>
         <p>Een onderzoek is pas af als je het kunt uitleggen aan iemand die er niet bij was — een collega, een officier
         van justitie, een rechter. In je rapport scheid je altijd <strong>feiten</strong> ("de dump bevat een proces
-        svch0st.exe met PID 4123, verbonden met 10.10.66.66:4444") van <strong>interpretatie</strong> ("dit duidt
+        svch0st.exe met PID 4123, verbonden met 198.51.100.66:4444") van <strong>interpretatie</strong> ("dit duidt
         vermoedelijk op een C2-kanaal"). En je werk is <strong>reproduceerbaar</strong>: iemand anders die dezelfde dump
         en dezelfde commando's gebruikt, moet tot dezelfde conclusie komen. Noteer daarom exact welke tool, versie en
         commando's je gebruikte, plus de hash van de dump.</p>
