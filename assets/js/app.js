@@ -22,7 +22,7 @@
     { id: 'intelligence',  title: 'Cyber-intelligence & opsporing', desc: 'Van fenomeen naar interventie: het cybercrime-ecosysteem, crime scripting, de intelligencecyclus, threat-intel-modellen, infrastructuur-OSINT & pivoting, en gestructureerde analyse tot een BLUF-product.' },
     { id: 'datastromen',   title: 'Datastromen volgen',        desc: 'Word expert in geld- en datastromen: volg witwasconstructies en structurering, betrap beaconing en exfiltratie in netwerkverkeer, en traceer de herkomst van een e-mail. De rode draad van cybercrime: het geld en de data.' },
     { id: 'puzzels',       title: 'Puzzels & uitdagingen',  desc: 'Leren door te doen: volg geld- en datastromen, ontmasker operators met OSINT, groepeer en reconstrueer, en los een grote cybercrime-CTF op. Alle oefening, veel plezier.' },
-    { id: 'meesterproeven', title: 'Meesterproeven (gevorderd)', desc: 'Voor wie de puzzels te makkelijk vond: zwaardere opgaven met meer achtergrond. Begin met cryptanalyse zonder sleutel: Vigenère kraken met Kasiski, IoC en chi-kwadraat, en een hergebruikt one-time pad openbreken.' },
+    { id: 'meesterproeven', title: 'Meesterproeven (gevorderd)', desc: 'Voor wie de puzzels te makkelijk vond: zwaardere opgaven met meer achtergrond. Cryptanalyse zonder sleutel (Vigenère en een hergebruikt one-time pad) en forensie met tegenstrijdige sporen: vervalste tijdstempels, verborgen data en valse aanwijzingen.' },
     { id: 'eindopdracht',  title: 'Eindopdracht',           desc: 'Breng alles samen in een afsluitende mini-CTF. Bewijs aan jezelf wat je kunt.' },
   ];
 

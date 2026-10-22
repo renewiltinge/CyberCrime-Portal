@@ -148,6 +148,7 @@ Leren door te doen — veel plezier met oplosbare cybercrime-puzzels.
 ### 🏔️ Meesterproeven (gevorderd)
 Voor wie de puzzels te makkelijk vond: zwaardere opgaven met meer achtergrond.
 1. **Cryptanalyse: Vigenère en de many-time pad kraken** — de sleutellengte vinden met Kasiski, de index of coincidence en Friedman, per kolom kraken met chi-kwadraat (inclusief een statistisch twijfelgeval), een hergebruikt one-time pad openbreken met crib dragging, en de moderne lessen (nonce-hergebruik, repeating-key XOR, Kerckhoffs).
+2. **Forensie gevorderd: tegenstrijdige sporen en misleidend bewijs** — timestomping betrappen via $SI, $FN, het USN-journaal en Prefetch, tijdstempels uit vijf formaten en tijdzones omrekenen, data achter het einde van een PNG vinden, false flags herkennen met ACH en rapporteren met bronbeoordeling.
 
 ### 🏁 Eindopdracht
 1. **Mini-CTF: Operatie KoffieKlap** — breng alles samen in een afsluitende Capture The Flag met zes vlaggen.
