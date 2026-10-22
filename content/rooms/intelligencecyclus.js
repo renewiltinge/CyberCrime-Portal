@@ -260,7 +260,7 @@ CS.registerRoom({
         type: 'admiralty',
         items: [
           { source: 'Een gebeurtenis in je eigen SIEM, bevestigd door een tweede, onafhankelijke logbron', info: 'Werkplek WS-07 maakte om 02:14 verbinding met een bekend C2-domein', reliability: 'A', credibility: '1', explain: 'Je eigen, geverifieerde telemetrie is een volledig betrouwbare bron (A). Een tweede onafhankelijke logbron bevestigt de waarneming, dus de info is bevestigd (1): A1.' },
-          { source: 'Een anonieme, onbevestigde tip via Meld Misdaad Anoniem', info: 'Bedrijf X wordt volgende week geraakt door ransomware', reliability: 'E', credibility: '4', explain: 'Een anonieme bron heeft geen trackrecord en is niet te verifiëren — in de praktijk scoor je die laag (E). De claim staat op zichzelf en is twijfelachtig (4): E4.' },
+          { source: 'Een anonieme, onbevestigde tip via Meld Misdaad Anoniem', info: 'Bedrijf X wordt volgende week geraakt door ransomware', reliability: 'F', credibility: '4', explain: 'Een anonieme bron heeft geen trackrecord en is niet te verifiëren: betrouwbaarheid niet te beoordelen (F; E is voor een bron die eerder onbetrouwbaar bleek) — in de praktijk scoor je die laag (E). De claim staat op zichzelf en is twijfelachtig (4): E4.' },
           { source: 'Een sectorpartner (ISAC) die je al jaren kent en die een goed trackrecord heeft, nog niet door jou geverifieerd', info: 'Er circuleert een nieuwe phishinggolf tegen de logistiek', reliability: 'B', credibility: '2', explain: 'Een partner met een goed trackrecord is meestal betrouwbaar (B). De claim klinkt plausibel maar is door jou nog niet bevestigd: waarschijnlijk waar (2): B2.' },
           { source: 'Een claim op de leksite van een ransomwaregroep zelf', info: 'Wij hebben gemeente Y versleuteld en 300 GB data buitgemaakt', reliability: 'D', credibility: '3', explain: 'Criminele groepen overdrijven, hergebruiken oude slachtoffers en liegen om druk te zetten: niet altijd betrouwbaar (D). De claim kan kloppen maar is onbevestigd: mogelijk waar (3): D3.' },
           { source: 'Een technisch rapport van een gerenommeerde securityleverancier met IOC\'s en onderbouwing', info: 'Campagne Z gebruikt een kwetsbaarheid in een VPN-gateway voor initiële toegang', reliability: 'B', credibility: '2', explain: 'Een gerenommeerde leverancier is doorgaans betrouwbaar (B). Het rapport is onderbouwd maar nog niet in jouw omgeving bevestigd (2): B2. Verifieer in je eigen logs om naar 1 te komen.' },
@@ -426,8 +426,8 @@ CS.registerRoom({
 
         <div class="callout warn">
           <strong>Let op "tool = actor":</strong> dit is in cyber-attributie de sluipmoordenaar. Gedeelde malware,
-          gedeelde infrastructuur of een gedeelde taal (denk aan de ACH-oefening) zijn aanwijzingen, geen bewijs van
-          identiteit. Het hele crime-as-a-service-ecosysteem bestaat erbij dat dezelfde tools door verschillende daders
+          gedeelde infrastructuur of een gedeelde taal zijn aanwijzingen, geen bewijs van
+          identiteit. Het hele crime-as-a-service-ecosysteem draait erom dat dezelfde tools door verschillende daders
           worden gebruikt.
         </div>
 

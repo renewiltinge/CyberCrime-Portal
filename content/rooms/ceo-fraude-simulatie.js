@@ -49,7 +49,7 @@ const CF_STEPS = [
   {
     situation: 'Je ontdekt dat een collega de betaling al klaar heeft gezet. Wat doe je?',
     choices: [
-      { label: 'Direct stoppen, security en de bank inschakelen (kickback aanvragen) en het bewijs bewaren', good: true, feedback: 'Precies: snelheid kan de betaling nog blokkeren; bewaar de mail/headers als bewijs.' },
+      { label: 'Direct stoppen, security en de bank inschakelen (terugboeking aanvragen) en het bewijs bewaren', good: true, feedback: 'Precies: snelheid kan de betaling nog blokkeren; bewaar de mail/headers als bewijs.' },
       { label: 'Stil houden om gedoe te voorkomen', good: false, feedback: 'Verzwijgen kost tijd en geld, en bij een datalek ben je meldplichtig. Direct escaleren.' },
       { label: 'Eerst zelf uitzoeken of het echt fraude is, voor je iemand stoort', good: false, feedback: 'Elke minuut telt bij het terughalen. Escaleer meteen; uitzoeken kan parallel.' },
     ],
@@ -88,7 +88,7 @@ CS.registerRoom({
     { term: 'Terugbel-verificatie (callback)', def: 'Een betaalverzoek bevestigen door zélf terug te bellen op een vooraf bekend nummer — niet op een nummer uit de mail.' },
     { term: 'Vier-ogen-principe', def: 'Een tweede persoon keurt de betaling goed; "geheimhouding" die dit omzeilt is een rode vlag.' },
     { term: 'DMARC (reject)', def: 'E-mailbeleid dat spoofmails van je eigen domein laat weigeren — de techniek die BEC aan de voordeur tegenhoudt.' },
-    { term: 'Kickback', def: 'Een verzoek aan de bank om een zojuist gedane (frauduleuze) betaling terug te halen; hoe sneller, hoe groter de kans.' },
+    { term: 'Terugboeking (recall)', def: 'Een verzoek aan de bank om een zojuist gedane (frauduleuze) betaling terug te halen; hoe sneller, hoe groter de kans.' },
   ],
   resources: [
     { title: 'FBI — Business Email Compromise (IC3)', url: 'https://www.ic3.gov/' },

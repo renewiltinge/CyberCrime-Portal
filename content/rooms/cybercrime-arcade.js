@@ -23,7 +23,7 @@ CS.registerRoom({
     { term: 'Access broker (toegangsmakelaar)', def: 'Een crimineel die toegang tot gehackte netwerken koopt en doorverkoopt aan bijvoorbeeld ransomware-groepen.' },
     { term: 'Typosquatting', def: 'Een domeinnaam registreren die sterk lijkt op een echte (met koppelteken, verwisselde letters of een extra woord) om slachtoffers te misleiden.' },
     { term: 'IOC (Indicator of Compromise)', def: 'Een waarneembaar spoor van een aanval: een verdacht domein, IP-adres, hash of e-mailadres.' },
-    { term: 'Caesarcijfer (ROT)', def: 'Een klassiek cijfer dat elke letter een vast aantal plaatsen in het alfabet opschuift. Met 26 mogelijke verschuivingen zo gekraakt.' },
+    { term: 'Caesarcijfer (ROT)', def: 'Een klassiek cijfer dat elke letter een vast aantal plaatsen in het alfabet opschuift. Met maar 25 zinvolle verschuivingen zo gekraakt.' },
     { term: 'Crackme', def: 'Een klein oefenprogramma met een sleutelcontrole die je mag reverse-engineeren. Je leest de controle en leidt de juiste sleutel af.' },
     { term: 'Reguliere expressie (regex)', def: 'Een patroontaal om tekst te matchen. In cybersecurity handig om IOC\'s en verdachte patronen uit logs en lijsten te vissen.' },
     { term: 'NTLM', def: 'Windows-wachtwoordhash (MD4 van het wachtwoord in UTF-16LE), 32 hex-tekens — aan de hash niet van MD5 te onderscheiden.' },
@@ -179,8 +179,8 @@ CS.registerRoom({
         <pre><code>Kl nlolptl cshn pz UT{jhlzhy_pz_thrrlspqr}</code></pre>
 
         <p>Het ziet er als wartaal uit, maar de structuur verraadt een <strong>Caesarcijfer</strong> (ook wel ROT genoemd):
-        elke letter is een vast aantal plaatsen in het alfabet <strong>opgeschoven</strong>. Zie je dat <code>QCA{...}</code>-blok?
-        Dat is bijna zeker een vlag die eigenlijk <code>NM{...}</code> moet zijn. Tel het verschil: <code>Q</code> → <code>J</code>
+        elke letter is een vast aantal plaatsen in het alfabet <strong>opgeschoven</strong>. Zie je dat <code>UT{...}</code>-blok?
+        Dat is bijna zeker een vlag die eigenlijk <code>NM{...}</code> moet zijn. Tel het verschil: <code>U</code> → <code>N</code>
         is zeven letters terug. De hele tekst is dus met <strong>7 opgeschoven</strong>; schuif alles 7 terug en je leest het.</p>
 
         <p>Gebruik het <strong>cipher-lab</strong> hieronder. Zet het op <strong>Caesar/ROT</strong>: de tool toont alle 26
@@ -194,9 +194,9 @@ CS.registerRoom({
       `,
       lab: { type: 'cipher', text: 'Kl nlolptl cshn pz UT{jhlzhy_pz_thrrlspqr}' },
       questions: [
-        { q: 'Met hoeveel plaatsen is de tekst opgeschoven (dus hoeveel moet je terugschuiven)?', answer: ['7'], hint: 'Vergelijk de cijfer-letter Q met de verwachte J: hoeveel plaatsen zit daartussen?', explain: 'Q → J is 7 plaatsen; de hele tekst is met ROT7 versleuteld.' },
+        { q: 'Met hoeveel plaatsen is de tekst opgeschoven (dus hoeveel moet je terugschuiven)?', answer: ['7'], hint: 'Vergelijk de cijfer-letter U met de verwachte N: hoeveel plaatsen zit daartussen?', explain: 'U → N is 7 plaatsen; de hele tekst is met ROT7 versleuteld.' },
         { q: 'Wat is de vlag uit het ontsleutelde bericht?', answer: ['NM{caesar_is_makkelijk}'], encoded: true, hint: 'Ontsleutel met het cipher-lab (Caesar, 7 terug); de "beste gok" toont de hele zin met de vlag.', explain: 'De tekst luidt "De geheime vlag is NM{caesar_is_makkelijk}". Ronde 4 gehaald.' },
-        { q: 'Waarom is een Caesarcijfer makkelijk te kraken?', options: ['Omdat het razendsnel te berekenen is', 'Omdat er maar 26 mogelijke verschuivingen zijn om te proberen', 'Omdat het alleen op Windows werkt', 'Omdat de sleutel altijd 7 is'], answer: 1, explain: 'Met slechts 26 sleutels probeer je ze simpelweg allemaal tot er leesbare tekst verschijnt.' },
+        { q: 'Waarom is een Caesarcijfer makkelijk te kraken?', options: ['Omdat het razendsnel te berekenen is', 'Omdat er maar 25 zinvolle verschuivingen zijn om te proberen', 'Omdat het alleen op Windows werkt', 'Omdat de sleutel altijd 7 is'], answer: 1, explain: 'Met slechts 26 sleutels probeer je ze simpelweg allemaal tot er leesbare tekst verschijnt.' },
       ],
     },
 

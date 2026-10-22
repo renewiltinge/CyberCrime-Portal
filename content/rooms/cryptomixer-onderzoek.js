@@ -58,11 +58,11 @@ const CMX_ENTITIES = [
 ];
 const CMX_EDGES = [
   { from: 'dA', to: 'ipA', rel: 'resolvet naar', time: '2026-01', source: 'passive DNS' },
-  { from: 'dA', to: 'cert', rel: 'presenteert cert', time: '2026-01', source: 'crt.sh' },
+  { from: 'dA', to: 'cert', rel: 'staat in cert (SAN)', time: '2026-01', source: 'crt.sh' },
   { from: 'dA', to: 'mail', rel: 'WHOIS-contact', time: '2026-01', source: 'WHOIS' },
   { from: 'dA', to: 'wal', rel: 'losgeld-adres', time: '2026-01', source: 'rapport' },
   { from: 'dB', to: 'ipB', rel: 'resolvet naar', time: '2026-02', source: 'passive DNS' },
-  { from: 'dB', to: 'cert', rel: 'presenteert cert', time: '2026-02', source: 'crt.sh' },
+  { from: 'dB', to: 'cert', rel: 'staat in cert (SAN)', time: '2026-02', source: 'crt.sh' },
 ];
 
 CS.registerRoom({
@@ -355,7 +355,7 @@ CS.registerRoom({
         bridge: ['A1B2C3D4', 'cert', 'certificaat'],
       },
       questions: [
-        { q: 'Welk zeldzaam kenmerk bruggt Zaak Alpha en Zaak Bravo?', answer: ['certificaat', 'cert', 'A1B2C3D4', 'a1b2c3d4', 'het certificaat', 'tls-certificaat'], hint: 'Hetzelfde kenmerk staat in crt.sh bij beide domeinen; de IP-adressen verschillen juist.', explain: 'Beide domeinen presenteren hetzelfde TLS-certificaat A1B2C3D4 (bekend). Een hergebruikt certificaat is zeldzaam, dus een sterke brug.' },
+        { q: 'Welk zeldzaam kenmerk verbindt Zaak Alpha en Zaak Bravo?', answer: ['certificaat', 'cert', 'A1B2C3D4', 'a1b2c3d4', 'het certificaat', 'tls-certificaat'], hint: 'Hetzelfde kenmerk staat in crt.sh bij beide domeinen; de IP-adressen verschillen juist.', explain: 'Beide domeinen presenteren hetzelfde TLS-certificaat A1B2C3D4 (bekend). Een hergebruikt certificaat is zeldzaam, dus een sterke brug.' },
         { q: 'Via welke openbare bron vind je een hergebruikt TLS-certificaat terug?', options: ['Certificate transparency (crt.sh)', 'De blockchain', 'Het telefoonboek', 'De firewall-logs van het slachtoffer'], answer: 0, explain: 'Certificate transparency-logs (zoals crt.sh) bevatten alle uitgegeven certificaten; zo vind je hergebruik over domeinen.' },
         { q: 'Waarom is een hergebruikt certificaat een sterkere brug dan een gedeelde hostingprovider?', options: ['Omdat een gedeeld certificaat zeldzaam is en een gedeelde hoster veel te algemeen', 'Omdat certificaten nooit worden hergebruikt', 'Omdat hosting niets met domeinen te maken heeft', 'Dat is het niet — de hoster is sterker'], answer: 0, explain: 'De zeldzaamheidstoets: hoe zeldzamer het gedeelde kenmerk, hoe sterker het bewijs.' },
         { q: 'Welke vlag verdien je door de zaken via het certificaat te koppelen?', answer: ['NM{cert_bruggt_de_zaken}'], hint: 'Staat in de tip-callout van deze taak.', explain: 'De vlag is NM{cert_bruggt_de_zaken}.' },

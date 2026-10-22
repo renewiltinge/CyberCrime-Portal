@@ -28,7 +28,7 @@ CS.registerRoom({
         <p>Software bevat fouten, en sommige fouten zijn beveiligingsgaten (<strong>kwetsbaarheden</strong>, Engels:
         <em>vulnerabilities</em>). Een <strong>patch</strong> is een reparatie die zo'n gat dicht. Zodra een patch
         uitkomt, is meteen openbaar <em>welk</em> gat hij dicht — en gaan aanvallers massaal op zoek naar systemen die
-        nog niet zijn bijgewerkt. Een niet-geupdatet apparaat is als een huis waarvan iedereen weet dat het
+        nog niet zijn bijgewerkt. Een niet-geüpdatet apparaat is als een huis waarvan iedereen weet dat het
         achterraam openstaat.</p>
 
         <div class="callout tip">
@@ -44,7 +44,7 @@ CS.registerRoom({
           <li><strong>Slimme apparaten (IoT).</strong> Camera's, slimme lampen, een slimme deurbel: ook dat is software
           die bijgewerkt moet worden.</li>
           <li><strong>Oude software (end-of-life).</strong> Als een fabrikant stopt met updates (zoals bij een heel oud
-          besturingssysteem), komen er geen patches meer. Zulke software blijft voorgoed lek; vervang of vervang hem.</li>
+          besturingssysteem), komen er geen patches meer. Zulke software blijft voorgoed lek; upgrade of vervang hem.</li>
         </ul>
 
         <h3>De analogie van het lek in de band</h3>
@@ -68,7 +68,7 @@ CS.registerRoom({
         <h3>De 3-2-1-regel</h3>
         <p>Een simpele, beproefde vuistregel voor back-ups:</p>
         <ul>
-          <li><strong>3</strong> kopieen van je belangrijke data (het origineel plus twee back-ups).</li>
+          <li><strong>3</strong> kopieën van je belangrijke data (het origineel plus twee back-ups).</li>
           <li><strong>2</strong> verschillende media/plekken (bijvoorbeeld een externe schijf én de cloud).</li>
           <li><strong>1</strong> kopie <strong>offsite</strong> en bij voorkeur <strong>offline</strong>: op een andere
           locatie en losgekoppeld van je netwerk.</li>
@@ -91,7 +91,7 @@ CS.registerRoom({
         waar de inbreker kijkt (offline). En af en toe check je of de reservesleutel echt op het slot past (testen).</p>
       `,
       questions: [
-        { q: "Waar staat de 3-2-1-regel voor?", options: ["3 kopieen, op 2 verschillende media, waarvan 1 offsite/offline", "3 wachtwoorden, 2 gebruikers, 1 computer", "3 updates per 2 weken op 1 apparaat", "3 firewalls, 2 routers, 1 modem"], answer: 0, explain: "3 kopieen, 2 soorten media, 1 kopie offsite en bij voorkeur offline." },
+        { q: "Waar staat de 3-2-1-regel voor?", options: ["3 kopieën, op 2 verschillende media, waarvan 1 offsite/offline", "3 wachtwoorden, 2 gebruikers, 1 computer", "3 updates per 2 weken op 1 apparaat", "3 firewalls, 2 routers, 1 modem"], answer: 0, explain: "3 kopieën, 2 soorten media, 1 kopie offsite en bij voorkeur offline." },
         { q: "Waarom is minstens één offline (losgekoppelde) back-up belangrijk tegen ransomware?", options: ["Ransomware kan aangesloten schijven meeversleutelen; een losgekoppelde kopie blijft buiten bereik", "Offline back-ups zijn sneller", "Het is wettelijk verplicht", "Dat maakt niet uit, elke back-up is gelijk"], answer: 0, explain: "Alles wat verbonden is, kan meeversleuteld worden; een offline/immutable kopie overleeft de aanval." },
         { q: "Wat moet je regelmatig doen om zeker te weten dat je back-up werkt?", answer: ["testen", "herstel testen", "terugzetten testen", "een restore testen"], hint: "Probeer eens iets terug te zetten.", explain: "Test je herstel: een nooit-geteste back-up blijkt te vaak leeg of corrupt op het slechtste moment." },
       ],
@@ -288,7 +288,7 @@ CS.registerRoom({
     { term: "Kwetsbaarheid", def: "Beveiligingsfout in software die een aanvaller kan misbruiken (Engels: vulnerability)." },
     { term: "End-of-life", def: "Software die geen updates meer krijgt van de fabrikant en dus voorgoed lek blijft." },
     { term: "Back-up", def: "Reservekopie van je data, zodat je bij verlies, schade of ransomware kunt herstellen." },
-    { term: "3-2-1-regel", def: "Vuistregel voor back-ups: 3 kopieen, op 2 verschillende media, waarvan 1 offsite en bij voorkeur offline." },
+    { term: "3-2-1-regel", def: "Vuistregel voor back-ups: 3 kopieën, op 2 verschillende media, waarvan 1 offsite en bij voorkeur offline." },
     { term: "Wachtwoordmanager", def: "Programma dat lange, unieke wachtwoorden genereert en versleuteld bewaart achter één hoofdwachtwoord." },
     { term: "MFA", def: "Multifactor-authenticatie: naast je wachtwoord een tweede bewijs, zoals een code uit een app of een passkey." },
     { term: "WPA3", def: "Nieuwste en veiligste versleuteling voor wifi; gebruik dit (of minstens WPA2), nooit het gebroken WEP." },
