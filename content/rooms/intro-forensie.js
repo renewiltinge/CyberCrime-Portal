@@ -126,7 +126,7 @@ CS.registerRoom({
           <li><strong>Bevoegdheid en bevel.</strong> Opsporingshandelingen mogen alleen door daartoe bevoegde ambtenaren, binnen de grenzen van een bevel of machtiging. Gegevensdragers kunnen in beslag worden genomen; onderzoek aan bijvoorbeeld een smartphone kan een machtiging vereisen.</li>
           <li><strong>Proportionaliteit &amp; subsidiariteit.</strong> Het middel moet in verhouding staan tot het doel (proportioneel), en als het met een lichter middel kan, gebruik je dat (subsidiair).</li>
           <li><strong>Zware bevoegdheden worden getoetst.</strong> Ingrijpende handelingen (zoals het binnendringen in een geautomatiseerd werk — de "hackbevoegdheid" uit de Wet Computercriminaliteit III) gelden alleen bij ernstige misdrijven en met voorafgaande toetsing door de rechter-commissaris.</li>
-          <li><strong>Privacy &amp; AVG.</strong> Je raakt persoonsgegevens; dataminimalisatie en doelbinding gelden ook hier.</li>
+          <li><strong>Privacy &amp; persoonsgegevens.</strong> Je raakt persoonsgegevens; dataminimalisatie en doelbinding gelden ook hier. In een bedrijfsonderzoek is dat de AVG; voor de politie geldt de Wet politiegegevens.</li>
         </ul>
         <div class="callout danger"><strong>Ethiek is geen bijzaak.</strong> Je zoekt de waarheid, niet een veroordeling. Dat betekent: ook ontlastend bewijs melden, objectief blijven, geen bewijs "mooier maken", en nooit buiten je bevoegdheid gaan. Eén onzorgvuldige of onbevoegde stap kan bewijs onbruikbaar maken — en een zaak laten klappen.</div>
         <p>En voor je oefeningen geldt wat je al kent: technieken oefen je alleen in je eigen lab of met uitdrukkelijke toestemming. Ongeautoriseerd binnendringen blijft strafbaar (computervredebreuk, art. 138ab Sr), ook met goede bedoelingen.</p>
@@ -165,8 +165,8 @@ CS.registerRoom({
         },
         denied: ['/root', '/etc/shadow'],
         commands: {
-          'sha256sum bewijs.dd': 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  bewijs.dd',
-          'sha256sum zaak-2026-0042/bewijs.dd': 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  zaak-2026-0042/bewijs.dd',
+          'sha256sum bewijs.dd': '2fc9a4e85e4b5de49e7c2f1ccb590726d3f604a40da598ec111494db30c6ab0f  bewijs.dd',
+          'sha256sum zaak-2026-0042/bewijs.dd': '2fc9a4e85e4b5de49e7c2f1ccb590726d3f604a40da598ec111494db30c6ab0f  zaak-2026-0042/bewijs.dd',
         },
       },
       questions: [

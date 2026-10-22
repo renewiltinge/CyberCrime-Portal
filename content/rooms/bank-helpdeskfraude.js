@@ -28,7 +28,7 @@ CS.registerRoom({
   summary: 'Een telefoontje van "de bank", een vervalst nummer in het schermpje en spaargeld dat binnen een uur weg is via katvangers. Je ontrafelt één samenhangende casus: van de eerste belletje-truc tot de cash-out, en je leert hoe je de zet herkent en stopt.',
   objectives: [
     'Uitleggen wat vishing, (nummer)spoofing en social engineering zijn, met echte NL-context',
-    'De overtuigingsprincipes van Cialdini (autoriteit, urgentie, schaarste, vertrouwen) herkennen in een gesprek',
+    'De overtuigingsprincipes van Cialdini (zoals autoriteit, schaarste en sympathie) en het drukmiddel urgentie herkennen in een gesprek',
     'De rode vlaggen van een bijbehorend phishing-bericht op afzender, taal en links benoemen',
     'De stappen van de oplichting reconstrueren en de geldstroom via money mules narekenen tot de cash-out',
     'Een kort, bruikbaar waarschuwings-/adviesproduct schrijven (conclusie eerst)',
@@ -55,7 +55,7 @@ CS.registerRoom({
           een stem die je stap voor stap meeneemt. Een stem klinkt persoonlijk en betrouwbaar, en je kunt hem niet rustig
           teruglezen zoals een mail.</li>
           <li><strong>(Nummer)spoofing</strong> — het <strong>vervalsen van de beller-ID</strong>. Via internettelefonie is
-          het weggeefnummer vrij in te stellen, dus kan er "NederBank" of zelfs het echte 0800-nummer in je scherm staan,
+          het weggeefnummer vrij in te stellen, dus kan er "NederBank" of zelfs het echte nummer van de bank in je scherm staan,
           terwijl de oproep van een oplichter komt. <em>Het nummer in je scherm is geen bewijs.</em></li>
         </ul>
 
@@ -84,7 +84,7 @@ CS.registerRoom({
       `,
       questions: [
         { q: 'Phishing via de telefoon, waarbij een "medewerker" je aan de lijn praat, heet:', answer: ['vishing'], hint: 'Voice + phishing.', explain: 'Vishing = voice phishing: de oplichter werkt via een telefoongesprek.' },
-        { q: 'In het schermpje staat "NederBank" of zelfs het echte 0800-nummer. Wat is hier aan de hand?', options: ['Dan is het zeker de echte bank', 'Nummerspoofing: de beller-ID is vervalst en zegt dus niets', 'De telefoon is gehackt', 'Dat kan technisch niet'], answer: 1, explain: 'Via spoofing is het weergegeven nummer vrij in te stellen. Het nummer in je scherm is geen bewijs van wie er belt.' },
+        { q: 'In het schermpje staat "NederBank" of zelfs het echte nummer van de bank. Wat is hier aan de hand?', options: ['Dan is het zeker de echte bank', 'Nummerspoofing: de beller-ID is vervalst en zegt dus niets', 'De telefoon is gehackt', 'Dat kan technisch niet'], answer: 1, explain: 'Via spoofing is het weergegeven nummer vrij in te stellen. Het nummer in je scherm is geen bewijs van wie er belt.' },
         { q: 'Bankhelpdeskfraude valt vooral de ... aan.', options: ['firewall van de bank', 'app van de bank', 'mens (het slachtoffer zelf)', 'geldautomaat'], answer: 2, explain: 'Het is social engineering: het slachtoffer wordt zelf naar de overboeking gepraat.' },
         { q: 'Welke kernvlag staat in de rode callout?', answer: ['NM{bank_belt_nooit_om_je_pincode}'], hint: 'Lees de danger-callout onderaan.', explain: 'De kernboodschap en -vlag: NM{bank_belt_nooit_om_je_pincode}.' },
       ],
@@ -94,14 +94,16 @@ CS.registerRoom({
       title: 'Taak 2 — De knoppen waarop ze drukken: Cialdini',
       content: `
         <p>Waarom trapt iemand hierin? Niet omdat het slachtoffer dom is — maar omdat de oplichter heel gericht op normale,
-        menselijke reflexen drukt. Psycholoog <strong>Robert Cialdini</strong> beschreef een paar van die
-        <strong>overtuigingsprincipes</strong>. In een vishing-gesprek hoor je ze bijna allemaal langskomen.</p>
+        menselijke reflexen drukt. Psycholoog <strong>Robert Cialdini</strong> beschreef zeven van die
+        <strong>overtuigingsprincipes</strong>: wederkerigheid, commitment en consistentie, sociaal bewijs, autoriteit, sympathie,
+        schaarste en eenheid. Oplichters combineren ze met <strong>urgentie</strong> (tijdsdruk), die Cialdini onder schaarste
+        schaart maar die zo vaak voorkomt dat we haar apart noemen. In een vishing-gesprek hoor je ze bijna allemaal langskomen.</p>
 
         <table>
           <thead><tr><th>Principe</th><th>Wat de "medewerker" zegt</th><th>Waarom het werkt</th></tr></thead>
           <tbody>
             <tr><td><strong>Autoriteit</strong></td><td>"U spreekt met de fraudedesk van NederBank."</td><td>We gehoorzamen gezag en twijfelen niet aan een "officiële" instantie.</td></tr>
-            <tr><td><strong>Urgentie</strong></td><td>"Er wordt NU geld afgeschreven, we moeten direct handelen."</td><td>Tijdsdruk schakelt je nadenken uit; je handelt vóór je checkt.</td></tr>
+            <tr><td><strong>Urgentie</strong> (tijdsdruk, vorm van schaarste)</td><td>"Er wordt NU geld afgeschreven, we moeten direct handelen."</td><td>Tijdsdruk schakelt je nadenken uit; je handelt vóór je checkt.</td></tr>
             <tr><td><strong>Schaarste</strong></td><td>"Dit tijdslot om te redden sluit over een paar minuten."</td><td>Iets wat bijna "op" of "voorbij" is, voelt kostbaarder en dwingender.</td></tr>
             <tr><td><strong>Vertrouwen / sympathie</strong></td><td>"Ik help u er samen doorheen, blijft u maar rustig aan de lijn."</td><td>Een vriendelijke, geduldige stem bouwt een band; je wilt de aardige helper niet teleurstellen.</td></tr>
           </tbody>
@@ -128,7 +130,7 @@ CS.registerRoom({
       `,
       questions: [
         { q: '"U spreekt met de officiële fraudedesk van de bank." Welk Cialdini-principe is dit?', answer: ['autoriteit'], hint: 'Gezag, een officiële instantie.', explain: 'Autoriteit: we gehoorzamen een bron die gezag uitstraalt en twijfelen minder snel.' },
-        { q: '"We moeten NU handelen, anders bent u uw geld kwijt." Dat is vooral een beroep op:', options: ['sympathie', 'urgentie', 'schaarste', 'autoriteit'], answer: 1, explain: 'Urgentie/tijdsdruk zorgt dat je handelt vóór je nadenkt of verifieert.' },
+        { q: '"We moeten NU handelen, anders bent u uw geld kwijt." Dat is vooral een beroep op:', options: ['sympathie', 'urgentie (tijdsdruk)', 'wederkerigheid', 'autoriteit'], answer: 1, explain: 'Urgentie/tijdsdruk zorgt dat je handelt vóór je nadenkt of verifieert. Cialdini rekent tijdsdruk tot het principe schaarste: de tijd om te handelen is "schaars".' },
         { q: 'Welk middel gebruikt de oplichter om te voorkomen dat je het bij een ander checkt?', answer: ['geheimhouding', 'geheim houden', 'zwijgen'], hint: '"Vertel dit aan niemand."', explain: 'Geheimhouding knipt de persoon weg die de truc zou doorzien — een grote rode vlag.' },
         { q: 'Wat is het beste tegengif tegen al deze druk-knoppen?', options: ['Snel meewerken zodat het voorbij is', 'Ophangen en zelf terugbellen via een nummer dat je zelf opzoekt', 'Het nummer in je scherm terugbellen', 'Je pincode doorgeven zodat ze het kunnen oplossen'], answer: 1, explain: 'Rust nemen, ophangen en via een eigen, opgezocht kanaal verifiëren breekt de hele truc.' },
         { q: 'Welke beloningsvlag staat in de tip-callout?', answer: ['NM{autoriteit_opent_deuren}'], hint: 'Lees de groene tip-callout.', explain: 'De beloningsvlag is NM{autoriteit_opent_deuren}.' },
@@ -161,7 +163,7 @@ CS.registerRoom({
             from: 'melding@nederbank-sms.info',
             to: 'mevr.deboer@voorbeeld.nl',
             subject: 'Nieuw apparaat gekoppeld aan uw rekening — was u dit?',
-            date: 'di 14 okt 2026 20:03',
+            date: 'wo 14 okt 2026 20:03',
             flags: {
               from: 'Het domein is nederbank-sms.info, niet nederbank.nl. De echte bank mailt niet vanaf zo\'n adres.',
               subject: 'Een onverwachte "waarschuwing" die je wil laten schrikken en snel laten klikken.',
@@ -179,7 +181,7 @@ CS.registerRoom({
             from: 'fraudedesk@nederbank-verificatie.info',
             to: 'mevr.deboer@voorbeeld.nl',
             subject: 'ACTIE VEREIST: breng uw saldo in veiligheid',
-            date: 'di 14 okt 2026 20:35',
+            date: 'wo 14 okt 2026 20:35',
             flags: {
               from: 'Weer een nep-domein (nederbank-verificatie.info). Een echte fraudedesk mailt niet vanaf zoiets.',
               subject: 'Hoofdletters, dreiging en haast ("ACTIE VEREIST") zijn klassieke drukmiddelen.',
@@ -196,7 +198,7 @@ CS.registerRoom({
             from: 'noreply@nederbank.nl',
             to: 'mevr.deboer@voorbeeld.nl',
             subject: 'Zo herkent u babbeltrucs — wij bellen nooit om uw pincode',
-            date: 'ma 13 okt 2026 10:00',
+            date: 'di 13 okt 2026 10:00',
             body: [
               [{ text: 'Beste klant, oplichters doen zich soms voor als medewerker van de bank. Onthoud: wij vragen u nooit om uw pincode of volledige inlogcode, en wij vragen u nooit geld over te maken naar een andere rekening.' }],
               [{ text: 'U hoeft op deze mail niets te doen en wij vragen u nergens om in te loggen. Twijfelt u over een telefoontje? Hang op en bel ons zelf via het nummer achter op uw pas of via de officiële app.' }],
@@ -311,7 +313,7 @@ CS.registerRoom({
       `,
       lab: {
         type: 'bluf',
-        source: 'Op dinsdag 14 oktober om 20.03 ontving mevrouw De Boer een mail van "NederBank Alert" over een nieuw gekoppeld apparaat. Om 20.10 werd zij gebeld; in haar scherm stond "NederBank". De beller noemde zich medewerker van de fraudedesk, meldde een verdachte afschrijving en drong aan op snelheid. Hij vroeg haar het spaargeld "in veiligheid te brengen" op een veilige kluisrekening en benadrukte dat zij hierover met niemand mocht praten. Om 20.15 boekte zij 8.000 euro over en om 20.40, nadat de "medewerker" haar hielp de daglimiet te verhogen, nog eens 7.000 euro, naar twee onbekende rekeningen. Die rekeningen bleken van katvangers; het geld werd binnen een uur doorgesluisd naar een verzamelrekening en vervolgens opgenomen en deels omgezet in crypto. In totaal is 15.000 euro verdwenen; ongeveer 14.000 euro bereikte het cash-out-punt.',
+        source: 'Op woensdag 14 oktober om 20.03 ontving mevrouw De Boer een mail van "NederBank Alert" over een nieuw gekoppeld apparaat. Om 20.10 werd zij gebeld; in haar scherm stond "NederBank". De beller noemde zich medewerker van de fraudedesk, meldde een verdachte afschrijving en drong aan op snelheid. Hij vroeg haar het spaargeld "in veiligheid te brengen" op een veilige kluisrekening en benadrukte dat zij hierover met niemand mocht praten. Om 20.15 boekte zij 8.000 euro over en om 20.40, nadat de "medewerker" haar hielp de daglimiet te verhogen, nog eens 7.000 euro, naar twee onbekende rekeningen. Die rekeningen bleken van katvangers; het geld werd binnen een uur doorgesluisd naar een verzamelrekening en vervolgens opgenomen en deels omgezet in crypto. In totaal is 15.000 euro verdwenen; ongeveer 14.000 euro bereikte het cash-out-punt.',
         model: '<p><strong>BLUF:</strong> Mevrouw De Boer is slachtoffer van bankhelpdeskfraude (vishing met nummerspoofing). Zij boekte na een vervalst "bank"-telefoontje 15.000 euro over naar katvangerrekeningen; naar schatting 14.000 euro bereikte de cash-out. Directe actie is nodig om schade te beperken en herhaling bij anderen te voorkomen.</p><p><strong>Adviezen (met eigenaar):</strong></p><ul><li><em>Slachtoffer:</em> bel direct de echte bank (nummer achter op de pas) om de overboekingen te laten blokkeren/terughalen; doe aangifte bij de politie en meld bij de Fraudehelpdesk.</li><li><em>Bank:</em> onderzoek en bevries de ontvangende rekeningen; waarschuw via de eigen kanalen dat zij nooit om pincode/codes vraagt.</li><li><em>Wijkagent/buurtbeheerder:</em> deel een korte waarschuwing: "de bank belt nooit om je pincode of om geld naar een veilige rekening te boeken — hang op en bel zelf terug."</li></ul><p><strong>Onzekerheid:</strong> het exact teruggehaalde bedrag is nog onbekend; de identiteit achter de cash-out is waarschijnlijk (nog) niet vastgesteld.</p>',
       },
       questions: [
@@ -332,7 +334,7 @@ CS.registerRoom({
           <li>De bank vraagt <strong>nooit</strong> om je pincode, volledige inlogcode, of om geld over te maken naar een
           "veilige rekening". Komt zo'n verzoek: het is per definitie oplichting.</li>
           <li>Het <strong>nummer in je scherm is geen bewijs</strong> (spoofing). Vertrouw er niet op, ook niet als het het
-          echte 0800-nummer lijkt.</li>
+          echte nummer van je bank lijkt.</li>
           <li>Voelt het dringend of geheim? Dat is juist het alarm. <strong>Hang op</strong> en bel de bank terug via het
           nummer achter op je pas of in de officiële app — nooit via de gegevens uit het gesprek of bericht.</li>
           <li>Laat je niet opjagen en overleg gerust met een familielid of de balie. Een echte bank vindt dat prima.</li>
@@ -345,7 +347,7 @@ CS.registerRoom({
           <li><strong>Bel direct je bank</strong> (nummer achter op je pas) en laat de overboeking blokkeren/terughalen en je
           rekening beveiligen. Hoe sneller, hoe groter de kans dat geld nog tegengehouden wordt.</li>
           <li><strong>Doe aangifte bij de politie</strong> via politie.nl of 0900-8844; bij direct gevaar 112.</li>
-          <li><strong>Meld het bij de Fraudehelpdesk</strong> (0800-nummer, kosteloos). Melden helpt anderen: trends en
+          <li><strong>Meld het bij de Fraudehelpdesk</strong> (via fraudehelpdesk.nl). Melden helpt anderen: trends en
           nummers worden gedeeld en slachtoffers krijgen advies.</li>
           <li><strong>Bewaar bewijs:</strong> het telefoonnummer, de tijdstippen, screenshots van berichten en de
           overboekingen. Dat helpt bank en politie enorm.</li>
@@ -356,15 +358,15 @@ CS.registerRoom({
         <div class="callout info"><strong>Melden = helpen.</strong> Noteer de laatste vlag als je weet waar een slachtoffer
         in Nederland terechtkan: <code>NM{melden_bij_fraudehelpdesk}</code>.</div>
 
-        <div class="callout warn"><strong>Let op de nummers:</strong> een echte bank en de Fraudehelpdesk gebruiken
-        <strong>gratis 0800-nummers</strong>. Een <strong>0900-nummer</strong> (betaald) in een "bank"-bericht is juist
-        verdacht. Zoek officiële nummers altijd zélf op, typ ze niet over uit het bericht.</div>
+        <div class="callout warn"><strong>Let op de nummers:</strong> aan het soort nummer (0800, 0900, 020, 088) zie je niet of
+        het echt is: banken gebruiken verschillende nummers, en oplichters kunnen elk nummer laten verschijnen. Zoek officiële
+        nummers altijd zélf op (achter op je pas, in de app of op de eigen website) en typ ze niet over uit het bericht.</div>
       `,
       questions: [
         { q: 'Je wordt gebeld door "de bank" die vraagt geld naar een veilige rekening te boeken. Wat doe je?', options: ['Snel overboeken zodat je geld veilig is', 'Je pincode doorgeven zodat zij het regelen', 'Ophangen en zelf de bank terugbellen via het nummer achter op je pas', 'Het nummer uit het scherm terugbellen'], answer: 2, explain: 'Ophangen en via een eigen, opgezocht kanaal verifiëren. De bank vraagt dit nooit.' },
         { q: 'Je hebt zojuist geld overgemaakt na zo\'n telefoontje. Wat is de eerste stap?', answer: ['bank bellen', 'direct de bank bellen', 'de bank bellen'], hint: 'Zorg dat de overboeking nog geblokkeerd/teruggehaald kan worden.', explain: 'Bel meteen je echte bank (nummer achter op je pas) om te blokkeren; daarna aangifte en melden.' },
-        { q: 'Bij welke instantie meld je dit type fraude (naast je bank en de politie)?', answer: ['fraudehelpdesk', 'de fraudehelpdesk'], hint: 'Een landelijk meldpunt met een gratis 0800-nummer.', explain: 'De Fraudehelpdesk is het landelijke meldpunt; melden helpt ook anderen.' },
-        { q: 'Welk soort telefoonnummer in een "bank"-bericht is juist verdacht?', options: ['Een gratis 0800-nummer', 'Een betaald 0900-nummer', 'Het alarmnummer 112', 'Een mobiel 06-nummer van een familielid'], answer: 1, explain: 'Echte banken en de Fraudehelpdesk gebruiken gratis 0800-nummers; een 0900-nummer is een rode vlag.' },
+        { q: 'Bij welke instantie meld je dit type fraude (naast je bank en de politie)?', answer: ['fraudehelpdesk', 'de fraudehelpdesk'], hint: 'Een landelijk meldpunt voor alle vormen van fraude.', explain: 'De Fraudehelpdesk is het landelijke meldpunt; melden helpt ook anderen.' },
+        { q: 'Een sms van "de bank" vraagt je terug te bellen op het nummer in het bericht. Wat doe je?', options: ['Bellen: een 0800-nummer is altijd echt', 'Het nummer zelf opzoeken (achter op je pas of in de app) en dat bellen', 'Terugbellen en eerst om een naam vragen', 'Antwoorden op de sms'], answer: 1, explain: 'Aan het soort nummer zie je niet of het echt is. Alleen een nummer dat je zelf via een vertrouwd kanaal opzoekt, is betrouwbaar.' },
         { q: 'Welke vlag staat in de laatste info-callout?', answer: ['NM{melden_bij_fraudehelpdesk}'], hint: 'Lees de info-callout over melden.', explain: 'De afsluitende vlag is NM{melden_bij_fraudehelpdesk}.' },
       ],
     },
@@ -375,7 +377,7 @@ CS.registerRoom({
     { term: 'Spoofing (nummerspoofing)', def: 'Het vervalsen van de beller-ID, zodat er een vertrouwde naam of het echte nummer in je scherm staat terwijl een oplichter belt.' },
     { term: 'Smishing', def: 'Phishing via sms, vaak als opwarmer of bevestiging rond een vishing-telefoontje.' },
     { term: 'Social engineering', def: 'Mensen manipuleren om iets te doen (klikken, betalen, codes geven) in plaats van techniek te hacken.' },
-    { term: 'Overtuigingsprincipes (Cialdini)', def: 'Vaste psychologische hefbomen zoals autoriteit, urgentie, schaarste en vertrouwen waarmee een oplichter je overhaalt.' },
+    { term: 'Overtuigingsprincipes (Cialdini)', def: 'Zeven psychologische hefbomen: wederkerigheid, commitment en consistentie, sociaal bewijs, autoriteit, sympathie, schaarste en eenheid. Oplichters combineren ze met tijdsdruk (urgentie).' },
     { term: 'Veilige kluisrekening', def: 'Een verzonnen "veilige rekening" waar je je geld heen zou moeten boeken; in werkelijkheid altijd de rekening van een katvanger.' },
     { term: 'Money mule / katvanger', def: 'Iemand die zijn bankrekening uitleent of verkoopt zodat crimineel geld erdoorheen stroomt; strafbaar.' },
     { term: 'Daglimiet', def: 'De maximale som die je per dag kunt overboeken; oplichters laten het slachtoffer dit verhogen om meer te kunnen wegsluizen.' },

@@ -69,7 +69,7 @@ CS.registerRoom({
     { term: 'Wwft', def: 'Wet ter voorkoming van witwassen en financieren van terrorisme: verplicht instellingen tot cliëntenonderzoek en het melden van ongebruikelijke transacties.' },
     { term: 'Meldgrens', def: 'Bedrag waarboven (of patroon waarbij) een transactie als ongebruikelijk geldt en gemeld moet worden. Hier als fictieve vuistregel € 10.000 voor contant.' },
     { term: 'FIU-Nederland', def: 'Financial Intelligence Unit: ontvangt ongebruikelijke transacties, analyseert ze en kan ze "verdacht" verklaren voor de opsporing.' },
-    { term: 'Cash-out-knelpunt', def: 'De plek waar het gewassen geld het systeem verlaat (wisselkantoor, buitenlandse rekening); vaak het sterkste aangrijppunt voor opsporing.' },
+    { term: 'Cash-out-knelpunt', def: 'De plek waar het gewassen geld het systeem verlaat (wisselkantoor, buitenlandse rekening); vaak het sterkste aangrijpingspunt voor opsporing.' },
     { term: 'ACH', def: 'Analysis of Competing Hypotheses: hypothesen naast elkaar leggen en weerleggen; wat de minste inconsistenties heeft, blijft het sterkst.' },
   ],
   resources: [

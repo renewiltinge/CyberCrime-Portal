@@ -12,7 +12,7 @@ const DV_RECORDS = [
     title: 'Darkweb-marktplaats — vendorpagina', icon: '🏴',
     lines: [
       'alias: rxshadow',
-      'PGP-fingerprint: 7C4D 9A1E 2B88 F03A 55D1',
+      'PGP-fingerprint: 7C4D 9A1E 2B88 F03A 55D1 0E6B 3C27 A9F4 18D5 6B02',
       'verzendt vanuit: EU',
       'stijl-tic in beschrijving: eindigt elke post met "cheerz!"',
     ],
@@ -21,7 +21,7 @@ const DV_RECORDS = [
     title: 'Clearnet-forum (openbaar) — profiel', icon: '💬',
     lines: [
       'gebruiker: rx_shadow',
-      'PGP-fingerprint (in bio): 7C4D 9A1E 2B88 F03A 55D1',
+      'PGP-fingerprint (in bio): 7C4D 9A1E 2B88 F03A 55D1 0E6B 3C27 A9F4 18D5 6B02',
       'ondertekening: "cheerz!"',
       'posts over: versleuteling en "stealth shipping"',
     ],
@@ -148,7 +148,7 @@ CS.registerRoom({
         records: DV_RECORDS,
         ask: [
           { q: 'Welke alias keert op (vrijwel) elke bron terug?', answer: ['rxshadow', 'rx_shadow'], hint: 'Lees de alias/username op elke kaart.' },
-          { q: 'Welke PGP-fingerprint koppelt de marktplaats aan het clearnet-forum?', answer: ['7C4D 9A1E 2B88 F03A 55D1', '7C4D9A1E2B88F03A55D1', '7c4d 9a1e 2b88 f03a 55d1'], hint: 'Staat op de vendorpagina én in de forum-bio.' },
+          { q: 'Welke PGP-fingerprint koppelt de marktplaats aan het clearnet-forum?', answer: ['7C4D 9A1E 2B88 F03A 55D1 0E6B 3C27 A9F4 18D5 6B02', '7C4D9A1E2B88F03A55D10E6B3C27A9F418D56B02', '7c4d 9a1e 2b88 f03a 55d1 0e6b 3c27 a9f4 18d5 6b02'], hint: 'Staat op de vendorpagina én in de forum-bio.' },
           { q: 'Welk e-mailadres koppelt het pastebin-lek aan de code-repo?', answer: ['rxshadow@mail.nm.lab'], hint: 'Hetzelfde adres op de paste-kaart én de repo-kaart.' },
           { q: 'Welk bitcoin-adres is publiek aan de vendor gelabeld?', answer: ['bc1qrxshadowvendor000xmpl'], hint: 'Staat op de blockchain-explorer-kaart.' },
         ],
@@ -178,7 +178,7 @@ CS.registerRoom({
         edges: DV_EDGES,
       },
       questions: [
-        { q: 'Welk hergebruikt kenmerk bruggt de vendor en het oude clearnet-project?', answer: ['PGP', 'de PGP-sleutel', 'pgp-sleutel', '7C4D 9A1E 2B88 F03A 55D1', 'de pgp-fingerprint', 'pgp-fingerprint'], hint: 'Dezelfde sleutel signeerde beide.', explain: 'De PGP-sleutel 7C4D…55D1 koppelt de vendor aan commits uit 2019 — de brug naar een echte-identiteit-lead.' },
+        { q: 'Welk hergebruikt kenmerk bruggt de vendor en het oude clearnet-project?', answer: ['PGP', 'de PGP-sleutel', 'pgp-sleutel', '7C4D 9A1E 2B88 F03A 55D1 0E6B 3C27 A9F4 18D5 6B02', 'de pgp-fingerprint', 'pgp-fingerprint'], hint: 'Dezelfde sleutel signeerde beide.', explain: 'De PGP-sleutel 7C4D…55D1 koppelt de vendor aan commits uit 2019 — de brug naar een echte-identiteit-lead.' },
         { q: 'Waarom is een PGP-sleutel uit 2019 zo waardevol?', options: ['Van vóór de vendor-OPSEC: toen was de maker vaak minder voorzichtig (bijv. een echte handle)', 'Omdat oude sleutels sterker zijn', 'Omdat 2019 een bijzonder jaar was', 'Dat is het niet'], answer: 0, explain: 'Vroege sporen stammen uit een tijd met slordiger OPSEC; daar liggen de echte-identiteit-leads.' },
         { q: 'Wat is "m.devries" in dit onderzoek precies?', options: ['Een lead (onderzoekslijn), nog geen bewezen identiteit', 'De bewezen dader', 'Een wachtwoord', 'Een bitcoin-adres'], answer: 0, explain: 'De handle opent een lijn; hem aan een echt persoon koppelen vraagt onafhankelijk bewijs.' },
         { q: 'Welke vlag staat in de tip-callout van deze taak?', answer: ['NM{sleutel_als_tijdmachine}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{sleutel_als_tijdmachine}.' },

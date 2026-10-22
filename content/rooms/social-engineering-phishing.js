@@ -110,7 +110,7 @@ CS.registerRoom({
             from: 'security@nederbank-verificatie.info',
             to: 'jij@voorbeeld.nl',
             subject: 'URGENT: uw rekening wordt binnen 24 uur geblokkeerd',
-            date: 'ma 6 okt 2026 07:12',
+            date: 'di 6 okt 2026 07:12',
             flags: {
               from: 'Het domein is nederbank-verificatie.info, niet nederbank.nl. De echte bank mailt niet vanaf zo\'n adres.',
               subject: 'Haast ("URGENT", "binnen 24 uur") en dreiging ("geblokkeerd") zijn klassieke drukmiddelen.',
@@ -129,7 +129,7 @@ CS.registerRoom({
             from: 'noreply@pakketpost.nl',
             to: 'jij@voorbeeld.nl',
             subject: 'Je pakket PP-48213 is onderweg',
-            date: 'ma 6 okt 2026 09:30',
+            date: 'di 6 okt 2026 09:30',
             body: [
               [{ text: 'Hoi, je bestelling met trackingcode PP-48213 is vandaag onderweg en wordt tussen 14:00 en 16:00 bezorgd.' }],
               [{ text: 'Je hoeft niets te doen. Wil je de bezorging volgen? Open de PakketPost-app of ga zelf naar pakketpost.nl en vul je code in.' }],
@@ -142,7 +142,7 @@ CS.registerRoom({
             from: 'jeroen.directie@gmail.com',
             to: 'financien@jouwbedrijf.nl',
             subject: 'Kleine spoedklus — kun je dit regelen?',
-            date: 'ma 6 okt 2026 11:02',
+            date: 'di 6 okt 2026 11:02',
             flags: {
               from: 'De "directeur" mailt vanaf een gmail.com-adres in plaats van het bedrijfsdomein. Klassieke CEO-fraude.',
             },
@@ -157,8 +157,8 @@ CS.registerRoom({
             fromName: 'ICT-Helpdesk',
             from: 'helpdesk@jouwbedrijf.nl',
             to: 'jij@jouwbedrijf.nl',
-            subject: 'Gepland onderhoud zaterdag 11 okt, 22:00–23:00',
-            date: 'di 7 okt 2026 08:15',
+            subject: 'Gepland onderhoud zondag 11 okt, 22:00–23:00',
+            date: 'wo 7 okt 2026 08:15',
             body: [
               [{ text: 'Beste collega, aanstaande zaterdag tussen 22:00 en 23:00 voeren we onderhoud uit. Mogelijk is de mail even niet bereikbaar.' }],
               [{ text: 'Je hoeft niets te doen en we vragen je nergens om in te loggen. Vragen? Reageer op deze mail of bel de helpdesk via het interne nummer op intranet.' }],

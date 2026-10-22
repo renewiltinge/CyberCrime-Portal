@@ -73,7 +73,7 @@ Oct  3 04:02:13 fw01 kernel: [UFW BLOCK] IN=eth0 OUT= SRC=203.0.113.200 DST=10.0
 Oct  3 04:02:13 fw01 kernel: [UFW BLOCK] IN=eth0 OUT= SRC=203.0.113.200 DST=10.0.5.20 PROTO=TCP SPT=44013 DPT=3306 FLAGS=SYN
 Oct  3 04:02:13 fw01 kernel: [UFW BLOCK] IN=eth0 OUT= SRC=203.0.113.200 DST=10.0.5.20 PROTO=TCP SPT=44014 DPT=3389 FLAGS=SYN
 Oct  3 04:02:14 fw01 kernel: [UFW BLOCK] IN=eth0 OUT= SRC=203.0.113.200 DST=10.0.5.20 PROTO=TCP SPT=44015 DPT=8080 FLAGS=SYN
-Oct  3 04:02:40 ids01 suricata[912]: [1:2001219:20] ET SCAN Possible TCP SYN port scan SRC=203.0.113.200 DST=10.0.5.20 classification=Attempted-Recon note=NM{poortscan_gedetecteerd}
+Oct  3 04:02:40 ids01 suricata[912]: [1:9000101:1] LOCAL SCAN Possible TCP SYN port scan SRC=203.0.113.200 DST=10.0.5.20 classification=Attempted-Recon note=NM{poortscan_gedetecteerd}
 Oct  3 04:05:02 fw01 kernel: [UFW ALLOW] IN=eth0 OUT= SRC=192.0.2.77 DST=10.0.5.20 PROTO=TCP SPT=52110 DPT=443 FLAGS=SYN
 `;
 
@@ -290,7 +290,7 @@ CS.registerRoom({
       content: `
         <p>Voordat een aanvaller inbreekt, wil hij weten welke deuren er zijn. Daarom doet hij een <strong>poortscan</strong>
         (Engels: <em>port scan</em>): hij klopt kort op heel veel poorten van een systeem om te zien welke open staan.
-        Poort 22 (SSH), 80 (HTTP), 443 (HTTPS), 3389 (Windows-afstandsbediening), 3306 (database): elk open poort is een
+        Poort 22 (SSH), 80 (HTTP), 443 (HTTPS), 3389 (Windows-afstandsbediening), 3306 (database): elke open poort is een
         mogelijke ingang. In de firewalllog ziet dat er heel kenmerkend uit.</p>
 
         <h3>De analogie van de inbreker</h3>

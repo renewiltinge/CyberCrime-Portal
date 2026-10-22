@@ -57,7 +57,7 @@ const RR_STEPS = [
   },
 ];
 
-// --- Ordering: de NIST-incidentresponsfasen ---
+// --- Ordering: een praktische volgorde op basis van de klassieke NIST-cyclus, met melden als eigen stap ---
 const RR_PHASES = [
   { id: '1', label: 'Detectie & analyse — bevestig de ransomware en bepaal de scope' },
   { id: '2', label: 'Containment — isoleer de besmette systemen van het netwerk' },
@@ -81,7 +81,7 @@ CS.registerRoom({
     'De afweging rond losgeld betalen onderbouwen (geen garantie, financiert misdaad, sancties)',
     'Verstandig omgaan met een afpersende aanvaller bij dubbele afpersing',
     'De meldplicht (AP, 72 uur) en aangifte kennen',
-    'De NIST-incidentresponsfasen op volgorde zetten en herhaling voorkomen',
+    'De stappen van incidentrespons (naar de klassieke NIST-cyclus) op volgorde zetten en herhaling voorkomen',
   ],
   terms: [
     { term: 'Ransomware', def: 'Malware die bestanden versleutelt (en vaak data steelt) en losgeld eist voor de sleutel of om niet te lekken.' },
@@ -90,7 +90,7 @@ CS.registerRoom({
     { term: 'Eradicatie', def: 'De aanvaller en de malware volledig verwijderen en de oorzaak (root cause) dichten.' },
     { term: 'Recovery', def: 'Herstellen vanuit schone back-ups, pas nadat de aanvaller eruit is.' },
     { term: 'Immutable back-up', def: 'Een back-up die niet gewijzigd of gewist kan worden; overleeft ransomware en afpersing.' },
-    { term: 'NIST IR-cyclus', def: 'Preparation → Detection & Analysis → Containment, Eradication & Recovery → Post-incident Activity.' },
+    { term: 'NIST IR-cyclus', def: 'De klassieke cyclus uit SP 800-61 Rev. 2 (2012): Preparation → Detection & Analysis → Containment, Eradication & Recovery → Post-incident Activity. Rev. 3 (2025) hangt incidentrespons op aan de zes functies van CSF 2.0, maar de cyclus blijft een bruikbare werkvolgorde.' },
     { term: 'Meldplicht datalek', def: 'Een datalek met risico voor personen meld je binnen 72 uur bij de Autoriteit Persoonsgegevens (AVG).' },
   ],
   resources: [
@@ -108,8 +108,9 @@ CS.registerRoom({
         "we hebben toch back-ups" niet meer genoeg is: ze dreigen die data te lekken.</p>
         <p>De verleiding om snel te betalen is groot, maar betalen is een <strong>laatste redmiddel</strong>: er is geen
         garantie dat je je data terugkrijgt, je financiert de misdaad (en maakt jezelf een doelwit), en betalen aan sommige
-        groepen kan zelfs onder <strong>sanctierecht</strong> vallen. Goede incidentrespons volgt een plan — de
-        <strong>NIST-cyclus</strong> — in plaats van paniek.</p>
+        groepen kan zelfs onder <strong>sanctierecht</strong> vallen. Goede incidentrespons volgt een plan — bijvoorbeeld de
+        klassieke <strong>NIST-cyclus</strong> — in plaats van paniek. (Melden aan de AP en aangifte zijn geen NIST-fase, maar
+        wettelijke en praktische stappen die je in die cyclus inpast.)</p>
         <div class="callout warn"><strong>Alles fictief:</strong> het incident, de organisatie en de aanvaller zijn verzonnen
         oefenmateriaal. De ransomware-extensie <code>.kryptlock</code> is een verzonnen familienaam.</div>
         <div class="callout tip"><strong>Beloning:</strong> een plan verslaat paniek. Vlag: <code>NM{plan_verslaat_paniek}</code>.</div>
@@ -180,13 +181,13 @@ CS.registerRoom({
           een communicatielijn.</li>
           <li><strong>Segmentatie</strong> en least privilege, zodat één besmette werkplek niet het hele netwerk meeneemt.</li>
         </ul>
-        <div class="callout tip"><strong>Beloning:</strong> geteste back-ups zijn je redmiddel. Vlag: <code>NM{teste_back_ups_redden}</code>.</div>
+        <div class="callout tip"><strong>Beloning:</strong> geteste back-ups zijn je redmiddel. Vlag: <code>NM{geteste_back_ups_redden}</code>.</div>
       `,
       questions: [
         { q: 'Wat is de belangrijkste maatregel tegen versleuteling door ransomware?', options: ['Offline/immutable back-ups die je regelmatig test op herstel', 'Een sterker antivirus-icoon', 'Vaker het wachtwoord wijzigen', 'Een snellere internetverbinding'], answer: 0, explain: 'Met een schone, geteste back-up kun je herstellen zonder te betalen — mits ook de dubbele-afpersing-kant is afgedekt.' },
         { q: 'Welke twee maatregelen dichten de meestgebruikte voordeuren?', options: ['MFA overal en snel patchen van internet-facing systemen', 'Een langer wachtwoord en een screensaver', 'Meer schijfruimte en RAM', 'Een nieuwe router'], answer: 0, explain: 'Gestolen/zwakke credentials en ongepatchte systemen zijn de klassieke toegangswegen; MFA en patchen sluiten ze.' },
         { q: 'Waarom helpt netwerksegmentatie?', options: ['Eén besmette werkplek neemt dan niet het hele netwerk mee', 'Het versnelt de back-up', 'Het voorkomt phishing', 'Het is wettelijk verplicht'], answer: 0, explain: 'Segmentatie en least privilege beperken laterale beweging en dus de schade van een besmetting.' },
-        { q: 'Welke vlag staat in de tip-callout van deze taak?', answer: ['NM{teste_back_ups_redden}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{teste_back_ups_redden}.' },
+        { q: 'Welke vlag staat in de tip-callout van deze taak?', answer: ['NM{geteste_back_ups_redden}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{geteste_back_ups_redden}.' },
       ],
     },
   ],

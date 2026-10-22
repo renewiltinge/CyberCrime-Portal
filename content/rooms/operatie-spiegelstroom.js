@@ -83,7 +83,7 @@ CS.registerRoom({
     { term: 'Keten (kill chain)', def: 'De opeenvolgende fasen van een aanval, van initiële toegang tot het uiteindelijke doel (hier: de cash-out).' },
     { term: 'Exfiltratie', def: 'Het wegsluizen van data naar buiten, vaak ’s nachts of in brokken.' },
     { term: 'Layering', def: 'De witwasfase waarin de herkomst wordt versluierd met veel transacties en omzettingen.' },
-    { term: 'Cash-out-knelpunt', def: 'De plek waar het geld het systeem verlaat (exchange, buitenlandse rekening); het sterkste aangrijppunt voor opsporing.' },
+    { term: 'Cash-out-knelpunt', def: 'De plek waar het geld het systeem verlaat (exchange, buitenlandse rekening); het sterkste aangrijpingspunt voor opsporing.' },
     { term: 'Certificate transparency', def: 'Openbare logs van TLS-certificaten waarmee je een hergebruikt certificaat over dossiers terugvindt (zeldzaamheidstoets).' },
     { term: 'ACH', def: 'Analysis of Competing Hypotheses: hypothesen weerleggen; wat de minste inconsistenties heeft, blijft het sterkst.' },
     { term: 'BLUF', def: 'Bottom Line Up Front: conclusie en advies bovenaan, onderbouwing eronder.' },

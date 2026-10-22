@@ -442,7 +442,7 @@ CS.registerRoom({
         heuristische checklist, geen AI-oordeel) en vergelijk met het modelantwoord.</p>
 
         <div class="callout tip"><strong>Slotvlag:</strong> rond je de zaak af met een echt BLUF-product dat de cash-out
-        als aangrijppunt benoemt, dan verdien je de laatste vlag: <code>NM{cash_out_is_het_knelpunt}</code>.</div>
+        als aangrijpingspunt benoemt, dan verdien je de laatste vlag: <code>NM{cash_out_is_het_knelpunt}</code>.</div>
 
         <div class="callout danger"><strong>Nooit blind betalen, en denk aan privacy:</strong> losgeld betalen financiert
         de volgende aanval en geeft geen garantie. Deel indicatoren onder het juiste TLP-label en haal persoonsgegevens
@@ -456,7 +456,7 @@ CS.registerRoom({
       },
       questions: [
         { q: 'Wat hoort in een BLUF-product bovenaan te staan?', options: ['De conclusie en het advies (de kernboodschap)', 'De volledige chronologie', 'De lijst met alle transactie-ID\'s', 'De namen van alle analisten'], answer: 0, explain: 'BLUF = Bottom Line Up Front: eerst de conclusie en wat er moet gebeuren, daarna de onderbouwing.' },
-        { q: 'Wat is in deze zaak het belangrijkste aangrijppunt voor de opsporing?', options: ['Het exchange-account, waar via KYC/Wwft een identiteit aan het spoor hangt', 'De mixer, die je offline kunt halen', 'De hop-wallets', 'De losgeldbrief'], answer: 0, explain: 'De cash-out bij de exchange koppelt het pseudonieme spoor aan een echte naam; daar grijp je aan met een vordering.' },
+        { q: 'Wat is in deze zaak het belangrijkste aangrijpingspunt voor de opsporing?', options: ['Het exchange-account, waar via KYC/Wwft een identiteit aan het spoor hangt', 'De mixer, die je offline kunt halen', 'De hop-wallets', 'De losgeldbrief'], answer: 0, explain: 'De cash-out bij de exchange koppelt het pseudonieme spoor aan een echte naam; daar grijp je aan met een vordering.' },
         { q: 'Hoe schrijf je de attributie in het eindproduct verantwoord?', options: ['Waarschijnlijk een professionele cash-out-dienst (afgeleid); een specifieke beheerder niet aan te wijzen (aanname vermijden)', 'Het is zeker persoon X', 'De mixer bepaalt de dader', 'Attributie laat je weg'], answer: 0, explain: 'Je benoemt de best passende hypothese met waarschijnlijkheidstaal en vermijdt de tool=actor-valkuil.' },
         { q: 'Welke slotvlag hoort bij het afronden van het BLUF-eindproduct?', answer: ['NM{cash_out_is_het_knelpunt}'], hint: 'Staat in de tip-callout van deze taak.', explain: 'De slotvlag is NM{cash_out_is_het_knelpunt}.' },
       ],

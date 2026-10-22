@@ -27,7 +27,7 @@ CS.registerRoom({
         <h3>OSINT is openbaar — maar niet grenzeloos</h3>
         <p>Omdat je alleen openbare bronnen gebruikt, is OSINT in de basis legaal. Toch zijn er stevige grenzen, zeker als je bij de <strong>Politie</strong> of een <strong>Team Cybercrime</strong> werkt:</p>
         <ul>
-          <li><strong>Privacy en de AVG.</strong> Persoonsgegevens verzamelen en bewaren mag niet zomaar. Er moet een doel en een grondslag zijn, en je mag niet meer verzamelen dan nodig (dataminimalisatie). De Autoriteit Persoonsgegevens houdt hier toezicht op.</li>
+          <li><strong>Privacy en de AVG.</strong> (Voor de politie geldt in plaats daarvan de Wet politiegegevens, met vergelijkbare eisen.) Persoonsgegevens verzamelen en bewaren mag niet zomaar. Er moet een doel en een grondslag zijn, en je mag niet meer verzamelen dan nodig (dataminimalisatie). De Autoriteit Persoonsgegevens houdt hier toezicht op.</li>
           <li><strong>Geen inbreken, geen misleiding op bestelling.</strong> Een wachtwoord raden, een "besloten" groep binnendringen of inloggen op andermans account is géén OSINT meer, maar computervredebreuk (art. 138ab Sr).</li>
           <li><strong>Onderzoeksaccounts (sockpuppets) zijn gereguleerd.</strong> Undercover gaan of met een nep-account iemand benaderen (uitlokken, infiltreren) mag in Nederland alleen onder strikte voorwaarden en bevoegdheden. Een gewone leerling of burger doet dat dus níét op eigen houtje.</li>
         </ul>
