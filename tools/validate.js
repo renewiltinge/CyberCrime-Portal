@@ -138,6 +138,7 @@ for (const file of files) {
     if (!t.title) err(rel, `${where}: geen title`);
     if (!t.content) err(rel, `${where}: geen content`);
     else { checkHtml(rel, t.content, where); allText.push(t.content); }
+    if (t.lab) allText.push(labText(t.lab)); // een vlag die letterlijk in een lab staat, telt ook als vindbaar
     if (t.lab) {
       allText.push(labText(t.lab));
       if (!LABS.includes(t.lab.type)) err(rel, `${where}: onbekend labtype "${t.lab.type}"`);

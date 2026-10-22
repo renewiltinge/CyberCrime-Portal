@@ -250,6 +250,7 @@ Werkwijze:
 | `node tools/build-artifact.js` | Bouwt de losse versie `dist/nineminds-cyber-dojo.html` (alles in één bestand, ook de letters). |
 | `node tools/smoke.js` | Laadt het portaal in een headless browser en controleert dat alles rendert: de leerpaden, elke room, het NineMinds-teken. |
 | `node tools/labtest.js` + `labtest-extra.js` | Bedienen de labs echt en controleren de uitkomsten. |
+| `node tools/labtest-meester.js` | Test de labs van Meesterproeven (Vigenère, many-time pad, RSA, VM) en de antwoorden van die rooms. |
 
 *(De testscripts gebruiken Node + Playwright; de validator en build werken met alleen Node.)*
 
