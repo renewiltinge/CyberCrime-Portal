@@ -145,6 +145,10 @@ Leren door te doen — veel plezier met oplosbare cybercrime-puzzels.
 7. **Casus: botnet-takedown** — C2-verkeer, ATT&CK, pivoten en de stappen van een takedown.
 8. **Casus: het cryptomixer-onderzoek** — taint volgen door een mixer met de blockchain-tracer.
 
+### 🏔️ Meesterproeven (gevorderd)
+Voor wie de puzzels te makkelijk vond: zwaardere opgaven met meer achtergrond.
+1. **Cryptanalyse: Vigenère en de many-time pad kraken** — de sleutellengte vinden met Kasiski, de index of coincidence en Friedman, per kolom kraken met chi-kwadraat (inclusief een statistisch twijfelgeval), een hergebruikt one-time pad openbreken met crib dragging, en de moderne lessen (nonce-hergebruik, repeating-key XOR, Kerckhoffs).
+
 ### 🏁 Eindopdracht
 1. **Mini-CTF: Operatie KoffieKlap** — breng alles samen in een afsluitende Capture The Flag met zes vlaggen.
 2. **Grote kraak-CTF: Operatie Sleutelbos** — een uitgebreide kraak-CTF langs hashes, cijfers, codering, een crackme, een JWT en NTLM (zeven vlaggen).
@@ -203,6 +207,10 @@ Alle labs draaien **volledig in je browser** — veilig, offline, zonder dat er 
 | 📒 **Reconciliatie** | Bankafschrift en boekhouding naast elkaar leggen en de onverklaarde (fraude)post vinden. |
 | 🧰 **Detectieregel bouwen** | Zelf een detectieregel samenstellen en live testen op true/false positives tegen events. |
 | 🛰️ **Infrastructuur-fingerprinting** | Hosts clusteren op gedeelde kenmerken (favicon, analytics, JARM) met de zeldzaamheidstoets. |
+| 🗝️ **Vigenère-werkbank** | Vigenère kraken zonder sleutel: Kasiski-afstanden, IoC per sleutellengte en chi-kwadraat per kolom, met live ontsleutelen. |
+| ⊕ **Many-time pad** | Twee berichten met dezelfde sleutelstroom: een crib langs C1 ⊕ C2 slepen en beide berichten reconstrueren. |
+| 🔢 **RSA-werkbank** | RSA narekenen met grote getallen: factoriseren (proefdeling, Fermat, Pollard-rho, GCD), φ, d en ontsleutelen. |
+| 🦉 **Nachtwacht-VM** | Een mini-assembler: lees de code, stap erdoorheen met registers en trace, en vind de invoer die `ok` bereikt. |
 | 🎲 **Beslissimulatie** | Beslissingen nemen onder druk (incident response/onderhandeling) en de gevolgen zien. |
 
 Alle tools zijn ook los te gebruiken via de **Gereedschapskist** (Gereedschap in de topbalk, of `#/tools`) — handig voor je eigen, ethische oefeningen.

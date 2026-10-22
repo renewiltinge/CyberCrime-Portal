@@ -3104,6 +3104,373 @@
   });
 
   // =====================================================================
+  //  VIGENERE — cryptanalyse zonder sleutel (Kasiski, IoC, chi-kwadraat)
+  // =====================================================================
+  // Letterfrequenties (in %) van het Nederlands en het Engels, a..z.
+  const FREQ_NL = [7.49, 1.58, 1.24, 5.93, 18.91, 0.81, 3.40, 2.38, 6.50, 1.46, 2.25, 3.57, 2.21, 10.03, 6.06, 1.57, 0.01, 6.41, 3.73, 6.79, 1.99, 2.85, 1.52, 0.04, 0.04, 1.39];
+  const FREQ_EN = [8.17, 1.49, 2.78, 4.25, 12.70, 2.23, 2.02, 6.09, 6.97, 0.15, 0.77, 4.03, 2.41, 6.75, 7.51, 1.93, 0.10, 5.99, 6.33, 9.06, 2.76, 0.98, 2.36, 0.15, 1.97, 0.07];
+  function vigLetters(s) { return s.toUpperCase().replace(/[^A-Z]/g, ''); }
+  function vigIoc(str) {
+    const n = str.length; if (n < 2) return 0;
+    const f = new Array(26).fill(0); for (const ch of str) f[ch.charCodeAt(0) - 65]++;
+    return f.reduce((acc, x) => acc + x * (x - 1), 0) / (n * (n - 1));
+  }
+  function vigColumns(letters, L) { const cols = Array.from({ length: L }, () => ''); for (let i = 0; i < letters.length; i++) cols[i % L] += letters[i]; return cols; }
+  // Chi-kwadraat van een kolom die met verschuiving k is ontsleuteld, tegen de taalverdeling.
+  function vigChi(col, k, freq) {
+    const n = col.length; if (!n) return 0;
+    const f = new Array(26).fill(0); for (const ch of col) f[(ch.charCodeAt(0) - 65 - k + 26) % 26]++;
+    let chi = 0; for (let i = 0; i < 26; i++) { const exp = n * freq[i] / 100; chi += (f[i] - exp) * (f[i] - exp) / exp; }
+    return chi;
+  }
+  function vigBestKey(letters, L, freq) {
+    return vigColumns(letters, L).map((col) => {
+      const scores = []; for (let k = 0; k < 26; k++) scores.push({ k, chi: vigChi(col, k, freq) });
+      scores.sort((a, b) => a.chi - b.chi);
+      return { letter: String.fromCharCode(65 + scores[0].k), chi: scores[0].chi, second: String.fromCharCode(65 + scores[1].k), chi2: scores[1].chi };
+    });
+  }
+  function vigKasiski(letters, minLen) {
+    const seen = {}; const out = [];
+    for (let i = 0; i + minLen <= letters.length; i++) { const s = letters.substr(i, minLen); (seen[s] = seen[s] || []).push(i); }
+    Object.keys(seen).forEach((s) => { const p = seen[s]; if (p.length > 1) { const d = []; for (let j = 1; j < p.length; j++) d.push(p[j] - p[0]); out.push({ seq: s, pos: p, dist: d }); } });
+    return out.sort((a, b) => b.pos.length - a.pos.length || a.pos[0] - b.pos[0]);
+  }
+  function vigDecrypt(s, key) {
+    const k = key.toUpperCase().replace(/[^A-Z]/g, ''); if (!k) return s;
+    let ki = 0;
+    return s.replace(/[a-z]/gi, (c) => { const b = c <= 'Z' ? 65 : 97; const off = k.charCodeAt(ki++ % k.length) - 65; return String.fromCharCode((c.charCodeAt(0) - b - off + 26) % 26 + b); });
+  }
+  CS.crypt = Object.assign(CS.crypt || {}, { vigLetters, vigIoc, vigBestKey, vigKasiski, vigDecrypt, FREQ_NL, FREQ_EN });
+
+  CS.registerLab('vigenere', function (container, cfg) {
+    const maxLen = cfg.maxLen || 16;
+    const wrap = el('div', { class: 'lab-pad' });
+    wrap.append(el('label', { text: 'Versleutelde tekst (alleen de letters tellen mee voor de analyse)' }));
+    const inp = el('textarea', { rows: '5', spellcheck: 'false' }); inp.value = cfg.text || '';
+    wrap.append(inp);
+    let lang = cfg.lang === 'en' ? 'en' : 'nl';
+    const langRow = el('div', { class: 'chip-row' });
+    [['nl', 'Nederlandse letterfrequentie'], ['en', 'Engelse letterfrequentie']].forEach(([k, label]) => {
+      const c = el('span', { class: 'chip' + (k === lang ? ' on' : ''), text: label, onclick: () => { lang = k; [...langRow.children].forEach((x) => x.classList.remove('on')); c.classList.add('on'); render(); } });
+      langRow.append(c);
+    });
+    wrap.append(langRow);
+    const out = el('div', {});
+    wrap.append(out);
+    let chosenL = null; let keyOverride = null;
+
+    function render() {
+      out.innerHTML = '';
+      const raw = inp.value; const letters = vigLetters(raw);
+      if (letters.length < 20) { out.append(el('div', { class: 'found-note', text: 'Plak minstens een paar regels versleutelde tekst: hoe langer, hoe betrouwbaarder de statistiek.' })); return; }
+      const freq = lang === 'en' ? FREQ_EN : FREQ_NL;
+      out.append(el('div', { class: 'found-note', html: '<strong>' + letters.length + '</strong> letters. IoC van de hele tekst: <strong>' + vigIoc(letters).toFixed(4) + '</strong> (willekeur ≈ 0,038 · Engels ≈ 0,066 · Nederlands ≈ 0,080). Een lage waarde wijst op een polyalfabetisch cijfer.' }));
+
+      // Stap 1 — Kasiski
+      out.append(el('h4', { text: 'Stap 1 · Kasiski: herhaalde stukjes en hun afstanden' }));
+      const kas = vigKasiski(letters, 3).slice(0, 10);
+      const fc = {}; kas.forEach((r) => r.dist.forEach((d) => { for (let f = 2; f <= maxLen; f++) if (d % f === 0) fc[f] = (fc[f] || 0) + 1; }));
+      if (!kas.length) out.append(el('div', { class: 'found-note', text: 'Geen herhaalde trigrammen gevonden. Te korte tekst?' }));
+      else {
+        const box = el('div', { class: 'logview', style: 'max-height:170px' });
+        kas.forEach((r) => { const ln = el('div', { class: 'ln' }); ln.append(el('span', { class: 'n', text: r.seq }), el('span', { text: 'posities ' + r.pos.join(', ') + '  →  afstand ' + r.dist.join(', ') })); box.append(ln); });
+        out.append(box);
+        const fac = Object.keys(fc).map(Number).sort((a, b) => fc[b] - fc[a] || a - b).slice(0, 8);
+        out.append(el('div', { class: 'found-note', html: 'Delers die het vaakst in de afstanden passen: ' + fac.map((f) => '<code>' + f + '</code>×' + fc[f]).join(' · ') + '. De sleutellengte is meestal de grootste deler die steeds terugkomt (de kleinere delers liften mee).' }));
+      }
+
+      // Stap 2 — IoC per sleutellengte
+      out.append(el('h4', { text: 'Stap 2 · Index of coincidence per sleutellengte' }));
+      const rows = [];
+      for (let L = 1; L <= Math.min(maxLen, Math.floor(letters.length / 6)); L++) { const cols = vigColumns(letters, L); rows.push({ L, avg: cols.reduce((a, c) => a + vigIoc(c), 0) / L }); }
+      const target = lang === 'en' ? 0.060 : 0.068;
+      const guess = (rows.find((r) => r.avg >= target) || rows.slice().sort((a, b) => b.avg - a.avg)[0]).L;
+      if (chosenL == null) chosenL = guess;
+      const tbl = el('div', { style: 'display:grid;grid-template-columns:auto 1fr auto;gap:2px 10px;font-family:var(--mono);font-size:.78rem;align-items:center' });
+      rows.forEach((r) => {
+        const w = Math.max(2, Math.min(100, (r.avg - 0.03) / 0.06 * 100));
+        const lab = el('span', { text: 'L=' + r.L, style: 'cursor:pointer;' + (r.L === chosenL ? 'font-weight:700' : ''), onclick: () => { chosenL = r.L; keyOverride = null; render(); } });
+        const bar = el('div', { style: 'height:10px;background:var(--surface-2);border:1px solid var(--border)' }, el('div', { style: 'height:100%;width:' + w + '%;background:' + (r.avg >= target ? 'var(--good)' : 'var(--muted)') }));
+        tbl.append(lab, bar, el('span', { text: r.avg.toFixed(4) }));
+      });
+      out.append(tbl);
+      out.append(el('div', { class: 'found-note', html: 'Klik een lengte om die te kiezen. Bij de juiste lengte is elke kolom een gewoon Caesar-cijfer, dus springt de gemiddelde IoC omhoog naar taalniveau. Let op: veelvouden van de echte lengte scoren óók hoog — kies de <em>kleinste</em> die hoog scoort. Automatische gok: <strong>L=' + guess + '</strong>.' }));
+
+      // Stap 3 — per kolom de verschuiving
+      out.append(el('h4', { text: 'Stap 3 · Per kolom de Caesar-verschuiving (chi-kwadraat, L=' + chosenL + ')' }));
+      const best = vigBestKey(letters, chosenL, freq);
+      const auto = best.map((b) => b.letter).join('');
+      const kt = el('div', { class: 'logview', style: 'max-height:200px' });
+      best.forEach((b, i) => { const ln = el('div', { class: 'ln' }); ln.append(el('span', { class: 'n', text: 'k' + (i + 1) }), el('span', { text: b.letter + '  (χ² ' + b.chi.toFixed(1) + ')   tweede keus: ' + b.second + ' (χ² ' + b.chi2.toFixed(1) + ')' + (b.chi2 - b.chi < 15 ? '   ← twijfelgeval' : '') })); kt.append(ln); });
+      out.append(kt);
+      const keyRow = el('div', { class: 'ans-row', style: 'margin-top:8px' });
+      const keyInp = el('input', { type: 'text', style: 'flex:1', spellcheck: 'false', autocomplete: 'off' }); keyInp.value = keyOverride != null ? keyOverride : auto;
+      keyRow.append(el('span', { class: 'found-note', style: 'margin:0;align-self:center', text: 'Sleutel:' }), keyInp);
+      out.append(keyRow);
+      out.append(el('div', { class: 'found-note', text: 'Voorgestelde sleutel: ' + auto + '. Pas letters aan als een stukje tekst net niet leesbaar is (kijk dan naar de "tweede keus" van die kolom).' }));
+      const dec = el('div', { class: 'lab-out', style: 'margin-top:6px' });
+      const upd = () => { dec.textContent = vigDecrypt(raw, keyInp.value); };
+      keyInp.addEventListener('input', () => { keyOverride = keyInp.value; upd(); });
+      upd();
+      out.append(dec);
+    }
+    inp.addEventListener('input', () => { chosenL = null; keyOverride = null; render(); });
+    render();
+    container.append(shell('<b>Vigenère-werkbank</b> — kraken zonder sleutel', wrap, false));
+  });
+
+  // =====================================================================
+  //  XORCRIB — many-time pad: twee berichten met dezelfde sleutelstroom
+  // =====================================================================
+  function hexBytes(h) { const s = String(h || '').replace(/[^0-9a-f]/gi, ''); const r = []; for (let i = 0; i + 1 < s.length; i += 2) r.push(parseInt(s.substr(i, 2), 16)); return r; }
+  CS.crypt.hexBytes = hexBytes;
+  CS.registerLab('xorcrib', function (container, cfg) {
+    const c1 = hexBytes(cfg.c1), c2 = hexBytes(cfg.c2);
+    const n = Math.min(c1.length, c2.length);
+    const x = []; for (let i = 0; i < n; i++) x.push(c1[i] ^ c2[i]);
+    const show = (b) => (b >= 32 && b < 127 ? String.fromCharCode(b) : '·');
+    const wrap = el('div', { class: 'lab-pad' });
+    if (cfg.scenario) wrap.append(el('div', { class: 'callout info', html: esc(cfg.scenario) }));
+    wrap.append(el('div', { class: 'found-note', html: 'Bericht 1 en 2 zijn met <strong>dezelfde sleutelstroom</strong> ge-XORd. Dan geldt <code>C1 ⊕ C2 = P1 ⊕ P2</code>: de sleutel valt weg. Sleep een vermoed woord (crib) langs alle posities; waar de uitkomst leesbaar wordt, staat in het <em>andere</em> bericht vermoedelijk een stukje echte tekst.' }));
+    const hexBox = el('div', { class: 'logview', style: 'max-height:120px' });
+    [['C1', c1], ['C2', c2], ['C1⊕C2', x]].forEach(([nm, arr]) => { const ln = el('div', { class: 'ln' }); ln.append(el('span', { class: 'n', text: nm, style: 'width:54px' }), el('span', { text: arr.slice(0, n).map((b) => b.toString(16).padStart(2, '0')).join(' ') })); hexBox.append(ln); });
+    wrap.append(hexBox);
+
+    wrap.append(el('label', { text: 'Stap 1 · Crib slepen' }));
+    const cribRow = el('div', { class: 'ans-row' });
+    const cribInp = el('input', { type: 'text', placeholder: 'bv. " de " of "NM{"', style: 'flex:1', spellcheck: 'false', autocomplete: 'off' }); cribInp.value = cfg.crib || ' de ';
+    cribRow.append(cribInp); wrap.append(cribRow);
+    const cribOut = el('div', { class: 'logview', style: 'max-height:220px' });
+    wrap.append(cribOut);
+    function readable(s) { let sc = 0; for (const ch of s) { if (/[a-z ]/.test(ch)) sc += 2; else if (/[A-Z0-9{}_.,'!?-]/.test(ch)) sc += 1; else sc -= 4; } return sc / Math.max(1, s.length); }
+    function drag() {
+      cribOut.innerHTML = '';
+      const crib = cribInp.value; if (!crib) return;
+      const rows = [];
+      for (let p = 0; p + crib.length <= n; p++) { let s = ''; for (let j = 0; j < crib.length; j++) s += String.fromCharCode(x[p + j] ^ crib.charCodeAt(j)); rows.push({ p, s, sc: readable(s) }); }
+      rows.forEach((r) => { const ln = el('div', { class: 'ln' }); ln.append(el('span', { class: 'n', text: String(r.p) }), el('span', { text: '"' + Array.from(r.s).map((ch) => show(ch.charCodeAt(0))).join('') + '"', style: r.sc >= 1.5 ? 'color:var(--syn-key);font-weight:700' : r.sc < 0 ? 'opacity:.45' : '' })); cribOut.append(ln); });
+    }
+    cribInp.addEventListener('input', drag);
+
+    wrap.append(el('label', { text: 'Stap 2 · Reconstrueer bericht 1 (gebruik · of ? voor onbekende tekens)' }));
+    const p1 = el('textarea', { rows: '2', spellcheck: 'false' }); p1.value = cfg.start || '';
+    wrap.append(p1);
+    const recon = el('div', { class: 'lab-out', style: 'margin-top:6px' });
+    wrap.append(recon);
+    function rebuild() {
+      const g = p1.value; let a = '', b = '', k = [];
+      for (let i = 0; i < n; i++) {
+        const ch = g[i];
+        if (ch == null || ch === '·' || ch === '?') { a += '·'; b += '·'; k.push('··'); continue; }
+        const pc = ch.charCodeAt(0) & 0xff; a += show(pc); b += show(x[i] ^ pc); k.push((c1[i] ^ pc).toString(16).padStart(2, '0'));
+      }
+      recon.textContent = 'Bericht 1: ' + a + '\nBericht 2: ' + b + '\nSleutel : ' + k.join(' ');
+    }
+    p1.addEventListener('input', rebuild);
+    drag(); rebuild();
+    puzzleAsk(wrap, cfg.ask);
+    container.append(shell('<b>Many-time pad</b> — ' + esc(cfg.title || 'crib dragging'), wrap, false));
+  });
+
+  // =====================================================================
+  //  RSA — werkbank voor zwakke RSA-sleutels (BigInt)
+  // =====================================================================
+  const big = (v) => { const s = String(v == null ? '' : v).replace(/[\s_]/g, ''); if (!/^(0x[0-9a-f]+|\d+)$/i.test(s)) return null; return BigInt(s); };
+  function bModPow(b, e, m) { let r = 1n; b %= m; if (b < 0n) b += m; while (e > 0n) { if (e & 1n) r = r * b % m; b = b * b % m; e >>= 1n; } return r; }
+  function bGcd(a, b) { a = a < 0n ? -a : a; b = b < 0n ? -b : b; while (b) { [a, b] = [b, a % b]; } return a; }
+  function bModInv(a, m) { let [or, r] = [a % m, m], [os, s] = [1n, 0n]; while (r) { const q = or / r; [or, r] = [r, or - q * r]; [os, s] = [s, os - q * s]; } if (or !== 1n) return null; return ((os % m) + m) % m; }
+  function bBits(n) { return n.toString(2).length; }
+  function bRoot(n, k) { // gehele k-de-machtswortel (afgerond naar beneden)
+    if (n < 2n) return n; const K = BigInt(k);
+    let x = 1n << BigInt(Math.ceil(bBits(n) / k) + 1);
+    while (true) { const y = ((K - 1n) * x + n / (x ** (K - 1n))) / K; if (y >= x) break; x = y; }
+    while (x ** K > n) x--; while ((x + 1n) ** K <= n) x++;
+    return x;
+  }
+  function bTrial(n, limit) { if (n % 2n === 0n) return 2n; for (let p = 3n; p <= limit && p * p <= n; p += 2n) if (n % p === 0n) return p; return null; }
+  function bFermat(n, iters) { let a = bRoot(n, 2); if (a * a < n) a++; for (let i = 0; i < iters; i++, a++) { const b2 = a * a - n; const b = bRoot(b2, 2); if (b * b === b2) return { p: a - b, q: a + b, steps: i + 1 }; } return null; }
+  function bRho(n, iters) { if (n % 2n === 0n) return 2n; for (let c = 1n; c < 6n; c++) { let x = 2n, y = 2n, d = 1n; const f = (v) => (v * v + c) % n; for (let i = 0; i < iters && d === 1n; i++) { x = f(x); y = f(f(y)); d = bGcd(x > y ? x - y : y - x, n); } if (d !== 1n && d !== n) return d; } return null; }
+  function bToText(m) { let h = m.toString(16); if (h.length % 2) h = '0' + h; let s = ''; for (let i = 0; i < h.length; i += 2) s += String.fromCharCode(parseInt(h.substr(i, 2), 16)); try { return decodeURIComponent(escape(s)); } catch (e) { return s; } }
+  function bFromText(t) { const u = unescape(encodeURIComponent(t)); let h = ''; for (let i = 0; i < u.length; i++) h += u.charCodeAt(i).toString(16).padStart(2, '0'); return h ? BigInt('0x' + h) : 0n; }
+  Object.assign(CS.crypt, { big, bModPow, bGcd, bModInv, bRoot, bTrial, bFermat, bRho, bToText, bFromText });
+
+  CS.registerLab('rsa', function (container, cfg) {
+    const wrap = el('div', { class: 'lab-pad' });
+    if (cfg.scenario) wrap.append(el('div', { class: 'callout info', html: esc(cfg.scenario) }));
+    const field = (label, val, rows) => { wrap.append(el('label', { text: label })); const t = el('textarea', { rows: String(rows || 2), spellcheck: 'false' }); t.value = val == null ? '' : String(val); wrap.append(t); return t; };
+    const fN = field('Modulus n', cfg.n), fE = field('Publieke exponent e', cfg.e || '65537', 1), fC = field('Ciphertext c (als getal)', cfg.c);
+    const fN2 = cfg.n2 != null ? field('Tweede modulus n₂ (voor de GCD-aanval)', cfg.n2) : null;
+    const status = el('div', { class: 'found-note' });
+    const tools = el('div', { class: 'chip-row' });
+    wrap.append(el('label', { text: 'Aanvallen op n' }), tools, status);
+    const fP = field('Factor p', cfg.p, 1), fQ = field('Factor q', cfg.q, 1);
+    const out = el('div', { class: 'lab-out', style: 'margin-top:8px' });
+    const say = (html, ok) => { status.innerHTML = html; status.style.color = ok === false ? 'var(--bad)' : ok ? 'var(--good)' : ''; };
+    const setPQ = (p, q) => { fP.value = p.toString(); fQ.value = q.toString(); calc(); };
+    const attack = (label, fn) => tools.append(el('button', { class: 'btn small', text: label, onclick: () => { const n = big(fN.value); if (!n || n < 4n) return say('Vul eerst een geldige n in.', false); const t0 = performance.now(); let r; try { r = fn(n); } catch (e) { r = null; } const ms = Math.round(performance.now() - t0); if (r) { say(r.msg + ' <span style="color:var(--muted)">(' + ms + ' ms)</span>', true); if (r.p) setPQ(r.p, n / r.p); } else say(label + ': niets gevonden (' + ms + ' ms). Deze aanval past niet bij deze sleutel.', false); } }));
+    attack('Proefdeling (tot 10⁶)', (n) => { const p = bTrial(n, 1000000n); return p ? { p, msg: 'Kleine factor gevonden: p = ' + p } : null; });
+    attack('Fermat (p ≈ q)', (n) => { const r = bFermat(n, 200000); return r ? { p: r.p, msg: 'Fermat slaagt na ' + r.steps + ' stap(pen): p en q liggen vlak bij √n.' } : null; });
+    attack('Pollard-rho', (n) => { const p = bRho(n, 300000); return p ? { p, msg: 'Pollard-rho vond een factor: p = ' + p } : null; });
+    if (fN2) attack('GCD(n, n₂)', (n) => { const n2 = big(fN2.value); if (!n2) return null; const g = bGcd(n, n2); return g > 1n && g < n ? { p: g, msg: 'n en n₂ delen een priemfactor! gcd = ' + g } : null; });
+    tools.append(el('button', { class: 'btn small', text: 'e-de-machtswortel van c', onclick: () => {
+      const c = big(fC.value), e = big(fE.value); if (c == null || !e) return say('Vul c en e in.', false);
+      if (e > 17n) return say('e = ' + e + ' is te groot voor deze aanval; die werkt bij kleine e (3, 5, 17) zonder padding.', false);
+      const r = bRoot(c, Number(e));
+      if (r ** e === c) { say('c is een exacte ' + e + '-de macht: m^e was kleiner dan n, dus de modulus deed niets. Geen sleutel nodig!', true); out.textContent = 'm (getal) = ' + r + '\nm (hex)   = 0x' + r.toString(16) + '\nm (tekst) = ' + bToText(r); }
+      else say('c is geen exacte ' + e + '-de macht: m^e was groter dan n (of er is padding gebruikt).', false);
+    } }));
+    wrap.append(el('div', { class: 'ans-row', style: 'margin-top:8px' }, el('button', { class: 'btn small primary', text: 'Bereken φ, d en ontsleutel', onclick: () => calc(true) })));
+    wrap.append(out);
+    function calc(explicit) {
+      const n = big(fN.value), e = big(fE.value), c = big(fC.value), p = big(fP.value), q = big(fQ.value);
+      if (!p || !q) { if (explicit) out.textContent = 'Vul p en q in (of vind ze met een aanval).'; return; }
+      const lines = [];
+      if (n && p * q !== n) lines.push('Let op: p × q ≠ n — klopt de factorisatie?');
+      const phi = (p - 1n) * (q - 1n);
+      lines.push('n         = ' + (n || p * q) + '  (' + bBits(n || p * q) + ' bits)');
+      lines.push('φ(n)      = (p−1)(q−1) = ' + phi);
+      const d = e ? bModInv(e, phi) : null;
+      if (!d) { lines.push('d bestaat niet: e en φ(n) zijn niet onderling ondeelbaar.'); out.textContent = lines.join('\n'); return; }
+      lines.push('d         = e⁻¹ mod φ(n) = ' + d);
+      if (c != null && n) { const m = bModPow(c, d, n); lines.push('m = c^d mod n = ' + m, 'm (hex)   = 0x' + m.toString(16), 'm (tekst) = ' + bToText(m)); }
+      out.textContent = lines.join('\n');
+    }
+    if (cfg.p && cfg.q) calc();
+    puzzleAsk(wrap, cfg.ask);
+    container.append(shell('<b>RSA-werkbank</b> — ' + esc(cfg.title || 'zwakke sleutels breken'), wrap, false));
+  });
+
+  // =====================================================================
+  //  VM — mini-assembler voor reverse engineering (Nachtwacht-VM)
+  // =====================================================================
+  const VM_REGS = ['a', 'b', 'c', 'd', 'i', 'j'];
+  const VM_JUMPS = ['jmp', 'je', 'jne', 'jl', 'jg', 'jle', 'jge'];
+  function vmParse(src) {
+    const prog = [], labels = {}, data = {}, errors = [];
+    String(src || '').split('\n').forEach((raw, ln) => {
+      let s = raw.replace(/;.*$/, '').trim();
+      if (!s) return;
+      const dm = s.match(/^data\s+([a-z_]\w*)\s*:\s*(.*)$/i);
+      if (dm) {
+        const items = [];
+        dm[2].split(',').map((x) => x.trim()).filter(Boolean).forEach((x) => { if (/^".*"$/.test(x)) for (const ch of x.slice(1, -1)) items.push(ch.charCodeAt(0)); else { const v = vmNum(x); if (v == null) errors.push('regel ' + (ln + 1) + ': ongeldige data "' + x + '"'); else items.push(v); } });
+        data[dm[1].toLowerCase()] = items; return;
+      }
+      let m;
+      while ((m = s.match(/^([a-z_]\w*):/i))) { labels[m[1].toLowerCase()] = prog.length; s = s.slice(m[0].length).trim(); }
+      if (!s) return;
+      const sp = s.indexOf(' ');
+      const op = (sp < 0 ? s : s.slice(0, sp)).toLowerCase();
+      const args = sp < 0 ? [] : s.slice(sp + 1).split(',').map((x) => x.trim().toLowerCase());
+      prog.push({ op, args, ln, text: raw.replace(/;.*$/, '').trim() });
+    });
+    return { prog, labels, data, errors };
+  }
+  function vmNum(x) { x = String(x).trim(); if (/^'.'$/.test(x)) return x.charCodeAt(1); if (/^-?0x[0-9a-f]+$/i.test(x)) return parseInt(x, 16); if (/^-?\d+$/.test(x)) return parseInt(x, 10); return null; }
+  function vmRun(src, input, opts) {
+    opts = opts || {};
+    const P = typeof src === 'string' ? vmParse(src) : src;
+    const maxSteps = opts.maxSteps || 50000;
+    const st = opts.state || { pc: 0, steps: 0, regs: { a: 0, b: 0, c: 0, d: 0, i: 0, j: 0 }, flag: 0, status: 'running', trace: [] };
+    if (P.errors.length) { st.status = 'error'; st.error = P.errors[0]; return st; }
+    const inp = String(input == null ? '' : input);
+    const val = (x) => {
+      if (VM_REGS.includes(x)) return st.regs[x];
+      const mm = x.match(/^([a-z_]\w*)\[(.+)\]$/);
+      if (mm) { const idx = val(mm[2]); if (mm[1] === 'in') return idx >= 0 && idx < inp.length ? inp.charCodeAt(idx) & 0xff : 0; const arr = P.data[mm[1]]; if (!arr) throw new Error('onbekende data "' + mm[1] + '"'); return idx >= 0 && idx < arr.length ? arr[idx] : 0; }
+      const v = vmNum(x); if (v == null) throw new Error('onbekende operand "' + x + '"'); return v;
+    };
+    const reg = (x) => { if (!VM_REGS.includes(x)) throw new Error('"' + x + '" is geen register'); return x; };
+    const limit = opts.single ? 1 : maxSteps;
+    try {
+      for (let k = 0; k < limit; k++) {
+        if (st.pc < 0 || st.pc >= P.prog.length) { st.status = 'error'; st.error = 'programma liep van het einde zonder ok/fail'; break; }
+        if (st.steps >= maxSteps) { st.status = 'error'; st.error = 'te veel stappen (oneindige lus?)'; break; }
+        const ins = P.prog[st.pc]; st.steps++;
+        const [x, y] = ins.args; let next = st.pc + 1; let note = '';
+        const set = (r, v) => { st.regs[r] = v >>> 0; note = r + '=' + st.regs[r]; };
+        switch (ins.op) {
+          case 'mov': set(reg(x), val(y)); break;
+          case 'add': set(reg(x), st.regs[reg(x)] + val(y)); break;
+          case 'sub': set(reg(x), st.regs[reg(x)] - val(y)); break;
+          case 'mul': set(reg(x), Math.imul(st.regs[reg(x)], val(y))); break;
+          case 'mod': { const v = val(y); if (!v) throw new Error('deling door nul'); set(reg(x), st.regs[reg(x)] % v); break; }
+          case 'xor': set(reg(x), st.regs[reg(x)] ^ val(y)); break;
+          case 'and': set(reg(x), st.regs[reg(x)] & val(y)); break;
+          case 'or': set(reg(x), st.regs[reg(x)] | val(y)); break;
+          case 'shl': set(reg(x), st.regs[reg(x)] << val(y)); break;
+          case 'shr': set(reg(x), st.regs[reg(x)] >>> val(y)); break;
+          case 'rol': { const v = st.regs[reg(x)] & 0xff, n = val(y) & 7; set(x, ((v << n) | (v >>> (8 - n))) & 0xff); break; }
+          case 'ror': { const v = st.regs[reg(x)] & 0xff, n = val(y) & 7; set(x, ((v >>> n) | (v << (8 - n))) & 0xff); break; }
+          case 'ld': set(reg(x), val(y)); break;
+          case 'len': set(reg(x), inp.length); break;
+          case 'size': { const arr = P.data[y]; if (!arr) throw new Error('onbekende data "' + y + '"'); set(reg(x), arr.length); break; }
+          case 'cmp': { const a = val(x), b = val(y); st.flag = a === b ? 0 : a < b ? -1 : 1; note = 'vergelijk ' + a + ' met ' + b; break; }
+          case 'nop': break;
+          case 'ok': st.status = 'ok'; break;
+          case 'fail': st.status = 'fail'; break;
+          default:
+            if (VM_JUMPS.includes(ins.op)) {
+              const t = P.labels[x]; if (t == null) throw new Error('onbekend label "' + x + '"');
+              const f = st.flag; const take = { jmp: true, je: f === 0, jne: f !== 0, jl: f < 0, jg: f > 0, jle: f <= 0, jge: f >= 0 }[ins.op];
+              if (take) { next = t; note = 'spring naar ' + x; } else note = 'geen sprong';
+            } else throw new Error('onbekende instructie "' + ins.op + '"');
+        }
+        st.trace.push({ ln: ins.ln, text: ins.text, note });
+        if (st.trace.length > 400) st.trace.shift();
+        if (st.status !== 'running') break;
+        st.pc = next;
+      }
+    } catch (e) { st.status = 'error'; st.error = (P.prog[st.pc] ? 'regel ' + (P.prog[st.pc].ln + 1) + ': ' : '') + e.message; }
+    return st;
+  }
+  CS.vm = { parse: vmParse, run: vmRun };
+
+  CS.registerLab('vm', function (container, cfg) {
+    const P = vmParse(cfg.program);
+    const wrap = el('div', { class: 'lab-pad' });
+    if (cfg.intro) wrap.append(el('div', { class: 'found-note', text: cfg.intro }));
+    const src = el('div', { class: 'logview', style: 'max-height:320px' });
+    const lineEls = [];
+    String(cfg.program || '').split('\n').forEach((t, i) => { const ln = el('div', { class: 'ln' }); ln.append(el('span', { class: 'n', text: String(i + 1) }), el('span', { text: t || ' ' })); lineEls.push(ln); src.append(ln); });
+    wrap.append(el('label', { text: 'Disassembly (lees en leid af welke invoer "ok" bereikt)' }), src);
+    wrap.append(el('details', { html: '<summary>Instructieset</summary><div class="found-note" style="margin-top:4px">Registers <code>a b c d i j</code> (32-bit, zonder teken). <code>mov r, x</code> · <code>add/sub/mul/mod/xor/and/or/shl/shr r, x</code> · <code>rol/ror r, n</code> (8-bit rotatie) · <code>ld r, in[x]</code> (teken x van de invoer als getal, 0 buiten bereik) · <code>ld r, naam[x]</code> (uit een <code>data</code>-tabel) · <code>len r</code> (lengte invoer) · <code>size r, naam</code> · <code>cmp x, y</code> en dan <code>je/jne/jl/jg/jle/jge/jmp label</code> · <code>ok</code> = toegang, <code>fail</code> = geweigerd. Getallen: <code>42</code>, <code>0x2a</code> of <code>\'*\'</code>.</div>' }));
+    if (P.errors.length) wrap.append(el('div', { style: 'color:var(--bad)', text: P.errors.join('; ') }));
+    const row = el('div', { class: 'ans-row', style: 'margin-top:8px' });
+    const inp = el('input', { type: 'text', placeholder: cfg.inputLabel || 'invoer…', style: 'flex:1', autocomplete: 'off', spellcheck: 'false' });
+    const bRun = el('button', { class: 'btn small primary', text: 'Uitvoeren' });
+    const bStep = el('button', { class: 'btn small', text: 'Stap' });
+    const bReset = el('button', { class: 'btn small', text: 'Reset' });
+    row.append(inp, bRun, bStep, bReset); wrap.append(row);
+    const regBox = el('div', { class: 'found-note', style: 'font-family:var(--mono)' });
+    const res = el('div', { class: 'lab-out', style: 'margin-top:8px' });
+    const traceBox = el('div', { class: 'logview', style: 'max-height:200px;margin-top:6px' });
+    wrap.append(regBox, res, el('label', { text: 'Trace (laatste stappen)' }), traceBox);
+    let st = null, tries = 0;
+    function paint() {
+      lineEls.forEach((l) => (l.style.background = ''));
+      if (!st) { regBox.textContent = ''; traceBox.innerHTML = ''; res.textContent = 'Typ een invoer en kies Uitvoeren of Stap.'; return; }
+      const cur = P.prog[st.pc]; if (cur && st.status === 'running' && lineEls[cur.ln]) { lineEls[cur.ln].style.background = 'var(--accent-soft)'; lineEls[cur.ln].scrollIntoView({ block: 'nearest' }); }
+      regBox.textContent = VM_REGS.map((r) => r + '=' + st.regs[r] + (st.regs[r] > 9 ? ' (0x' + st.regs[r].toString(16) + (st.regs[r] >= 32 && st.regs[r] < 127 ? " '" + String.fromCharCode(st.regs[r]) + "'" : '') + ')' : '')).join('   ') + '   vlag=' + st.flag + '   stappen=' + st.steps;
+      traceBox.innerHTML = '';
+      st.trace.slice(-60).forEach((t) => { const ln = el('div', { class: 'ln' }); ln.append(el('span', { class: 'n', text: String(t.ln + 1) }), el('span', { text: t.text.padEnd(22) + (t.note ? '  ; ' + t.note : '') })); traceBox.append(ln); });
+      traceBox.scrollTop = traceBox.scrollHeight;
+      res.innerHTML = '';
+      if (st.status === 'ok') { res.append(el('div', { html: '<strong style="color:var(--good)">TOEGANG VERLEEND</strong>' + (cfg.flag ? ' — vlag: <code>' + esc(cfg.flag) + '</code>' : '') })); if (cfg.reveal) res.append(el('div', { style: 'margin-top:4px', text: cfg.reveal })); inp.classList.add('ok'); }
+      else if (st.status === 'fail') { res.append(el('div', { style: 'color:var(--bad)', text: 'GEWEIGERD (fail op regel ' + (P.prog[st.pc].ln + 1) + '). Kijk in de trace waar je afslaat.' })); if (cfg.hint && tries >= 3) res.append(el('div', { class: 'found-note', text: 'Hint: ' + cfg.hint })); }
+      else if (st.status === 'error') res.append(el('div', { style: 'color:var(--bad)', text: 'Fout: ' + st.error }));
+      else res.textContent = 'Gepauzeerd. Volgende instructie is gemarkeerd.';
+    }
+    bRun.addEventListener('click', () => { tries++; st = vmRun(P, inp.value, { maxSteps: cfg.maxSteps }); paint(); });
+    bStep.addEventListener('click', () => { if (!st || st.status !== 'running') { if (st) tries++; st = { pc: 0, steps: 0, regs: { a: 0, b: 0, c: 0, d: 0, i: 0, j: 0 }, flag: 0, status: 'running', trace: [] }; } st = vmRun(P, inp.value, { state: st, single: true, maxSteps: cfg.maxSteps }); paint(); });
+    bReset.addEventListener('click', () => { st = null; inp.classList.remove('ok'); paint(); });
+    inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') bRun.click(); });
+    paint();
+    container.append(shell('<b>Nachtwacht-VM</b> — ' + esc(cfg.title || 'reverse engineering'), wrap, false));
+  });
+
+  // =====================================================================
   //  Encoding & hash helpers
   // =====================================================================
   function b64encode(s) { return btoa(unescape(encodeURIComponent(s))); }

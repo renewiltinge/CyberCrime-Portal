@@ -1132,7 +1132,7 @@ hr { border: 0; border-top: 1px solid var(--border); margin: 24px 0; }
     play: '<path d="M8 5.5v13l10-6.5-10-6.5Z"/>',
     menu: '<path d="M4 7h16M4 12h16M4 17h16"/>',
 
-    // de negen leerpaden
+    // de tien leerpaden
     'path-fundamenten': '<path d="M4 8.5 12 4l8 4.5-8 4.5-8-4.5Z"/><path d="m4 12.5 8 4.5 8-4.5M4 16.5 12 21l8-4.5"/>',
     'path-security-kern': '<circle cx="8" cy="15" r="4"/><path d="m11 12 8-8m-3 3 2.5 2.5M14 9l2 2"/>',
     'path-offensief': '<circle cx="12" cy="12" r="7"/><path d="M12 2.5v5M12 16.5v5M2.5 12h5M16.5 12h5"/>',
@@ -1141,6 +1141,7 @@ hr { border: 0; border-top: 1px solid var(--border); margin: 24px 0; }
     'path-intelligence': '<circle cx="6" cy="7" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="12" cy="13" r="2.2"/><circle cx="7" cy="19" r="2"/><circle cx="18" cy="18" r="2"/><path d="m7.6 8.3 3 3.2M16.6 7.4l-3.2 3.9M10.8 14.8l-2.6 2.6M13.6 14.6l3 2.2"/>',
     'path-datastromen': '<path d="M3 8c3-3 6 3 9 0s6 3 9 0M3 16c3-3 6 3 9 0s6 3 9 0"/><path d="m17 11 2-3M7 13l-2 3"/>',
     'path-puzzels': '<path d="M4 4h7v3a2 2 0 1 0 4 0V4h5v7h-3a2 2 0 1 0 0 4h3v5h-7v-3a2 2 0 1 0-4 0v3H4v-7h3a2 2 0 1 0 0-4H4V4Z"/>',
+    'path-meesterproeven': '<path d="m3 20 6.5-11 3.5 6 2.5-4L21 20H3Z"/><path d="M9.5 9V4l3.5 1.5L9.5 7"/>',
     'path-eindopdracht': '<path d="M6 21V4m0 0h12v8H6"/><path d="M10 4v8M14 4v8M6 8h12"/>',
   };
 
@@ -1182,6 +1183,7 @@ hr { border: 0; border-top: 1px solid var(--border); margin: 24px 0; }
     { id: 'intelligence',  title: 'Cyber-intelligence & opsporing', desc: 'Van fenomeen naar interventie: het cybercrime-ecosysteem, crime scripting, de intelligencecyclus, threat-intel-modellen, infrastructuur-OSINT & pivoting, en gestructureerde analyse tot een BLUF-product.' },
     { id: 'datastromen',   title: 'Datastromen volgen',        desc: 'Word expert in geld- en datastromen: volg witwasconstructies en structurering, betrap beaconing en exfiltratie in netwerkverkeer, en traceer de herkomst van een e-mail. De rode draad van cybercrime: het geld en de data.' },
     { id: 'puzzels',       title: 'Puzzels & uitdagingen',  desc: 'Leren door te doen: volg geld- en datastromen, ontmasker operators met OSINT, groepeer en reconstrueer, en los een grote cybercrime-CTF op. Alle oefening, veel plezier.' },
+    { id: 'meesterproeven', title: 'Meesterproeven (gevorderd)', desc: 'Voor wie de puzzels te makkelijk vond: zwaardere opgaven met meer achtergrond. Begin met cryptanalyse zonder sleutel: Vigenère kraken met Kasiski, IoC en chi-kwadraat, en een hergebruikt one-time pad openbreken.' },
     { id: 'eindopdracht',  title: 'Eindopdracht',           desc: 'Breng alles samen in een afsluitende mini-CTF. Bewijs aan jezelf wat je kunt.' },
   ];
 
@@ -1268,6 +1270,7 @@ hr { border: 0; border-top: 1px solid var(--border); margin: 24px 0; }
     { id: 'analyst',     icon: 'path-intelligence', name: 'Intelligence-analist', desc: 'Alle Cyber-intelligence-rooms af', test: () => pathDone('intelligence') },
     { id: 'tracer',      icon: 'path-datastromen', name: 'Stromenvolger', desc: 'Alle Datastromen-rooms af', test: () => pathDone('datastromen') },
     { id: 'puzzler',     icon: 'path-puzzels', name: 'Puzzelmeester', desc: 'Alle Puzzels & uitdagingen af', test: () => pathDone('puzzels') },
+    { id: 'meester',     icon: 'path-meesterproeven', name: 'Meester', desc: 'Alle Meesterproeven af', test: () => pathDone('meesterproeven') },
     { id: 'arena10',     icon: 'practice', name: 'Scherpschutter', desc: 'Reeks van 10 in de Oefenarena', test: () => (STATE.bestStreak || 0) >= 10 },
     { id: 'hacker10',    icon: 'seal', name: 'Doorzetter', desc: '10 rooms afgerond', test: () => ROOMS.filter(roomDone).length >= 10 },
     { id: 'flaghunter',  icon: 'flag', name: 'Vlaggenjager', desc: '15 vlaggen gevonden', test: () => (STATE.flags || 0) >= 15 },
@@ -2289,6 +2292,10 @@ hr { border: 0; border-top: 1px solid var(--border); margin: 24px 0; }
     { type: 'cipher', name: 'Cijfer-kraker', desc: 'Caesar/ROT, XOR, Vigenère en Atbash ontcijferen.', cfg: { text: 'Kl nlolptl cshn pz QCA{jhlzhy_pz_thrrlspqr}' } },
     { type: 'multidecode', name: 'Multi-decoder', desc: 'Herkent en pelt lagen codering af (Base64/32, hex, binair, morse, ROT13, URL…).', cfg: { input: '536c5a55653231316248527058327868655756795832397266513d3d' } },
     { type: 'crackme', name: 'Crackme', desc: 'Reverse-engineering puzzel: lees de controle en vind de sleutel.', cfg: { title: 'demo', source: 'function check(key) {\n  // toegang als key, achterstevoren gelezen, "62oziuj" oplevert\n  return key.split("").reverse().join("") === "62oziuj";\n}', check: (k) => k.split('').reverse().join('') === '62oziuj', flag: 'NM{reverse_engineered}', hint: 'Draai de doelstring om: wat moet key dan zijn?' } },
+    { type: 'vigenere', name: 'Vigenère-werkbank', desc: 'Kraak Vigenère zonder sleutel: Kasiski, index of coincidence en chi-kwadraat per kolom.', cfg: { text: '' } },
+    { type: 'xorcrib', name: 'Many-time pad', desc: 'Twee berichten met dezelfde sleutelstroom: crib dragging en reconstructie.', cfg: { c1: '35 a5 22 64 d3 35 76 e9 e9 ed 18 2f', c2: '35 a5 22 6d d9 24 65 ec e5 f1 5f 78', crib: ' de ', start: 'de ' } },
+    { type: 'rsa', name: 'RSA-werkbank', desc: 'Reken RSA na met grote getallen: factoriseren, φ, d en ontsleutelen.', cfg: { n: '3233', e: '17', c: '2790' } },
+    { type: 'vm', name: 'Nachtwacht-VM', desc: 'Een mini-assembler: lees de code, stap erdoorheen en vind de invoer die "ok" bereikt.', cfg: { title: 'demo', program: 'data doel: 0x4e, 0x4f, 0x4d\nlen a\ncmp a, 3\njne nee\nmov i, 0\nlus:\nld b, in[i]\nxor b, 0x20\nld c, doel[i]\ncmp b, c\njne nee\nadd i, 1\ncmp i, 3\njl lus\nok\nnee:\nfail', hint: 'Elk teken wordt met 0x20 ge-XORd en moet dan gelijk zijn aan de data-tabel.' } },
     { type: 'rainbow', name: 'Rainbow table', desc: 'Zie waarom onvergezouten hashes direct op te zoeken zijn — en salt dat breekt.', cfg: { algo: 'md5', wordlist: ['welkom', 'zomer2024', 'admin', 'geheim', 'voetbal', 'wachtwoord', 'qwerty', 'liefde'], target: '371620aa75830b1388b63305b0d42f06', saltExample: { word: 'welkom', salt: 'Xy7' } } },
     { type: 'ach', name: 'ACH-matrix', desc: 'Concurrerende hypothesen afwegen door bewijs te scoren (C/I/N).', cfg: { question: 'Wie zit achter de ransomware-aanval op een fictief bedrijf?', hypotheses: ['Ontevreden insider', 'Georganiseerde crimineel (RaaS-affiliate)', 'Statelijke actor'], evidence: [{ text: 'Er is losgeld in crypto geëist', expert: ['I', 'C', 'I'] }, { text: 'Zeer gerichte spear-phishing vooraf' }, { text: 'Data gelekt op een bekende leksite' }, { text: 'Activiteit vooral tijdens kantooruren UTC+3' }] } },
     { type: 'crimescript', name: 'Crime script-builder', desc: 'Ontleed een delict in zes fasen met interventies per fase.', cfg: { scenario: 'Phishing-fraude met moneymules (fictief).' } },
@@ -5728,6 +5735,373 @@ hr { border: 0; border-top: 1px solid var(--border); margin: 24px 0; }
     }
     renderStep();
     container.append(shell('<b>Beslissimulatie</b> — ' + esc(cfg.title || 'kies en zie de gevolgen'), wrap, false));
+  });
+
+  // =====================================================================
+  //  VIGENERE — cryptanalyse zonder sleutel (Kasiski, IoC, chi-kwadraat)
+  // =====================================================================
+  // Letterfrequenties (in %) van het Nederlands en het Engels, a..z.
+  const FREQ_NL = [7.49, 1.58, 1.24, 5.93, 18.91, 0.81, 3.40, 2.38, 6.50, 1.46, 2.25, 3.57, 2.21, 10.03, 6.06, 1.57, 0.01, 6.41, 3.73, 6.79, 1.99, 2.85, 1.52, 0.04, 0.04, 1.39];
+  const FREQ_EN = [8.17, 1.49, 2.78, 4.25, 12.70, 2.23, 2.02, 6.09, 6.97, 0.15, 0.77, 4.03, 2.41, 6.75, 7.51, 1.93, 0.10, 5.99, 6.33, 9.06, 2.76, 0.98, 2.36, 0.15, 1.97, 0.07];
+  function vigLetters(s) { return s.toUpperCase().replace(/[^A-Z]/g, ''); }
+  function vigIoc(str) {
+    const n = str.length; if (n < 2) return 0;
+    const f = new Array(26).fill(0); for (const ch of str) f[ch.charCodeAt(0) - 65]++;
+    return f.reduce((acc, x) => acc + x * (x - 1), 0) / (n * (n - 1));
+  }
+  function vigColumns(letters, L) { const cols = Array.from({ length: L }, () => ''); for (let i = 0; i < letters.length; i++) cols[i % L] += letters[i]; return cols; }
+  // Chi-kwadraat van een kolom die met verschuiving k is ontsleuteld, tegen de taalverdeling.
+  function vigChi(col, k, freq) {
+    const n = col.length; if (!n) return 0;
+    const f = new Array(26).fill(0); for (const ch of col) f[(ch.charCodeAt(0) - 65 - k + 26) % 26]++;
+    let chi = 0; for (let i = 0; i < 26; i++) { const exp = n * freq[i] / 100; chi += (f[i] - exp) * (f[i] - exp) / exp; }
+    return chi;
+  }
+  function vigBestKey(letters, L, freq) {
+    return vigColumns(letters, L).map((col) => {
+      const scores = []; for (let k = 0; k < 26; k++) scores.push({ k, chi: vigChi(col, k, freq) });
+      scores.sort((a, b) => a.chi - b.chi);
+      return { letter: String.fromCharCode(65 + scores[0].k), chi: scores[0].chi, second: String.fromCharCode(65 + scores[1].k), chi2: scores[1].chi };
+    });
+  }
+  function vigKasiski(letters, minLen) {
+    const seen = {}; const out = [];
+    for (let i = 0; i + minLen <= letters.length; i++) { const s = letters.substr(i, minLen); (seen[s] = seen[s] || []).push(i); }
+    Object.keys(seen).forEach((s) => { const p = seen[s]; if (p.length > 1) { const d = []; for (let j = 1; j < p.length; j++) d.push(p[j] - p[0]); out.push({ seq: s, pos: p, dist: d }); } });
+    return out.sort((a, b) => b.pos.length - a.pos.length || a.pos[0] - b.pos[0]);
+  }
+  function vigDecrypt(s, key) {
+    const k = key.toUpperCase().replace(/[^A-Z]/g, ''); if (!k) return s;
+    let ki = 0;
+    return s.replace(/[a-z]/gi, (c) => { const b = c <= 'Z' ? 65 : 97; const off = k.charCodeAt(ki++ % k.length) - 65; return String.fromCharCode((c.charCodeAt(0) - b - off + 26) % 26 + b); });
+  }
+  CS.crypt = Object.assign(CS.crypt || {}, { vigLetters, vigIoc, vigBestKey, vigKasiski, vigDecrypt, FREQ_NL, FREQ_EN });
+
+  CS.registerLab('vigenere', function (container, cfg) {
+    const maxLen = cfg.maxLen || 16;
+    const wrap = el('div', { class: 'lab-pad' });
+    wrap.append(el('label', { text: 'Versleutelde tekst (alleen de letters tellen mee voor de analyse)' }));
+    const inp = el('textarea', { rows: '5', spellcheck: 'false' }); inp.value = cfg.text || '';
+    wrap.append(inp);
+    let lang = cfg.lang === 'en' ? 'en' : 'nl';
+    const langRow = el('div', { class: 'chip-row' });
+    [['nl', 'Nederlandse letterfrequentie'], ['en', 'Engelse letterfrequentie']].forEach(([k, label]) => {
+      const c = el('span', { class: 'chip' + (k === lang ? ' on' : ''), text: label, onclick: () => { lang = k; [...langRow.children].forEach((x) => x.classList.remove('on')); c.classList.add('on'); render(); } });
+      langRow.append(c);
+    });
+    wrap.append(langRow);
+    const out = el('div', {});
+    wrap.append(out);
+    let chosenL = null; let keyOverride = null;
+
+    function render() {
+      out.innerHTML = '';
+      const raw = inp.value; const letters = vigLetters(raw);
+      if (letters.length < 20) { out.append(el('div', { class: 'found-note', text: 'Plak minstens een paar regels versleutelde tekst: hoe langer, hoe betrouwbaarder de statistiek.' })); return; }
+      const freq = lang === 'en' ? FREQ_EN : FREQ_NL;
+      out.append(el('div', { class: 'found-note', html: '<strong>' + letters.length + '</strong> letters. IoC van de hele tekst: <strong>' + vigIoc(letters).toFixed(4) + '</strong> (willekeur ≈ 0,038 · Engels ≈ 0,066 · Nederlands ≈ 0,080). Een lage waarde wijst op een polyalfabetisch cijfer.' }));
+
+      // Stap 1 — Kasiski
+      out.append(el('h4', { text: 'Stap 1 · Kasiski: herhaalde stukjes en hun afstanden' }));
+      const kas = vigKasiski(letters, 3).slice(0, 10);
+      const fc = {}; kas.forEach((r) => r.dist.forEach((d) => { for (let f = 2; f <= maxLen; f++) if (d % f === 0) fc[f] = (fc[f] || 0) + 1; }));
+      if (!kas.length) out.append(el('div', { class: 'found-note', text: 'Geen herhaalde trigrammen gevonden. Te korte tekst?' }));
+      else {
+        const box = el('div', { class: 'logview', style: 'max-height:170px' });
+        kas.forEach((r) => { const ln = el('div', { class: 'ln' }); ln.append(el('span', { class: 'n', text: r.seq }), el('span', { text: 'posities ' + r.pos.join(', ') + '  →  afstand ' + r.dist.join(', ') })); box.append(ln); });
+        out.append(box);
+        const fac = Object.keys(fc).map(Number).sort((a, b) => fc[b] - fc[a] || a - b).slice(0, 8);
+        out.append(el('div', { class: 'found-note', html: 'Delers die het vaakst in de afstanden passen: ' + fac.map((f) => '<code>' + f + '</code>×' + fc[f]).join(' · ') + '. De sleutellengte is meestal de grootste deler die steeds terugkomt (de kleinere delers liften mee).' }));
+      }
+
+      // Stap 2 — IoC per sleutellengte
+      out.append(el('h4', { text: 'Stap 2 · Index of coincidence per sleutellengte' }));
+      const rows = [];
+      for (let L = 1; L <= Math.min(maxLen, Math.floor(letters.length / 6)); L++) { const cols = vigColumns(letters, L); rows.push({ L, avg: cols.reduce((a, c) => a + vigIoc(c), 0) / L }); }
+      const target = lang === 'en' ? 0.060 : 0.068;
+      const guess = (rows.find((r) => r.avg >= target) || rows.slice().sort((a, b) => b.avg - a.avg)[0]).L;
+      if (chosenL == null) chosenL = guess;
+      const tbl = el('div', { style: 'display:grid;grid-template-columns:auto 1fr auto;gap:2px 10px;font-family:var(--mono);font-size:.78rem;align-items:center' });
+      rows.forEach((r) => {
+        const w = Math.max(2, Math.min(100, (r.avg - 0.03) / 0.06 * 100));
+        const lab = el('span', { text: 'L=' + r.L, style: 'cursor:pointer;' + (r.L === chosenL ? 'font-weight:700' : ''), onclick: () => { chosenL = r.L; keyOverride = null; render(); } });
+        const bar = el('div', { style: 'height:10px;background:var(--surface-2);border:1px solid var(--border)' }, el('div', { style: 'height:100%;width:' + w + '%;background:' + (r.avg >= target ? 'var(--good)' : 'var(--muted)') }));
+        tbl.append(lab, bar, el('span', { text: r.avg.toFixed(4) }));
+      });
+      out.append(tbl);
+      out.append(el('div', { class: 'found-note', html: 'Klik een lengte om die te kiezen. Bij de juiste lengte is elke kolom een gewoon Caesar-cijfer, dus springt de gemiddelde IoC omhoog naar taalniveau. Let op: veelvouden van de echte lengte scoren óók hoog — kies de <em>kleinste</em> die hoog scoort. Automatische gok: <strong>L=' + guess + '</strong>.' }));
+
+      // Stap 3 — per kolom de verschuiving
+      out.append(el('h4', { text: 'Stap 3 · Per kolom de Caesar-verschuiving (chi-kwadraat, L=' + chosenL + ')' }));
+      const best = vigBestKey(letters, chosenL, freq);
+      const auto = best.map((b) => b.letter).join('');
+      const kt = el('div', { class: 'logview', style: 'max-height:200px' });
+      best.forEach((b, i) => { const ln = el('div', { class: 'ln' }); ln.append(el('span', { class: 'n', text: 'k' + (i + 1) }), el('span', { text: b.letter + '  (χ² ' + b.chi.toFixed(1) + ')   tweede keus: ' + b.second + ' (χ² ' + b.chi2.toFixed(1) + ')' + (b.chi2 - b.chi < 15 ? '   ← twijfelgeval' : '') })); kt.append(ln); });
+      out.append(kt);
+      const keyRow = el('div', { class: 'ans-row', style: 'margin-top:8px' });
+      const keyInp = el('input', { type: 'text', style: 'flex:1', spellcheck: 'false', autocomplete: 'off' }); keyInp.value = keyOverride != null ? keyOverride : auto;
+      keyRow.append(el('span', { class: 'found-note', style: 'margin:0;align-self:center', text: 'Sleutel:' }), keyInp);
+      out.append(keyRow);
+      out.append(el('div', { class: 'found-note', text: 'Voorgestelde sleutel: ' + auto + '. Pas letters aan als een stukje tekst net niet leesbaar is (kijk dan naar de "tweede keus" van die kolom).' }));
+      const dec = el('div', { class: 'lab-out', style: 'margin-top:6px' });
+      const upd = () => { dec.textContent = vigDecrypt(raw, keyInp.value); };
+      keyInp.addEventListener('input', () => { keyOverride = keyInp.value; upd(); });
+      upd();
+      out.append(dec);
+    }
+    inp.addEventListener('input', () => { chosenL = null; keyOverride = null; render(); });
+    render();
+    container.append(shell('<b>Vigenère-werkbank</b> — kraken zonder sleutel', wrap, false));
+  });
+
+  // =====================================================================
+  //  XORCRIB — many-time pad: twee berichten met dezelfde sleutelstroom
+  // =====================================================================
+  function hexBytes(h) { const s = String(h || '').replace(/[^0-9a-f]/gi, ''); const r = []; for (let i = 0; i + 1 < s.length; i += 2) r.push(parseInt(s.substr(i, 2), 16)); return r; }
+  CS.crypt.hexBytes = hexBytes;
+  CS.registerLab('xorcrib', function (container, cfg) {
+    const c1 = hexBytes(cfg.c1), c2 = hexBytes(cfg.c2);
+    const n = Math.min(c1.length, c2.length);
+    const x = []; for (let i = 0; i < n; i++) x.push(c1[i] ^ c2[i]);
+    const show = (b) => (b >= 32 && b < 127 ? String.fromCharCode(b) : '·');
+    const wrap = el('div', { class: 'lab-pad' });
+    if (cfg.scenario) wrap.append(el('div', { class: 'callout info', html: esc(cfg.scenario) }));
+    wrap.append(el('div', { class: 'found-note', html: 'Bericht 1 en 2 zijn met <strong>dezelfde sleutelstroom</strong> ge-XORd. Dan geldt <code>C1 ⊕ C2 = P1 ⊕ P2</code>: de sleutel valt weg. Sleep een vermoed woord (crib) langs alle posities; waar de uitkomst leesbaar wordt, staat in het <em>andere</em> bericht vermoedelijk een stukje echte tekst.' }));
+    const hexBox = el('div', { class: 'logview', style: 'max-height:120px' });
+    [['C1', c1], ['C2', c2], ['C1⊕C2', x]].forEach(([nm, arr]) => { const ln = el('div', { class: 'ln' }); ln.append(el('span', { class: 'n', text: nm, style: 'width:54px' }), el('span', { text: arr.slice(0, n).map((b) => b.toString(16).padStart(2, '0')).join(' ') })); hexBox.append(ln); });
+    wrap.append(hexBox);
+
+    wrap.append(el('label', { text: 'Stap 1 · Crib slepen' }));
+    const cribRow = el('div', { class: 'ans-row' });
+    const cribInp = el('input', { type: 'text', placeholder: 'bv. " de " of "NM{"', style: 'flex:1', spellcheck: 'false', autocomplete: 'off' }); cribInp.value = cfg.crib || ' de ';
+    cribRow.append(cribInp); wrap.append(cribRow);
+    const cribOut = el('div', { class: 'logview', style: 'max-height:220px' });
+    wrap.append(cribOut);
+    function readable(s) { let sc = 0; for (const ch of s) { if (/[a-z ]/.test(ch)) sc += 2; else if (/[A-Z0-9{}_.,'!?-]/.test(ch)) sc += 1; else sc -= 4; } return sc / Math.max(1, s.length); }
+    function drag() {
+      cribOut.innerHTML = '';
+      const crib = cribInp.value; if (!crib) return;
+      const rows = [];
+      for (let p = 0; p + crib.length <= n; p++) { let s = ''; for (let j = 0; j < crib.length; j++) s += String.fromCharCode(x[p + j] ^ crib.charCodeAt(j)); rows.push({ p, s, sc: readable(s) }); }
+      rows.forEach((r) => { const ln = el('div', { class: 'ln' }); ln.append(el('span', { class: 'n', text: String(r.p) }), el('span', { text: '"' + Array.from(r.s).map((ch) => show(ch.charCodeAt(0))).join('') + '"', style: r.sc >= 1.5 ? 'color:var(--syn-key);font-weight:700' : r.sc < 0 ? 'opacity:.45' : '' })); cribOut.append(ln); });
+    }
+    cribInp.addEventListener('input', drag);
+
+    wrap.append(el('label', { text: 'Stap 2 · Reconstrueer bericht 1 (gebruik · of ? voor onbekende tekens)' }));
+    const p1 = el('textarea', { rows: '2', spellcheck: 'false' }); p1.value = cfg.start || '';
+    wrap.append(p1);
+    const recon = el('div', { class: 'lab-out', style: 'margin-top:6px' });
+    wrap.append(recon);
+    function rebuild() {
+      const g = p1.value; let a = '', b = '', k = [];
+      for (let i = 0; i < n; i++) {
+        const ch = g[i];
+        if (ch == null || ch === '·' || ch === '?') { a += '·'; b += '·'; k.push('··'); continue; }
+        const pc = ch.charCodeAt(0) & 0xff; a += show(pc); b += show(x[i] ^ pc); k.push((c1[i] ^ pc).toString(16).padStart(2, '0'));
+      }
+      recon.textContent = 'Bericht 1: ' + a + '\nBericht 2: ' + b + '\nSleutel : ' + k.join(' ');
+    }
+    p1.addEventListener('input', rebuild);
+    drag(); rebuild();
+    puzzleAsk(wrap, cfg.ask);
+    container.append(shell('<b>Many-time pad</b> — ' + esc(cfg.title || 'crib dragging'), wrap, false));
+  });
+
+  // =====================================================================
+  //  RSA — werkbank voor zwakke RSA-sleutels (BigInt)
+  // =====================================================================
+  const big = (v) => { const s = String(v == null ? '' : v).replace(/[\s_]/g, ''); if (!/^(0x[0-9a-f]+|\d+)$/i.test(s)) return null; return BigInt(s); };
+  function bModPow(b, e, m) { let r = 1n; b %= m; if (b < 0n) b += m; while (e > 0n) { if (e & 1n) r = r * b % m; b = b * b % m; e >>= 1n; } return r; }
+  function bGcd(a, b) { a = a < 0n ? -a : a; b = b < 0n ? -b : b; while (b) { [a, b] = [b, a % b]; } return a; }
+  function bModInv(a, m) { let [or, r] = [a % m, m], [os, s] = [1n, 0n]; while (r) { const q = or / r; [or, r] = [r, or - q * r]; [os, s] = [s, os - q * s]; } if (or !== 1n) return null; return ((os % m) + m) % m; }
+  function bBits(n) { return n.toString(2).length; }
+  function bRoot(n, k) { // gehele k-de-machtswortel (afgerond naar beneden)
+    if (n < 2n) return n; const K = BigInt(k);
+    let x = 1n << BigInt(Math.ceil(bBits(n) / k) + 1);
+    while (true) { const y = ((K - 1n) * x + n / (x ** (K - 1n))) / K; if (y >= x) break; x = y; }
+    while (x ** K > n) x--; while ((x + 1n) ** K <= n) x++;
+    return x;
+  }
+  function bTrial(n, limit) { if (n % 2n === 0n) return 2n; for (let p = 3n; p <= limit && p * p <= n; p += 2n) if (n % p === 0n) return p; return null; }
+  function bFermat(n, iters) { let a = bRoot(n, 2); if (a * a < n) a++; for (let i = 0; i < iters; i++, a++) { const b2 = a * a - n; const b = bRoot(b2, 2); if (b * b === b2) return { p: a - b, q: a + b, steps: i + 1 }; } return null; }
+  function bRho(n, iters) { if (n % 2n === 0n) return 2n; for (let c = 1n; c < 6n; c++) { let x = 2n, y = 2n, d = 1n; const f = (v) => (v * v + c) % n; for (let i = 0; i < iters && d === 1n; i++) { x = f(x); y = f(f(y)); d = bGcd(x > y ? x - y : y - x, n); } if (d !== 1n && d !== n) return d; } return null; }
+  function bToText(m) { let h = m.toString(16); if (h.length % 2) h = '0' + h; let s = ''; for (let i = 0; i < h.length; i += 2) s += String.fromCharCode(parseInt(h.substr(i, 2), 16)); try { return decodeURIComponent(escape(s)); } catch (e) { return s; } }
+  function bFromText(t) { const u = unescape(encodeURIComponent(t)); let h = ''; for (let i = 0; i < u.length; i++) h += u.charCodeAt(i).toString(16).padStart(2, '0'); return h ? BigInt('0x' + h) : 0n; }
+  Object.assign(CS.crypt, { big, bModPow, bGcd, bModInv, bRoot, bTrial, bFermat, bRho, bToText, bFromText });
+
+  CS.registerLab('rsa', function (container, cfg) {
+    const wrap = el('div', { class: 'lab-pad' });
+    if (cfg.scenario) wrap.append(el('div', { class: 'callout info', html: esc(cfg.scenario) }));
+    const field = (label, val, rows) => { wrap.append(el('label', { text: label })); const t = el('textarea', { rows: String(rows || 2), spellcheck: 'false' }); t.value = val == null ? '' : String(val); wrap.append(t); return t; };
+    const fN = field('Modulus n', cfg.n), fE = field('Publieke exponent e', cfg.e || '65537', 1), fC = field('Ciphertext c (als getal)', cfg.c);
+    const fN2 = cfg.n2 != null ? field('Tweede modulus n₂ (voor de GCD-aanval)', cfg.n2) : null;
+    const status = el('div', { class: 'found-note' });
+    const tools = el('div', { class: 'chip-row' });
+    wrap.append(el('label', { text: 'Aanvallen op n' }), tools, status);
+    const fP = field('Factor p', cfg.p, 1), fQ = field('Factor q', cfg.q, 1);
+    const out = el('div', { class: 'lab-out', style: 'margin-top:8px' });
+    const say = (html, ok) => { status.innerHTML = html; status.style.color = ok === false ? 'var(--bad)' : ok ? 'var(--good)' : ''; };
+    const setPQ = (p, q) => { fP.value = p.toString(); fQ.value = q.toString(); calc(); };
+    const attack = (label, fn) => tools.append(el('button', { class: 'btn small', text: label, onclick: () => { const n = big(fN.value); if (!n || n < 4n) return say('Vul eerst een geldige n in.', false); const t0 = performance.now(); let r; try { r = fn(n); } catch (e) { r = null; } const ms = Math.round(performance.now() - t0); if (r) { say(r.msg + ' <span style="color:var(--muted)">(' + ms + ' ms)</span>', true); if (r.p) setPQ(r.p, n / r.p); } else say(label + ': niets gevonden (' + ms + ' ms). Deze aanval past niet bij deze sleutel.', false); } }));
+    attack('Proefdeling (tot 10⁶)', (n) => { const p = bTrial(n, 1000000n); return p ? { p, msg: 'Kleine factor gevonden: p = ' + p } : null; });
+    attack('Fermat (p ≈ q)', (n) => { const r = bFermat(n, 200000); return r ? { p: r.p, msg: 'Fermat slaagt na ' + r.steps + ' stap(pen): p en q liggen vlak bij √n.' } : null; });
+    attack('Pollard-rho', (n) => { const p = bRho(n, 300000); return p ? { p, msg: 'Pollard-rho vond een factor: p = ' + p } : null; });
+    if (fN2) attack('GCD(n, n₂)', (n) => { const n2 = big(fN2.value); if (!n2) return null; const g = bGcd(n, n2); return g > 1n && g < n ? { p: g, msg: 'n en n₂ delen een priemfactor! gcd = ' + g } : null; });
+    tools.append(el('button', { class: 'btn small', text: 'e-de-machtswortel van c', onclick: () => {
+      const c = big(fC.value), e = big(fE.value); if (c == null || !e) return say('Vul c en e in.', false);
+      if (e > 17n) return say('e = ' + e + ' is te groot voor deze aanval; die werkt bij kleine e (3, 5, 17) zonder padding.', false);
+      const r = bRoot(c, Number(e));
+      if (r ** e === c) { say('c is een exacte ' + e + '-de macht: m^e was kleiner dan n, dus de modulus deed niets. Geen sleutel nodig!', true); out.textContent = 'm (getal) = ' + r + '\nm (hex)   = 0x' + r.toString(16) + '\nm (tekst) = ' + bToText(r); }
+      else say('c is geen exacte ' + e + '-de macht: m^e was groter dan n (of er is padding gebruikt).', false);
+    } }));
+    wrap.append(el('div', { class: 'ans-row', style: 'margin-top:8px' }, el('button', { class: 'btn small primary', text: 'Bereken φ, d en ontsleutel', onclick: () => calc(true) })));
+    wrap.append(out);
+    function calc(explicit) {
+      const n = big(fN.value), e = big(fE.value), c = big(fC.value), p = big(fP.value), q = big(fQ.value);
+      if (!p || !q) { if (explicit) out.textContent = 'Vul p en q in (of vind ze met een aanval).'; return; }
+      const lines = [];
+      if (n && p * q !== n) lines.push('Let op: p × q ≠ n — klopt de factorisatie?');
+      const phi = (p - 1n) * (q - 1n);
+      lines.push('n         = ' + (n || p * q) + '  (' + bBits(n || p * q) + ' bits)');
+      lines.push('φ(n)      = (p−1)(q−1) = ' + phi);
+      const d = e ? bModInv(e, phi) : null;
+      if (!d) { lines.push('d bestaat niet: e en φ(n) zijn niet onderling ondeelbaar.'); out.textContent = lines.join('\n'); return; }
+      lines.push('d         = e⁻¹ mod φ(n) = ' + d);
+      if (c != null && n) { const m = bModPow(c, d, n); lines.push('m = c^d mod n = ' + m, 'm (hex)   = 0x' + m.toString(16), 'm (tekst) = ' + bToText(m)); }
+      out.textContent = lines.join('\n');
+    }
+    if (cfg.p && cfg.q) calc();
+    puzzleAsk(wrap, cfg.ask);
+    container.append(shell('<b>RSA-werkbank</b> — ' + esc(cfg.title || 'zwakke sleutels breken'), wrap, false));
+  });
+
+  // =====================================================================
+  //  VM — mini-assembler voor reverse engineering (Nachtwacht-VM)
+  // =====================================================================
+  const VM_REGS = ['a', 'b', 'c', 'd', 'i', 'j'];
+  const VM_JUMPS = ['jmp', 'je', 'jne', 'jl', 'jg', 'jle', 'jge'];
+  function vmParse(src) {
+    const prog = [], labels = {}, data = {}, errors = [];
+    String(src || '').split('\n').forEach((raw, ln) => {
+      let s = raw.replace(/;.*$/, '').trim();
+      if (!s) return;
+      const dm = s.match(/^data\s+([a-z_]\w*)\s*:\s*(.*)$/i);
+      if (dm) {
+        const items = [];
+        dm[2].split(',').map((x) => x.trim()).filter(Boolean).forEach((x) => { if (/^".*"$/.test(x)) for (const ch of x.slice(1, -1)) items.push(ch.charCodeAt(0)); else { const v = vmNum(x); if (v == null) errors.push('regel ' + (ln + 1) + ': ongeldige data "' + x + '"'); else items.push(v); } });
+        data[dm[1].toLowerCase()] = items; return;
+      }
+      let m;
+      while ((m = s.match(/^([a-z_]\w*):/i))) { labels[m[1].toLowerCase()] = prog.length; s = s.slice(m[0].length).trim(); }
+      if (!s) return;
+      const sp = s.indexOf(' ');
+      const op = (sp < 0 ? s : s.slice(0, sp)).toLowerCase();
+      const args = sp < 0 ? [] : s.slice(sp + 1).split(',').map((x) => x.trim().toLowerCase());
+      prog.push({ op, args, ln, text: raw.replace(/;.*$/, '').trim() });
+    });
+    return { prog, labels, data, errors };
+  }
+  function vmNum(x) { x = String(x).trim(); if (/^'.'$/.test(x)) return x.charCodeAt(1); if (/^-?0x[0-9a-f]+$/i.test(x)) return parseInt(x, 16); if (/^-?\d+$/.test(x)) return parseInt(x, 10); return null; }
+  function vmRun(src, input, opts) {
+    opts = opts || {};
+    const P = typeof src === 'string' ? vmParse(src) : src;
+    const maxSteps = opts.maxSteps || 50000;
+    const st = opts.state || { pc: 0, steps: 0, regs: { a: 0, b: 0, c: 0, d: 0, i: 0, j: 0 }, flag: 0, status: 'running', trace: [] };
+    if (P.errors.length) { st.status = 'error'; st.error = P.errors[0]; return st; }
+    const inp = String(input == null ? '' : input);
+    const val = (x) => {
+      if (VM_REGS.includes(x)) return st.regs[x];
+      const mm = x.match(/^([a-z_]\w*)\[(.+)\]$/);
+      if (mm) { const idx = val(mm[2]); if (mm[1] === 'in') return idx >= 0 && idx < inp.length ? inp.charCodeAt(idx) & 0xff : 0; const arr = P.data[mm[1]]; if (!arr) throw new Error('onbekende data "' + mm[1] + '"'); return idx >= 0 && idx < arr.length ? arr[idx] : 0; }
+      const v = vmNum(x); if (v == null) throw new Error('onbekende operand "' + x + '"'); return v;
+    };
+    const reg = (x) => { if (!VM_REGS.includes(x)) throw new Error('"' + x + '" is geen register'); return x; };
+    const limit = opts.single ? 1 : maxSteps;
+    try {
+      for (let k = 0; k < limit; k++) {
+        if (st.pc < 0 || st.pc >= P.prog.length) { st.status = 'error'; st.error = 'programma liep van het einde zonder ok/fail'; break; }
+        if (st.steps >= maxSteps) { st.status = 'error'; st.error = 'te veel stappen (oneindige lus?)'; break; }
+        const ins = P.prog[st.pc]; st.steps++;
+        const [x, y] = ins.args; let next = st.pc + 1; let note = '';
+        const set = (r, v) => { st.regs[r] = v >>> 0; note = r + '=' + st.regs[r]; };
+        switch (ins.op) {
+          case 'mov': set(reg(x), val(y)); break;
+          case 'add': set(reg(x), st.regs[reg(x)] + val(y)); break;
+          case 'sub': set(reg(x), st.regs[reg(x)] - val(y)); break;
+          case 'mul': set(reg(x), Math.imul(st.regs[reg(x)], val(y))); break;
+          case 'mod': { const v = val(y); if (!v) throw new Error('deling door nul'); set(reg(x), st.regs[reg(x)] % v); break; }
+          case 'xor': set(reg(x), st.regs[reg(x)] ^ val(y)); break;
+          case 'and': set(reg(x), st.regs[reg(x)] & val(y)); break;
+          case 'or': set(reg(x), st.regs[reg(x)] | val(y)); break;
+          case 'shl': set(reg(x), st.regs[reg(x)] << val(y)); break;
+          case 'shr': set(reg(x), st.regs[reg(x)] >>> val(y)); break;
+          case 'rol': { const v = st.regs[reg(x)] & 0xff, n = val(y) & 7; set(x, ((v << n) | (v >>> (8 - n))) & 0xff); break; }
+          case 'ror': { const v = st.regs[reg(x)] & 0xff, n = val(y) & 7; set(x, ((v >>> n) | (v << (8 - n))) & 0xff); break; }
+          case 'ld': set(reg(x), val(y)); break;
+          case 'len': set(reg(x), inp.length); break;
+          case 'size': { const arr = P.data[y]; if (!arr) throw new Error('onbekende data "' + y + '"'); set(reg(x), arr.length); break; }
+          case 'cmp': { const a = val(x), b = val(y); st.flag = a === b ? 0 : a < b ? -1 : 1; note = 'vergelijk ' + a + ' met ' + b; break; }
+          case 'nop': break;
+          case 'ok': st.status = 'ok'; break;
+          case 'fail': st.status = 'fail'; break;
+          default:
+            if (VM_JUMPS.includes(ins.op)) {
+              const t = P.labels[x]; if (t == null) throw new Error('onbekend label "' + x + '"');
+              const f = st.flag; const take = { jmp: true, je: f === 0, jne: f !== 0, jl: f < 0, jg: f > 0, jle: f <= 0, jge: f >= 0 }[ins.op];
+              if (take) { next = t; note = 'spring naar ' + x; } else note = 'geen sprong';
+            } else throw new Error('onbekende instructie "' + ins.op + '"');
+        }
+        st.trace.push({ ln: ins.ln, text: ins.text, note });
+        if (st.trace.length > 400) st.trace.shift();
+        if (st.status !== 'running') break;
+        st.pc = next;
+      }
+    } catch (e) { st.status = 'error'; st.error = (P.prog[st.pc] ? 'regel ' + (P.prog[st.pc].ln + 1) + ': ' : '') + e.message; }
+    return st;
+  }
+  CS.vm = { parse: vmParse, run: vmRun };
+
+  CS.registerLab('vm', function (container, cfg) {
+    const P = vmParse(cfg.program);
+    const wrap = el('div', { class: 'lab-pad' });
+    if (cfg.intro) wrap.append(el('div', { class: 'found-note', text: cfg.intro }));
+    const src = el('div', { class: 'logview', style: 'max-height:320px' });
+    const lineEls = [];
+    String(cfg.program || '').split('\n').forEach((t, i) => { const ln = el('div', { class: 'ln' }); ln.append(el('span', { class: 'n', text: String(i + 1) }), el('span', { text: t || ' ' })); lineEls.push(ln); src.append(ln); });
+    wrap.append(el('label', { text: 'Disassembly (lees en leid af welke invoer "ok" bereikt)' }), src);
+    wrap.append(el('details', { html: '<summary>Instructieset</summary><div class="found-note" style="margin-top:4px">Registers <code>a b c d i j</code> (32-bit, zonder teken). <code>mov r, x</code> · <code>add/sub/mul/mod/xor/and/or/shl/shr r, x</code> · <code>rol/ror r, n</code> (8-bit rotatie) · <code>ld r, in[x]</code> (teken x van de invoer als getal, 0 buiten bereik) · <code>ld r, naam[x]</code> (uit een <code>data</code>-tabel) · <code>len r</code> (lengte invoer) · <code>size r, naam</code> · <code>cmp x, y</code> en dan <code>je/jne/jl/jg/jle/jge/jmp label</code> · <code>ok</code> = toegang, <code>fail</code> = geweigerd. Getallen: <code>42</code>, <code>0x2a</code> of <code>\'*\'</code>.</div>' }));
+    if (P.errors.length) wrap.append(el('div', { style: 'color:var(--bad)', text: P.errors.join('; ') }));
+    const row = el('div', { class: 'ans-row', style: 'margin-top:8px' });
+    const inp = el('input', { type: 'text', placeholder: cfg.inputLabel || 'invoer…', style: 'flex:1', autocomplete: 'off', spellcheck: 'false' });
+    const bRun = el('button', { class: 'btn small primary', text: 'Uitvoeren' });
+    const bStep = el('button', { class: 'btn small', text: 'Stap' });
+    const bReset = el('button', { class: 'btn small', text: 'Reset' });
+    row.append(inp, bRun, bStep, bReset); wrap.append(row);
+    const regBox = el('div', { class: 'found-note', style: 'font-family:var(--mono)' });
+    const res = el('div', { class: 'lab-out', style: 'margin-top:8px' });
+    const traceBox = el('div', { class: 'logview', style: 'max-height:200px;margin-top:6px' });
+    wrap.append(regBox, res, el('label', { text: 'Trace (laatste stappen)' }), traceBox);
+    let st = null, tries = 0;
+    function paint() {
+      lineEls.forEach((l) => (l.style.background = ''));
+      if (!st) { regBox.textContent = ''; traceBox.innerHTML = ''; res.textContent = 'Typ een invoer en kies Uitvoeren of Stap.'; return; }
+      const cur = P.prog[st.pc]; if (cur && st.status === 'running' && lineEls[cur.ln]) { lineEls[cur.ln].style.background = 'var(--accent-soft)'; lineEls[cur.ln].scrollIntoView({ block: 'nearest' }); }
+      regBox.textContent = VM_REGS.map((r) => r + '=' + st.regs[r] + (st.regs[r] > 9 ? ' (0x' + st.regs[r].toString(16) + (st.regs[r] >= 32 && st.regs[r] < 127 ? " '" + String.fromCharCode(st.regs[r]) + "'" : '') + ')' : '')).join('   ') + '   vlag=' + st.flag + '   stappen=' + st.steps;
+      traceBox.innerHTML = '';
+      st.trace.slice(-60).forEach((t) => { const ln = el('div', { class: 'ln' }); ln.append(el('span', { class: 'n', text: String(t.ln + 1) }), el('span', { text: t.text.padEnd(22) + (t.note ? '  ; ' + t.note : '') })); traceBox.append(ln); });
+      traceBox.scrollTop = traceBox.scrollHeight;
+      res.innerHTML = '';
+      if (st.status === 'ok') { res.append(el('div', { html: '<strong style="color:var(--good)">TOEGANG VERLEEND</strong>' + (cfg.flag ? ' — vlag: <code>' + esc(cfg.flag) + '</code>' : '') })); if (cfg.reveal) res.append(el('div', { style: 'margin-top:4px', text: cfg.reveal })); inp.classList.add('ok'); }
+      else if (st.status === 'fail') { res.append(el('div', { style: 'color:var(--bad)', text: 'GEWEIGERD (fail op regel ' + (P.prog[st.pc].ln + 1) + '). Kijk in de trace waar je afslaat.' })); if (cfg.hint && tries >= 3) res.append(el('div', { class: 'found-note', text: 'Hint: ' + cfg.hint })); }
+      else if (st.status === 'error') res.append(el('div', { style: 'color:var(--bad)', text: 'Fout: ' + st.error }));
+      else res.textContent = 'Gepauzeerd. Volgende instructie is gemarkeerd.';
+    }
+    bRun.addEventListener('click', () => { tries++; st = vmRun(P, inp.value, { maxSteps: cfg.maxSteps }); paint(); });
+    bStep.addEventListener('click', () => { if (!st || st.status !== 'running') { if (st) tries++; st = { pc: 0, steps: 0, regs: { a: 0, b: 0, c: 0, d: 0, i: 0, j: 0 }, flag: 0, status: 'running', trace: [] }; } st = vmRun(P, inp.value, { state: st, single: true, maxSteps: cfg.maxSteps }); paint(); });
+    bReset.addEventListener('click', () => { st = null; inp.classList.remove('ok'); paint(); });
+    inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') bRun.click(); });
+    paint();
+    container.append(shell('<b>Nachtwacht-VM</b> — ' + esc(cfg.title || 'reverse engineering'), wrap, false));
   });
 
   // =====================================================================
@@ -30164,6 +30538,312 @@ CS.registerRoom({
         { q: 'Wat is in deze zaak het belangrijkste aangrijppunt voor de opsporing?', options: ['Het exchange-account, waar via KYC/Wwft een identiteit aan het spoor hangt', 'De mixer, die je offline kunt halen', 'De hop-wallets', 'De losgeldbrief'], answer: 0, explain: 'De cash-out bij de exchange koppelt het pseudonieme spoor aan een echte naam; daar grijp je aan met een vordering.' },
         { q: 'Hoe schrijf je de attributie in het eindproduct verantwoord?', options: ['Waarschijnlijk een professionele cash-out-dienst (afgeleid); een specifieke beheerder niet aan te wijzen (aanname vermijden)', 'Het is zeker persoon X', 'De mixer bepaalt de dader', 'Attributie laat je weg'], answer: 0, explain: 'Je benoemt de best passende hypothese met waarschijnlijkheidstaal en vermijdt de tool=actor-valkuil.' },
         { q: 'Welke slotvlag hoort bij het afronden van het BLUF-eindproduct?', answer: ['NM{cash_out_is_het_knelpunt}'], hint: 'Staat in de tip-callout van deze taak.', explain: 'De slotvlag is NM{cash_out_is_het_knelpunt}.' },
+      ],
+    },
+  ],
+});
+
+</script>
+<script>
+/* Room: Cryptanalyse — Vigenère en de many-time pad kraken zonder sleutel */
+
+// =======================================================================
+//  Alles in deze room is FICTIEF: de cel "De Nachtwacht", de berichten en
+//  de sleutels zijn verzonnen. Je oefent de methode, niet een echte zaak.
+// =======================================================================
+
+// Onderschept bericht 1 — Vigenère, sleutellengte 8 (de sleutel vind je zelf).
+const MPV_CIPHER_1 = 'Nap hefm wrdgu ouv or cgs. Wy vtruyl wlwa iipkm jtlntu vi xwyqetkta vl zifkxlvlphv ibd lp bufl eiwof acu ayb hntgy. Gymx nlnlxh kzatcum amwq mgl xh tlnt fl mytpsoqul npfvs, yhgn lp conpmcm whiuaxlb xre qw wy vzemcsx eiynlgu. Wy szrrklk bmpst fl duicgep txn lp teuahfmy teiloyvd oil gbwp pa vgypuksg dg ixniwvni pg nepr dgsxh. Etr tg stub vbmv, dhlle aiga fymc oipuxhopyavlg yv grrnpxmb kvjp hthlprl ku wy waorguzmb gnn flsy ulnnf. Cxlvtrtkn wcb mrrkjan lteeea gu ppg lggxh my tedyncs gnncm go ppg nklnqm nbdgdhizo ioqy wy dzygguwy zzadg: UF{eidvsmp_ulmpxt_xpzyvpee}. Vvm xwyqetkta my jegz oiwcmieomco zadgypyo.';
+
+// Onderschept bericht 2 — Vigenère met een langere sleutel; één kolom is een twijfelgeval.
+const MPV_CIPHER_2 = 'Jpxtuve kay hm gthmvbeexe. Sib vgttaox gtrwmml gb perj ytgpr lw odvmtk pc rpil ewi mit kcxjki jwkimpcertn yeij ztb mthfhtcmmlwgzior lpn oi zsfs det hp htlh. Lssg wrzqzttei pab ieik syqevivvw birtiy sip imf rlivk ozufpv wnwglvuirtn. Oi sgxumv cics iy hm dsplvamxie ritwys mr ji hpgpr dwjizsq htgenx zauwbmtk ot syitowv. Dsrkpcs oi qfxdzqgre qegeb vw zwjlic wachm kuwqnbiy bee hm svbqrowegaemm nsc li cmeladszyscqwgxtt ey hm kdtcxkpd kay hm ujnxxualalpxa. Vw gmgnicrhp elnahmixx zb dp aiywc jmp hp tecwbngaoithp iayoalge axgeyse ei pgmsmr kr ot kzjnwj kmmrmr ie dxmddtv zuscsae hm ywvmzkrd lochmf ntzroiexgo. Lml ltiq yxlpt aezssi mr cenwt zt mwf psouscs vlr lw gunmimpg vlr rmkiqxoi.';
+
+// Twee berichten, versleuteld met DEZELFDE sleutelstroom (hex).
+const MPV_MTP_1 = '35 a5 22 64 d3 35 76 e9 e9 ed 18 2f e1 c5 0e 17 37 48 11 92 75 68 a6 ca 5b 97 90 e6 18 f7 af 11 c7 2a e6 0c f3 45 68 1c 21 6e bc 42 8b 53 1a e3 42 d2 19 da c1 97 c2 45 7d f3 34 20 89 64 4d 11 b8 7b 04 d6 91 a0 5b';
+const MPV_MTP_2 = '35 a5 22 6d d9 24 65 ec e5 f1 5f 78 e7 c7 07 17 37 53 1f 8e 73 7b a7 84 49 de 93 af 16 b2 eb 19 8e 3d f6 1a b6 0b 65 12 3c 2a b8 03 86 5e 11 b7 0a f9 20 81 db 97 d8 59 50 a7 30 28 98 1b 59 15 fc 4f 09 d2 88 a0 43 95';
+
+CS.registerRoom({
+  id: 'cryptanalyse-vigenere',
+  path: 'meesterproeven',
+  order: 1,
+  title: 'Cryptanalyse: Vigenère en de many-time pad kraken',
+  icon: '🗝️',
+  difficulty: 'Moeilijk',
+  minutes: 90,
+  summary: 'Kraak versleutelde berichten van een fictieve criminele cel zonder de sleutel te kennen: vind de sleutellengte met Kasiski en de index of coincidence, haal per kolom de verschuiving eruit met chi-kwadraat, herken een statistisch twijfelgeval, en breek een "onbreekbaar" one-time pad dat twee keer is gebruikt.',
+  objectives: [
+    'Uitleggen waarom een polyalfabetisch cijfer de letterfrequentie afvlakt en hoe de index of coincidence (IoC) dat meet',
+    'De sleutellengte van een Vigenère-cijfer bepalen met de Kasiski-test, de IoC per kolom en de Friedman-schatting',
+    'Per kolom de Caesar-verschuiving vinden met de chi-kwadraattoets en een twijfelgeval met taalgevoel corrigeren',
+    'Een many-time pad breken met crib dragging, en uitleggen waarom C1 ⊕ C2 = P1 ⊕ P2',
+    'De moderne lessen benoemen: sleutelstroom- en nonce-hergebruik (WEP, AES-CTR/GCM) en repeating-key XOR in malware',
+  ],
+  terms: [
+    { term: 'Polyalfabetisch cijfer', def: 'Een cijfer dat meerdere substitutie-alfabetten afwisselt (bij Vigenère: één Caesar-verschuiving per sleutelletter), zodat dezelfde klartekstletter steeds anders versleuteld wordt.' },
+    { term: 'Index of coincidence (IoC)', def: 'De kans dat twee willekeurig gekozen letters uit een tekst gelijk zijn: Σ f(f−1) / N(N−1). Nederlands ≈ 0,080, Engels ≈ 0,066, willekeurige letters ≈ 0,038.' },
+    { term: 'Kasiski-test', def: 'Methode (Friedrich Kasiski, 1863) die herhaalde stukjes ciphertext zoekt; hun onderlinge afstanden zijn vaak veelvouden van de sleutellengte.' },
+    { term: 'Friedman-test', def: 'Ruwe schatting van de sleutellengte uit de IoC van de hele tekst: L ≈ (κ_taal − κ_willekeur) / (κ_tekst − κ_willekeur).' },
+    { term: 'Chi-kwadraattoets', def: 'Statistische maat voor hoe ver een waargenomen letterverdeling afwijkt van de verwachte taalverdeling; de verschuiving met de laagste χ² is de beste gok.' },
+    { term: 'Crib', def: 'Een stukje vermoede klare tekst (bijv. " de " of "NM{") dat je gebruikt om een cijfer open te breken.' },
+    { term: 'Crib dragging', def: 'Een crib langs alle posities van C1 ⊕ C2 schuiven; waar het resultaat leesbaar wordt, staat in het andere bericht vermoedelijk echte tekst.' },
+    { term: 'One-time pad (OTP)', def: 'Versleuteling met een echt willekeurige sleutel die even lang is als het bericht en maar één keer wordt gebruikt. Bewijsbaar onbreekbaar — tot je de sleutel hergebruikt.' },
+    { term: 'Many-time pad', def: 'Het misbruik van een one-time pad of sleutelstroom voor meerdere berichten. Dan valt de sleutel weg: C1 ⊕ C2 = P1 ⊕ P2.' },
+    { term: 'Nonce-hergebruik', def: 'Het twee keer gebruiken van dezelfde nonce/IV bij een stroomcijfer of AES-CTR/GCM; dat levert dezelfde sleutelstroom op en dus een many-time pad.' },
+    { term: 'Hammingafstand', def: 'Het aantal bits waarin twee bytereeksen verschillen. Gebruikt om de sleutellengte van repeating-key XOR te schatten.' },
+  ],
+  resources: [
+    { title: 'Cryptopals — de klassieke crypto-uitdagingen (set 1: repeating-key XOR)', url: 'https://cryptopals.com/sets/1' },
+    { title: 'Wikipedia — Vigenère-cijfer (geschiedenis, Kasiski en Friedman)', url: 'https://en.wikipedia.org/wiki/Vigen%C3%A8re_cipher' },
+    { title: 'Wikipedia — Het Venona-project (many-time pad in de praktijk)', url: 'https://en.wikipedia.org/wiki/Venona_project' },
+    { title: 'NCSC — Cryptografie-richtlijnen voor TLS en versleuteling', url: 'https://www.ncsc.nl/' },
+  ],
+  tasks: [
+    {
+      title: 'Taak 1 — Le chiffre indéchiffrable',
+      content: `
+        <p>Een recherche-team heeft beslag gelegd op de laptop van een tussenpersoon van de fictieve cel <strong>"De Nachtwacht"</strong>.
+        Op de laptop staan berichten die met de hand versleuteld zijn. Geen AES, geen PGP: de cel gebruikt een klassiek
+        <strong>Vigenère-cijfer</strong>, in de veronderstelling dat "niemand dat zonder sleutel leest". Jouw taak in deze room is
+        bewijzen dat dat niet klopt.</p>
+
+        <h3>Van Caesar naar Vigenère</h3>
+        <p>Een Caesar-cijfer schuift elke letter een vast aantal plaatsen op. Dat breek je in seconden: er zijn maar 25
+        verschuivingen, en de meest voorkomende letter in het geheimschrift is vrijwel zeker de <code>e</code>. Vigenère
+        (16e eeuw) lost dat op door per letter een <em>andere</em> verschuiving te gebruiken, gestuurd door een sleutelwoord:</p>
+<pre><code>klare tekst : d e d r o p i s d o n d e r d a g
+sleutel     : N A C H T U I L N A C H T U I L N
+verschuiving: 13 0 2 7 19 20 8 11 13 0 2 7 19 20 8 11 13
+geheimschrift: q e f y h j q d q o p k x l l l t</code></pre>
+        <p>De vijf <code>d</code>'s worden achtereenvolgens <code>q</code>, <code>f</code>, <code>q</code>, <code>k</code> en
+        <code>l</code>. Dat is precies het punt: de letterfrequentie wordt <strong>afgevlakt</strong>. (Zie je dat de eerste en
+        de derde <code>d</code> allebei een <code>q</code> werden? Ze staan precies 8 posities uit elkaar, onder dezelfde
+        sleutelletter <code>N</code>. Onthoud dat: het is de sleutel tot taak 2.) Eeuwenlang heette Vigenère daarom <em>le chiffre
+        indéchiffrable</em>. Pas in 1863 publiceerde de Pruisische officier Friedrich Kasiski een algemene aanval (Charles Babbage
+        had hem al eerder, maar hield het geheim).</p>
+
+        <h3>De zwakke plek: de sleutel herhaalt zich</h3>
+        <p>Een sleutel van 8 letters betekent dat letter 1, 9, 17, 25, ... allemaal met <em>dezelfde</em> verschuiving zijn
+        versleuteld. Zet je de tekst in 8 kolommen, dan is <strong>elke kolom een gewoon Caesar-cijfer</strong>. En Caesar
+        breek je met frequentieanalyse. Het hele probleem draait dus om één vraag: <strong>hoe lang is de sleutel?</strong></p>
+
+        <h3>De index of coincidence</h3>
+        <p>William Friedman (1922) bedacht een getal dat meet hoe "ongelijk" de letters van een tekst verdeeld zijn: de
+        <strong>index of coincidence</strong>. Pak twee willekeurige letters uit de tekst; hoe groot is de kans dat ze gelijk
+        zijn?</p>
+<pre><code>IoC = Σ f_i · (f_i − 1)  /  N · (N − 1)        (f_i = aantal keer letter i, N = aantal letters)</code></pre>
+        <table>
+          <thead><tr><th>Soort tekst</th><th>IoC (ongeveer)</th><th>Waarom</th></tr></thead>
+          <tbody>
+            <tr><td>Nederlands</td><td>0,080</td><td>De <code>e</code> alleen is al bijna 19% van alle letters</td></tr>
+            <tr><td>Engels</td><td>0,066</td><td>Vlakkere verdeling dan Nederlands</td></tr>
+            <tr><td>Caesar/monoalfabetisch</td><td>gelijk aan de taal</td><td>Letters worden alleen hernoemd, de verdeling blijft</td></tr>
+            <tr><td>Vigenère met lange sleutel</td><td>richting 0,04</td><td>De verschuivingen mengen de verdelingen</td></tr>
+            <tr><td>Willekeurige letters</td><td>1/26 ≈ 0,038</td><td>Elke letter even vaak</td></tr>
+          </tbody>
+        </table>
+        <div class="callout tip"><strong>Waarom dit werkt:</strong> een monoalfabetische substitutie <em>hernoemt</em> letters
+        maar verandert de vorm van de verdeling niet, dus de IoC blijft gelijk. Een polyalfabetisch cijfer mengt meerdere
+        verschoven verdelingen en drukt de IoC omlaag. De IoC verraadt dus <em>welk soort</em> cijfer je voor je hebt,
+        nog voor je iets ontsleuteld hebt.</div>
+        <div class="callout warn"><strong>Ethiek:</strong> je kraakt hier fictieve berichten in een lab. Echt onderschept
+        materiaal ontsleutelen mag alleen binnen een wettelijke bevoegdheid (bijvoorbeeld onder het Wetboek van Strafvordering)
+        of op eigen data.</div>
+      `,
+      questions: [
+        { q: 'Welke IoC (afgerond op drie decimalen) verwacht je bij volledig willekeurige letters (1/26)?', answer: ['0.038', '0,038'], hint: 'Reken 1 gedeeld door 26 uit.', explain: '1/26 ≈ 0,0385: elke letter is even waarschijnlijk.' },
+        { q: 'Een ciphertext heeft een IoC van 0,079. Wat voor cijfer is het waarschijnlijk?', options: ['Vigenère met een lange sleutel', 'Een monoalfabetische substitutie of transpositie van Nederlandse tekst', 'Een one-time pad', 'AES'], answer: 1, explain: 'Een IoC op taalniveau betekent dat de letterverdeling intact is: letters zijn hernoemd (substitutie) of verplaatst (transpositie), niet gemengd.' },
+        { q: 'Met een sleutel van lengte L: welk soort cijfer is elke kolom (letter 1, 1+L, 1+2L, ...)?', options: ['Een Caesar-cijfer', 'Een one-time pad', 'Een transpositie', 'Een hash'], answer: 0, explain: 'Alle letters in één kolom zijn met dezelfde sleutelletter, dus dezelfde verschuiving, versleuteld.' },
+        { q: 'In welk jaar publiceerde Kasiski zijn algemene aanval op Vigenère?', answer: '1863', hint: 'Staat in de tekst.', explain: 'Friedrich Kasiski publiceerde in 1863; Babbage had de methode eerder, maar maakte haar niet openbaar.' },
+      ],
+    },
+    {
+      title: 'Taak 2 — Kasiski en IoC: de sleutellengte vinden',
+      content: `
+        <p>Het eerste onderschepte bericht staat hieronder in de <strong>Vigenère-werkbank</strong>. Werk de drie stappen af,
+        precies zoals een cryptanalist dat met pen en papier zou doen.</p>
+
+        <h3>Stap 1 — Kasiski: herhalingen zijn geen toeval</h3>
+        <p>Als hetzelfde stukje klare tekst (bijvoorbeeld <code>de</code> + spatie + <code>donderdag</code>) toevallig op twee
+        plekken onder dezelfde sleutelpositie valt, levert het <em>hetzelfde</em> stukje ciphertext op. De afstand tussen die
+        twee plekken is dan een veelvoud van de sleutellengte. Verzamel veel afstanden en kijk welke deler steeds terugkomt.</p>
+<pre><code>XWY op letterpositie 45 en 461       → afstand 416 = 2⁵ · 13     = 8 · 52   ("donderdag", twee keer)
+UWY op 179 en 323                    → afstand 144 = 2⁴ · 3²     = 8 · 18
+TLN op 38 en 118                     → afstand  80 = 2⁴ · 5      = 8 · 10
+MYT op 124, 214 en 382               → afstanden 90 en 168
+                                        168 = 8 · 21   ✓
+                                         90 = 2 · 3² · 5          ← toeval!</code></pre>
+        <p>Let op de laatste regel: niet elke herhaling is echt. Twee verschillende stukken klare tekst kunnen toevallig
+        dezelfde ciphertext opleveren. Daarom tel je <em>welke deler het vaakst</em> past, in plaats van blind de
+        grootste gemene deler van alles te nemen.</p>
+
+        <h3>Stap 2 — IoC per kolom</h3>
+        <p>Probeer elke sleutellengte L = 1, 2, 3, ... Splits de tekst in L kolommen en reken de gemiddelde IoC uit. Bij de
+        <em>juiste</em> L is elke kolom een Caesar-cijfer en springt de IoC naar taalniveau (≈ 0,08). Bij een verkeerde L blijft
+        hij rond de 0,04. Een veelvoud van de juiste lengte (2L, 3L) scoort ook hoog, want ook dan zit elke kolom onder één
+        sleutelletter. Kies dus de <strong>kleinste</strong> lengte die hoog scoort.</p>
+
+        <h3>Stap 3 — Friedman als controle</h3>
+        <p>De Friedman-test geeft een snelle schatting zonder kolommen te maken:</p>
+<pre><code>L ≈ (κ_taal − κ_willekeur) / (κ_tekst − κ_willekeur)
+  ≈ (0,080 − 0,0385) / (0,0428 − 0,0385)  ≈  9,7</code></pre>
+        <p>Dat is maar een <em>schatting</em> (de echte lengte blijkt 8): de formule gaat uit van een ideale, lange tekst.
+        Gebruik haar als richtingaanwijzer, niet als antwoord.</p>
+
+        <h3>Stap 4 — Het lezen</h3>
+        <p>Heb je de lengte, dan stelt de werkbank per kolom de beste verschuiving voor (zie taak 3 voor de wiskunde). Lees
+        de ontsleutelde tekst en beantwoord de vragen.</p>
+        <div class="callout tip"><strong>Tip:</strong> klik in stap 2 op een andere lengte om te zien hoe "net niet goed"
+        eruitziet. Bij L=4 is precies de helft van elke kolom goed: de IoC zit dan tussenin.</div>
+      `,
+      lab: { type: 'vigenere', text: MPV_CIPHER_1, lang: 'nl' },
+      questions: [
+        { q: 'Wat is de sleutellengte van bericht 1?', answer: '8', hint: 'Kleinste L met een IoC rond 0,08; vergelijk met de Kasiski-afstanden.', explain: 'L=8 geeft een gemiddelde IoC van ≈ 0,082; 16 scoort ook hoog, maar dat is een veelvoud.' },
+        { q: 'Wat is de sleutel van bericht 1?', answer: ['NACHTUIL', 'nachtuil'], hint: 'Lees de voorgestelde sleutel in stap 3.', explain: 'NACHTUIL — passend bij "De Nachtwacht".' },
+        { q: 'Op welke dag vindt de nieuwe drop plaats?', answer: ['donderdag'], hint: 'Lees de ontsleutelde tekst.', explain: 'Donderdag na middernacht, bij de oude loods aan het water.' },
+        { q: 'Welke vlag staat in de ontsleutelde tekst?', answer: ['NM{kasiski_breekt_vigenere}'], encoded: true, hint: 'Aan het eind: het nieuwe codewoord.', explain: 'Ook de letters van de vlag waren versleuteld; de accolades en underscores niet — een klassieke lek: leestekens verraden structuur.', xp: 25 },
+        { q: 'Waarom is de herhaling "MYT" met afstand 90 waarschijnlijk toeval?', options: ['90 is niet deelbaar door 8, terwijl bijna alle andere afstanden dat wel zijn', 'Omdat trigrammen nooit herhalen', 'Omdat 90 een priemgetal is', 'Omdat MYT geen Nederlands woord is'], answer: 0, explain: 'Een echte herhaling ligt op een veelvoud van de sleutellengte. 90 = 2·3²·5 past niet bij 8: twee verschillende klare teksten gaven toevallig dezelfde ciphertext.' },
+      ],
+    },
+    {
+      title: 'Taak 3 — Chi-kwadraat en het twijfelgeval',
+      content: `
+        <p>Een tweede bericht, van een ander lid van de cel. Hij vond een sleutel van 8 letters te kort en koos een veel
+        langere. Langere sleutel = minder letters per kolom = <strong>zwakkere statistiek</strong>. Hier ga je zien dat de
+        computer het niet altijd goed heeft, en dat jij als analist het laatste woord hebt.</p>
+
+        <h3>Hoe kies je per kolom de verschuiving?</h3>
+        <p>Elke kolom is een Caesar-cijfer. Je probeert alle 26 verschuivingen en vergelijkt de letterverdeling van de
+        uitkomst met de verwachte verdeling van het Nederlands. De maat daarvoor is de <strong>chi-kwadraat</strong>:</p>
+<pre><code>χ² = Σ (waargenomen_i − verwacht_i)² / verwacht_i      (over de 26 letters)</code></pre>
+        <p>Hoe kleiner χ², hoe beter de kolom op Nederlands lijkt. De werkbank toont per kolom de beste én de tweede keus,
+        met het verschil. Een klein verschil (minder dan ~15) betekent: <strong>de statistiek twijfelt</strong>.</p>
+
+        <h3>Waarom kan de beste χ² fout zijn?</h3>
+        <ul>
+          <li><strong>Te weinig letters per kolom.</strong> Met 565 letters en een sleutel van 13 heeft elke kolom ~43 letters.
+          Eén paar toevallige <code>a</code>'s of <code>n</code>'s kan de score omgooien.</li>
+          <li><strong>De verkeerde taalverdeling.</strong> Probeer de Engelse frequentietabel: soms vind je dan voor een
+          twijfelkolom wél de goede letter, omdat de Engelse verdeling minder op de <code>e</code> leunt.</li>
+          <li><strong>Vakjargon en namen.</strong> Een tekst vol "cryptowallets" en "witwasorganisatie" heeft een andere
+          verdeling dan een roman.</li>
+        </ul>
+
+        <h3>Taalgevoel als laatste stap</h3>
+        <p>De sleutel is bij mensen bijna altijd een <strong>woord of zin</strong>. Leest de voorgestelde sleutel als een woord
+        met één letter fout, dan weet je welke kolom je moet corrigeren. En de ontsleutelde tekst zelf helpt ook: staat er
+        overal "obhervatie" en "dotlwit", dan is precies één kolom één plek verschoven.</p>
+        <div class="callout info"><strong>Werkwijze:</strong> kies de lengte (Kasiski + IoC), lees de voorgestelde sleutel,
+        zoek de twijfelkolom, probeer de tweede keus, en controleer of de hele tekst nu vloeiend leest. Pas de sleutel aan in
+        het invoerveld; de tekst eronder werkt live mee.</div>
+      `,
+      lab: { type: 'vigenere', text: MPV_CIPHER_2, lang: 'nl' },
+      questions: [
+        { q: 'Wat is de sleutellengte van bericht 2?', answer: '13', hint: 'In stap 2 springt één lengte er duidelijk bovenuit.', explain: 'L=13 geeft een IoC van ≈ 0,085; alle andere lengtes blijven rond 0,043. Kasiski wijst ook op 13 (22 treffers).' },
+        { q: 'Wat is de volledige, juiste sleutel van bericht 2?', answer: ['SPIEGELPALEIS', 'spiegelpaleis'], hint: 'De automatische gok heeft één letter fout. Welke kolom twijfelt, en wat is daar de tweede keus?', explain: 'Met de Nederlandse tabel kiest kolom 2 een A (te veel a\'s in die kolom); de tweede keus P maakt er SPIEGELPALEIS van. Met de Engelse tabel komt hij direct goed uit — taal en tekstlengte maken uit.', xp: 25 },
+        { q: 'Wat zit er volgens de informant in de koffer? (twee woorden)', answer: ['harde schijven', 'harde schijf'], hint: 'Lees de ontsleutelde tekst na de correctie.', explain: 'Harde schijven met de administratie van de witwasorganisatie en de sleutels van de cryptowallets.' },
+        { q: 'Waarom is een langere Vigenère-sleutel moeilijker statistisch te kraken (bij dezelfde tekstlengte)?', options: ['Er zijn minder letters per kolom, dus de frequentieverdeling per kolom is onbetrouwbaarder', 'Omdat lange sleutels een andere wiskunde gebruiken', 'Omdat de IoC dan hoger wordt', 'Dat is niet zo: lengte maakt niet uit'], answer: 0, explain: 'Tekstlengte gedeeld door sleutellengte = letters per kolom. Hoe minder letters, hoe meer ruis in de telling. Bij sleutellengte = tekstlengte heb je... een one-time pad.' },
+      ],
+    },
+    {
+      title: 'Taak 4 — De many-time pad: als "onbreekbaar" toch breekt',
+      content: `
+        <p>De cel werd voorzichtiger en stapte over op een <strong>one-time pad</strong>: een willekeurige sleutelstroom die even
+        lang is als het bericht, ge-XORd met de klare tekst. Claude Shannon bewees in 1949 dat dit <em>perfect geheim</em> is.
+        Maar die garantie heeft drie voorwaarden: de sleutel is echt willekeurig, minstens zo lang als het bericht, en wordt
+        <strong>nooit hergebruikt</strong>. De cel gebruikte hetzelfde blok voor twee berichten.</p>
+
+        <h3>Waarom hergebruik fataal is</h3>
+<pre><code>C1 = P1 ⊕ K
+C2 = P2 ⊕ K
+C1 ⊕ C2 = P1 ⊕ K ⊕ P2 ⊕ K = P1 ⊕ P2       (want K ⊕ K = 0)</code></pre>
+        <p>De sleutel valt volledig weg. Wat overblijft is twee klare teksten over elkaar heen. Dat klinkt nog onleesbaar,
+        maar klare tekst heeft structuur: spaties, veelvoorkomende woorden, voorspelbare kopjes.</p>
+
+        <h3>Crib dragging</h3>
+        <p>Raad een woord dat waarschijnlijk in één van de berichten staat — een <strong>crib</strong>, zoals
+        <code>" de "</code>. XOR het op elke positie met <code>C1 ⊕ C2</code>. Staat de crib echt op die plek in P1, dan krijg
+        je op die plek een stuk van P2 te zien, en dat is leesbaar. Op alle andere plekken krijg je rommel.</p>
+        <ol>
+          <li>Begin met korte, veelvoorkomende cribs: <code>" de "</code>, <code>" het "</code>, <code>" van "</code>, <code>" een "</code>.</li>
+          <li>Een leesbaar fragment uit P2 kun je zelf <em>verlengen</em> (raad hoe het woord verder gaat) en weer als crib gebruiken.</li>
+          <li>Bekende formats zijn goud waard: een vlag begint met <code>NM{</code>, een wallet-adres met <code>bc1</code>.</li>
+          <li>Vul bij stap 2 je reconstructie van bericht 1 in; de lab toont direct het bijbehorende stuk van bericht 2 én de sleutelstroom.</li>
+        </ol>
+        <div class="callout tip"><strong>Startpunt:</strong> beide berichten beginnen met precies dezelfde drie bytes
+        (<code>35 a5 22</code>). Dan zijn de eerste drie tekens van beide berichten gelijk. Wat begint een Nederlandse zin vaak
+        mee? Probeer bericht 1 te beginnen met <code>de </code>.</div>
+
+        <h3>Dit gebeurde echt</h3>
+        <ul>
+          <li><strong>Venona (1943–1980):</strong> Sovjet-diplomaten hergebruikten one-time-padbladen onder oorlogsdruk.
+          Amerikaanse cryptanalisten ontcijferden daardoor duizenden berichten, onder meer over atoomspionage.</li>
+          <li><strong>WEP (wifi, 1999–2004):</strong> een IV van slechts 24 bits zorgde dat de RC4-sleutelstroom zich na enkele
+          duizenden pakketten herhaalde. WEP werd binnen minuten kraakbaar.</li>
+          <li><strong>AES-CTR en AES-GCM:</strong> dezelfde sleutel met dezelfde nonce = dezelfde sleutelstroom = many-time pad.
+          Bij GCM lekt nonce-hergebruik bovendien de authenticatiesleutel, zodat een aanvaller berichten kan vervalsen.</li>
+        </ul>
+      `,
+      lab: {
+        type: 'xorcrib',
+        title: 'twee berichten, één sleutelstroom',
+        scenario: 'Twee onderschepte berichten van De Nachtwacht (hex). Ze zijn met hetzelfde one-time-padblok ge-XORd. Reconstrueer beide.',
+        c1: MPV_MTP_1,
+        c2: MPV_MTP_2,
+        crib: ' de ',
+        start: 'de ',
+      },
+      questions: [
+        { q: 'Welke vlag staat aan het eind van bericht 1?', answer: ['NM{many_time_pad_lekt}'], encoded: true, hint: 'Sleep de crib "NM{" en zoek waar bericht 2 leesbaar wordt; of reconstrueer bericht 1 van voor naar achter.', explain: 'Bericht 1: "de betaling gaat morgen via de mixer naar wallet NM{many_time_pad_lekt}".', xp: 30 },
+        { q: 'Waar wacht de koerier volgens bericht 2? (drie woorden)', answer: ['de oude loods', 'oude loods', 'bij de oude loods'], hint: 'Hoe verder je bericht 1 reconstrueert, hoe meer je van bericht 2 ziet.', explain: 'Bericht 2: "de koerier wacht vanavond bij de oude loods aan het water met de kaarten".' },
+        { q: 'Waarom valt bij hergebruik de sleutel weg?', options: ['Omdat K ⊕ K = 0', 'Omdat XOR omkeerbaar is met elke sleutel', 'Omdat de berichten even lang zijn', 'Omdat het een zwakke random-generator is'], answer: 0, explain: 'XOR met jezelf geeft nul. C1 ⊕ C2 = P1 ⊕ P2 ⊕ (K ⊕ K) = P1 ⊕ P2.' },
+        { q: 'Welke moderne fout is wiskundig hetzelfde als een many-time pad?', options: ['Twee berichten versleutelen met AES-GCM onder dezelfde sleutel én dezelfde nonce', 'Een wachtwoord hashen met bcrypt', 'Een TLS-certificaat hergebruiken op twee domeinen', 'AES-256 in plaats van AES-128 gebruiken'], answer: 0, explain: 'CTR/GCM maakt een sleutelstroom uit (sleutel, nonce, teller). Zelfde sleutel + zelfde nonce = zelfde sleutelstroom.' },
+      ],
+    },
+    {
+      title: 'Taak 5 — Van museumstuk naar malware: repeating-key XOR',
+      content: `
+        <p>Denk je dat Vigenère alleen in een museum hoort? Malware-analisten komen zijn digitale neef dagelijks tegen:
+        <strong>repeating-key XOR</strong>. Malware versleutelt haar configuratie (C2-adressen, campagne-ID, encryptiesleutels)
+        vaak met een korte sleutel die zich herhaalt. Dat is Vigenère op bytes in plaats van letters, en het breekt op
+        precies dezelfde manier.</p>
+
+        <h3>Stap 1 — Sleutellengte via de Hammingafstand</h3>
+        <p>Bij letters gebruikten we de IoC. Bij bytes werkt de <strong>genormaliseerde Hammingafstand</strong> goed: neem voor
+        elke kandidaat-lengte L een aantal blokken van L bytes en tel hoeveel <em>bits</em> opeenvolgende blokken verschillen,
+        gedeeld door L. Bij de juiste L wordt de sleutel weg-ge-XORd en vergelijk je twee stukken klare tekst; die lijken in
+        bits meer op elkaar dan willekeurige bytes. De laagste afstand wint.</p>
+<pre><code>hamming("this is a test", "wokka wokka!!!") = 37   ← het bekende testgeval van Cryptopals</code></pre>
+
+        <h3>Stap 2 — Transponeren en per byte kraken</h3>
+        <p>Zet alle bytes 1, 1+L, 1+2L, ... in één blok: dat is een <strong>single-byte XOR</strong>. Probeer alle 256
+        sleutels en scoor de uitkomst op leesbaarheid (letters, spaties, bekende woorden). Doe dat voor elk van de L blokken
+        en je hebt de sleutel. In de Cijfer-kraker van de Gereedschapskist zit precies die single-byte-brute-force.</p>
+
+        <h3>Stap 3 — Known plaintext maakt het nóg makkelijker</h3>
+        <p>Malwareconfiguraties hebben voorspelbare stukken: <code>http://</code>, <code>.exe</code>, <code>User-Agent:</code>,
+        nul-bytes als opvulling. Weet je dat ergens <code>http://</code> staat, dan is <code>C ⊕ "http://"</code> direct
+        zeven bytes van de sleutel. Een XOR met <code>0x00</code> levert zelfs de sleutel letterlijk op: bij opvulling met
+        nullen "lekt" de sleutel in het bestand, wat je in een hex-viewer kunt zien als een zich herhalend patroon.</p>
+
+        <h3>De lessen voor verdedigers</h3>
+        <table>
+          <thead><tr><th>Fout</th><th>Moderne vorm</th><th>Goede praktijk</th></tr></thead>
+          <tbody>
+            <tr><td>Korte, herhalende sleutel</td><td>Repeating-key XOR in configs en "eigen crypto"</td><td>Gebruik een bewezen AEAD (AES-GCM, ChaCha20-Poly1305)</td></tr>
+            <tr><td>Sleutel(stroom) hergebruiken</td><td>Nonce-hergebruik bij CTR/GCM</td><td>Unieke nonce per bericht, of een nonce-misuse-resistente modus (AES-GCM-SIV)</td></tr>
+            <tr><td>Structuur lekt</td><td>Leestekens, opvulling, vaste headers</td><td>Versleutel alles, gebruik padding-veilige formaten</td></tr>
+            <tr><td>Geheimhouding van het algoritme</td><td>"Niemand kent onze methode"</td><td>Kerckhoffs: alleen de sleutel mag geheim zijn</td></tr>
+          </tbody>
+        </table>
+        <div class="callout info"><strong>Principe van Kerckhoffs (1883):</strong> een systeem moet veilig blijven, ook als
+        de vijand alles weet behalve de sleutel. De Nachtwacht dacht dat een oud cijfer veilig was omdat "niemand dat meer
+        gebruikt". Obscuriteit is geen beveiliging.</div>
+      `,
+      questions: [
+        { q: 'Wat is de Hammingafstand tussen "this is a test" en "wokka wokka!!!" (in bits)?', answer: '37', hint: 'Staat in de tekst, of tel de verschillende bits na een XOR.', explain: '37 bits verschillen: het klassieke controlegetal uit Cryptopals set 1.' },
+        { q: 'Een malwareconfig is ge-XORd met een herhalende sleutel en opgevuld met nul-bytes. Wat zie je in de opvulling?', options: ['De sleutel zelf, herhaald (want x ⊕ 0 = x)', 'Alleen nullen', 'Willekeurige bytes', 'De klare tekst'], answer: 0, explain: 'XOR met 0x00 laat de sleutelbyte ongewijzigd: de opvulling bevat de sleutel letterlijk.' },
+        { q: 'Welk principe zegt dat alleen de sleutel geheim hoeft te zijn, niet het algoritme?', answer: ['Kerckhoffs', 'principe van Kerckhoffs', 'kerckhoffs principe'], hint: 'Nederlandse taalkundige en cryptograaf, 1883.', explain: 'Auguste Kerckhoffs (1883), geboren in Nuth (Limburg).' },
+        { q: 'Na het transponeren op sleutellengte L: welk probleem moet je per blok oplossen?', options: ['Een single-byte XOR (256 mogelijkheden)', 'Een volledige AES-sleutel raden', 'Een hash kraken', 'Een priemfactorisatie'], answer: 0, explain: 'Elk blok is met één sleutelbyte ge-XORd: 256 kandidaten, scoor op leesbaarheid.' },
       ],
     },
   ],

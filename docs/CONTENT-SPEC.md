@@ -10,7 +10,7 @@ laadt de bestanden als gewone `<script>`-tags, zodat het ook werkt door `index.h
 /* Room: Netwerken — de basis */
 CS.registerRoom({
   id: 'netwerken-basis',            // gelijk aan de bestandsnaam, kebab-case
-  path: 'fundamenten',              // 'fundamenten' | 'security-kern' | 'offensief' | 'defensief' | 'forensie' | 'intelligence' | 'datastromen' | 'puzzels' | 'eindopdracht'
+  path: 'fundamenten',              // 'fundamenten' | 'security-kern' | 'offensief' | 'defensief' | 'forensie' | 'intelligence' | 'datastromen' | 'puzzels' | 'meesterproeven' | 'eindopdracht'
   order: 2,                         // volgorde binnen het leerpad
   title: 'Netwerken: de basis',
   icon: '🌐',                       // optioneel; de interface toont het niet meer (een leerpad heeft een getekend teken, zie docs/adr/0001)
@@ -715,3 +715,40 @@ lab: {
 Lineaire reeks beslismomenten; bij elke keuze directe feedback (✓/✗) en daarna "Volgende". Telt goede keuzes; haalt de
 leerling ≥ `pass` (standaard = aantal stappen), dan verschijnt `flag`. Met een "Opnieuw"-knop. Reusable voor elke
 beslis-/onderhandelingsoefening.
+
+### `vigenere`: Vigenère kraken zonder sleutel
+
+```js
+lab: { type: 'vigenere', text: '<ciphertext>', lang: 'nl', maxLen: 16 }   // lang 'nl' (standaard) of 'en'
+```
+Drie stappen: **Kasiski** (herhaalde trigrammen, afstanden en de delers die het vaakst passen), **IoC per
+sleutellengte** (klikbaar; de kleinste lengte op taalniveau is de automatische gok) en **chi-kwadraat per kolom**
+(beste en tweede keus per sleutelletter, met een markering bij twijfel). De voorgestelde sleutel is aan te passen
+en de ontsleuteling werkt live mee. **Reken na met Node** dat de analyse op jouw tekst de bedoelde sleutel (of een
+bewust twijfelgeval) oplevert; zet `encoded: true` op een vlag die pas na ontsleutelen verschijnt.
+
+### `xorcrib`: many-time pad (crib dragging)
+
+```js
+lab: { type: 'xorcrib', title: '...', scenario: '<intro>', c1: '<hex>', c2: '<hex>', crib: ' de ', start: 'de ', ask: [ ... ] }
+```
+Toont C1, C2 en C1 ⊕ C2; de leerling sleept een crib langs alle posities (leesbare uitkomsten worden gemarkeerd) en
+reconstrueert bericht 1 in een tekstveld, waarna bericht 2 en de sleutelstroom live verschijnen.
+
+### `rsa`: RSA-werkbank (BigInt)
+
+```js
+lab: { type: 'rsa', n: '3233', e: '17', c: '2790', n2: '<optioneel>', p: '', q: '', ask: [ ... ] }
+```
+Aanvallen op n: proefdeling (tot 10⁶), Fermat (p ≈ q), Pollard-rho en, met `n2`, de GCD van twee moduli; plus de
+e-de-machtswortel van c bij kleine e zonder padding. Met p en q berekent het lab φ(n), d en m (als getal, hex en tekst).
+
+### `vm`: mini-assembler (reverse engineering)
+
+```js
+lab: { type: 'vm', title: '...', intro: '...', program: 'data doel: 0x4e, 0x4f\nlen a\n...\nok\nnee:\nfail', flag: 'NM{...}', hint: '...', maxSteps: 50000 }
+```
+Registers `a b c d i j`; instructies `mov add sub mul mod xor and or shl shr rol ror ld len size cmp je jne jl jg jle jge jmp nop ok fail`,
+labels als `naam:`, data als `data naam: 1, 0x2a, 'x', "tekst"`, en `ld r, in[i]` / `ld r, naam[i]`. De leerling voert
+uit of stapt door de code met registers en trace. Controleer met Node (`CS.vm.run(program, invoer).status === 'ok'`)
+dat jouw bedoelde invoer slaagt.

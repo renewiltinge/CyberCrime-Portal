@@ -22,6 +22,7 @@
     { id: 'intelligence',  title: 'Cyber-intelligence & opsporing', desc: 'Van fenomeen naar interventie: het cybercrime-ecosysteem, crime scripting, de intelligencecyclus, threat-intel-modellen, infrastructuur-OSINT & pivoting, en gestructureerde analyse tot een BLUF-product.' },
     { id: 'datastromen',   title: 'Datastromen volgen',        desc: 'Word expert in geld- en datastromen: volg witwasconstructies en structurering, betrap beaconing en exfiltratie in netwerkverkeer, en traceer de herkomst van een e-mail. De rode draad van cybercrime: het geld en de data.' },
     { id: 'puzzels',       title: 'Puzzels & uitdagingen',  desc: 'Leren door te doen: volg geld- en datastromen, ontmasker operators met OSINT, groepeer en reconstrueer, en los een grote cybercrime-CTF op. Alle oefening, veel plezier.' },
+    { id: 'meesterproeven', title: 'Meesterproeven (gevorderd)', desc: 'Voor wie de puzzels te makkelijk vond: zwaardere opgaven met meer achtergrond. Begin met cryptanalyse zonder sleutel: Vigenère kraken met Kasiski, IoC en chi-kwadraat, en een hergebruikt one-time pad openbreken.' },
     { id: 'eindopdracht',  title: 'Eindopdracht',           desc: 'Breng alles samen in een afsluitende mini-CTF. Bewijs aan jezelf wat je kunt.' },
   ];
 
@@ -108,6 +109,7 @@
     { id: 'analyst',     icon: 'path-intelligence', name: 'Intelligence-analist', desc: 'Alle Cyber-intelligence-rooms af', test: () => pathDone('intelligence') },
     { id: 'tracer',      icon: 'path-datastromen', name: 'Stromenvolger', desc: 'Alle Datastromen-rooms af', test: () => pathDone('datastromen') },
     { id: 'puzzler',     icon: 'path-puzzels', name: 'Puzzelmeester', desc: 'Alle Puzzels & uitdagingen af', test: () => pathDone('puzzels') },
+    { id: 'meester',     icon: 'path-meesterproeven', name: 'Meester', desc: 'Alle Meesterproeven af', test: () => pathDone('meesterproeven') },
     { id: 'arena10',     icon: 'practice', name: 'Scherpschutter', desc: 'Reeks van 10 in de Oefenarena', test: () => (STATE.bestStreak || 0) >= 10 },
     { id: 'hacker10',    icon: 'seal', name: 'Doorzetter', desc: '10 rooms afgerond', test: () => ROOMS.filter(roomDone).length >= 10 },
     { id: 'flaghunter',  icon: 'flag', name: 'Vlaggenjager', desc: '15 vlaggen gevonden', test: () => (STATE.flags || 0) >= 15 },
@@ -1129,6 +1131,10 @@
     { type: 'cipher', name: 'Cijfer-kraker', desc: 'Caesar/ROT, XOR, Vigenère en Atbash ontcijferen.', cfg: { text: 'Kl nlolptl cshn pz QCA{jhlzhy_pz_thrrlspqr}' } },
     { type: 'multidecode', name: 'Multi-decoder', desc: 'Herkent en pelt lagen codering af (Base64/32, hex, binair, morse, ROT13, URL…).', cfg: { input: '536c5a55653231316248527058327868655756795832397266513d3d' } },
     { type: 'crackme', name: 'Crackme', desc: 'Reverse-engineering puzzel: lees de controle en vind de sleutel.', cfg: { title: 'demo', source: 'function check(key) {\n  // toegang als key, achterstevoren gelezen, "62oziuj" oplevert\n  return key.split("").reverse().join("") === "62oziuj";\n}', check: (k) => k.split('').reverse().join('') === '62oziuj', flag: 'NM{reverse_engineered}', hint: 'Draai de doelstring om: wat moet key dan zijn?' } },
+    { type: 'vigenere', name: 'Vigenère-werkbank', desc: 'Kraak Vigenère zonder sleutel: Kasiski, index of coincidence en chi-kwadraat per kolom.', cfg: { text: '' } },
+    { type: 'xorcrib', name: 'Many-time pad', desc: 'Twee berichten met dezelfde sleutelstroom: crib dragging en reconstructie.', cfg: { c1: '35 a5 22 64 d3 35 76 e9 e9 ed 18 2f', c2: '35 a5 22 6d d9 24 65 ec e5 f1 5f 78', crib: ' de ', start: 'de ' } },
+    { type: 'rsa', name: 'RSA-werkbank', desc: 'Reken RSA na met grote getallen: factoriseren, φ, d en ontsleutelen.', cfg: { n: '3233', e: '17', c: '2790' } },
+    { type: 'vm', name: 'Nachtwacht-VM', desc: 'Een mini-assembler: lees de code, stap erdoorheen en vind de invoer die "ok" bereikt.', cfg: { title: 'demo', program: 'data doel: 0x4e, 0x4f, 0x4d\nlen a\ncmp a, 3\njne nee\nmov i, 0\nlus:\nld b, in[i]\nxor b, 0x20\nld c, doel[i]\ncmp b, c\njne nee\nadd i, 1\ncmp i, 3\njl lus\nok\nnee:\nfail', hint: 'Elk teken wordt met 0x20 ge-XORd en moet dan gelijk zijn aan de data-tabel.' } },
     { type: 'rainbow', name: 'Rainbow table', desc: 'Zie waarom onvergezouten hashes direct op te zoeken zijn — en salt dat breekt.', cfg: { algo: 'md5', wordlist: ['welkom', 'zomer2024', 'admin', 'geheim', 'voetbal', 'wachtwoord', 'qwerty', 'liefde'], target: '371620aa75830b1388b63305b0d42f06', saltExample: { word: 'welkom', salt: 'Xy7' } } },
     { type: 'ach', name: 'ACH-matrix', desc: 'Concurrerende hypothesen afwegen door bewijs te scoren (C/I/N).', cfg: { question: 'Wie zit achter de ransomware-aanval op een fictief bedrijf?', hypotheses: ['Ontevreden insider', 'Georganiseerde crimineel (RaaS-affiliate)', 'Statelijke actor'], evidence: [{ text: 'Er is losgeld in crypto geëist', expert: ['I', 'C', 'I'] }, { text: 'Zeer gerichte spear-phishing vooraf' }, { text: 'Data gelekt op een bekende leksite' }, { text: 'Activiteit vooral tijdens kantooruren UTC+3' }] } },
     { type: 'crimescript', name: 'Crime script-builder', desc: 'Ontleed een delict in zes fasen met interventies per fase.', cfg: { scenario: 'Phishing-fraude met moneymules (fictief).' } },
