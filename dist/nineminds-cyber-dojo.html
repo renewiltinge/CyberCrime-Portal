@@ -2821,8 +2821,10 @@ hr { border: 0; border-top: 1px solid var(--border); margin: 24px 0; }
         }
         case 'head': case 'tail': {
           let n = 10; const ni = args.indexOf('-n'); if (ni >= 0 && args[ni + 1]) n = parseInt(args[ni + 1], 10) || 10;
+          // De waarde achter -n is geen bestandsnaam (anders faalt "... | tail -n 1" in een pipe).
+          const fileArgs = rest.filter((a) => !(ni >= 0 && a === args[ni + 1] && args.indexOf(a) === ni + 1));
           let text = stdin;
-          if (rest.length) { const r = readFile(rest[rest.length - 1]); if (r.err) return r; text = r.out; }
+          if (fileArgs.length) { const r = readFile(fileArgs[fileArgs.length - 1]); if (r.err) return r; text = r.out; }
           const lines = (text || '').replace(/\n$/, '').split('\n');
           return { out: (c === 'head' ? lines.slice(0, n) : lines.slice(-n)).join('\n') };
         }
@@ -30637,6 +30639,471 @@ CS.registerRoom({
         { q: 'Wat is in deze zaak het belangrijkste aangrijpingspunt voor de opsporing?', options: ['Het exchange-account, waar via KYC/Wwft een identiteit aan het spoor hangt', 'De mixer, die je offline kunt halen', 'De hop-wallets', 'De losgeldbrief'], answer: 0, explain: 'De cash-out bij de exchange koppelt het pseudonieme spoor aan een echte naam; daar grijp je aan met een vordering.' },
         { q: 'Hoe schrijf je de attributie in het eindproduct verantwoord?', options: ['Waarschijnlijk een professionele cash-out-dienst (afgeleid); een specifieke beheerder niet aan te wijzen (aanname vermijden)', 'Het is zeker persoon X', 'De mixer bepaalt de dader', 'Attributie laat je weg'], answer: 0, explain: 'Je benoemt de best passende hypothese met waarschijnlijkheidstaal en vermijdt de tool=actor-valkuil.' },
         { q: 'Welke slotvlag hoort bij het afronden van het BLUF-eindproduct?', answer: ['NM{cash_out_is_het_knelpunt}'], hint: 'Staat in de tip-callout van deze taak.', explain: 'De slotvlag is NM{cash_out_is_het_knelpunt}.' },
+      ],
+    },
+  ],
+});
+
+</script>
+<script>
+/* Room: Casus — de digitale nalatenschap (een cryptowallet terugvinden voor de erfgenamen) */
+
+// =======================================================================
+//  Alles in deze room is FICTIEF: de familie De Wit, de documenten, de
+//  herstelzin en de wallet zijn verzonnen. De herstelzin bestaat uit
+//  Nederlandse woorden om de puzzel leesbaar te houden; een echte zin
+//  bestaat uit 12 of 24 Engelse woorden uit de BIP39-lijst.
+// =======================================================================
+
+const MPN_GEDICHT = [
+  'in de haven ligt een oude boot',
+  'de wind waait over het grijze water',
+  'mijn vader bouwde hier zijn huis',
+  'elke ochtend zong de merel zacht',
+  'zomer kwam en bracht ons brood',
+  'de molen draaide naast de witte kerk',
+  'lantaarn licht op het natte plein',
+  'wij liepen samen tot de dijk',
+  'onder de linde stond een bank',
+  'het water bleef altijd even koud',
+  'zij zong een lied voor iedereen',
+  'dag en nacht keek ik naar de zee',
+].join('\n') + '\n';
+
+const MPN_FS = {
+  '/home/executeur/LEESMIJ.txt': 'Opdracht van mr. A. de Wit (executeur) aan het onderzoeksbureau, met schriftelijke toestemming van alle erfgenamen:\nHelp ons de bitcoin van mijn vader Henk de Wit (overleden 2 september 2026) terug te vinden.\nDe gescande documenten uit zijn bureau staan in de map nalatenschap/.\n',
+  '/home/executeur/nalatenschap/notitieboek_p14.txt': 'Voor als ik er niet meer ben.\nDe twaalf woorden staan in mijn lievelingsgedicht (het staat ingelijst in de gang).\nRegel.woord, in deze volgorde:\n\n6.2 7.1 1.3 4.5 8.6 5.6 9.3 2.2 6.7 5.1 11.4 10.6\n\nHet wachtwoord van de wallet-app: de naam van onze eerste hond met daarachter het jaar dat Riet en ik trouwden.\n',
+  '/home/executeur/nalatenschap/notitieboek_p09.txt': 'DOORGESTREEPT (oude wallet, leeg gemaakt in 2021, niet meer gebruiken):\n2.1 3.3 1.1 9.9 4.2 5.5 12.1 7.7 8.8 11.1 6.6 10.10\n',
+  '/home/executeur/nalatenschap/gedicht_gang.txt': MPN_GEDICHT,
+  '/home/executeur/nalatenschap/trouwkaart.txt': 'Henk de Wit en Riet Jansen\ngeven elkaar het ja-woord op vrijdag 14 mei 1971\nin het gemeentehuis van Zeeweide.\n',
+  '/home/executeur/nalatenschap/dierenarts_1974.txt': 'Dierenkliniek Zeeweide — rekening 1974\nPatiënt: Bello (hond, kruising) — eigenaar: H. de Wit\nEnting en controle: f 35,-\n',
+  '/home/executeur/nalatenschap/fotoalbum_index.txt': 'Fotoalbum (index, geschreven door Riet)\n1972 — Henk op de boot van zijn vader\n1975 — Bello in de sneeuw\n1988 — Max, onze tweede hond, als pup\n1998 — kerst met Max en de kleinkinderen\n2021 — Henk koopt zijn eerste bitcoin ("voor de kleinkinderen")\n',
+  '/home/executeur/nalatenschap/brief_cryptoherstel.txt': 'Van: support@wallet-herstel-snel.example\nGeachte erfgenaam, wij kunnen uw wallet binnen 24 uur herstellen.\nStuur ons de twaalf woorden en wij doen de rest. Kosten: slechts 5% van het saldo.\n',
+};
+
+CS.registerRoom({
+  id: 'casus-digitale-nalatenschap',
+  path: 'puzzels',
+  order: 9,
+  title: 'Casus: de digitale nalatenschap',
+  icon: '🗝️',
+  difficulty: 'Moeilijk',
+  minutes: 75,
+  summary: 'Opa Henk liet bitcoin na "voor de kleinkinderen", maar niemand weet waar de sleutels zijn. In opdracht van de executeur zoek je in zijn papieren de herstelzin (verstopt in een gedicht), reconstrueer je het wachtwoord van de wallet-app uit familiedocumenten, en zorg je dat de erfenis veilig en rechtmatig bij de erfgenamen komt — zonder in de val van een "herstelbedrijf" te lopen.',
+  objectives: [
+    'Uitleggen wie mag zoeken naar de digitale bezittingen van een overledene (executeur, verklaring van erfrecht, toestemming)',
+    'Begrijpen wat een herstelzin (seed phrase) is en waarom wie hem kent de volledige controle over de wallet heeft',
+    'Een herstelzin reconstrueren uit een boekcijfer met terminalcommando\'s (head, tail, cut)',
+    'Een wachtwoord afleiden uit persoonlijke documenten en daarbij afleiders herkennen',
+    'Oplichting rond cryptoherstel herkennen en de erfenis veilig en gedocumenteerd overdragen',
+  ],
+  terms: [
+    { term: 'Executeur', def: 'De persoon die in een testament is aangewezen om de nalatenschap af te wikkelen. Kan namens de erfgenamen handelen.' },
+    { term: 'Verklaring van erfrecht', def: 'Een notariële akte die vastlegt wie de erfgenamen zijn en wie bevoegd is de nalatenschap af te wikkelen. Banken en beurzen vragen erom.' },
+    { term: 'Herstelzin (seed phrase)', def: 'Een reeks van meestal 12 of 24 woorden (BIP39) waaruit alle sleutels van een wallet worden afgeleid. Wie de zin kent, kan over het geld beschikken.' },
+    { term: 'Self-custody', def: 'Je bewaart de sleutels van je crypto zelf (bijv. met een hardware wallet), in plaats van bij een beurs. Bij overlijden is er dan geen bedrijf dat kan helpen.' },
+    { term: 'Boekcijfer', def: 'Een geheimschrift waarbij getallen verwijzen naar woorden in een afgesproken tekst (bijv. regel en woord). Zonder de juiste tekst zijn de getallen betekenisloos.' },
+    { term: 'Wachtwoord van de wallet-app', def: 'Beschermt de wallet op één apparaat. Het is iets anders dan de herstelzin: met de zin kun je de wallet altijd op een nieuw apparaat terughalen.' },
+    { term: 'Herstelzwendel', def: 'Oplichting waarbij "herstelbedrijven" erfgenamen of slachtoffers vragen om de herstelzin, om daarna het geld te stelen.' },
+  ],
+  resources: [
+    { title: 'Rijksoverheid — erven en de verklaring van erfrecht', url: 'https://www.rijksoverheid.nl/onderwerpen/erfrecht' },
+    { title: 'Fraudehelpdesk — crypto- en herstelfraude', url: 'https://www.fraudehelpdesk.nl/' },
+    { title: 'Bitcoin-wiki — BIP39 (herstelzinnen)', url: 'https://en.bitcoin.it/wiki/BIP_0039' },
+  ],
+  tasks: [
+    {
+      title: 'Taak 1 — De opdracht: wie mag hier zoeken?',
+      content: `
+        <p>Henk de Wit (fictief) overleed op 2 september 2026. Zijn dochter Anja is executeur. In zijn agenda staat: "2021 —
+        eerste bitcoin, voor de kleinkinderen". Er is geen account bij een beurs gevonden: Henk bewaarde zijn crypto zelf
+        (<em>self-custody</em>). Dan is er geen klantenservice die kan helpen. Zonder sleutels is het geld voorgoed onbereikbaar.</p>
+        <h3>Rechtmatig zoeken</h3>
+        <ul>
+          <li>De <strong>executeur</strong> (of de gezamenlijke erfgenamen) beheert de nalatenschap. De notaris legt dat vast in een
+          <strong>verklaring van erfrecht</strong>.</li>
+          <li>Een onderzoeker werkt alleen met een <strong>schriftelijke opdracht</strong> van wie daartoe bevoegd is, en legt vast wat
+          hij doet. Andermans wallet "terugvinden" zonder die bevoegdheid is gewoon diefstal.</li>
+          <li>De opbrengst valt in de nalatenschap. Voor de <strong>erfbelasting</strong> telt de waarde op de dag van overlijden,
+          ook bij crypto.</li>
+        </ul>
+        <h3>Wat zoek je precies?</h3>
+        <p>Een wallet-app heeft meestal twee geheimen:</p>
+        <table>
+          <thead><tr><th>Geheim</th><th>Wat het doet</th><th>Als je het kwijt bent</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Herstelzin</strong> (12 of 24 woorden)</td><td>Hieruit volgen alle sleutels; de wallet is er op elk apparaat mee terug te zetten</td><td>Geld onbereikbaar (als het apparaat ook weg is)</td></tr>
+            <tr><td><strong>Wachtwoord of pincode van de app</strong></td><td>Beschermt de wallet op één telefoon of computer</td><td>Met de herstelzin kun je opnieuw beginnen</td></tr>
+          </tbody>
+        </table>
+        <div class="callout warn"><strong>Gouden regel:</strong> een herstelzin typ je nooit in op een website en stuur je nooit
+        naar iemand. Wie hem kent, kan het geld wegsluizen, en een transactie op de blockchain is niet terug te draaien.</div>
+      `,
+      questions: [
+        { q: 'Welke notariële akte legt vast wie de erfgenamen zijn en wie de nalatenschap mag afwikkelen?', answer: ['verklaring van erfrecht', 'een verklaring van erfrecht', 'de verklaring van erfrecht'], hint: 'Staat in de tekst.', explain: 'Beurzen en banken vragen om deze verklaring voordat ze iets vrijgeven.' },
+        { q: 'Henk bewaarde zijn crypto zelf. Wat betekent dat voor de erfgenamen?', options: ['Er is geen bedrijf dat kan helpen: zonder de sleutels is het geld onbereikbaar', 'De beurs stuurt de sleutels naar de notaris', 'De bank kan het geld terughalen', 'Het geld gaat automatisch naar de partner'], answer: 0, explain: 'Bij self-custody bestaan de sleutels alleen bij de eigenaar.' },
+        { q: 'Welke waarde telt voor de erfbelasting?', options: ['De waarde op de dag van overlijden', 'De aankoopprijs uit 2021', 'De waarde op het moment van verkopen', 'Crypto telt niet mee'], answer: 0, explain: 'De waarde in het economisch verkeer op de overlijdensdatum.' },
+      ],
+    },
+    {
+      title: 'Taak 2 — Het gedicht in de gang',
+      content: `
+        <p>In het bureau van Henk liggen gescande pagina's van zijn notitieboek. Op pagina 14 staat een reeks getallen en een
+        verwijzing naar zijn "lievelingsgedicht", dat ingelijst in de gang hangt. Dat is een <strong>boekcijfer</strong>: elk getal
+        <code>regel.woord</code> wijst één woord aan. Veel mensen verstoppen hun herstelzin zo: het briefje alleen is waardeloos
+        voor een inbreker, maar de familie kan het oplossen.</p>
+        <h3>Met de terminal</h3>
+        <p>Je kunt het met de hand tellen, maar een onderzoeker werkt reproduceerbaar. Zo haal je regel 6, woord 2 op:</p>
+<pre><code>head -n 6 gedicht_gang.txt | tail -n 1 | cut -d ' ' -f 2</code></pre>
+        <p><code>head -n 6</code> geeft de eerste zes regels, <code>tail -n 1</code> daarvan de laatste (regel 6), en
+        <code>cut -d ' ' -f 2</code> knipt op spaties en pakt het tweede woord.</p>
+        <div class="callout tip"><strong>Let op afleiders:</strong> er staan twee reeksen getallen in de map. Lees welke reeks
+        geldig is voordat je begint. Begin met <code>ls</code> en <code>cat notitieboek_p14.txt</code>.</div>
+        <div class="callout info"><strong>In het echt</strong> bestaat een herstelzin uit Engelse woorden uit de BIP39-lijst van
+        2048 woorden, en het laatste woord bevat een controlegetal (checksum). Een fout woord of een verkeerde volgorde valt dus
+        meestal direct op. In deze oefening zijn het Nederlandse woorden.</div>
+      `,
+      lab: {
+        type: 'terminal',
+        user: 'onderzoeker', host: 'bureau-wit',
+        home: '/home/executeur', cwd: '/home/executeur/nalatenschap',
+        motd: 'Onderzoekswerkstation (kopie van de gescande documenten, alleen lezen). Begin met: ls',
+        fs: MPN_FS,
+      },
+      questions: [
+        { q: 'Welke reeks getallen is de geldige (van welke notitieboekpagina)?', options: ['Pagina 14', 'Pagina 9', 'Allebei', 'Geen van beide'], answer: 0, explain: 'Pagina 9 is doorgestreept: een oude, lege wallet.' },
+        { q: 'Wat is het eerste woord van de herstelzin? (regel 6, woord 2)', answer: ['molen'], hint: 'head -n 6 gedicht_gang.txt | tail -n 1 | cut -d \' \' -f 2', explain: 'Regel 6: "de molen draaide naast de witte kerk" — woord 2 is "molen".' },
+        { q: 'Wat is het zevende woord van de herstelzin? (regel 9, woord 3)', answer: ['linde'], hint: 'Regel 9 is "onder de linde stond een bank".', explain: 'Het zevende getal is 9.3: "linde".' },
+        { q: 'Wat is het laatste (twaalfde) woord van de herstelzin?', answer: ['koud'], hint: 'Het laatste getal is 10.6.', explain: 'Regel 10, woord 6: "koud". De hele zin: molen lantaarn haven merel dijk brood linde wind kerk zomer lied koud.' },
+      ],
+    },
+    {
+      title: 'Taak 3 — Het wachtwoord van de wallet-app',
+      content: `
+        <p>Henks oude laptop staat nog aan, met de wallet-app erop. De app vraagt om een wachtwoord. Op pagina 14 schreef hij:
+        "de naam van onze eerste hond met daarachter het jaar dat Riet en ik trouwden".</p>
+        <p>Met de herstelzin uit taak 2 zou je de wallet ook op een nieuw apparaat kunnen terugzetten. Maar op de laptop staan
+        ook notities en transactielabels die de erfgenamen graag willen zien, en het openen ervan laat zien dat de herstelzin
+        bij precies deze wallet hoort. Je zoekt dus allebei.</p>
+        <h3>Persoonlijke documenten als bron</h3>
+        <p>Dit is de omgekeerde kant van wat je bij wachtwoordbeveiliging leert: wachtwoorden die bestaan uit namen van
+        huisdieren en jaartallen zijn makkelijk te raden voor wie de persoon kent. Hier helpt dat de erfgenamen. Maar let op:
+        er zijn twee honden en meerdere jaartallen. Welke combinatie past precies bij de aanwijzing?</p>
+      `,
+      lab: {
+        type: 'osintpuzzle',
+        scenario: 'Drie documenten uit het bureau van Henk. Welke hond was de eerste, en in welk jaar trouwden Henk en Riet?',
+        records: [
+          { title: 'Trouwkaart', icon: '💌', lines: ['Henk de Wit en Riet Jansen', 'geven elkaar het ja-woord op vrijdag 14 mei 1971', 'in het gemeentehuis van Zeeweide'] },
+          { title: 'Rekening dierenarts (1974)', icon: '🐕', lines: ['Patiënt: Bello (hond, kruising)', 'Eigenaar: H. de Wit', 'Enting en controle'] },
+          { title: 'Fotoalbum (index)', icon: '📷', lines: ['1975 — Bello in de sneeuw', '1988 — Max, onze tweede hond, als pup', '1998 — kerst met Max en de kleinkinderen'] },
+        ],
+        ask: [
+          { q: 'Hoe heette de eerste hond?', answer: ['Bello'], hint: 'Max wordt "onze tweede hond" genoemd.' },
+          { q: 'In welk jaar trouwden Henk en Riet?', answer: ['1971'], hint: 'De trouwkaart.' },
+        ],
+      },
+      questions: [
+        { q: 'Wat is het wachtwoord van de wallet-app?', answer: ['Bello1971'], hint: 'Naam van de eerste hond, direct gevolgd door het trouwjaar.', explain: 'Bello1971. Max (1988) en 1998 zijn afleiders.' },
+        { q: 'Waarom is zo\'n wachtwoord in het algemeen geen goed idee?', options: ['Iedereen die de persoon of zijn sociale media kent, kan het raden', 'Omdat cijfers niet mogen', 'Omdat het te lang is', 'Dat is wel een goed idee'], answer: 0, explain: 'Persoonlijke feiten zijn vaak openbaar of bekend in de kring rond iemand.' },
+      ],
+    },
+    {
+      title: 'Taak 4 — De wallet openen',
+      content: `
+        <p>Voer het wachtwoord in. De app laat zien dat de wallet bij de gevonden herstelzin hoort, en toont het saldo en de
+        notities van Henk.</p>
+        <p>Waarom kan de app het wachtwoord niet zomaar "terugrekenen"? Een goede wallet bewaart het wachtwoord niet, maar
+        leidt er met een bewust trage functie (zoals PBKDF2 of scrypt) een sleutel uit af. Daarmee wordt het versleutelde
+        walletbestand geopend. Raden met miljoenen pogingen kost daardoor heel veel tijd; raden met de juiste aanwijzingen
+        kost één poging.</p>
+      `,
+      lab: {
+        type: 'crackme',
+        title: 'Wallet-app van Henk',
+        intro: 'De app vraagt om het wachtwoord om het lokale walletbestand te openen.',
+        source: 'function ontgrendel(wachtwoord) {\n  // De app bewaart het wachtwoord niet. Met een trage afleidfunctie maakt hij er een sleutel van\n  // en probeert daarmee het versleutelde walletbestand te openen.\n  const sleutel = scrypt(wachtwoord, walletBestand.salt, { N: 32768, r: 8, p: 1 });\n  return probeerTeOntsleutelen(walletBestand.data, sleutel);\n}',
+        check: (pw) => pw === 'Bello1971',
+        flag: 'NM{nalatenschap_veilig_geopend}',
+        reveal: 'Wallet geopend. Saldo: 0,8 BTC. Notitie van Henk: "Voor de kleinkinderen, eerlijk verdelen. Vraag hulp aan Anja."',
+        hint: 'Hoofdletter B, daarna het trouwjaar zonder spatie.',
+      },
+      questions: [
+        { q: 'Welke vlag toont de geopende wallet?', answer: ['NM{nalatenschap_veilig_geopend}'], encoded: true, hint: 'Gebruik het wachtwoord uit taak 3.', explain: 'De wallet is open en de herstelzin is bevestigd.', xp: 25 },
+        { q: 'Waarom gebruikt een wallet een bewust trage afleidfunctie (zoals scrypt) voor het wachtwoord?', options: ['Zodat raden met miljoenen pogingen heel lang duurt', 'Zodat de app sneller opstart', 'Omdat snelle functies niet bestaan', 'Om het wachtwoord op te slaan'], answer: 0, explain: 'Elke poging kost bewust veel rekenwerk; voor één juiste poging maakt dat niet uit.' },
+      ],
+    },
+    {
+      title: 'Taak 5 — Veilig afronden, en de brief van het "herstelbedrijf"',
+      content: `
+        <p>In de map zat ook een brief van een bedrijf dat aanbiedt de wallet "binnen 24 uur te herstellen" als je de twaalf
+        woorden opstuurt. Lees hem met <code>cat brief_cryptoherstel.txt</code> in het lab van taak 2. Dit is een klassieke
+        <strong>herstelzwendel</strong>: wie de zin heeft, heeft het geld. Erfgenamen en slachtoffers van eerdere oplichting zijn
+        een geliefd doelwit.</p>
+        <h3>Zo rond je het af</h3>
+        <ol>
+          <li><strong>Leg alles vast</strong>: welke documenten, welke stappen, wie aanwezig was, het saldo en het tijdstip.</li>
+          <li><strong>Maak een nieuwe wallet</strong> voor de nalatenschap (met een nieuwe herstelzin) en zet het saldo daarheen,
+          met de executeur erbij. De oude zin is immers gezien door meerdere mensen en staat op papier.</li>
+          <li><strong>Verdeel volgens de verklaring van erfrecht</strong> of het testament, met hulp van de notaris.</li>
+          <li><strong>Vernietig of beveilig</strong> de oude briefjes en kopieën van de zin.</li>
+          <li><strong>Meld de oplichtingsbrief</strong> bij de Fraudehelpdesk.</li>
+        </ol>
+        <div class="callout tip"><strong>Voor je eigen nalatenschap:</strong> leg vast <em>dat</em> je crypto hebt en
+        <em>waar</em> de instructies liggen (bijvoorbeeld bij de notaris), zonder de zin zelf in een testament te zetten — een
+        testament wordt door meerdere mensen gelezen.</div>
+      `,
+      questions: [
+        { q: 'Wat doe je met het aanbod van wallet-herstel-snel.example?', options: ['Niets opsturen en het melden bij de Fraudehelpdesk', 'De twaalf woorden opsturen, 5% is redelijk', 'Alleen de eerste zes woorden opsturen', 'Het wachtwoord opsturen in plaats van de zin'], answer: 0, explain: 'Ook een deel van de zin delen is gevaarlijk; een betrouwbaar bedrijf vraagt nooit om je herstelzin.' },
+        { q: 'Waarom zet je het saldo over naar een nieuwe wallet?', options: ['Omdat de oude herstelzin door meerdere mensen is gezien en op papier staat', 'Omdat oude wallets verlopen', 'Om belasting te ontwijken', 'Dat is niet nodig'], answer: 0, explain: 'Wie de oude zin ooit zag of een kopie heeft, kan het geld anders wegsluizen.' },
+        { q: 'Ik begrijp dat ik alleen met een geldige opdracht van de executeur of de erfgenamen naar iemands wallet mag zoeken.', noAnswer: true },
+      ],
+    },
+  ],
+});
+
+</script>
+<script>
+/* Room: Casus — de kluis zonder beheerder (sleutels terugvinden in je eigen organisatie) */
+
+// =======================================================================
+//  Alles in deze room is FICTIEF: Kade Transport BV, de medewerkers, de
+//  sleutels en de aandelen zijn verzonnen. Je werkt in opdracht van de
+//  directie, aan de eigen systemen van de organisatie.
+// =======================================================================
+
+const MPK_TIMELINE = [
+  { t: '2024-11-02 15:40:10', src: 'Sleutelceremonie', host: 'SRV-ARCHIEF', user: 'j.kramer', desc: 'BitLocker opnieuw ingesteld; herstelsleutel {1B44E0D9-…} opgeslagen in AD' },
+  { t: '2024-11-04 10:00:00', src: 'Sleutelceremonie', host: '—', user: 'j.kramer', desc: 'Archiefsleutel (versie 2024) gesplitst in 5 aandelen, drempel 3 (Shamir)' },
+  { t: '2025-06-18 09:30:00', src: 'Wachtwoordmanager', host: '—', user: 'j.kramer', desc: 'Noodtoegang ingesteld; noodcontact: j.kramer@kade-transport.example (eigen tweede account)' },
+  { t: '2026-03-14 09:12:44', src: 'Sleutelceremonie', host: 'SRV-ARCHIEF', user: 'j.kramer', desc: 'Schijf vervangen; nieuwe BitLocker-herstelsleutel {7A3F91C2-…} opgeslagen in AD' },
+  { t: '2026-03-16 10:00:00', src: 'Sleutelceremonie', host: '—', user: 'j.kramer', desc: 'NIEUWE archiefsleutel (versie 2026) gesplitst in 5 aandelen, drempel 3 (Shamir), priemgetal p = 101; aandelen 1–5 uitgereikt aan directie en HR; aandelen 2024 vervallen' },
+  { t: '2026-03-16 10:05:00', src: 'Sleutelceremonie', host: '—', user: 'j.kramer', desc: 'Herstelbestand "archief-herstel.bin" versleuteld met XOR-sleutel "Kade" + herstelgeheim + "!" en in de kluis gelegd' },
+  { t: '2026-09-29 07:55:12', src: 'HR', host: '—', user: '—', desc: 'J. Kramer (enige beheerder) langdurig uitgevallen wegens ziekte; niet bereikbaar' },
+  { t: '2026-10-05 06:12:40', src: 'Monitoring', host: 'SRV-ARCHIEF', user: '—', desc: 'Moederbord vervangen na storing; server start op in het BitLocker-herstelscherm' },
+  { t: '2026-10-05 08:30:00', src: 'Directie', host: '—', user: 'm.dekker', desc: 'Schriftelijke opdracht aan het herstelteam: toegang tot SRV-ARCHIEF en het archief herstellen' },
+  { t: '2026-10-06 11:20:00', src: 'Kluis', host: '—', user: 'm.dekker', desc: 'Envelop "aandeel 3 (2024)" gevonden in de kluis; aandeel 3 (2026) van CFO-assistent zoekgeraakt' },
+];
+
+const MPK_PWSH = {
+  'Get-ADComputer SRV-ARCHIEF': 'DistinguishedName : CN=SRV-ARCHIEF,OU=Servers,DC=kade,DC=local\nDNSHostName       : srv-archief.kade.local\nEnabled           : True\nName              : SRV-ARCHIEF\nObjectClass       : computer',
+  'Get-ADObject -Filter "objectClass -eq \'msFVE-RecoveryInformation\'" -SearchBase "CN=SRV-ARCHIEF,OU=Servers,DC=kade,DC=local" -Properties msFVE-RecoveryPassword | Format-List Name,msFVE-RecoveryPassword':
+    'Name                   : 2024-11-02T15:40:10+01:00{1B44E0D9-2C6A-4F81-B0D3-7E95A1C2F604}\nmsFVE-RecoveryPassword : 505142-718531-429704-609884-322377-674278-483769-403513\n\nName                   : 2026-03-14T09:12:44+01:00{7A3F91C2-5E1B-4C2D-9F0A-3B8E6D1C4A77}\nmsFVE-RecoveryPassword : 585717-711007-181093-517638-504911-008404-208351-150018',
+  'Get-Content .\\notitie_kramer.txt': 'Gevonden in de bureaula van J. Kramer, handgeschreven:\n"Archief-BitLocker, voor noodgevallen:\n 585717-711007-181093-517638-504011-008404-208351-150018"',
+  'Get-ChildItem': '    Directory: C:\\Herstel\n\nMode   LastWriteTime        Length Name\n----   -------------        ------ ----\n-a---  06-10-2026  11:02      214  notitie_kramer.txt',
+  'dir': '    Directory: C:\\Herstel\n\nMode   LastWriteTime        Length Name\n----   -------------        ------ ----\n-a---  06-10-2026  11:02      214  notitie_kramer.txt',
+};
+
+// Het versleutelde herstelbestand (hex), ge-XORd met de sleutel uit het herstelgeheim.
+const MPK_HERSTEL_HEX = '03 24 36 36 63 76 6d 0f 2e 27 30 7a 76 6f 1f 41 25 37 74 7b 68 0e 27 49 2e 7b 66 68 18 6b 25 17 54 5b 48 2e 07 13 04 54 5b 55 3c 0e 0b 17 53 09 01 11 04 01 07 45 5a 44 38 4c 29 0a 45 54 44 25 4c 56 55 05 05 2b 1d 0d 05 02 0d 13 6f 06 1a 17 0d 56 5e 48 39 3e 00 17 5e 56 7e 3d 00 0a 3a 41 5a 4b 2d 1c 6e';
+
+CS.registerRoom({
+  id: 'casus-kluis-zonder-beheerder',
+  path: 'puzzels',
+  order: 10,
+  title: 'Casus: de kluis zonder beheerder',
+  icon: '🔐',
+  difficulty: 'Moeilijk',
+  minutes: 90,
+  summary: 'De enige beheerder van een transportbedrijf valt langdurig uit, en net dan start de archiefserver op in het BitLocker-herstelscherm. In opdracht van de directie zoek je de juiste herstelsleutel in Active Directory (en betrap je een overschrijffout in een briefje), reconstrueer je het herstelgeheim uit drie van de vijf Shamir-aandelen, ontsleutel je het herstelbestand en schrijf je de lessen op voor sleutelbeheer.',
+  objectives: [
+    'Uitleggen waarom één beheerder met alle sleutels een risico is (bus factor) en hoe sleutelbeheer dat opvangt',
+    'Een BitLocker-herstelsleutel opzoeken in Active Directory aan de hand van de sleutel-ID, en een sleutel controleren met de deelbaar-door-11-regel',
+    'Uitleggen hoe Shamir\'s Secret Sharing werkt en een geheim reconstrueren uit drie aandelen met Lagrange-interpolatie modulo een priemgetal',
+    'Een versleuteld herstelbestand openen met de afgeleide sleutel',
+    'Een verbeterplan voor sleutelbeheer opstellen: escrow, vier-ogenprincipe, versiebeheer van aandelen en herstelproeven',
+  ],
+  terms: [
+    { term: 'Bus factor', def: 'Het aantal mensen dat kan uitvallen voordat een organisatie vastloopt. Een bus factor van 1 betekent: één persoon weet alles.' },
+    { term: 'Key escrow', def: 'Het veilig in bewaring geven van (een kopie van) een sleutel, zodat de organisatie er bij nood bij kan.' },
+    { term: 'BitLocker-herstelsleutel', def: 'Een sleutel van 48 cijfers in 8 blokken van 6 waarmee een BitLocker-schijf te openen is als de normale ontgrendeling faalt. Elk blok is deelbaar door 11.' },
+    { term: 'Sleutel-ID', def: 'Een kenmerk (GUID) dat het herstelscherm toont, zodat je weet welke van de opgeslagen herstelsleutels bij deze schijf hoort.' },
+    { term: 'Shamir\'s Secret Sharing', def: 'Een methode (Adi Shamir, 1979) om een geheim te verdelen in n aandelen, waarvan er k nodig zijn om het terug te rekenen. Met minder dan k aandelen weet je niets over het geheim.' },
+    { term: 'Lagrange-interpolatie', def: 'De rekenmethode om uit k punten de unieke veelterm van graad k−1 terug te vinden; bij Shamir gebruik je hem om f(0), het geheim, te berekenen.' },
+    { term: 'Modulair rekenen', def: 'Rekenen met resten na deling door een getal p ("klokrekenen"). Delen door a betekent vermenigvuldigen met de inverse van a modulo p.' },
+    { term: 'Herstelproef', def: 'Een geplande oefening waarin je echt probeert te herstellen met de bewaarde sleutels en aandelen, om te bewijzen dat het werkt voordat het nodig is.' },
+  ],
+  resources: [
+    { title: 'Microsoft Learn — BitLocker-herstel: overzicht', url: 'https://learn.microsoft.com/windows/security/operating-system-security/data-protection/bitlocker/recovery-overview' },
+    { title: 'Wikipedia — Shamir\'s Secret Sharing', url: 'https://en.wikipedia.org/wiki/Shamir%27s_secret_sharing' },
+    { title: 'NCSC — informatiebeveiliging en continuïteit', url: 'https://www.ncsc.nl/' },
+  ],
+  tasks: [
+    {
+      title: 'Taak 1 — De situatie: één beheerder, alle sleutels',
+      content: `
+        <p><strong>Kade Transport BV</strong> (fictief) heeft één IT-beheerder: Joost Kramer. Hij is sinds eind september
+        langdurig ziek en niet bereikbaar. Op 5 oktober vervangt de leverancier het moederbord van de archiefserver
+        <code>SRV-ARCHIEF</code>. Bij het opstarten verschijnt het BitLocker-herstelscherm: de schijf herkent de nieuwe hardware
+        niet en vraagt om de herstelsleutel. Daarachter zit nog een versleuteld archief, waarvan de sleutel volgens Joost
+        "veilig bij de directie" ligt.</p>
+        <p>De directie geeft jou een <strong>schriftelijke opdracht</strong>: herstel de toegang. Het zijn de eigen systemen en
+        gegevens van het bedrijf; leg toch elke stap vast, want je komt aan gevoelige informatie.</p>
+        <h3>Lees de tijdlijn</h3>
+        <p>Joost was gelukkig een nette beheerder: in het logboek van zijn sleutelceremonies staat wat hij deed. Filter de
+        tijdlijn en zoek uit welke sleutels je nodig hebt, waar ze liggen en welke versie geldt.</p>
+        <div class="callout warn"><strong>Let op versies:</strong> een sleutel of aandeel uit een oude ceremonie lijkt
+        bruikbaar, maar levert het verkeerde resultaat. Noteer bij elk stuk uit welke ceremonie het komt.</div>
+      `,
+      lab: { type: 'timeline', title: 'Logboek sleutelbeheer — Kade Transport BV', events: MPK_TIMELINE },
+      questions: [
+        { q: 'Hoeveel aandelen zijn er nodig om de archiefsleutel (versie 2026) te reconstrueren?', answer: ['3', 'drie'], hint: 'De drempel uit de ceremonie van 16 maart 2026.', explain: 'Drie van de vijf (een 3-uit-5-schema).' },
+        { q: 'Welk priemgetal p is bij de ceremonie van 2026 gebruikt?', answer: ['101'], hint: 'Staat in dezelfde regel.', explain: 'Alle berekeningen gebeuren modulo 101.' },
+        { q: 'Waarom werkte de noodtoegang van de wachtwoordmanager niet?', options: ['Joost had zichzelf (een eigen tweede account) als noodcontact ingesteld', 'De wachtwoordmanager was verlopen', 'Noodtoegang bestaat niet', 'De directie had het wachtwoord veranderd'], answer: 0, explain: 'Een noodcontact moet iemand anders zijn: anders verdwijnt de toegang samen met de persoon.' },
+        { q: 'Welke gevonden envelop moet je NIET gebruiken?', options: ['Aandeel 3 (2024)', 'Aandeel 1 (2026)', 'Aandeel 2 (2026)', 'Aandeel 4 (2026)'], answer: 0, explain: 'De aandelen van 2024 zijn vervallen: ze horen bij een ander geheim en een andere veelterm.' },
+      ],
+    },
+    {
+      title: 'Taak 2 — De BitLocker-herstelsleutel',
+      content: `
+        <p>Het herstelscherm van SRV-ARCHIEF toont:</p>
+<pre><code>BitLocker-herstel
+Voer de herstelsleutel voor dit station in.
+Herstelsleutel-id (om de sleutel te identificeren): 7A3F91C2</code></pre>
+        <p>In een domein worden BitLocker-herstelsleutels vaak opgeslagen in Active Directory (of in Microsoft Entra ID), als
+        <code>msFVE-RecoveryInformation</code>-object onder het computerobject. De naam van zo'n object bevat de datum en de
+        sleutel-ID. Een server kan er meerdere hebben, bijvoorbeeld na een vervangen schijf. Je kiest de sleutel waarvan de ID
+        overeenkomt met het herstelscherm.</p>
+        <h3>Opzoeken in PowerShell</h3>
+        <p>Je werkt op een beheerwerkplek met de juiste rechten (gedelegeerd door de directie). Gebruik deze commando's:</p>
+<pre><code>Get-ADComputer SRV-ARCHIEF
+Get-ADObject -Filter "objectClass -eq 'msFVE-RecoveryInformation'" -SearchBase "CN=SRV-ARCHIEF,OU=Servers,DC=kade,DC=local" -Properties msFVE-RecoveryPassword | Format-List Name,msFVE-RecoveryPassword
+Get-ChildItem
+Get-Content .\\notitie_kramer.txt</code></pre>
+        <h3>De controleregel: deelbaar door 11</h3>
+        <p>Een BitLocker-herstelsleutel bestaat uit 8 blokken van 6 cijfers. Elk blok is een getal dat <strong>deelbaar is door
+        11</strong> (en kleiner dan 720.896). Zo vangt BitLocker typfouten op. Je kunt een overgeschreven sleutel dus zelf
+        controleren: deel elk blok door 11; komt er een rest uit, dan zit daar een fout.</p>
+        <div class="callout tip"><strong>Voorbeeld:</strong> 585717 / 11 = 53.247, precies. Probeer zelf het vijfde blok van
+        het briefje in de bureaula.</div>
+      `,
+      lab: { type: 'terminal', shell: 'powershell', user: 'herstel', host: 'BEHEER-01', cwd: 'C:\\Herstel', motd: 'Beheerwerkplek Kade Transport — sessie wordt gelogd (opdracht directie, 05-10-2026). Typ help voor hulp.', commands: MPK_PWSH },
+      questions: [
+        { q: 'Wat zijn de eerste zes cijfers van de juiste herstelsleutel voor ID 7A3F91C2?', answer: ['585717'], hint: 'Zoek het object waarvan de naam {7A3F91C2-…} bevat.', explain: 'De sleutel van 14 maart 2026: 585717-711007-…' },
+        { q: 'Welk blok (1–8) van het handgeschreven briefje bevat een fout?', answer: ['5', 'vijf', 'het vijfde'], hint: 'Vergelijk met AD, of deel elk blok door 11.', explain: 'Blok 5 is 504011 in plaats van 504911. 504011 / 11 = 45.819 rest 2: ongeldig.' },
+        { q: 'Waarom gebruik je de sleutel uit AD en niet die van het briefje?', options: ['AD is de bron die bij de sleutel-ID hoort; het briefje is overgeschreven en bevat een fout', 'Briefjes zijn nooit geldig', 'AD-sleutels zijn langer', 'Het briefje is van 2024'], answer: 0, explain: 'Werk met de primaire, gekoppelde bron, en controleer een kopie altijd.' },
+      ],
+    },
+    {
+      title: 'Taak 3 — Shamir: drie van de vijf aandelen',
+      content: `
+        <p>De server draait weer, maar het archief zelf is apart versleuteld. Joost verdeelde het <strong>herstelgeheim</strong>
+        met <strong>Shamir's Secret Sharing</strong>: vijf aandelen, waarvan er drie nodig zijn. Zo kan niemand alleen bij het
+        archief, en blijft het herstel mogelijk als één of twee mensen er niet zijn.</p>
+        <h3>Hoe het werkt</h3>
+        <p>Joost koos een veelterm van graad 2 (een parabool) met het geheim S als constante term, en rekende modulo het
+        priemgetal p = 101:</p>
+<pre><code>f(x) = S + a₁·x + a₂·x²   (mod 101)          aandeel i = (i, f(i))</code></pre>
+        <p>Door twee punten gaan oneindig veel parabolen, door drie punten precies één. Daarom zeggen twee aandelen niets over
+        S, en drie aandelen alles.</p>
+        <h3>De beschikbare aandelen (versie 2026)</h3>
+        <table>
+          <thead><tr><th>Aandeel</th><th>Houder</th><th>Waarde f(i)</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Directeur M. Dekker</td><td>96</td></tr>
+            <tr><td>2</td><td>CFO</td><td>34</td></tr>
+            <tr><td>3</td><td>Assistent CFO</td><td>zoekgeraakt (de envelop "aandeel 3 (2024)" is vervallen)</td></tr>
+            <tr><td>4</td><td>HR-manager</td><td>59</td></tr>
+            <tr><td>5</td><td>Commissaris</td><td>niet bereikbaar (buitenland)</td></tr>
+          </tbody>
+        </table>
+        <h3>Lagrange-interpolatie in f(0)</h3>
+        <p>Met de aandelen x = 1, 2 en 4 is het geheim S = f(0) = y₁·L₁ + y₂·L₂ + y₄·L₄, met:</p>
+<pre><code>L₁ = (0−2)(0−4) / ((1−2)(1−4)) = 8 / 3
+L₂ = (0−1)(0−4) / ((2−1)(2−4)) = 4 / −2 = −2
+L₄ = (0−1)(0−2) / ((4−1)(4−2)) = 2 / 6  = 1 / 3</code></pre>
+        <p>Delen bestaat modulo 101 niet zoals gewoon; je vermenigvuldigt met de <strong>inverse</strong>. De inverse van 3
+        modulo 101 is 34, want 3 × 34 = 102 = 1 (mod 101). Dus:</p>
+<pre><code>L₁ = 8 × 34 = 272 = 70   (mod 101)
+L₂ = −2              = 99   (mod 101)
+L₄ = 34
+
+S = 96 × 70 + 34 × 99 + 59 × 34   (mod 101)</code></pre>
+        <p>Reken het uit en neem de rest na deling door 101. Vul S in bij de herstelmodule hieronder.</p>
+        <div class="callout info"><strong>In het echt</strong> gebruik je een veel groter priemgetal (honderden bits) en
+        betrouwbare software, en verdeel je vaak de sleutel van een wachtwoordkluis of een hardware security module. Het
+        principe is precies hetzelfde.</div>
+      `,
+      lab: {
+        type: 'crackme',
+        title: 'Herstelmodule archiefkluis',
+        intro: 'De herstelmodule controleert het gereconstrueerde geheim tegen de hash die bij de ceremonie is vastgelegd.',
+        source: 'function controleer(geheim) {\n  // Bij de ceremonie is alleen een hash van het geheim opgeslagen, niet het geheim zelf.\n  return sha256("kade-2026:" + geheim) === CEREMONIE_HASH;\n}',
+        check: (k) => String(k).trim() === '73',
+        flag: 'NM{drie_aandelen_een_geheim}',
+        reveal: 'Herstelgeheim bevestigd. Het herstelbestand gebruikt de XOR-sleutel "Kade" + geheim + "!".',
+        hint: 'Bereken 96·70 + 34·99 + 59·34 en neem de rest na deling door 101.',
+      },
+      questions: [
+        { q: 'Wat is het herstelgeheim S?', answer: ['73'], hint: '6720 + 3366 + 2006 = 12092; 12092 mod 101 = ?', explain: '12092 = 119 × 101 + 73, dus S = 73.' },
+        { q: 'Welke vlag geeft de herstelmodule?', answer: ['NM{drie_aandelen_een_geheim}'], encoded: true, hint: 'Vul het juiste geheim in.', explain: 'Drie aandelen zijn genoeg om de parabool en dus f(0) vast te leggen.', xp: 25 },
+        { q: 'Wat weet iemand die maar twee aandelen heeft over het geheim?', options: ['Niets: bij elke waarde van S past een parabool door die twee punten', 'De helft van het geheim', 'Het geheim op 1 na', 'Alles'], answer: 0, explain: 'Dat is de kracht van Shamir: onder de drempel lekt er geen informatie.' },
+        { q: 'Wat is de inverse van 3 modulo 101?', answer: ['34'], hint: '3 × ? = 1 (mod 101).', explain: '3 × 34 = 102 = 1 (mod 101).' },
+      ],
+    },
+    {
+      title: 'Taak 4 — Het herstelbestand openen',
+      content: `
+        <p>In de kluis ligt <code>archief-herstel.bin</code>. Volgens het logboek is het versleuteld met de XOR-sleutel
+        <code>"Kade" + herstelgeheim + "!"</code>. Hieronder staat de inhoud als hex.</p>
+        <ol>
+          <li>Voeg in het lab de bewerking <strong>Hex decoderen</strong> toe.</li>
+          <li>Voeg daarna <strong>XOR (sleutel)</strong> toe en vul de sleutel in.</li>
+          <li>Lees het herstelwachtwoord van het archief en de vlag.</li>
+        </ol>
+        <div class="callout warn"><strong>Kanttekening:</strong> XOR met een korte, herhalende sleutel is geen sterke
+        versleuteling (zie de cryptanalyse-room in Meesterproeven). Het werkt hier omdat het bestand in een fysieke kluis ligt
+        en het geheim alleen met drie aandelen terug te rekenen is. Een beter ontwerp gebruikt een echte versleuteling met
+        authenticatie (bijvoorbeeld AES-GCM) en een sleutel die direct uit het herstelgeheim wordt afgeleid.</div>
+      `,
+      lab: { type: 'cyberchef', input: MPK_HERSTEL_HEX },
+      questions: [
+        { q: 'Wat is de volledige XOR-sleutel?', answer: ['Kade73!'], hint: '"Kade" + 73 + "!".', explain: 'Kade73!' },
+        { q: 'Wat is het archiefwachtwoord in het herstelbestand?', answer: ['Zeebries-Morgen-2026'], hint: 'Hex decoderen, daarna XOR met de sleutel.', explain: 'Het archief is weer te openen; Kade Transport heeft zijn data terug.' },
+        { q: 'Welke vlag staat in het herstelbestand?', answer: ['NM{shamir_drie_van_vijf}'], encoded: true, hint: 'Staat op de laatste regel van de ontsleutelde tekst.', explain: 'Drie van de vijf aandelen bleken genoeg.', xp: 25 },
+      ],
+    },
+    {
+      title: 'Taak 5 — Lessen voor sleutelbeheer',
+      content: `
+        <p>Het is goed afgelopen, maar het scheelde weinig: het noodcontact was de beheerder zelf, één aandeel was zoek, één
+        houder was onbereikbaar, en het briefje in de bureaula bevatte een fout. Met nog één tegenvaller was het archief
+        verloren geweest.</p>
+        <h3>Verbeterplan</h3>
+        <table>
+          <thead><tr><th>Probleem</th><th>Maatregel</th></tr></thead>
+          <tbody>
+            <tr><td>Bus factor van 1</td><td>Minstens twee mensen met beheerrechten, en een gedocumenteerde procedure die een ander kan volgen</td></tr>
+            <tr><td>Noodcontact = beheerder zelf</td><td>Noodtoegang naar een functie (bijv. directie), niet naar een persoon die zelf de beheerder is</td></tr>
+            <tr><td>Oude en nieuwe aandelen door elkaar</td><td>Versienummer en datum op elk aandeel; oude aandelen aantoonbaar vernietigen</td></tr>
+            <tr><td>Kopie met typfout</td><td>Sleutels niet overschrijven; uitprinten uit de bron en de controle (deelbaar door 11) toepassen</td></tr>
+            <tr><td>Nooit getest</td><td>Jaarlijkse <strong>herstelproef</strong>: echt herstellen met de bewaarde sleutels en aandelen</td></tr>
+            <tr><td>Houders niet bereikbaar</td><td>Aandelen spreiden over mensen die niet tegelijk weg zijn, en een vervangingsregeling vastleggen</td></tr>
+          </tbody>
+        </table>
+        <div class="callout info"><strong>Voor de NIS2/Cyberbeveiligingswet</strong> en voor ISO 27001 horen continuïteit,
+        back-ups en het beheer van cryptografische sleutels bij de basismaatregelen. Een herstelproef is daarvoor het beste
+        bewijs dat het werkt.</div>
+      `,
+      lab: {
+        type: 'ordering',
+        prompt: 'Zet de stappen van een goede jaarlijkse herstelproef op volgorde.',
+        items: [
+          { id: 'p', label: 'Plannen: doel, scope en wie de aandelen en sleutels meebrengt' },
+          { id: 'c', label: 'Controleren: zijn alle aandelen en sleutels van de juiste versie?' },
+          { id: 'h', label: 'Herstellen op een testomgeving met de bewaarde sleutels' },
+          { id: 'v', label: 'Verifiëren: is de data compleet en leesbaar?' },
+          { id: 'd', label: 'Documenteren: wat ging goed, wat niet, hoe lang duurde het?' },
+          { id: 'b', label: 'Bijwerken: procedure, houders en aandelen aanpassen waar nodig' },
+        ],
+        correct: ['p', 'c', 'h', 'v', 'd', 'b'],
+        flag: 'NM{herstelproef_elk_jaar}',
+        explain: 'Plannen, controleren, herstellen, verifiëren, documenteren en bijwerken.',
+      },
+      questions: [
+        { q: 'Welke vlag krijg je bij de juiste volgorde?', answer: ['NM{herstelproef_elk_jaar}'], encoded: true, hint: 'Van plannen tot bijwerken.', explain: 'Een herstel dat nooit geoefend is, is een hoop, geen plan.', xp: 20 },
+        { q: 'Wat had dit incident het meest voorkomen?', options: ['Een jaarlijkse herstelproef, die de fouten (noodcontact, zoekgeraakt aandeel, typfout) vooraf aan het licht had gebracht', 'Een langer wachtwoord', 'Een snellere server', 'Minder aandelen'], answer: 0, explain: 'Alle zwakke plekken waren bij een proef zichtbaar geworden.' },
+        { q: 'Hoe heet het risico dat alles afhangt van één persoon?', answer: ['bus factor', 'busfactor', 'bus factor van 1'], hint: 'Wat als die persoon onder de bus komt?', explain: 'Een bus factor van 1.' },
       ],
     },
   ],

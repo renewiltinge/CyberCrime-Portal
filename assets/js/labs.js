@@ -185,8 +185,10 @@
         }
         case 'head': case 'tail': {
           let n = 10; const ni = args.indexOf('-n'); if (ni >= 0 && args[ni + 1]) n = parseInt(args[ni + 1], 10) || 10;
+          // De waarde achter -n is geen bestandsnaam (anders faalt "... | tail -n 1" in een pipe).
+          const fileArgs = rest.filter((a) => !(ni >= 0 && a === args[ni + 1] && args.indexOf(a) === ni + 1));
           let text = stdin;
-          if (rest.length) { const r = readFile(rest[rest.length - 1]); if (r.err) return r; text = r.out; }
+          if (fileArgs.length) { const r = readFile(fileArgs[fileArgs.length - 1]); if (r.err) return r; text = r.out; }
           const lines = (text || '').replace(/\n$/, '').split('\n');
           return { out: (c === 'head' ? lines.slice(0, n) : lines.slice(-n)).join('\n') };
         }

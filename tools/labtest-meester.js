@@ -77,6 +77,45 @@ const url = 'file://' + path.join(__dirname, '..', 'index.html');
   ok('Bayes: dreigmail 15,97% na het IP-bewijs', /Hp \(P\.\) 15\.97%/.test(await bayesFinal('bewijs-in-de-rechtszaal', 'De dreigmail', [0])));
   ok('Bayes: dreigmail 91,94% na beide bewijsstukken', /Hp \(P\.\) 91\.94%/.test(await bayesFinal('bewijs-in-de-rechtszaal', 'De dreigmail', [0, 1])));
 
+  // Casussen met sleutels: terminal, PowerShell, crackme en CyberChef.
+  const term = async (sel, cmd) => {
+    const inp = await p.$(sel + ' .inrow input');
+    await inp.fill(cmd); await inp.press('Enter'); await p.waitForTimeout(120);
+    return p.$eval(sel + ' .lab', (e) => e.innerText);
+  };
+  const crack = async (sel, key) => {
+    await p.fill(sel + ' .ans-row input', key); await p.click(sel + ' button:has-text("Probeer")'); await p.waitForTimeout(80);
+    return text(sel + ' .lab-out');
+  };
+  const taskOf = (needle) => p.evaluate((n) => { const t = [...document.querySelectorAll('.task[id^="task-"]')].find((x) => x.querySelector('.lab') && x.textContent.includes(n)); return t ? t.id.slice(5) : -1; }, needle);
+
+  await p.goto(url + '#/room/casus-digitale-nalatenschap', { waitUntil: 'networkidle' });
+  await p.waitForSelector('.lab');
+  let ti = await taskOf('Het gedicht in de gang');
+  const woord = async (l, w) => { const lines = (await term('#task-' + ti, 'head -n ' + l + ' gedicht_gang.txt | tail -n 1 | cut -d \' \' -f ' + w)).trim().split('\n'); return lines[lines.length - 2].trim(); };
+  const zin = [];
+  for (const pos of '6.2 7.1 1.3 4.5 8.6 5.6 9.3 2.2 6.7 5.1 11.4 10.6'.split(' ')) { const [l, w] = pos.split('.'); zin.push(await woord(l, w)); }
+  ok('Nalatenschap: head/tail/cut levert de herstelzin', zin.join(' ') === 'molen lantaarn haven merel dijk brood linde wind kerk zomer lied koud');
+  ti = await taskOf('Wallet-app van Henk');
+  ok('Nalatenschap: Bello1971 opent de wallet', /NM\{nalatenschap_veilig_geopend\}/.test(await crack('#task-' + ti, 'Bello1971')));
+
+  await p.goto(url + '#/room/casus-kluis-zonder-beheerder', { waitUntil: 'networkidle' });
+  await p.waitForSelector('.lab');
+  ti = await taskOf('De BitLocker-herstelsleutel');
+  const ad = await term('#task-' + ti, 'Get-ADObject -Filter "objectClass -eq \'msFVE-RecoveryInformation\'" -SearchBase "CN=SRV-ARCHIEF,OU=Servers,DC=kade,DC=local" -Properties msFVE-RecoveryPassword | Format-List Name,msFVE-RecoveryPassword');
+  ok('Kluis: AD-opzoeking toont de sleutel bij ID 7A3F91C2', /\{7A3F91C2[^}]*\}\s*msFVE-RecoveryPassword : 585717-/.test(ad));
+  ok('Kluis: het briefje bevat het foute blok 504011', /504011/.test(await term('#task-' + ti, 'Get-Content .\\notitie_kramer.txt')));
+  ti = await taskOf('Herstelmodule archiefkluis');
+  ok('Kluis: herstelgeheim 73 wordt geaccepteerd', /NM\{drie_aandelen_een_geheim\}/.test(await crack('#task-' + ti, '73')));
+  ti = await taskOf('Het herstelbestand openen');
+  const chef = '#task-' + ti;
+  await p.click(chef + ' .chip:has-text("Hex decoderen")');
+  await p.click(chef + ' .chip:has-text("XOR (sleutel)")');
+  await p.fill(chef + ' input[value="key"]', 'Kade73!');
+  await p.waitForTimeout(120);
+  const plain = await text(chef + ' .lab');
+  ok('Kluis: Hex → XOR "Kade73!" geeft wachtwoord en vlag', /Zeebries-Morgen-2026/.test(plain) && /NM\{shamir_drie_van_vijf\}/.test(plain));
+
   // Gereedschapskist: RSA-werkbank en Nachtwacht-VM.
   await p.goto(url + '#/tools', { waitUntil: 'networkidle' });
   await p.waitForSelector('#tool-rsa');

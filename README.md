@@ -144,6 +144,8 @@ Leren door te doen — veel plezier met oplosbare cybercrime-puzzels.
 6. **Casus: bankhelpdeskfraude** — vishing, money mules en de geldstroom naar de cash-out.
 7. **Casus: botnet-takedown** — C2-verkeer, ATT&CK, pivoten en de stappen van een takedown.
 8. **Casus: het cryptomixer-onderzoek** — taint volgen door een mixer met de blockchain-tracer.
+9. **Casus: de digitale nalatenschap** — in opdracht van de executeur de herstelzin van opa's cryptowallet terugvinden in een gedicht (met head, tail en cut), het app-wachtwoord afleiden uit familiedocumenten en een herstelzwendel herkennen.
+10. **Casus: de kluis zonder beheerder** — na het uitvallen van de enige beheerder de juiste BitLocker-herstelsleutel in Active Directory vinden, een geheim reconstrueren uit drie van de vijf Shamir-aandelen, het herstelbestand ontsleutelen en sleutelbeheer verbeteren.
 
 ### 🏔️ Meesterproeven (gevorderd)
 Voor wie de puzzels te makkelijk vond: zwaardere opgaven met meer achtergrond.
@@ -255,7 +257,7 @@ Werkwijze:
 | `node tools/build-artifact.js` | Bouwt de losse versie `dist/nineminds-cyber-dojo.html` (alles in één bestand, ook de letters). |
 | `node tools/smoke.js` | Laadt het portaal in een headless browser en controleert dat alles rendert: de leerpaden, elke room, het NineMinds-teken. |
 | `node tools/labtest.js` + `labtest-extra.js` | Bedienen de labs echt en controleren de uitkomsten. |
-| `node tools/labtest-meester.js` | Test de labs van Meesterproeven (Vigenère, many-time pad, Benford, Bayes, RSA, VM) en de antwoorden van die rooms. |
+| `node tools/labtest-meester.js` | Test de labs van Meesterproeven (Vigenère, many-time pad, Benford, Bayes, RSA, VM), de sleutelcasussen en de antwoorden van die rooms. |
 
 *(De testscripts gebruiken Node + Playwright; de validator en build werken met alleen Node.)*
 
