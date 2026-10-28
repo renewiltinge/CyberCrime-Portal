@@ -31,11 +31,22 @@ let html = fs.readFileSync(INDEX, 'utf8');
 const re = /(<!-- ROOMS:START -->)[\s\S]*?(<!-- ROOMS:END -->)/;
 if (!re.test(html)) { console.error('Markers <!-- ROOMS:START/END --> niet gevonden in index.html'); process.exit(1); }
 html = html.replace(re, '$1\n' + block + '\n  $2');
-fs.writeFileSync(INDEX, html);
 
 // Het NineMinds-teken uit de huislaag, als script (zie tools/house.js).
 require('./house').write();
 console.log('assets/js/house.js bijgewerkt uit nineminds/.');
+
+// Cache-busting: elk lokaal script en stylesheet krijgt ?v=<inhoudshash>. Verandert een bestand,
+// dan verandert zijn URL, en laadt de browser (of de Cloudflare-cache) nooit meer een oude versie
+// naast een nieuwe index.html. Dat gebeurde wel: een oude app.js toonde maar 9 leerpaden.
+const crypto = require('crypto');
+html = html.replace(/(<(?:script|link)\b[^>]*?\b(?:src|href)=")((?:assets|content|nineminds)\/[^"?]+)(?:\?v=[0-9a-f]+)?(")/g, (m, pre, rel, post) => {
+  const file = path.join(ROOT, rel);
+  if (!fs.existsSync(file)) { console.error('Waarschuwing: ' + rel + ' bestaat niet'); return m; }
+  const v = crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex').slice(0, 10);
+  return pre + rel + '?v=' + v + post;
+});
+fs.writeFileSync(INDEX, html);
 
 console.log('index.html bijgewerkt met ' + metas.length + ' rooms:');
 let cur = '';

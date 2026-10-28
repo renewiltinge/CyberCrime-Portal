@@ -218,6 +218,20 @@ Object.keys(globalDecls).forEach((nm) => {
   if (fs2.length > 1) { errors++; console.log(`  ✗ top-level naam "${nm}" is in meerdere bestanden gedeclareerd (botst in de browser): ${fs2.join(', ')} — hernoem of maak uniek per room`); }
 });
 
+// Cache-busting: de ?v=-hashes in index.html moeten bij de huidige bestanden horen.
+{
+  const idx = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+  const stale = [];
+  idx.replace(/(?:src|href)="((?:assets|content|nineminds)\/[^"?]+)(?:\?v=([0-9a-f]+))?"/g, (m, rel, v) => {
+    const file = path.join(ROOT, rel);
+    if (!fs.existsSync(file)) return m;
+    const h = crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex').slice(0, 10);
+    if (v !== h) stale.push(rel);
+    return m;
+  });
+  if (stale.length) { errors++; console.log('  ✗ index.html verwijst met een verouderde of ontbrekende ?v= naar ' + stale.length + ' bestand(en) (o.a. ' + stale.slice(0, 3).join(', ') + ') — draai node tools/build.js'); }
+}
+
 // De huislaag: assets/js/house.js moet zijn wat nineminds/ nu oplevert, anders toont de
 // pagina een ander NineMinds-teken dan de huislaag zegt.
 if (!require('./house').upToDate()) {
