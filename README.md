@@ -25,7 +25,7 @@ Gratis, valt nooit in slaap, eigen domein met HTTPS, en ook zakelijk gebruik is 
 4. **Save and Deploy**. Je Dojo staat daarna op `https://<projectnaam>.pages.dev`; elke push naar main zet hem automatisch opnieuw online.
 5. Eigen (sub)domein, bijvoorbeeld `dojo.nineminds.nl`: in het project → **Custom domains**.
 
-Het bestand [`_headers`](_headers) geeft Cloudflare een paar veilige HTTP-headers mee; andere hosts negeren het.
+Het bestand [`_headers`](_headers) geeft Cloudflare een paar veilige HTTP-headers mee; andere hosts negeren het. Het project draait als Cloudflare Worker met statische assets: [`wrangler.jsonc`](wrangler.jsonc) legt de naam en de map vast (nodig voor de builds van andere branches dan main), en [`.assetsignore`](.assetsignore) houdt `tools/`, `docs/` en de README's offline.
 
 > **Kies één vast adres en blijf daarbij.** Je voortgang staat in de browser, per adres. `*.pages.dev`, je eigen domein en `index.html` lokaal openen zijn voor de browser drie aparte plekken. Wissel je toch? Maak eerst een back-up (zie hieronder).
 
