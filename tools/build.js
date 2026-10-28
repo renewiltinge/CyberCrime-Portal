@@ -12,7 +12,7 @@ const vm = require('vm');
 const ROOT = path.join(__dirname, '..');
 const DIR = path.join(ROOT, 'content/rooms');
 const INDEX = path.join(ROOT, 'index.html');
-const ORDER = ['fundamenten', 'security-kern', 'offensief', 'defensief', 'forensie', 'intelligence', 'datastromen', 'puzzels', 'meesterproeven', 'eindopdracht'];
+const ORDER = ['fundamenten', 'security-kern', 'offensief', 'defensief', 'forensie', 'intelligence', 'datastromen', 'puzzels', 'meesterproeven', 'uitdagingen', 'eindopdracht'];
 
 const files = fs.readdirSync(DIR).filter((f) => f.endsWith('.js') && !f.startsWith('_'));
 const metas = files.map((f) => {

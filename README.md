@@ -155,6 +155,12 @@ Voor wie de puzzels te makkelijk vond: zwaardere opgaven met meer achtergrond.
 4. **Redeneren met kansen: Bayes voor analisten** — basispercentages, likelihood ratios en de odds-vorm van Bayes, meerdere hypothesen en afhankelijk bewijs, kalibratie met de Brier-score en een Key Assumptions Check.
 5. **Bewijs in de rechtszaal: digitaal bewijs wegen en rapporteren** — bron-, activiteits- en delictsniveau, de prosecutor's fallacy (Sally Clark, Lucia de Berk), de likelihood ratio met verbale schaal, het forensisch rapport en contextuele bias.
 
+### 🎯 Uitdagingen (zonder handleiding)
+Geen uitleg en geen stappenplan: alleen een opdracht en het bewijs. De antwoorden staan nergens in de tekst en de hints zijn bewust vaag; de validator controleert dat. Kies zelf je gereedschap.
+1. **★ Het lege bureau** — een vertrokken medewerker en zijn thuismap: wat nam hij mee, waarheen, en wanneer?
+2. **★★ De gelaagde boodschap** — een "factuur" die geen factuur is, een sleutel in de bestandsstructuur en een bericht in meerdere lagen.
+3. **★★★ De onverklaarde geldstroom** — bank, boekhouding, geldstroom en open bronnen combineren; de reconciliatie alleen vertelt niet het hele verhaal.
+
 ### 🏁 Eindopdracht
 1. **Mini-CTF: Operatie KoffieKlap** — breng alles samen in een afsluitende Capture The Flag met zes vlaggen.
 2. **Grote kraak-CTF: Operatie Sleutelbos** — een uitgebreide kraak-CTF langs hashes, cijfers, codering, een crackme, een JWT en NTLM (zeven vlaggen).

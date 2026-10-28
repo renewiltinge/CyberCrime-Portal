@@ -116,6 +116,37 @@ const url = 'file://' + path.join(__dirname, '..', 'index.html');
   const plain = await text(chef + ' .lab');
   ok('Kluis: Hex → XOR "Kade73!" geeft wachtwoord en vlag', /Zeebries-Morgen-2026/.test(plain) && /NM\{shamir_drie_van_vijf\}/.test(plain));
 
+  // Uitdagingen zonder handleiding: zijn ze met de labs echt op te lossen?
+  await p.goto(url + '#/room/uitdaging-het-lege-bureau', { waitUntil: 'networkidle' });
+  await p.waitForSelector('.lab');
+  ti = await taskOf('Opdracht');
+  ok('Uitdaging 1: ls -a toont de verborgen map .cache', /\.cache/.test(await term('#task-' + ti, 'ls -a')));
+  ok('Uitdaging 1: dubbel Base64 afpellen geeft de vlag', /NM\{dubbel_ingepakt\}/.test(await term('#task-' + ti, 'cat .cache/.k | base64 -d | base64 -d')));
+  ok('Uitdaging 1: grep vindt de upload in de geschiedenis', /upload\.opslagbox\.example/.test(await term('#task-' + ti, 'grep curl .bash_history')));
+
+  await p.goto(url + '#/room/uitdaging-gelaagde-boodschap', { waitUntil: 'networkidle' });
+  await p.waitForSelector('.lab');
+  ti = await taskOf('Bewijsstuk 1');
+  ok('Uitdaging 2: hex-viewer toont de verstopte k=4841…', /k=48415645/.test(await text('#task-' + ti + ' .lab')));
+  ti = await taskOf('Bewijsstuk 2');
+  // De automatische ketting kiest hier bewust verkeerd; handmatig afpellen (klik Hex, dan Base64) moet werken.
+  await p.click('#task-' + ti + ' .logview .ln:has(.n:text-is("Hex"))');
+  await p.waitForTimeout(150);
+  const md = await text('#task-' + ti + ' .lab');
+  ok('Uitdaging 2: handmatig Hex → Base64 afpellen geeft de versleutelde zin', /Seqieseg vrypgendjt/.test(md));
+  ti = await taskOf('Het bericht lezen');
+  await p.fill('#task-' + ti + ' .lab textarea', 'Seqieseg vrypgendjt nnhr fvnke zeiln jt qo Naayoaqia. Ufm oz ciej bfvr tjle hig nv pacpemia. Lvvefaib qrd EM{kehai_drfvn_vvqf_jzrb_kwer}');
+  await p.click('#task-' + ti + ' .chip:has-text("Vigenère")');
+  await p.fill('#task-' + ti + ' .lab input[type=text]', 'HAVENKRAAN');
+  await p.waitForTimeout(120);
+  ok('Uitdaging 2: Vigenère met HAVENKRAAN geeft de vlag', /NM\{kraan_zeven_vijf_over_twee\}/.test(await text('#task-' + ti + ' .lab')));
+
+  await p.goto(url + '#/room/uitdaging-onverklaarde-geldstroom', { waitUntil: 'networkidle' });
+  await p.waitForSelector('.lab');
+  ti = await taskOf('Bron 1');
+  const rc = await text('#task-' + ti + ' .lab');
+  ok('Uitdaging 3: reconciliatie toont de twee ongeboekte Meridiaan-posten', /9[.,]?850/.test(rc) && /9[.,]?900/.test(rc));
+
   // Gereedschapskist: RSA-werkbank en Nachtwacht-VM.
   await p.goto(url + '#/tools', { waitUntil: 'networkidle' });
   await p.waitForSelector('#tool-rsa');

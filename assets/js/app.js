@@ -23,6 +23,7 @@
     { id: 'datastromen',   title: 'Datastromen volgen',        desc: 'Word expert in geld- en datastromen: volg witwasconstructies en structurering, betrap beaconing en exfiltratie in netwerkverkeer, en traceer de herkomst van een e-mail. De rode draad van cybercrime: het geld en de data.' },
     { id: 'puzzels',       title: 'Puzzels & uitdagingen',  desc: 'Leren door te doen: volg geld- en datastromen, ontmasker operators met OSINT, groepeer en reconstrueer, en los een grote cybercrime-CTF op. Alle oefening, veel plezier.' },
     { id: 'meesterproeven', title: 'Meesterproeven (gevorderd)', desc: 'Voor wie de puzzels te makkelijk vond: zwaardere opgaven met meer achtergrond. Cryptanalyse zonder sleutel, forensie met tegenstrijdige sporen, fraude ontdekken met de wet van Benford, redeneren met kansen (Bayes en kalibratie) en digitaal bewijs eerlijk wegen in de rechtszaal.' },
+    { id: 'uitdagingen', title: 'Uitdagingen (zonder handleiding)', desc: 'Geen uitleg, geen stappenplan: alleen een opdracht en het bewijs. Je kiest zelf je gereedschap (de Gereedschapskist staat bovenin). De antwoorden staan nergens in de tekst; hints zijn bewust vaag. Oplopend van één tot drie sterren.' },
     { id: 'eindopdracht',  title: 'Eindopdracht',           desc: 'Breng alles samen in een afsluitende mini-CTF. Bewijs aan jezelf wat je kunt.' },
   ];
 
@@ -110,6 +111,7 @@
     { id: 'tracer',      icon: 'path-datastromen', name: 'Stromenvolger', desc: 'Alle Datastromen-rooms af', test: () => pathDone('datastromen') },
     { id: 'puzzler',     icon: 'path-puzzels', name: 'Puzzelmeester', desc: 'Alle Puzzels & uitdagingen af', test: () => pathDone('puzzels') },
     { id: 'meester',     icon: 'path-meesterproeven', name: 'Meester', desc: 'Alle Meesterproeven af', test: () => pathDone('meesterproeven') },
+    { id: 'zelfstandig', icon: 'path-uitdagingen', name: 'Zelfstandig onderzoeker', desc: 'Alle uitdagingen zonder handleiding af', test: () => pathDone('uitdagingen') },
     { id: 'arena10',     icon: 'practice', name: 'Scherpschutter', desc: 'Reeks van 10 in de Oefenarena', test: () => (STATE.bestStreak || 0) >= 10 },
     { id: 'hacker10',    icon: 'seal', name: 'Doorzetter', desc: '10 rooms afgerond', test: () => ROOMS.filter(roomDone).length >= 10 },
     { id: 'flaghunter',  icon: 'flag', name: 'Vlaggenjager', desc: '15 vlaggen gevonden', test: () => (STATE.flags || 0) >= 15 },
