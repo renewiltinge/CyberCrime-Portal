@@ -58,7 +58,7 @@ CS.registerRoom({
     { term: 'C2', def: 'Command-and-control: de server waarmee de bots contact houden voor opdrachten.' },
     { term: 'DDoS', def: 'Distributed Denial of Service: een doelwit overspoelen met verkeer vanaf vele bronnen zodat het onbereikbaar wordt.' },
     { term: 'Amplificatie', def: 'Een klein verzoek naar een open server (DNS/NTP) uitlokken met een vervalst bron-IP, zodat een groot antwoord naar het slachtoffer gaat.' },
-    { term: 'Booter/stresser', def: 'Een (illegaal) dienst die DDoS-aanvallen te huur aanbiedt, vermomd als "stresstest-dienst".' },
+    { term: 'Booter/stresser', def: 'Een (illegale) dienst die DDoS-aanvallen te huur aanbiedt, vermomd als "stresstest-dienst".' },
     { term: 'Ransom-DDoS', def: 'Afpersing: betaal, anders (blijft) de aanval.' },
     { term: 'Scrubbing-center', def: 'Een dienst die het aanvalsverkeer "schoonwast" en alleen legitiem verkeer doorlaat.' },
   ],

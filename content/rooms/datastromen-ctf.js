@@ -27,7 +27,7 @@ const CTF_TX = [
   { date: '2026-04-07', who: 'Katvanger A', amount: 9700, kind: 'contant' },
   { date: '2026-04-07', who: 'R. Bakker', amount: 250, kind: 'pin', note: 'normaal' },
   { date: '2026-04-08', who: 'Katvanger B', amount: 9600, kind: 'contant' },
-  { date: '2026-04-08', who: 'Katvanger A', amount: 11000, kind: 'overboeking', note: 'boven de grens — meldplichtig' },
+  { date: '2026-04-08', who: 'Katvanger A', amount: 11000, kind: 'contant', note: 'contant boven de grens — meldplichtig' },
 ];
 
 // Vlag 4 — flow (het geldspoor; de € 39.000 gestructureerd)
@@ -39,8 +39,8 @@ const CTF_NODES = [
   { id: 'cash', type: 'cashout', label: 'Cash-out' },
 ];
 const CTF_EDGES = [
-  { from: 'a', to: 'verz', amount: 20000, time: 'week 15', note: 'gestructureerde stortingen A' },
-  { from: 'b', to: 'verz', amount: 19000, time: 'week 15', note: 'gestructureerde stortingen B' },
+  { from: 'a', to: 'verz', amount: 19600, time: 'week 15', note: 'gestructureerde stortingen A (9.900 + 9.700)' },
+  { from: 'b', to: 'verz', amount: 19400, time: 'week 15', note: 'gestructureerde stortingen B (9.800 + 9.600)' },
   { from: 'verz', to: 'ex', amount: 38500, time: 'week 15', note: 'katvanger houdt 500' },
   { from: 'ex', to: 'cash', amount: 38000, time: 'week 16', note: 'exchange-fee 500; cash-out' },
 ];
@@ -205,7 +205,7 @@ CS.registerRoom({
         ],
       },
       questions: [
-        { q: 'Hoeveel komt er binnen op de verzamelrekening?', answer: ['39000', '39.000', '€ 39.000', '€39000'], hint: '20000 + 19000.', explain: '€ 20.000 + € 19.000 = € 39.000 — precies de gestructureerde buit.' },
+        { q: 'Hoeveel komt er binnen op de verzamelrekening?', answer: ['39000', '39.000', '€ 39.000', '€39000'], hint: '19600 + 19400.', explain: '€ 19.600 + € 19.400 = € 39.000 — precies de gestructureerde buit.' },
         { q: 'Hoeveel bereikt de cash-out?', answer: ['38000', '38.000', '€ 38.000', '€38000'], hint: 'Na de afdrachten.', explain: 'Na € 500 (katvanger) + € 500 (exchange) blijft € 38.000 over.' },
         { q: 'Welke vlag hoort bij deze taak?', answer: ['NM{ctf_geldspoor_gevolgd}'], hint: 'Lees de tip-callout.', explain: 'Vlag 4: NM{ctf_geldspoor_gevolgd}.' },
       ],

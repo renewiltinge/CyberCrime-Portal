@@ -27,8 +27,8 @@ const PK_ENTITIES = [
 const PK_EDGES = [
   { from: 'p1', to: 'exfil', rel: 'POST buit naar', time: '2026-02', source: 'kit-config' },
   { from: 'p2', to: 'exfil', rel: 'POST buit naar', time: '2026-02', source: 'kit-config' },
-  { from: 'p1', to: 'cert', rel: 'presenteert cert', time: '2026-02', source: 'crt.sh' },
-  { from: 'p2', to: 'cert', rel: 'presenteert cert', time: '2026-02', source: 'crt.sh' },
+  { from: 'p1', to: 'cert', rel: 'staat in cert (SAN)', time: '2026-02', source: 'crt.sh' },
+  { from: 'p2', to: 'cert', rel: 'staat in cert (SAN)', time: '2026-02', source: 'crt.sh' },
   { from: 'p1', to: 'mail', rel: 'WHOIS-contact', time: '2026-02', source: 'WHOIS' },
 ];
 

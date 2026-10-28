@@ -7,14 +7,14 @@ Rapportcode: NM{koffiekat_iocs_verzameld}
 
 SAMENVATTING
 Sinds half september zien we phishingmails met een nepfactuur van "PakketPost Zakelijk".
-De mails komen van facturen[at]pakketpost-zakelijk[.]nineminds[.]lab en bevatten een bijlage factuur_sep.zip.
+De mails komen van facturen[at]pakketpost-zakelijk[.]nm[.]lab en bevatten een bijlage factuur_sep.zip.
 In het archief zit een snelkoppeling die een PowerShell-loader start (loader.dll via rundll32.exe).
 Bij twee slachtoffers kwam de aanvaller eerst binnen via een ongepatchte NetScaler-gateway (CVE-2023-4966).
 
 INFRASTRUCTUUR
-Command-and-control (C2): update-koffie[.]nineminds[.]lab
-Beacon-URL: hxxps://update-koffie[.]nineminds[.]lab/api/beacon
-Payload-download: hxxps://cdn-koffiekat[.]nineminds[.]lab/drop/stage2
+Command-and-control (C2): update-koffie[.]nm[.]lab
+Beacon-URL: hxxps://update-koffie[.]nm[.]lab/api/beacon
+Payload-download: hxxps://cdn-koffiekat[.]nm[.]lab/drop/stage2
 C2-IP-adressen: 203.0.113[.]88 en 203.0.113[.]91
 Scanverkeer vanaf: 198.51.100(.)7
 Exfiltratie naar: 192.0.2[.]14
@@ -273,9 +273,9 @@ CS.registerRoom({
           <thead><tr><th>Origineel</th><th>Gedefanged</th></tr></thead>
           <tbody>
             <tr><td><code>https://</code></td><td><code>hxxps://</code></td></tr>
-            <tr><td><code>update-koffie.nm.lab</code></td><td><code>update-koffie[.]nineminds[.]lab</code></td></tr>
+            <tr><td><code>update-koffie.nm.lab</code></td><td><code>update-koffie[.]nm[.]lab</code></td></tr>
             <tr><td><code>203.0.113.88</code></td><td><code>203.0.113[.]88</code></td></tr>
-            <tr><td><code>naam@domein.nm.lab</code></td><td><code>naam[at]domein[.]nineminds[.]lab</code></td></tr>
+            <tr><td><code>naam@domein.nm.lab</code></td><td><code>naam[at]domein[.]nm[.]lab</code></td></tr>
           </tbody>
         </table>
         <p>Het omgekeerde, <strong>refangen</strong>, doe je pas vlak voordat je een indicator in je SIEM of firewall

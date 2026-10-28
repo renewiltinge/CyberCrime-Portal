@@ -28,7 +28,7 @@ CS.registerRoom({
           In IT is dit je gebruikersnaam of e-mailadres. Een claim, meer niet.</li>
           <li><strong>Authenticatie</strong> — je <em>bewijst</em> dat je het echt bent. De douanier controleert of de
           foto en de gegevens kloppen. In IT doe je dit met een wachtwoord, een code of je vingerafdruk.</li>
-          <li><strong>Autorisatie</strong> — nadat je bewezen bent wie je bent, wordt bepaald wat je <em>mag</em>.
+          <li><strong>Autorisatie</strong> — nadat je hebt bewezen wie je bent, wordt bepaald wat je <em>mag</em>.
           Met je ticket mag je het vliegtuig in, maar niet de cockpit. In IT: je rol en rechten (lezen, schrijven,
           beheren).</li>
         </ul>

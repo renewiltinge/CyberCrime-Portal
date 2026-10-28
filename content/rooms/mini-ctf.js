@@ -235,7 +235,7 @@ Oct  2 09:15:19 koffieklap sudo:   jan : TTY=pts/1 ; PWD=/home/jan ; USER=root ;
       `,
       questions: [
         { q: 'Wat is de belangrijkste ethische regel die je meeneemt?', options: ['Alleen hacken met toestemming of op je eigen lab', 'Nooit iets melden', 'Zo snel mogelijk beroemd worden', 'Alle technieken overal uitproberen'], answer: 0, explain: 'Toestemming of je eigen lab — en kwetsbaarheden netjes melden. Dat scheidt een security-professional van een crimineel.' },
-        { q: 'Welke brede beginstappcertificering noemden we als goede basis?', answer: ['comptia security+', 'security+', 'comptia security plus'], hint: 'Een bekende leverancier-neutrale certificering.', explain: 'CompTIA Security+ is een veelgebruikte, brede basiscertificering.' },
+        { q: 'Welke brede instapcertificering noemden we als goede basis?', answer: ['comptia security+', 'security+', 'comptia security plus'], hint: 'Een bekende leverancier-neutrale certificering.', explain: 'CompTIA Security+ is een veelgebruikte, brede basiscertificering.' },
         { q: 'Ik weet hoe ik verder kan leren en blijf dat ethisch doen.', noAnswer: true },
       ],
     },

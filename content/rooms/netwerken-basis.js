@@ -214,7 +214,7 @@ CS.registerRoom({
 
         <p><strong>TCP (Transmission Control Protocol)</strong> is <em>verbindingsgericht</em> en betrouwbaar. Voordat
         er data gaat, bouwen zender en ontvanger eerst een verbinding op. TCP controleert of alles aankomt, in de
-        juiste volgorde, en vraagt opnieuw om wat verloren ging. Je gebruikt TCP waar het klopt moet zijn: webpagina\'s
+        juiste volgorde, en vraagt opnieuw om wat verloren ging. Je gebruikt TCP waar het moet kloppen: webpagina\'s
         (HTTP/HTTPS), e-mail, bestandsoverdracht, SSH.</p>
 
         <p><strong>UDP (User Datagram Protocol)</strong> is <em>verbindingsloos</em>: het schiet de pakketjes gewoon weg,

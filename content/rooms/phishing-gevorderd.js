@@ -13,7 +13,7 @@ const PG_EMAILS = [
     from: 's.dewit@jouwbedrjf.nl',
     to: 'jij@jouwbedrijf.nl',
     subject: 'Even naar de offerte voor Project Zephyr kijken?',
-    date: 'ma 13 okt 2026 10:41',
+    date: 'di 13 okt 2026 10:41',
     flags: {
       from: 'Kijk goed: het domein is "jouwbedrjf.nl" — de i ontbreekt (typosquat). Je echte collega mailt vanaf jouwbedrijf.nl.',
     },
@@ -29,7 +29,7 @@ const PG_EMAILS = [
     from: 'facturen@leverancier-noord.nl',
     to: 'financien@jouwbedrijf.nl',
     subject: 'RE: Factuur F-2026-0345',
-    date: 'di 14 okt 2026 09:03',
+    date: 'wo 14 okt 2026 09:03',
     body: [
       [{ text: 'Beste, in vervolg op onze eerdere mail hierbij de betaalherinnering voor F-2026-0345.' }],
       [{ text: 'Let op: ons ', flag: null }, { text: 'rekeningnummer is gewijzigd', flag: 'Een gewijzigd IBAN in een lopende correspondentie is dé klassieke truc (soms vanaf een gekaapt, echt account). Altijd verifiëren via een bekend telefoonnummer.' }, { text: ' naar NL02 BOOS 0199 4433 22. Gelieve ' }, { text: 'binnen 3 dagen', flag: 'Tijdsdruk om verificatie te ontmoedigen.' }, { text: ' te voldoen.' }],
@@ -42,7 +42,7 @@ const PG_EMAILS = [
     from: 'mfa-support@account-beveiliging.net',
     to: 'jij@jouwbedrijf.nl',
     subject: 'Actie vereist: je MFA verloopt vandaag',
-    date: 'wo 15 okt 2026 08:20',
+    date: 'do 15 okt 2026 08:20',
     flags: {
       from: 'Het domein account-beveiliging.net is niet je bedrijf of je provider. Echte IT gebruikt het interne domein.',
       subject: '"Verloopt vandaag" is kunstmatige urgentie; MFA "verloopt" zo niet.',
@@ -59,7 +59,7 @@ const PG_EMAILS = [
     from: 'account-security-noreply@accountprotection.microsoft.com',
     to: 'jij@voorbeeld.nl',
     subject: 'Nieuwe aanmelding op je Microsoft-account',
-    date: 'wo 15 okt 2026 21:12',
+    date: 'do 15 okt 2026 21:12',
     body: [
       [{ text: 'We hebben een nieuwe aanmelding gezien vanaf een nieuw apparaat. Was jij dit? Dan hoef je niets te doen.' }],
       [{ text: 'Twijfel je? Ga zélf naar account.microsoft.com (typ het adres) en controleer je recente activiteit. We vragen je hier niet om in te loggen of gegevens in te vullen.' }],
@@ -72,7 +72,7 @@ const PG_EMAILS = [
     from: 'nieuws@techwijzer-update.com',
     to: 'jij@voorbeeld.nl',
     subject: 'Je wekelijkse update — plus 1 belangrijke actie',
-    date: 'do 16 okt 2026 07:00',
+    date: 'vr 16 okt 2026 07:00',
     flags: {
       from: 'Je bent geabonneerd op techwijzer.nl, maar dit komt van techwijzer-update.com — een nagemaakte (clone) afzender.',
     },
@@ -160,7 +160,7 @@ CS.registerRoom({
         emails: PG_EMAILS,
       },
       questions: [
-        { q: 'De mail van "Sanne de Wit" gebruikt het domein jouwbedrjf.nl. Wat is daar mis mee?', options: ['Het is een typosquat: de "i" ontbreekt (jouwbedrįf.nl) — het echte domein is jouwbedrijf.nl', 'Niets, het klopt', 'Het is te lang', 'Het mist https'], answer: 0, explain: 'Een net-verkeerd gespeld domein (typosquat) is een klassiek spear-phishing-signaal.' },
+        { q: 'De mail van "Sanne de Wit" gebruikt het domein jouwbedrjf.nl. Wat is daar mis mee?', options: ['Het is een typosquat: de "i" ontbreekt (jouwbedrjf.nl) — het echte domein is jouwbedrijf.nl', 'Niets, het klopt', 'Het is te lang', 'Het mist https'], answer: 0, explain: 'Een net-verkeerd gespeld domein (typosquat) is een klassiek spear-phishing-signaal.' },
         { q: 'In de "RE: Factuur"-mail staat een gewijzigd rekeningnummer. Wat doe je?', options: ['De leverancier bellen op een bekend nummer om de IBAN-wijziging te verifiëren', 'Gewoon betalen, het is een lopende thread', 'Op de mail antwoorden ter bevestiging', 'Binnen 3 dagen overmaken'], answer: 0, explain: 'Een IBAN-wijziging (ook in een echte thread/gekaapt account) verifieer je altijd out-of-band per telefoon.' },
         { q: 'Welke mail was legitiem?', options: ['De Microsoft-aanmeldingsmelding (correct domein, vraagt niets, laat je zelf de site typen)', 'De MFA-QR-mail', 'De factuur met nieuw IBAN', 'De nieuwsbrief-clone'], answer: 0, explain: 'De beveiligingsmelding gebruikt het echte domein, vraagt niets en stuurt je zelf naar account.microsoft.com — geen phishing.' },
         { q: 'Waarom is een QR-code in een MFA-mail (quishing) extra sneaky?', options: ['De QR verbergt de bestemming én omzeilt de linkcontrole op de mailserver', 'QR-codes zijn altijd veilig', 'Het is sneller', 'Dat is het niet'], answer: 0, explain: 'Je ziet de URL niet en filters die links scannen, zien een plaatje — scan nooit een QR uit een onverwachte mail.' },

@@ -1,0 +1,12 @@
+// Cloudflare Workers (statische assets) — de Dojo is één statische site, zonder buildstap.
+// Zonder dit bestand slaagt alleen de build van main (wrangler deploy raadt de instellingen zelf),
+// maar falen de builds van andere branches: die draaien "wrangler versions upload", en dat
+// vindt zonder configuratie geen assets-map ("Missing entry-point to Worker script or to assets directory").
+{
+  "$schema": "https://unpkg.com/wrangler@4/config-schema.json",
+  "name": "cybercrime-portal",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "."
+  }
+}

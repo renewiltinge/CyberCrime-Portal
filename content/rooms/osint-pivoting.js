@@ -21,13 +21,13 @@ const PIVOT_ENTITIES = [
 const PIVOT_EDGES = [
   // Zaak Alpha (januari 2026)
   { from: 'dA', to: 'ipA', rel: 'resolvet naar', time: '2026-01', source: 'passive DNS' },
-  { from: 'dA', to: 'cert', rel: 'presenteert cert', time: '2026-01', source: 'crt.sh' },
+  { from: 'dA', to: 'cert', rel: 'staat in cert (SAN)', time: '2026-01', source: 'crt.sh' },
   { from: 'dA', to: 'mail', rel: 'WHOIS-contact', time: '2026-01', source: 'WHOIS' },
   { from: 'dA', to: 'wal', rel: 'losgeld-adres in rapport', time: '2026-01', source: 'rapport' },
   { from: 'ipA', to: 'asnA', rel: 'hoort bij ASN', time: '2026-01', source: 'RIPEstat' },
   // Zaak Bravo (februari 2026) — ander IP, maar ZELFDE cert
   { from: 'dB', to: 'ipB', rel: 'resolvet naar', time: '2026-02', source: 'passive DNS' },
-  { from: 'dB', to: 'cert', rel: 'presenteert cert', time: '2026-02', source: 'crt.sh' },
+  { from: 'dB', to: 'cert', rel: 'staat in cert (SAN)', time: '2026-02', source: 'crt.sh' },
   { from: 'dB', to: 'walB', rel: 'losgeld-adres in rapport', time: '2026-02', source: 'rapport' },
 ];
 
@@ -46,7 +46,7 @@ CS.registerRoom({
     'Fingerprints (JARM, JA3/JA4, favicon-hash, response-headers) herkennen en gebruiken om infrastructuur te clusteren',
     'Pivoten als iteratief proces uitvoeren en elk kenmerk toetsen op zeldzaamheid voordat je het een echte link noemt',
     'Een onderzoek als relatietabel (met tijd en herkomst) vastleggen en uitleggen hoe pandas/networkx bruggen en centrale knopen vinden',
-    'De blockchain-basis (common-input- en change-heuristiek, exchanges als knelpunt) en de juridische/opsec-grenzen (art. 126j Sv, Wet politiegegevens) toepassen',
+    'De blockchain-basis (common-input- en change-heuristiek, exchanges als knelpunt) en de juridische/opsec-grenzen (art. 126g en 126j Sv, Wet politiegegevens) toepassen',
   ],
   tasks: [
     {
@@ -76,7 +76,7 @@ CS.registerRoom({
         <h3>Label wat je weet: bekend, afgeleid, aanname</h3>
         <p>Een valkuil is dat je waarnemingen en conclusies door elkaar gaat halen. Houd ze streng uit elkaar met drie labels:</p>
         <ul>
-          <li><strong>Bekend</strong> — een harde waarneming uit een bron. "Domein <code>betaal-controle.nm.lab</code> presenteert certificaat <code>A1B2C3D4</code> (bron: crt.sh)."</li>
+          <li><strong>Bekend</strong> — een harde waarneming uit een bron. "Domein <code>betaal-controle.nm.lab</code> staat in certificaat <code>A1B2C3D4</code> (bron: crt.sh)."</li>
           <li><strong>Afgeleid</strong> — een analytische conclusie uit meerdere bekende feiten. "Beide zaken gebruiken hetzelfde certificaat, dus ze draaien waarschijnlijk op dezelfde opzet."</li>
           <li><strong>Aanname</strong> — iets wat je vermoedt maar niet bewijst. "Het is dezelfde dadergroep." (Nog niet bewezen.)</li>
         </ul>
@@ -108,7 +108,7 @@ CS.registerRoom({
         </table>
 
         <h3>Twee bronnen uitgelicht</h3>
-        <p><strong>crt.sh</strong> is je favoriet voor deze room. Certificate Transparency verplicht uitgevers om elk TLS-certificaat in een openbaar logboek te zetten. Daardoor kun je opzoeken welke certificaten voor een domein bestaan — én, andersom, welke <em>andere</em> domeinen hetzelfde certificaat presenteren. Dat laatste is pivotgoud.</p>
+        <p><strong>crt.sh</strong> is je favoriet voor deze room. Certificate Transparency verplicht uitgevers om elk TLS-certificaat in een openbaar logboek te zetten. Daardoor kun je opzoeken welke certificaten voor een domein bestaan — én, andersom, welke <em>andere</em> domeinen in hetzelfde certificaat staan. Dat laatste is pivotgoud.</p>
         <p><strong>urlscan.io</strong> is bijzonder omdat het de pagina voor je bezoekt. Je ziet de favicon, de geladen scripts en eventuele doorverwijzingen zonder zelf naar het verdachte adres te surfen. Dat is ook <em>opsec</em>: jij blijft uit het zicht van de dader (meer daarover in de laatste taak).</p>
 
         <div class="callout info"><strong>Passief &ne; gratis van consequenties:</strong> de meeste van deze bronnen zijn <em>passief</em> — je bevraagt een archief, niet de server van de dader. Maar één bron is dat níét zonder meer: een bestand uploaden naar VirusTotal is een actieve handeling die sporen achterlaat. Onthoud dat alvast.</div>
@@ -204,13 +204,13 @@ CS.registerRoom({
 
         <h3>Zo gebruik je de sandbox</h3>
         <ol>
-          <li>Klik links een entiteit aan. Je ziet rechts zijn relaties, telkens <strong>mét tijd en herkomst</strong> (bijv. "presenteert cert · 2026-01 · bron: crt.sh").</li>
+          <li>Klik links een entiteit aan. Je ziet rechts zijn relaties, telkens <strong>mét tijd en herkomst</strong> (bijv. "staat in cert (SAN) · 2026-01 · bron: crt.sh").</li>
           <li>Klik in de relatielijst door naar een buur-entiteit om verder te pivoten.</li>
           <li>Begin bij <code>betaal-controle.nm.lab</code> (Alpha), bekijk zijn kenmerken, en doe hetzelfde voor <code>inlog-verificatie.nm.lab</code> (Bravo).</li>
           <li>Zoek het ene kenmerk dat in <strong>beide</strong> zaken terugkomt. Pas de zeldzaamheidstoets toe: is het uniek genoeg?</li>
         </ol>
 
-        <div class="callout info"><strong>Denk in labels:</strong> wat je in de sandbox ziet is <em>bekend</em> (waarnemingen uit bronnen). Dat beide domeinen hetzelfde certificaat presenteren terwijl hun IP's verschillen, is <em>afgeleid</em> bewijs dat het dezelfde opzet is. Dat het dezelfde persoon of groep is, blijft voorlopig een <em>aanname</em> — daarvoor heb je meer nodig.</div>
+        <div class="callout info"><strong>Denk in labels:</strong> wat je in de sandbox ziet is <em>bekend</em> (waarnemingen uit bronnen). Dat beide domeinen in hetzelfde certificaat staan terwijl hun IP's verschillen, is <em>afgeleid</em> bewijs dat het dezelfde opzet is. Dat het dezelfde persoon of groep is, blijft voorlopig een <em>aanname</em> — daarvoor heb je meer nodig.</div>
 
         <p>Typ je antwoord in het controleveld van de sandbox (het label of het type van het bruggende kenmerk). Noteer daarna je conclusie ook hieronder bij de vragen.</p>
       `,
@@ -224,8 +224,8 @@ CS.registerRoom({
         bridge: ['A1B2C3D4', 'cert', 'certificaat'],
       },
       questions: [
-        { q: 'Welk gedeeld kenmerk (het label) bruggt Zaak Alpha en Zaak Bravo?', answer: ['A1B2C3D4', 'cert', 'certificaat', 'het certificaat', 'certificaat a1b2c3d4'], hint: 'De IP\'s verschillen. Welke ENE entiteit hangt aan allebei de domeinen? Kijk naar de bron crt.sh.', explain: 'Beide domeinen presenteren hetzelfde TLS-certificaat A1B2C3D4 (bron: crt.sh). De IP\'s (203.0.113.10 vs 198.51.100.20) verschillen, maar het hergebruikte, zeldzame certificaat bruggt de zaken.' },
-        { q: 'Via welke bron zie je dat beide domeinen hetzelfde certificaat presenteren?', answer: ['crt.sh', 'crt sh', 'certificate transparency'], hint: 'Staat als herkomst bij de "presenteert cert"-relatie.', explain: 'De relatie "presenteert cert" is afkomstig uit crt.sh (Certificate Transparency) — precies de bron die gedeelde certificaten zichtbaar maakt.' },
+        { q: 'Welk gedeeld kenmerk (het label) verbindt Zaak Alpha en Zaak Bravo?', answer: ['A1B2C3D4', 'cert', 'certificaat', 'het certificaat', 'certificaat a1b2c3d4'], hint: 'De IP\'s verschillen. Welke ENE entiteit hangt aan allebei de domeinen? Kijk naar de bron crt.sh.', explain: 'Beide domeinen presenteren hetzelfde TLS-certificaat A1B2C3D4 (bron: crt.sh). De IP\'s (203.0.113.10 vs 198.51.100.20) verschillen, maar het hergebruikte, zeldzame certificaat verbindt de zaken.' },
+        { q: 'Via welke bron zie je dat beide domeinen in hetzelfde certificaat staan?', answer: ['crt.sh', 'crt sh', 'certificate transparency'], hint: 'Staat als herkomst bij de "staat in cert (SAN)"-relatie.', explain: 'De relatie "staat in cert (SAN)" is afkomstig uit crt.sh (Certificate Transparency) — precies de bron die gedeelde certificaten zichtbaar maakt.' },
         { q: 'De IP-adressen van Alpha en Bravo verschillen. Waarom is dat geen bewijs dat het losse zaken zijn?', options: ['IP-adressen zijn nooit betrouwbaar', 'Omdat een ander, zeldzamer kenmerk (het certificaat) juist wél overlapt en zwaarder weegt', 'Omdat IP-adressen niet bestaan in OSINT', 'Omdat het toeval is'], answer: 1, explain: 'Verschillende IP\'s sluiten een link niet uit. Het gedeelde, zeldzame certificaat is sterker bewijs dan het verschil in (makkelijk te wisselen) IP-adressen.' },
         { q: 'Welk label hoort bij de uitspraak "het is dezelfde dadergroep" in deze zaak?', options: ['Bekend', 'Afgeleid', 'Aanname', 'Bewezen'], answer: 2, explain: 'Het gedeelde certificaat is bekend; "dezelfde opzet" is afgeleid; "dezelfde dadergroep" blijft een aanname tot je het onderbouwt met meer bewijs.' },
       ],
@@ -239,8 +239,8 @@ CS.registerRoom({
         <table>
           <thead><tr><th>Van</th><th>Relatie</th><th>Naar</th><th>Tijd</th><th>Herkomst</th></tr></thead>
           <tbody>
-            <tr><td>betaal-controle.nm.lab</td><td>presenteert cert</td><td>A1B2C3D4</td><td>2026-01</td><td>crt.sh</td></tr>
-            <tr><td>inlog-verificatie.nm.lab</td><td>presenteert cert</td><td>A1B2C3D4</td><td>2026-02</td><td>crt.sh</td></tr>
+            <tr><td>betaal-controle.nm.lab</td><td>staat in cert (SAN)</td><td>A1B2C3D4</td><td>2026-01</td><td>crt.sh</td></tr>
+            <tr><td>inlog-verificatie.nm.lab</td><td>staat in cert (SAN)</td><td>A1B2C3D4</td><td>2026-02</td><td>crt.sh</td></tr>
             <tr><td>betaal-controle.nm.lab</td><td>resolvet naar</td><td>203.0.113.10</td><td>2026-01</td><td>passive DNS</td></tr>
           </tbody>
         </table>
@@ -250,7 +250,7 @@ CS.registerRoom({
         <h3>Laat de computer het zware werk doen</h3>
         <p>Bij een handvol knopen zie je de brug zo. Bij honderden knopen niet meer. Dan laad je de tabel in <strong>pandas</strong> (een Python-bibliotheek voor tabellen) en bouw je er met <strong>networkx</strong> (voor grafen) een graaf van. Twee berekeningen zijn hier goud waard:</p>
         <ul>
-          <li><strong>Bruggen vinden.</strong> Een <em>brug</em> is een lijn die, als je hem weghaalt, de graaf in twee stukken laat vallen. In onze zaak is de lijn naar het gedeelde certificaat precies zo'n brug: hij is de enige verbinding tussen cluster Alpha en cluster Bravo.</li>
+          <li><strong>Scharnierpunten vinden.</strong> Een <em>scharnierpunt</em> (articulation point) is een knoop die, als je hem weghaalt, de graaf in stukken laat vallen. (Een <em>brug</em> is hetzelfde voor een lijn; in een graaf zonder lussen is élke lijn een brug, dus daar zegt dat weinig.) In onze zaak is het gedeelde certificaat precies zo'n scharnierpunt: hij is de enige verbinding tussen cluster Alpha en cluster Bravo.</li>
           <li><strong>Centraliteit meten.</strong> Centraliteit zegt hoe "belangrijk" een knoop is. Een knoop waar veel verbindingen doorheen lopen (hoge <em>betweenness</em>) is vaak een spil — bijvoorbeeld een server of wallet die meerdere zaken verbindt.</li>
         </ul>
 
@@ -261,7 +261,7 @@ import networkx as nx
 df = pd.read_csv("relaties.csv")          # kolommen: van, naar, relatie, tijd, herkomst
 G = nx.from_pandas_edgelist(df, "van", "naar")
 
-list(nx.bridges(G))                       # welke lijnen verbinden anders losse clusters?
+list(nx.articulation_points(G))           # welke knopen houden de graaf bij elkaar? (in een boom is elke lijn een 'brug')
 nx.betweenness_centrality(G)              # welke knoop is de spil?</code></pre>
 
         <div class="callout tip"><strong>Tip:</strong> de code is het gereedschap, niet de conclusie. Een gevonden "brug" is een <em>afgeleide</em> die je nog moet toetsen op zeldzaamheid: een brug via een gedeeld certificaat is sterk, een brug via een gedeelde Cloudflare-IP is zwak.</div>
@@ -290,7 +290,7 @@ nx.betweenness_centrality(G)              # welke knoop is de spil?</code></pre>
         <h3>De grenzen: wet en opsec</h3>
         <p>Infrastructuur-OSINT lijkt vrijblijvend, maar je werkt met persoonsgegevens en raakt aan opsporingsbevoegdheden. Twee kaders:</p>
         <ul>
-          <li><strong>Stelselmatig observeren (art. 126j Sv-sfeer).</strong> Af en toe iets opzoeken is iets anders dan iemand <em>stelselmatig</em> volgen tot je een compleet beeld van zijn leven krijgt. Stelselmatige informatie-inwinning door opsporing is een bevoegdheid met voorwaarden; zie <a href="https://wetten.overheid.nl/BWBR0001903" target="_blank" rel="noopener">het Wetboek van Strafvordering</a>. Als leerling of burger doe je dit niet op eigen houtje.</li>
+          <li><strong>Stelselmatig observeren (art. 126g Sv; met heimelijke interactie art. 126j Sv).</strong> Af en toe iets opzoeken is iets anders dan iemand <em>stelselmatig</em> volgen tot je een compleet beeld van zijn leven krijgt. Stelselmatige informatie-inwinning door opsporing is een bevoegdheid met voorwaarden; zie <a href="https://wetten.overheid.nl/BWBR0001903" target="_blank" rel="noopener">het Wetboek van Strafvordering</a>. Als leerling of burger doe je dit niet op eigen houtje.</li>
           <li><strong>Wet politiegegevens (Wpg).</strong> Politiegegevens mogen alleen voor een bepaald doel worden verwerkt en bewaard; zie <a href="https://wetten.overheid.nl/BWBR0022463" target="_blank" rel="noopener">de Wet politiegegevens</a>. Verzamel niet meer dan nodig (dataminimalisatie) en leg je grondslag vast.</li>
           <li><strong>Passief vs. actief.</strong> Een archief bevragen (crt.sh, passive DNS, RIPEstat) is <em>passief</em>: de dader merkt er niets van. De verdachte server zélf benaderen (hem bezoeken, scannen, een JARM nemen) is <em>actief</em> en kan je verraden of zelfs strafbaar zijn.</li>
         </ul>
@@ -327,6 +327,6 @@ nx.betweenness_centrality(G)              # welke knoop is de spil?</code></pre>
     { title: 'crt.sh — Certificate Transparency search', url: 'https://crt.sh/' },
     { title: 'RIPEstat — data over IP-adressen, ASN\'s en domeinen', url: 'https://stat.ripe.net/' },
     { title: 'abuse.ch — threat-intel-feeds (URLhaus, ThreatFox, SSLBL)', url: 'https://abuse.ch/' },
-    { title: 'Wetboek van Strafvordering (art. 126j Sv) & Wet politiegegevens — wetten.overheid.nl', url: 'https://wetten.overheid.nl/BWBR0001903' },
+    { title: 'Wetboek van Strafvordering (art. 126g en 126j Sv) & Wet politiegegevens — wetten.overheid.nl', url: 'https://wetten.overheid.nl/BWBR0001903' },
   ],
 });

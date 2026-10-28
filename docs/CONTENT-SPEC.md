@@ -10,7 +10,7 @@ laadt de bestanden als gewone `<script>`-tags, zodat het ook werkt door `index.h
 /* Room: Netwerken — de basis */
 CS.registerRoom({
   id: 'netwerken-basis',            // gelijk aan de bestandsnaam, kebab-case
-  path: 'fundamenten',              // 'fundamenten' | 'security-kern' | 'offensief' | 'defensief' | 'forensie' | 'intelligence' | 'datastromen' | 'puzzels' | 'eindopdracht'
+  path: 'fundamenten',              // 'fundamenten' | 'security-kern' | 'offensief' | 'defensief' | 'forensie' | 'intelligence' | 'datastromen' | 'puzzels' | 'meesterproeven' | 'eindopdracht'
   order: 2,                         // volgorde binnen het leerpad
   title: 'Netwerken: de basis',
   icon: '🌐',                       // optioneel; de interface toont het niet meer (een leerpad heeft een getekend teken, zie docs/adr/0001)
@@ -432,7 +432,7 @@ de velden af, en koppelt een interventie aan elke fase (basis voor de interventi
 
 ```js
 lab: { type: 'admiralty', items: [
-  { source: 'Anonieme tip via Meld Misdaad Anoniem', info: 'X plant een ransomware-aanval', reliability: 'E', credibility: '4', explain: 'Onbekende bron, niet te verifiëren.' },
+  { source: 'Anonieme tip via Meld Misdaad Anoniem', info: 'X plant een ransomware-aanval', reliability: 'F', credibility: '4', explain: 'Onbekende bron: betrouwbaarheid niet te beoordelen.' },
 ] }
 ```
 De leerling kiest betrouwbaarheid van de bron (A–F) én geloofwaardigheid van de info (1–6), apart; het lab vergelijkt met
@@ -526,7 +526,7 @@ lab: {
   saltExample: { word: 'welkom', salt: 'Xy7' }, // toont plain-hash vs gesalte hash (optioneel)
 }
 ```
-Toont een voorberekende tabel (hash → woord) en een opzoekveld: een onvergezouten hash wordt direct gevonden, een gesalte
+Toont een voorberekende tabel (hash → woord) en een opzoekveld: een ongezouten hash wordt direct gevonden, een gesalte
 hash niet — zo zie je waarom salt precomputatie breekt. Hashes worden met de echte lab-hashfunctie berekend.
 
 ### `flow`: geld-/datastroom volgen (follow the money/data)
@@ -692,7 +692,7 @@ test live tegen de events. Toont TP/FP/FN/TN. Doel: alle `malicious:true` vangen
 lab: {
   type: 'fingerprint', title: '...', scenario: '<intro>',
   attrs: [ { key: 'favicon', label: 'Favicon-hash' }, { key: 'analytics', label: 'Analytics-ID' }, { key: 'jarm', label: 'JARM' } ],
-  hosts: [ { host: 'a.nm.lab', favicon: 'f7a1c9', analytics: 'UA-66613-7', jarm: '2ad2ad00' }, ... ],
+  hosts: [ { host: 'a.nm.lab', favicon: 'f7a1c9', analytics: 'G-6M61Q37X', jarm: '2ad2ad00' }, ... ],
   ask: [ { q: 'Hoeveel hosts delen favicon f7a1c9?', answer: ['4'] } ],
 }
 ```
@@ -715,3 +715,61 @@ lab: {
 Lineaire reeks beslismomenten; bij elke keuze directe feedback (✓/✗) en daarna "Volgende". Telt goede keuzes; haalt de
 leerling ≥ `pass` (standaard = aantal stappen), dan verschijnt `flag`. Met een "Opnieuw"-knop. Reusable voor elke
 beslis-/onderhandelingsoefening.
+
+### `vigenere`: Vigenère kraken zonder sleutel
+
+```js
+lab: { type: 'vigenere', text: '<ciphertext>', lang: 'nl', maxLen: 16 }   // lang 'nl' (standaard) of 'en'
+```
+Drie stappen: **Kasiski** (herhaalde trigrammen, afstanden en de delers die het vaakst passen), **IoC per
+sleutellengte** (klikbaar; de kleinste lengte op taalniveau is de automatische gok) en **chi-kwadraat per kolom**
+(beste en tweede keus per sleutelletter, met een markering bij twijfel). De voorgestelde sleutel is aan te passen
+en de ontsleuteling werkt live mee. **Reken na met Node** dat de analyse op jouw tekst de bedoelde sleutel (of een
+bewust twijfelgeval) oplevert; zet `encoded: true` op een vlag die pas na ontsleutelen verschijnt.
+
+### `xorcrib`: many-time pad (crib dragging)
+
+```js
+lab: { type: 'xorcrib', title: '...', scenario: '<intro>', c1: '<hex>', c2: '<hex>', crib: ' de ', start: 'de ', ask: [ ... ] }
+```
+Toont C1, C2 en C1 ⊕ C2; de leerling sleept een crib langs alle posities (leesbare uitkomsten worden gemarkeerd) en
+reconstrueert bericht 1 in een tekstveld, waarna bericht 2 en de sleutelstroom live verschijnen.
+
+### `rsa`: RSA-werkbank (BigInt)
+
+```js
+lab: { type: 'rsa', n: '3233', e: '17', c: '2790', n2: '<optioneel>', p: '', q: '', ask: [ ... ] }
+```
+Aanvallen op n: proefdeling (tot 10⁶), Fermat (p ≈ q), Pollard-rho en, met `n2`, de GCD van twee moduli; plus de
+e-de-machtswortel van c bij kleine e zonder padding. Met p en q berekent het lab φ(n), d en m (als getal, hex en tekst).
+
+### `vm`: mini-assembler (reverse engineering)
+
+```js
+lab: { type: 'vm', title: '...', intro: '...', program: 'data doel: 0x4e, 0x4f\nlen a\n...\nok\nnee:\nfail', flag: 'NM{...}', hint: '...', maxSteps: 50000 }
+```
+Registers `a b c d i j`; instructies `mov add sub mul mod xor and or shl shr rol ror ld len size cmp je jne jl jg jle jge jmp nop ok fail`,
+labels als `naam:`, data als `data naam: 1, 0x2a, 'x', "tekst"`, en `ld r, in[i]` / `ld r, naam[i]`. De leerling voert
+uit of stapt door de code met registers en trace. Controleer met Node (`CS.vm.run(program, invoer).status === 'ok'`)
+dat jouw bedoelde invoer slaagt.
+
+### `benford`: eerste-cijferanalyse (wet van Benford)
+
+```js
+lab: { type: 'benford', title: '...', scenario: '<intro>', sets: [ { name: 'Referentie', amounts: [ ... ] }, { name: 'Verdacht', amounts: [ ... ] } ], ask: [ ... ] }
+// of één reeks: amounts: [ ... ]
+```
+Toont per eerste cijfer het waargenomen en het verwachte percentage (log10(1 + 1/d)), de MAD met het oordeel volgens
+Nigrini (≤ 0,006 · ≤ 0,012 · ≤ 0,015), χ² met de 5%-grens (15,51 bij 8 vrijheidsgraden) en het sterkst
+oververtegenwoordigde cijfer. **Genereer datasets deterministisch en reken de uitkomst na** met `CS.stats.benfordStats`.
+Bedenk dat de MAD-grenzen voor grote reeksen bedoeld zijn: bij een paar honderd bedragen is ruis normaal.
+
+### `bayes`: hypothesen bijwerken met bewijs
+
+```js
+lab: { type: 'bayes', title: '...', scenario: '<intro>', hypotheses: ['Insider', 'Extern'], prior: [0.2, 0.8],
+  evidence: [ { short: 'thuis-IP', text: '...', likelihood: [0.7, 0.05] } ], ask: [ ... ] }
+```
+De leerling past de prior aan en vinkt bewijs aan; het lab toont na elke stap de posteriors en (bij twee hypothesen)
+de LR per bewijsstuk en de eind-odds. `likelihood[i]` is P(bewijs | hypothese i). Reken antwoorden na met
+`CS.stats.bayesUpdate(prior, likelihood)`.

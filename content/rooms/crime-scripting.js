@@ -162,7 +162,7 @@ CS.registerRoom({
         <table>
           <thead><tr><th>Niveau</th><th>Wat het is</th><th>Cybervoorbeeld</th></tr></thead>
           <tbody>
-            <tr><td><strong>Metascript</strong></td><td>Het meest abstracte niveau: een hele familie van misdaden met dezelfde grove logica.</td><td>"Online fraude" in het algemeen.</td></tr>
+            <tr><td><strong>Metascript</strong></td><td>Het meest abstracte van deze vier niveaus: een hele familie van misdaden met dezelfde grove logica. (Cornish zet daar nog het universele script boven, het sjabloon voor elk delict.)</td><td>"Online fraude" in het algemeen.</td></tr>
             <tr><td><strong>Protoscript</strong></td><td>Een generiek script voor één type misdaad, los van de precieze uitvoering.</td><td>"Phishing-fraude" als categorie.</td></tr>
             <tr><td><strong>Script</strong></td><td>De concrete manier waarop dat type wordt uitgevoerd.</td><td>"Bankphishing via een nagemaakte inlogpagina".</td></tr>
             <tr><td><strong>Track</strong></td><td>Een specifieke variant binnen hetzelfde script.</td><td>Phishing per sms (smishing) versus per e-mail: twee tracks van hetzelfde script.</td></tr>
@@ -188,7 +188,7 @@ CS.registerRoom({
         uitzoomen voor patronen.</p>
       `,
       questions: [
-        { q: 'Welk abstractieniveau is het meest algemeen (het hoogste, over een hele familie van misdaden)?', options: ['Track', 'Script', 'Protoscript', 'Metascript'], answer: 3, explain: 'Het metascript is het meest abstracte niveau en omvat een hele familie van misdaadvormen.' },
+        { q: 'Welk van deze vier abstractieniveaus is het meest algemeen (over een hele familie van misdaden)?', options: ['Track', 'Script', 'Protoscript', 'Metascript'], answer: 3, explain: 'Het metascript is het meest abstracte niveau en omvat een hele familie van misdaadvormen.' },
         { q: 'Smishing (phishing via sms) en phishing via e-mail zijn twee ... van hetzelfde script.', answer: ['tracks', 'track'], hint: 'Het meest concrete niveau: een specifieke variant.', explain: 'Een track is een specifieke uitvoeringsvariant binnen één script.' },
         { q: 'Zet van abstract naar concreet: welke volgorde klopt?', options: ['Script, metascript, protoscript, track', 'Metascript, protoscript, script, track', 'Track, script, protoscript, metascript', 'Protoscript, metascript, track, script'], answer: 1, explain: 'Van abstract naar concreet: metascript, protoscript, script, track.' },
       ],
@@ -209,8 +209,7 @@ CS.registerRoom({
         <h3>Displacement: de waterbed-waarschuwing</h3>
         <p>Grijp je ergens in, dan verdwijnt de misdaad lang niet altijd. Vaak <em>verplaatst</em> hij zich — als een
         waterbed waar je op duwt: op de ene plek zakt het, op de andere komt het omhoog. Dat heet
-        <strong>displacement</strong> (verplaatsing). Er zijn vijf klassieke soorten (Reppetto; later aangevuld door
-        Cornish &amp; Clarke):</p>
+        <strong>displacement</strong> (verplaatsing). Er zijn vijf klassieke soorten (Reppetto, 1976):</p>
         <ul>
           <li><strong>Geografische verplaatsing</strong> (spatial) — zelfde misdaad, andere plek. Het phishingdomein
           wordt geblokkeerd, dus de dader zet een nieuwe server bij een andere hoster in een ander land neer.</li>
@@ -223,7 +222,7 @@ CS.registerRoom({
           <li><strong>Misdaadverplaatsing</strong> (functional) — ander type misdaad. Ransomware wordt te risicovol,
           dus de groep schakelt over op gegevensdiefstal met afpersing.</li>
         </ul>
-        <p>Cornish &amp; Clarke voegden daar nog een zesde aan toe: <strong>daderverplaatsing</strong> (perpetrator) —
+        <p>Barr &amp; Pease (1990) voegden daar nog een zesde aan toe: <strong>daderverplaatsing</strong> (perpetrator) —
         pak je de ene dader op, dan neemt een ander zijn plek in, zeker in een crime-as-a-service-markt.</p>
 
         <div class="callout info">
@@ -537,7 +536,7 @@ CS.registerRoom({
     { term: 'Scène', def: 'Eén stap in een crime script, beschreven op zes velden: handeling, actoren, middelen, locatie, randvoorwaarden en sporen.' },
     { term: 'Universeel script', def: 'Vast sjabloon van fasen dat vrijwel elke misdaad volgt; hier in zes fasen van voorbereiding tot cash-out.' },
     { term: 'Cash-out', def: 'De laatste fase: de buit omzetten in besteedbaar, witgewassen geld; vaak de zwakste schakel in de keten.' },
-    { term: 'Metascript', def: 'Het meest abstracte abstractieniveau: een hele familie van misdaadvormen met dezelfde grove logica.' },
+    { term: 'Metascript', def: 'Het meest abstracte niveau onder het universele script: een hele familie van misdaadvormen met dezelfde grove logica.' },
     { term: 'Protoscript', def: 'Een generiek script voor één type misdaad, los van de precieze uitvoering.' },
     { term: 'Track', def: 'Een specifieke uitvoeringsvariant binnen hetzelfde script (bijvoorbeeld smishing versus e-mailphishing).' },
     { term: 'Subscript', def: 'Een scène die als een compleet eigen script wordt uitgewerkt; vaak hergebruikt over meerdere zaken.' },

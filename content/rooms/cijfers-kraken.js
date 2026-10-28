@@ -264,7 +264,7 @@ CS.registerRoom({
 
         <h3>Grote sleutelruimte</h3>
         <p><strong>AES</strong> (Advanced Encryption Standard) gebruikt sleutels van 128, 192 of 256 bits. Een
-        256-bits sleutel betekent ongeveer 10^77 mogelijkheden — meer dan er atomen in het waarneembare heelal zijn.
+        256-bits sleutel betekent ongeveer 10^77 mogelijkheden — in de orde van grootte van het aantal atomen in het waarneembare heelal (zo'n 10^78 tot 10^80).
         Brute force is dan geen optie meer: alle computers op aarde samen zouden astronomisch veel langer dan de
         leeftijd van het heelal nodig hebben. Vergelijk dat met de 25 sleutels van Caesar of de 256 van 1-byte-XOR.</p>
 

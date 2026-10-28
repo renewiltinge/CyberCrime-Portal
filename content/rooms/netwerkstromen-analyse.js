@@ -151,7 +151,7 @@ CS.registerRoom({
       questions: [
         { q: 'Wat is de juiste eerste reactie op de besmette werkplek?', options: ['Isoleren van het netwerk, maar aan laten staan (geheugen en bewijs behouden)', 'Direct uitzetten', 'Niets doen en verder monitoren', 'De harde schijf meteen wissen'], answer: 0, explain: 'Isoleren stopt de schade; aan laten staan bewaart vluchtig bewijs (geheugen, verbindingen) voor forensie.' },
         { q: 'Welke twee IOCs blokkeer je direct op de firewall/proxy?', options: ['cdn-telemetry.nm.lab (203.0.113.50) en opslag-x9f3.nm.lab (203.0.113.77)', 'updates.nm.lab en mail.nm.lab', 'intranet.nm.lab en mail.nm.lab', 'Alle .nm.lab-domeinen'], answer: 0, explain: 'De C2 en de exfil-bestemming zijn de kwaadaardige IOCs; de rest is legitiem verkeer dat je niet wilt blokkeren.' },
-        { q: 'Welke ATT&CK-tactiek hoort bij het beacon-verkeer naar de C2?', options: ['Command and Control (T1071)', 'Initial Access', 'Impact', 'Reconnaissance'], answer: 0, explain: 'Het ritmische C2-verkeer valt onder Command and Control (Application Layer Protocol, T1071).' },
+        { q: 'Welke ATT&CK-tactiek hoort bij het beacon-verkeer naar de C2?', options: ['Command and Control (TA0011)', 'Initial Access', 'Impact', 'Reconnaissance'], answer: 0, explain: 'Het ritmische C2-verkeer valt onder de tactiek Command and Control (TA0011); de techniek is Application Layer Protocol (T1071).' },
         { q: 'Welke vlag staat in de tip-callout van deze taak?', answer: ['NM{isoleer_niet_uit}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{isoleer_niet_uit}.' },
       ],
     },

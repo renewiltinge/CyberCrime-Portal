@@ -47,11 +47,11 @@ CS.registerRoom({
     'Twee administraties matchen en de onverklaarde post vinden',
     'Een saldoverschil verklaren uit een ontbrekende boeking',
     'Het onverklaarde bedrag als geldstroom volgen tot de cash-out',
-    'Interne controles benoemen (functiescheiding, vier-ogen-principe) die skimming tegengaan',
+    'Interne controles benoemen (functiescheiding, vier-ogen-principe) die verduistering via ongeboekte betalingen tegengaan',
   ],
   terms: [
     { term: 'Reconciliatie', def: 'Twee administraties die hetzelfde zouden moeten weergeven naast elkaar leggen en afstemmen; verschillen zijn verdacht.' },
-    { term: 'Skimming', def: 'Interne fraude waarbij geld wordt weggesluisd vóór of buiten de boeking om, zodat het in de boekhouding niet opvalt.' },
+    { term: 'Ongeboekte uitbetaling (fraudulent disbursement)', def: 'Interne fraude waarbij geld via een betaling die niet (of vals) wordt geboekt uit de organisatie verdwijnt. Verwant aan skimming, waarbij ontvangsten worden afgeroomd vóórdat ze geboekt worden.' },
     { term: 'Katvanger / shell', def: 'Een tussenrekening of lege BV die alleen dient om geld door te sluizen en de bestemming te verhullen.' },
     { term: 'Onverklaarde post', def: 'Een transactie die op de ene administratie staat maar niet op de andere — de kern van veel fraudezaken.' },
     { term: 'Saldoverschil', def: 'Het verschil tussen twee saldi dat precies gelijk is aan de ontbrekende boeking(en).' },
@@ -70,7 +70,8 @@ CS.registerRoom({
       title: 'Taak 1 — Waarom reconciliatie fraude vindt',
       content: `
         <p>Een boekhouding kan er perfect uitzien en tóch liegen — als er geld is weggesluisd <em>buiten de boeking om</em>.
-        Dat heet <strong>skimming</strong>. Je vindt het niet door de boekhouding alléén te lezen, maar door haar te
+        Dat heet een <strong>ongeboekte uitbetaling</strong> (fraudulent disbursement); de verwante truc waarbij
+        ontvangsten vóór de boeking worden afgeroomd, heet <em>skimming</em>. Je vindt het niet door de boekhouding alléén te lezen, maar door haar te
         <strong>reconciliëren</strong>: naast een onafhankelijke bron leggen (het bankafschrift) en afstemmen.</p>
         <p>De logica is simpel: het bankafschrift en de boekhouding horen dezelfde transacties te tonen. Een post die wél op
         de bank staat maar niet in de boeken (of andersom) is <strong>onverklaard</strong> — en vaak precies het spoor van
@@ -80,7 +81,7 @@ CS.registerRoom({
       `,
       questions: [
         { q: 'Wat is reconciliatie?', options: ['Twee administraties naast elkaar leggen en afstemmen om verschillen te vinden', 'De boekhouding opnieuw typen', 'Een wachtwoord resetten', 'Een back-up maken'], answer: 0, explain: 'Reconciliëren stemt bron en boeking op elkaar af; het verschil is het signaal.' },
-        { q: 'Waarom vind je skimming niet door alleen de boekhouding te lezen?', options: ['Omdat het geld juist buiten de boeking om is weggesluisd — het ontbreekt daar', 'Omdat de boekhouding versleuteld is', 'Omdat boekhoudingen altijd kloppen', 'Omdat het bedrag te klein is'], answer: 0, explain: 'Skimming laat de boeking er netjes uitzien; alleen een onafhankelijke bron (de bank) onthult het.' },
+        { q: 'Waarom vind je een ongeboekte uitbetaling niet door alleen de boekhouding te lezen?', options: ['Omdat het geld juist buiten de boeking om is weggesluisd — het ontbreekt daar', 'Omdat de boekhouding versleuteld is', 'Omdat boekhoudingen altijd kloppen', 'Omdat het bedrag te klein is'], answer: 0, explain: 'Zo\'n fraude laat de boeking er netjes uitzien; alleen een onafhankelijke bron (de bank) onthult het.' },
         { q: 'Waaraan is het saldoverschil gelijk?', options: ['Aan de ontbrekende boeking(en)', 'Aan de btw', 'Aan de rente', 'Aan het hoogste bedrag'], answer: 0, explain: 'Als één post ontbreekt, verschillen de saldi precies met dat bedrag.' },
         { q: 'Welke vlag staat in de tip-callout?', answer: ['NM{zit_in_het_verschil}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{zit_in_het_verschil}.' },
       ],
@@ -152,7 +153,7 @@ CS.registerRoom({
       questions: [
         { q: 'Welke controle maakt interne fraude het moeilijkst?', options: ['Functiescheiding: niet één persoon mag betalen, boeken én controleren', 'Een langer wachtwoord', 'Een snellere computer', 'Meer back-ups'], answer: 0, explain: 'Als taken gescheiden zijn, kan niemand alleen een betaling doen én verbergen.' },
         { q: 'Wat houdt het vier-ogen-principe in?', options: ['Een tweede persoon moet een betaling goedkeuren', 'Je controleert alles vier keer', 'Je gebruikt vier wachtwoorden', 'Je bewaart alles vier jaar'], answer: 0, explain: 'Een verplichte tweede goedkeuring voorkomt dat één persoon ongezien geld wegsluist.' },
-        { q: 'Waarom helpt een periodieke, onafhankelijke reconciliatie?', options: ['Ze legt een onverklaarde post snel bloot, voordat het spoor koud wordt', 'Ze versnelt de boekhouding', 'Ze verlaagt de belasting', 'Ze is wettelijk verboden'], answer: 0, explain: 'Regelmatig afstemmen met de bank vangt skimming vroeg — precies wat je in dit lab deed.' },
+        { q: 'Waarom helpt een periodieke, onafhankelijke reconciliatie?', options: ['Ze legt een onverklaarde post snel bloot, voordat het spoor koud wordt', 'Ze versnelt de boekhouding', 'Ze verlaagt de belasting', 'Ze is wettelijk verboden'], answer: 0, explain: 'Regelmatig afstemmen met de bank vangt zulke fraude vroeg — precies wat je in dit lab deed.' },
         { q: 'Welke vlag staat in de tip-callout van deze taak?', answer: ['NM{functiescheiding_wint}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{functiescheiding_wint}.' },
       ],
     },

@@ -18,14 +18,14 @@ const INCIDENT_TIMELINE = [
   { t: '2026-09-17 19:05:40', src: 'Sysmon', host: 'WS-ADM-04', desc: 'ProcessCreate net.exe  CommandLine: net group "Domain Admins" /domain' },
   { t: '2026-09-17 19:06:12', src: 'Sysmon', host: 'WS-ADM-04', desc: 'ProcessCreate nltest.exe  CommandLine: nltest /dclist:noorderlicht.nm.lab' },
   { t: '2026-09-17 19:09:55', src: 'Sysmon', host: 'WS-ADM-04', desc: 'ProcessCreate powershell.exe -w hidden -enc U3RhZ2UyIGdlbGFkZW4gdmFuYWYgY2RuLXNsdWlzLm5tLmxhYjsgY2FtcGFnbmUtdGFnOiBOTXtzdGFnZV90d2VlX29udGh1bGR9' },
-  { t: '2026-09-17 19:10:30', src: 'Proxy', host: 'WS-ADM-04', desc: 'GET hxxps://cdn-sluis[.]nineminds[.]lab/stage2  ->  203.0.113.91:443' },
+  { t: '2026-09-17 19:10:30', src: 'Proxy', host: 'WS-ADM-04', desc: 'GET hxxps://cdn-sluis[.]nm[.]lab/stage2  ->  203.0.113.91:443' },
   { t: '2026-09-17 19:14:03', src: 'Sysmon', host: 'WS-ADM-04', desc: 'ProcessAccess rundll32.exe -> lsass.exe  GrantedAccess=0x1010' },
   { t: '2026-09-17 19:14:20', src: 'EDR', host: 'WS-ADM-04', desc: 'ALERT HIGH  Credential.LsassAccess  Process=rundll32.exe' },
   { t: '2026-09-17 19:40:12', src: 'Analist', host: '-', desc: 'Handmatige notitie: het gat van ~3 dagen tussen de eerste toegang en de hands-on-keyboard-actie past bij koop-en-doorverkoop van toegang (IAB -> affiliate). NM{pauze_is_een_signaal}' },
   // Dag 5 — laterale beweging, exfiltratie, versleuteling
   { t: '2026-09-18 00:52:40', src: 'Security', host: 'SRV-FS02', desc: '4624 aanmelding type 10 (RDP) svc-backup vanaf WS-ADM-04' },
   { t: '2026-09-18 01:10:18', src: 'Sysmon', host: 'SRV-FS02', desc: 'ProcessCreate 7z.exe  CommandLine: 7z.exe a -p<redacted> C:\\Temp\\klanten.7z D:\\Shares\\Klanten' },
-  { t: '2026-09-18 01:55:30', src: 'Proxy', host: 'SRV-FS02', desc: 'POST hxxps://opslag-cloud[.]nineminds[.]lab/upload  ->  192.0.2.60:443  BytesSent=2147483648' },
+  { t: '2026-09-18 01:55:30', src: 'Proxy', host: 'SRV-FS02', desc: 'POST hxxps://opslag-cloud[.]nm[.]lab/upload  ->  192.0.2.60:443  BytesSent=2147483648' },
   // Korte pauze (~1,5 uur): de staging is klaar, de affiliate wacht
   { t: '2026-09-18 03:28:05', src: 'Sysmon', host: 'SRV-FS02', desc: 'ProcessCreate vssadmin.exe  CommandLine: vssadmin.exe delete shadows /all /quiet' },
   { t: '2026-09-18 03:30:11', src: 'FileAudit', host: 'SRV-FS02', desc: 'FileRename D:\\Shares\\Klanten\\contracten.xlsx -> contracten.xlsx.sluislock' },
@@ -37,11 +37,11 @@ const INCIDENT_TIMELINE = [
 // --- IOC-tekst voor de defang-oefening (alles fictief, gedefanged) ---
 const INCIDENT_IOCS = `INTERN IOC-OVERZICHT — incident Noorderlicht Logistiek (TLP:AMBER)
 Bron-IP VPN-login (gekochte toegang): 203.0.113[.]77
-Stage2-download: hxxps://cdn-sluis[.]nineminds[.]lab/stage2  (203.0.113[.]91)
-C2/stage2-host: cdn-sluis[.]nineminds[.]lab
-Exfiltratie naar: hxxps://opslag-cloud[.]nineminds[.]lab/upload  (192.0.2[.]60)
+Stage2-download: hxxps://cdn-sluis[.]nm[.]lab/stage2  (203.0.113[.]91)
+C2/stage2-host: cdn-sluis[.]nm[.]lab
+Exfiltratie naar: hxxps://opslag-cloud[.]nm[.]lab/upload  (192.0.2[.]60)
 Let op: 203.0.113[.]91 komt zowel bij de download als in het beacon-verkeer voor (tel één keer).
-Afzender oorspronkelijke phishing (via de IAB): beheer[at]betaal-controle[.]nineminds[.]lab
+Afzender oorspronkelijke phishing (via de IAB): beheer[at]betaal-controle[.]nm[.]lab
 Losgeld-wallet: bc1qfictief0alpha
 Versleutelaar (SHA-256): 4f1c9b7a2e6d5038a1c4bb90de72f183ac05e9d1b7640c2fa38e91d6c7b4a502
 `;
@@ -131,7 +131,7 @@ CS.registerRoom({
 
         <div class="callout danger"><strong>Ethiek:</strong> je reconstrueert en duidt bewijs dat rechtmatig is
         veiliggesteld. Pivoten doe je passief, op open bronnen en in een afgeschermde omgeving — nooit door de
-        infrastructuur van een verdachte actief te benaderen (opsec, en de kaders van art. 126j Sv en de Wet
+        infrastructuur van een verdachte actief te benaderen (opsec, en de kaders van art. 126g/126j Sv en de Wet
         politiegegevens). Nabouwen van aanvalstechnieken mag alleen in je eigen lab of met schriftelijke toestemming.</div>
       `,
       lab: { type: 'timeline', title: 'Incident Noorderlicht Logistiek — super-timeline', events: INCIDENT_TIMELINE },
@@ -314,7 +314,7 @@ CS.registerRoom({
         bridge: ['A1B2C3D4', 'cert', 'certificaat'],
       },
       questions: [
-        { q: 'Welk zeldzaam kenmerk bruggt Zaak Alpha en Zaak Bravo?', answer: ['certificaat', 'cert', 'A1B2C3D4', 'het certificaat', 'tls-certificaat'], hint: 'Hetzelfde kenmerk staat in crt.sh bij beide domeinen; de IP-adressen verschillen juist.', explain: 'Beide domeinen presenteren hetzelfde TLS-certificaat A1B2C3D4 (bekend). Een hergebruikt certificaat is zeldzaam, dus een sterke brug.' },
+        { q: 'Welk zeldzaam kenmerk verbindt Zaak Alpha en Zaak Bravo?', answer: ['certificaat', 'cert', 'A1B2C3D4', 'het certificaat', 'tls-certificaat'], hint: 'Hetzelfde kenmerk staat in crt.sh bij beide domeinen; de IP-adressen verschillen juist.', explain: 'Beide domeinen presenteren hetzelfde TLS-certificaat A1B2C3D4 (bekend). Een hergebruikt certificaat is zeldzaam, dus een sterke brug.' },
         { q: 'Beide IP-adressen horen bij dezelfde hostingprovider (AS64500). Waarom is dat geen sterke brug?', options: ['Omdat heel veel onschuldige sites dezelfde hostingprovider delen — het kenmerk is niet zeldzaam', 'Omdat ASN-nummers altijd nep zijn', 'Omdat hosting niets met IP-adressen te maken heeft', 'Dat is wél een sterke brug'], answer: 0, explain: 'Een gedeelde hoster is te algemeen: het is de zeldzaamheidstoets die bepaalt of een gedeeld kenmerk echt bewijs is.' },
         { q: 'Welke vlag verdien je door de zeldzaamheidstoets juist toe te passen?', answer: ['NM{zeldzaamheid_boven_toeval}'], hint: 'Staat in de tip-callout van deze taak.', explain: 'De les: kies het zeldzame dwarsverband (het certificaat), niet het toevallige (de hoster): NM{zeldzaamheid_boven_toeval}.' },
       ],
@@ -397,7 +397,7 @@ CS.registerRoom({
         <table>
           <thead><tr><th>Indicator / fase</th><th>Interventie</th><th>Soort (eigenaar)</th></tr></thead>
           <tbody>
-            <tr><td>C2/stage2-host <code>cdn-sluis[.]nineminds[.]lab</code>, exfil-host</td><td>Blokkeren in proxy/DNS, takedown aanvragen</td><td>Verstoren (SOC + hostingpartij/registrar)</td></tr>
+            <tr><td>C2/stage2-host <code>cdn-sluis[.]nm[.]lab</code>, exfil-host</td><td>Blokkeren in proxy/DNS, takedown aanvragen</td><td>Verstoren (SOC + hostingpartij/registrar)</td></tr>
             <tr><td>Losgeld-wallet <code>bc1qfictief0alpha</code></td><td>Volgen op de blockchain; exchange als knelpunt aanspreken</td><td>Strafrechtelijk (opsporing)</td></tr>
             <tr><td>Gekochte toegang / ontbrekende MFA</td><td>MFA afdwingen, serviceaccounts herzien</td><td>Preventief (IT/CISO)</td></tr>
             <tr><td>Jonge first-offender in beeld</td><td>Alternatief traject (bijv. Hack_Right-achtig)</td><td>Alternatief (opsporing/OM)</td></tr>

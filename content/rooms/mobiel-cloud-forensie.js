@@ -33,7 +33,7 @@ CS.registerRoom({
 
         <p>Een analogie: een huis doorzoeken levert vingerafdrukken en papieren op. Een telefoon doorzoeken levert een <em>tijdlijn</em> op — minuut voor minuut wie, waar en wat. Dat maakt mobiele forensie zo krachtig, én zo privacygevoelig.</p>
 
-        <div class="callout warn"><strong>Daarom gelden er strenge regels:</strong> juist omdat een telefoon zó veel vertelt, mag je hem niet zomaar uitlezen. De AVG en het strafrecht stellen grenzen (machtiging, proportionaliteit). Daar komen we in de laatste taak op terug. Alle namen, apps en personen in deze room zijn fictief — we gebruiken bijvoorbeeld de verzonnen chat-app <strong>KletsApp</strong>.</div>
+        <div class="callout warn"><strong>Daarom gelden er strenge regels:</strong> juist omdat een telefoon zó veel vertelt, mag je hem niet zomaar uitlezen. Het strafrecht en de privacywetgeving (voor de politie de Wet politiegegevens, voor organisaties de AVG) stellen grenzen (machtiging, proportionaliteit). Daar komen we in de laatste taak op terug. Alle namen, apps en personen in deze room zijn fictief — we gebruiken bijvoorbeeld de verzonnen chat-app <strong>KletsApp</strong>.</div>
       `,
       questions: [
         { q: 'Waarom noemen we een telefoon een "goudmijn" voor onderzoek?', options: ['Omdat er goud in zit', 'Omdat één apparaat een gedetailleerde tijdlijn van berichten, locatie en activiteit kan bevatten', 'Omdat telefoons duur zijn', 'Omdat ze altijd versleuteld zijn'], answer: 1, explain: 'Een telefoon combineert berichten, locaties, foto\'s en app-data tot een rijke tijdlijn — vandaar "goudmijn".' },
@@ -205,23 +205,23 @@ CS.registerRoom({
       lab: {
         type: 'logs',
         title: 'kletsapp-cloud · loginhistorie mila@kletsapp.lab',
-        lines: `2026-09-01 08:14:02  account=mila@kletsapp.lab  gebeurtenis=login  status=ok  ip=192.168.1.24  locatie=Utrecht, NL  apparaat=iPhone (KletsApp 7.2)
-2026-09-01 12:41:55  account=mila@kletsapp.lab  gebeurtenis=login  status=ok  ip=192.168.1.24  locatie=Utrecht, NL  apparaat=iPhone (KletsApp 7.2)
+        lines: `2026-09-01 08:14:02  account=mila@kletsapp.lab  gebeurtenis=login  status=ok  ip=198.51.100.24  locatie=Utrecht, NL  apparaat=iPhone (KletsApp 7.2)
+2026-09-01 12:41:55  account=mila@kletsapp.lab  gebeurtenis=login  status=ok  ip=198.51.100.24  locatie=Utrecht, NL  apparaat=iPhone (KletsApp 7.2)
 2026-09-02 07:58:19  account=mila@kletsapp.lab  gebeurtenis=login  status=ok  ip=198.51.100.33  locatie=Utrecht, NL  apparaat=iPhone (KletsApp 7.2)
 2026-09-02 18:22:40  account=mila@kletsapp.lab  gebeurtenis=login  status=ok  ip=198.51.100.33  locatie=Amersfoort, NL  apparaat=iPhone (KletsApp 7.2)
-2026-09-03 08:03:11  account=mila@kletsapp.lab  gebeurtenis=login  status=ok  ip=192.168.1.24  locatie=Utrecht, NL  apparaat=iPhone (KletsApp 7.2)
-2026-09-03 09:15:47  account=mila@kletsapp.lab  gebeurtenis=login  status=mislukt  ip=192.168.1.24  locatie=Utrecht, NL  apparaat=iPhone (KletsApp 7.2)
-2026-09-03 09:16:02  account=mila@kletsapp.lab  gebeurtenis=login  status=ok  ip=192.168.1.24  locatie=Utrecht, NL  apparaat=iPhone (KletsApp 7.2)
+2026-09-03 08:03:11  account=mila@kletsapp.lab  gebeurtenis=login  status=ok  ip=198.51.100.24  locatie=Utrecht, NL  apparaat=iPhone (KletsApp 7.2)
+2026-09-03 09:15:47  account=mila@kletsapp.lab  gebeurtenis=login  status=mislukt  ip=198.51.100.24  locatie=Utrecht, NL  apparaat=iPhone (KletsApp 7.2)
+2026-09-03 09:16:02  account=mila@kletsapp.lab  gebeurtenis=login  status=ok  ip=198.51.100.24  locatie=Utrecht, NL  apparaat=iPhone (KletsApp 7.2)
 2026-09-10 13:30:05  account=mila@kletsapp.lab  gebeurtenis=login  status=ok  ip=198.51.100.33  locatie=Utrecht, NL  apparaat=iPhone (KletsApp 7.2)
-2026-09-12 22:11:38  account=mila@kletsapp.lab  gebeurtenis=login  status=ok  ip=192.168.1.24  locatie=Utrecht, NL  apparaat=iPhone (KletsApp 7.2)
+2026-09-12 22:11:38  account=mila@kletsapp.lab  gebeurtenis=login  status=ok  ip=198.51.100.24  locatie=Utrecht, NL  apparaat=iPhone (KletsApp 7.2)
 2026-09-14 03:47:51  account=mila@kletsapp.lab  gebeurtenis=login  status=ok  ip=203.0.113.88  locatie=Belgrado, RS  apparaat=onbekend (web)
 2026-09-14 03:48:10  account=mila@kletsapp.lab  gebeurtenis=wachtwoord_gewijzigd  status=ok  ip=203.0.113.88  locatie=Belgrado, RS  apparaat=onbekend (web)
 2026-09-14 03:49:27  account=mila@kletsapp.lab  gebeurtenis=export_chats  status=ok  ip=203.0.113.88  locatie=Belgrado, RS  notitie=NM{verdachte_login_gevonden}
 2026-09-14 03:52:03  account=mila@kletsapp.lab  gebeurtenis=nieuw_apparaat_gekoppeld  status=ok  ip=203.0.113.88  locatie=Belgrado, RS  apparaat=web-sessie
-2026-09-14 08:05:12  account=mila@kletsapp.lab  gebeurtenis=login  status=mislukt  ip=192.168.1.24  locatie=Utrecht, NL  apparaat=iPhone (KletsApp 7.2)
-2026-09-14 08:05:29  account=mila@kletsapp.lab  gebeurtenis=login  status=mislukt  ip=192.168.1.24  locatie=Utrecht, NL  apparaat=iPhone (KletsApp 7.2)
-2026-09-14 08:09:44  account=mila@kletsapp.lab  gebeurtenis=wachtwoord_herstel_aangevraagd  status=ok  ip=192.168.1.24  locatie=Utrecht, NL  apparaat=iPhone (KletsApp 7.2)
-2026-09-14 08:20:01  account=mila@kletsapp.lab  gebeurtenis=login  status=ok  ip=192.168.1.24  locatie=Utrecht, NL  apparaat=iPhone (KletsApp 7.2)`,
+2026-09-14 08:05:12  account=mila@kletsapp.lab  gebeurtenis=login  status=mislukt  ip=198.51.100.24  locatie=Utrecht, NL  apparaat=iPhone (KletsApp 7.2)
+2026-09-14 08:05:29  account=mila@kletsapp.lab  gebeurtenis=login  status=mislukt  ip=198.51.100.24  locatie=Utrecht, NL  apparaat=iPhone (KletsApp 7.2)
+2026-09-14 08:09:44  account=mila@kletsapp.lab  gebeurtenis=wachtwoord_herstel_aangevraagd  status=ok  ip=198.51.100.24  locatie=Utrecht, NL  apparaat=iPhone (KletsApp 7.2)
+2026-09-14 08:20:01  account=mila@kletsapp.lab  gebeurtenis=login  status=ok  ip=198.51.100.24  locatie=Utrecht, NL  apparaat=iPhone (KletsApp 7.2)`,
       },
       questions: [
         { q: 'Vanaf welk IP-adres kwam de verdachte login (vreemde locatie, raar tijdstip)?', answer: ['203.0.113.88'], hint: 'Filter op login en zoek de regel met locatie buiten NL rond 03:47.', explain: 'De login van 203.0.113.88 (Belgrado, RS) om 03:47 wijkt af van Mila\'s gewone patroon uit NL overdag.' },
@@ -243,7 +243,7 @@ CS.registerRoom({
           <li><strong>Rechtshulpverzoek.</strong> Staat de clouddata in het buitenland, dan heb je vaak de hulp van dat land nodig via een formeel verzoek.</li>
         </ul>
 
-        <div class="callout info"><strong>De AVG blijft gelden:</strong> ook de politie moet doelbinding en dataminimalisatie respecteren. Je verzamelt wat nodig is voor de zaak, niet meer. De Autoriteit Persoonsgegevens houdt toezicht.</div>
+        <div class="callout info"><strong>Privacyregels blijven gelden:</strong> voor de politie is dat de Wet politiegegevens (niet de AVG, die opsporing uitzondert), voor organisaties de AVG. Beide eisen doelbinding en dataminimalisatie. Je verzamelt wat nodig is voor de zaak, niet meer. De Autoriteit Persoonsgegevens houdt toezicht.</div>
 
         <h3>Samenwerken met het NFI</h3>
         <p>Voor complexe gevallen — een zwaar versleutelde telefoon, een beschadigde chip, een ingewikkelde fysieke image — schakelt de politie het <strong>NFI</strong> in, het <strong>Nederlands Forensisch Instituut</strong>. Daar zitten specialisten en apparatuur die veel verder gaan dan de standaardgereedschappen. Zie het als het forensisch laboratorium achter de rechercheur: jij levert de zaak en de vragen aan, zij halen er met geavanceerde technieken het bewijs uit.</p>
@@ -254,7 +254,7 @@ CS.registerRoom({
         { q: 'Wat is doorgaans nodig om de privacygevoelige inhoud van een in beslag genomen telefoon echt uit te lezen?', options: ['Niets, dat mag altijd', 'Een machtiging van bijvoorbeeld een officier van justitie of rechter-commissaris', 'Toestemming van de fabrikant', 'Een Faraday-tas'], answer: 1, explain: 'Het uitlezen van een telefoon is een forse privacy-inbreuk; daarvoor is een machtiging vereist.' },
         { q: 'Waar staat de afkorting NFI voor?', answer: ['nederlands forensisch instituut'], hint: 'Het forensisch laboratorium van Nederland.', explain: 'NFI = Nederlands Forensisch Instituut, dat de politie bijstaat bij complexe forensische vragen.' },
         { q: 'Wat betekent proportionaliteit bij een digitaal onderzoek?', options: ['Zo veel mogelijk data verzamelen', 'De privacy-inbreuk moet in verhouding staan tot het onderzoeksbelang', 'Alles twee keer kopiëren', 'Alleen de nieuwste telefoons onderzoeken'], answer: 1, explain: 'Proportionaliteit: de inbreuk moet in verhouding staan tot het belang; samen met subsidiariteit kies je het minst ingrijpende middel.' },
-        { q: 'Ik begrijp dat forensisch onderzoek alleen bruikbaar is als het binnen het juridische kader (machtiging, proportionaliteit, AVG) gebeurt.', noAnswer: true },
+        { q: 'Ik begrijp dat forensisch onderzoek alleen bruikbaar is als het binnen het juridische kader (machtiging, proportionaliteit, privacywetgeving) gebeurt.', noAnswer: true },
       ],
     },
   ],

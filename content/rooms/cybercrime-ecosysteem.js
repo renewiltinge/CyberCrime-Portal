@@ -321,7 +321,7 @@ CS.registerRoom({
           </tbody>
         </table>
 
-        <p>Een anonieme, niet te verifiëren tip scoort bijvoorbeeld rond <code>E4</code>. Je eigen, geverifieerde
+        <p>Een anonieme, niet te verifiëren tip scoort bijvoorbeeld <code>F4</code>. Je eigen, geverifieerde
         SIEM-log is een volledig betrouwbare bron (<code>A</code>), maar zolang één bron het beeld geeft, blijft de
         informatie "waarschijnlijk waar" (<code>2</code>) &mdash; pas als andere bronnen het bevestigen, wordt het
         "bevestigd" (<code>1</code>). Zo scheid je netjes <em>wie iets zegt</em> van <em>of het waar is</em>.</p>
@@ -348,9 +348,9 @@ CS.registerRoom({
           {
             source: 'Anonieme tip via Meld Misdaad Anoniem',
             info: 'Een met naam genoemde persoon plant volgende week een ransomware-aanval',
-            reliability: 'E',
+            reliability: 'F',
             credibility: '4',
-            explain: 'Een anonieme, onbekende bron kun je niet op betrouwbaarheid toetsen (E, onbetrouwbaar/niet vast te stellen). De onbevestigde bewering is twijfelachtig tot er onderbouwing is (4). Nuttig als startpunt, nooit als bewijs.',
+            explain: 'Een anonieme, onbekende bron kun je niet op betrouwbaarheid toetsen (F, niet te beoordelen; E is voor een bron die eerder onbetrouwbaar bleek). De onbevestigde bewering is twijfelachtig tot er onderbouwing is (4). Nuttig als startpunt, nooit als bewijs.',
           },
           {
             source: 'Je eigen, geverifieerde SIEM-log van het bedrijfsnetwerk',

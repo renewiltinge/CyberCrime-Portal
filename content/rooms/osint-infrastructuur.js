@@ -15,20 +15,20 @@ const OI_ATTRS = [
   { key: 'title', label: 'Paginatitel' },
 ];
 const OI_HOSTS = [
-  { host: 'nederbank-check.nm.lab', favicon: 'f7a1c9', analytics: 'UA-66613-7', jarm: '2ad2ad00', cert: 'LE-a1', title: 'Inloggen' },
-  { host: 'inlog-nederbank.nm.lab', favicon: 'f7a1c9', analytics: 'UA-66613-7', jarm: '2ad2ad00', cert: 'LE-b2', title: 'Inloggen' },
-  { host: 'verify-nederbank.nm.lab', favicon: 'f7a1c9', analytics: 'UA-66613-7', jarm: '2ad2ad00', cert: 'LE-c3', title: 'Inloggen' },
-  { host: 'nederbank-secure.nm.lab', favicon: 'f7a1c9', analytics: 'UA-66613-7', jarm: '2ad2ad00', cert: 'LE-d4', title: 'Inloggen' },
-  { host: 'webshop.nm.lab', favicon: '11bb20', analytics: 'UA-20011-1', jarm: '2ad2ad00', cert: 'LE-e5', title: 'Webshop' },
+  { host: 'nederbank-check.nm.lab', favicon: 'f7a1c9', analytics: 'G-6M61Q37X', jarm: '2ad2ad00', cert: 'LE-a1', title: 'Inloggen' },
+  { host: 'inlog-nederbank.nm.lab', favicon: 'f7a1c9', analytics: 'G-6M61Q37X', jarm: '2ad2ad00', cert: 'LE-b2', title: 'Inloggen' },
+  { host: 'verify-nederbank.nm.lab', favicon: 'f7a1c9', analytics: 'G-6M61Q37X', jarm: '2ad2ad00', cert: 'LE-c3', title: 'Inloggen' },
+  { host: 'nederbank-secure.nm.lab', favicon: 'f7a1c9', analytics: 'G-6M61Q37X', jarm: '2ad2ad00', cert: 'LE-d4', title: 'Inloggen' },
+  { host: 'webshop.nm.lab', favicon: '11bb20', analytics: 'G-2D011K1P', jarm: '2ad2ad00', cert: 'LE-e5', title: 'Webshop' },
   { host: 'blog.nm.lab', favicon: '22cc31', analytics: '', jarm: '2ad2ad00', cert: 'LE-f6', title: 'Blog' },
-  { host: 'forum.nm.lab', favicon: '33dd42', analytics: 'UA-55500-2', jarm: '2ad2ad00', cert: 'LE-g7', title: 'Forum' },
+  { host: 'forum.nm.lab', favicon: '33dd42', analytics: 'G-55K00Q2R', jarm: '2ad2ad00', cert: 'LE-g7', title: 'Forum' },
   { host: 'intranet.nm.lab', favicon: '44ee53', analytics: '', jarm: '2ad2ad00', cert: 'LE-h8', title: 'Intranet' },
 ];
 
 // --- Pivot: de brug naar een tweede dossier (hergebruikte analytics-ID) ---
 const OI_ENTITIES = [
   { id: 'd1', type: 'domain', label: 'nederbank-check.nm.lab' },
-  { id: 'ga', type: 'alias', label: 'UA-66613-7 (Analytics-ID)' },
+  { id: 'ga', type: 'alias', label: 'G-6M61Q37X (Analytics-ID)' },
   { id: 'c2', type: 'domain', label: 'paneel-oud.nm.lab (oud C2-paneel)' },
   { id: 'wal', type: 'wallet', label: 'bc1q…crime (losgeld-adres)' },
   { id: 'mail', type: 'email', label: 'beheer@boos.nm.lab' },
@@ -111,12 +111,12 @@ CS.registerRoom({
         hosts: OI_HOSTS,
         ask: [
           { q: 'Hoeveel hosts delen het favicon-hash f7a1c9?', answer: ['4', 'vier'], hint: 'Klik de favicon-waarde aan.' },
-          { q: 'Welke (zeldzame) Analytics-ID koppelt de vier phishingdomeinen?', answer: ['UA-66613-7', 'ua-66613-7'], hint: 'Klik een analytics-waarde aan en kijk naar de telling.' },
+          { q: 'Welke (zeldzame) Analytics-ID koppelt de vier phishingdomeinen?', answer: ['G-6M61Q37X', 'g-6m61q37x'], hint: 'Klik een analytics-waarde aan en kijk naar de telling.' },
           { q: 'Welk gedeeld kenmerk is juist te algemeen om op te clusteren?', answer: ['jarm', '2ad2ad00', 'de jarm'], hint: 'Welk kenmerk delen álle acht hosts?' },
         ],
       },
       questions: [
-        { q: 'Hoeveel hosts vormen de phishingcluster?', answer: ['4', 'vier'], hint: 'De hosts die het zeldzame favicon én analytics-ID delen.', explain: 'Vier hosts delen favicon f7a1c9 én analytics UA-66613-7 — dat is de operator-cluster.' },
+        { q: 'Hoeveel hosts vormen de phishingcluster?', answer: ['4', 'vier'], hint: 'De hosts die het zeldzame favicon én analytics-ID delen.', explain: 'Vier hosts delen favicon f7a1c9 én analytics G-6M61Q37X — dat is de operator-cluster.' },
         { q: 'Waarom is de gedeelde JARM (2ad2ad00) hier geen bruikbare link?', options: ['Alle acht hosts delen hem — een default-stack is te algemeen', 'JARM bestaat niet', 'Hij is uniek per host', 'Omdat het een phishingkenmerk is'], answer: 0, explain: 'Een kenmerk dat iedereen deelt, onderscheidt niets. De zeldzaamheidstoets wijst het af als ruis.' },
         { q: 'Waarom is het hergebruikte favicon zo\'n sterke aanwijzing?', options: ['Het is zeldzaam en specifiek: dezelfde maker gebruikte hetzelfde icoon over zijn domeinen', 'Omdat favicons geheim zijn', 'Omdat het een virus bevat', 'Omdat het groot is'], answer: 0, explain: 'Een uniek favicon over meerdere domeinen verraadt één hand — efficiëntie van de aanvaller wordt zijn vingerafdruk.' },
         { q: 'Welke vlag staat in de tip-callout van deze taak?', answer: ['NM{vier_een_vingerafdruk}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{vier_een_vingerafdruk}.' },
@@ -126,21 +126,21 @@ CS.registerRoom({
       title: 'Taak 3 — Pivoteer naar het tweede dossier',
       content: `
         <p>Je hebt de phishingcluster. Nu de grote vraag: is dit een bekende speler? Pivoteer via het zeldzame kenmerk. De
-        analytics-ID <code>UA-66613-7</code> blijkt — volgens een oude <strong>archive.org</strong>-snapshot — ook gebruikt
+        analytics-ID <code>G-6M61Q37X</code> blijkt — volgens een oude <strong>archive.org</strong>-snapshot — ook gebruikt
         op een <em>oud C2-paneel</em> uit een ransomware-dossier van 2024. Dat is de brug tussen twee zaken.</p>
         <p>Klik door de entiteiten in het lab en volg de relaties. Let op de <strong>bron</strong> en de <strong>tijd</strong>
         van elke link — en of het kenmerk zeldzaam genoeg is om de brug te dragen.</p>
-        <div class="callout tip"><strong>Beloning:</strong> één hergebruikt kenmerk bruggt twee dossiers. Vlag: <code>NM{brug_via_hergebruik}</code>.</div>
+        <div class="callout tip"><strong>Beloning:</strong> één hergebruikt kenmerk verbindt twee dossiers. Vlag: <code>NM{brug_via_hergebruik}</code>.</div>
       `,
       lab: {
         type: 'pivot',
         title: 'van phishingdomein naar oud C2-paneel',
-        scenario: 'De analytics-ID UA-66613-7 koppelt de phishingcluster aan een ransomware-C2 uit 2024.',
+        scenario: 'De analytics-ID G-6M61Q37X koppelt de phishingcluster aan een ransomware-C2 uit 2024.',
         entities: OI_ENTITIES,
         edges: OI_EDGES,
       },
       questions: [
-        { q: 'Welk hergebruikt kenmerk bruggt de phishingcluster en het oude C2-paneel?', answer: ['UA-66613-7', 'ua-66613-7', 'de analytics-id', 'analytics-id', 'analytics'], hint: 'Beide laadden dezelfde tracking-ID.', explain: 'Zowel nederbank-check.nm.lab als paneel-oud.nm.lab laadde analytics-ID UA-66613-7 — de brug tussen de dossiers.' },
+        { q: 'Welk hergebruikt kenmerk verbindt de phishingcluster en het oude C2-paneel?', answer: ['G-6M61Q37X', 'g-6m61q37x', 'de analytics-id', 'analytics-id', 'analytics'], hint: 'Beide laadden dezelfde tracking-ID.', explain: 'Zowel nederbank-check.nm.lab als paneel-oud.nm.lab laadde analytics-ID G-6M61Q37X — de brug tussen de dossiers.' },
         { q: 'Via welke bron vond je dat het oude paneel die ID gebruikte?', options: ['Een archive.org-snapshot (de site is nu offline)', 'Door in te loggen op het paneel', 'Via de politie', 'Door het domein te scannen'], answer: 0, explain: 'Een Wayback-snapshot bewaart de oude broncode — passief, en daarom OSINT.' },
         { q: 'Waarom is deze brug sterker dan "beide gebruiken Let\'s Encrypt"?', options: ['Een specifieke tracking-ID is zeldzaam; een gratis certificaatprovider gebruikt iedereen', 'Let\'s Encrypt bestaat niet', 'Omdat het paneel offline is', 'Dat is het niet'], answer: 0, explain: 'Weer de zeldzaamheidstoets: een unieke ID bruggt, een alomtegenwoordige provider niet.' },
         { q: 'Welke vlag staat in de tip-callout van deze taak?', answer: ['NM{brug_via_hergebruik}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{brug_via_hergebruik}.' },

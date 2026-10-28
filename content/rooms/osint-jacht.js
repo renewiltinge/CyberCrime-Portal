@@ -1,12 +1,12 @@
 /* Room: OSINT-jacht — ontmasker de operator (puzzels) */
 
-const KOERIER_POST = `GELEKTE OPERATOR-POST — bron: fraudeforum DropZone (gearchiveerd kopie)
+const KOERIER_POST = `GELEKTE OPERATOR-POST — bron: fraudeforum DropZone (gearchiveerde kopie)
 Zaakcode: NM{koerier_ontmaskerd}
 
 [v0idkoerier] KOERIER-kit v3 — "uitbetalingen netjes geregeld"
-Contact alleen via v0idkoerier[at]mail[.]nineminds[.]lab (PGP verplicht, geen DM's).
-Panel: hxxps://panel[.]koerier-track[.]nineminds[.]lab/login
-Backup-panel: hxxps://koerier-track[.]nineminds[.]lab/panel
+Contact alleen via v0idkoerier[at]mail[.]nm[.]lab (PGP verplicht, geen DM's).
+Panel: hxxps://panel[.]koerier-track[.]nm[.]lab/login
+Backup-panel: hxxps://koerier-track[.]nm[.]lab/panel
 C2 / check-in draait op 198.51.100[.]77 en 203.0.113[.]60
 Exfil-drop: 192.0.2[.]23
 Let op: 198.51.100[.]77 verzorgt óók de phishing-redirect, dus dat adres zie je dubbel.
@@ -30,7 +30,7 @@ CS.registerRoom({
     'Een phishing-URL ontleden en de @-truc, een merknaam als subdomein en punycode herkennen',
     'Indicatoren (IOC\'s) uit een gedefangde operator-post halen en ze uit elkaar houden',
     'De zeldzaamheid en betrouwbaarheid van een spoor inschatten en nooit op één pivot vertrouwen',
-    'De grenzen benoemen: passief observeren, geen echte personen, en art. 126j Sv kort',
+    'De grenzen benoemen: passief observeren, geen echte personen, en art. 126g en 126j Sv kort',
   ],
 
   tasks: [
@@ -195,8 +195,8 @@ query           id=12</code></pre>
         <h3>Wat is wat?</h3>
         <ul>
           <li><strong>IPv4-adres</strong> — bijv. <code>198.51.100[.]77</code> (een documentatie-adres).</li>
-          <li><strong>Domein / URL</strong> — <code>koerier-track[.]nineminds[.]lab</code>, <code>hxxps://panel[.]koerier-track[.]nineminds[.]lab/login</code>.</li>
-          <li><strong>E-mailadres</strong> — <code>v0idkoerier[at]mail[.]nineminds[.]lab</code> (ken je die nog uit taak 2?).</li>
+          <li><strong>Domein / URL</strong> — <code>koerier-track[.]nm[.]lab</code>, <code>hxxps://panel[.]koerier-track[.]nm[.]lab/login</code>.</li>
+          <li><strong>E-mailadres</strong> — <code>v0idkoerier[at]mail[.]nm[.]lab</code> (ken je die nog uit taak 2?).</li>
           <li><strong>Hashes</strong> — MD5 (32 hextekens) en SHA-256 (64 hextekens) van bestanden.</li>
           <li><strong>CVE</strong> — een kwetsbaarheid die de kit misbruikt.</li>
         </ul>
@@ -293,13 +293,13 @@ query           id=12</code></pre>
         <p>Terwijl jij de operator onderzoekt, laat jíj ook sporen na: je IP-adres is zichtbaar voor een server, en een profielbezoek kan een melding geven. <strong>OPSEC</strong> (Operational Security) betekent een aparte onderzoeksomgeving gebruiken, niet je persoonlijke account, en vastleggen wat je doet zonder jezelf te verraden.</p>
 
         <h3>De juridische lijn (kort)</h3>
-        <p>Als een <strong>opsporingsambtenaar</strong> stelselmatig informatie over iemand gaat inwinnen — structureel volgen, een profiel opbouwen — valt dat onder een bijzondere opsporingsbevoegdheid: <strong>art. 126j Sv</strong> (stelselmatige inwinning van informatie). Dat vereist toestemming en waarborgen. Een burger of leerling heeft die bevoegdheid <em>niet</em>. En de <strong>AVG</strong> geldt altijd: verzamel niet meer persoonsgegevens dan je voor je vraag nodig hebt (dataminimalisatie).</p>
+        <p>Als een <strong>opsporingsambtenaar</strong> iemand stelselmatig gaat volgen of een profiel van zijn leven opbouwt, is dat <strong>stelselmatige observatie</strong> (<strong>art. 126g Sv</strong>). Gaat hij daarbij heimelijk contact aan, zonder kenbaar te zijn als opsporingsambtenaar (bijvoorbeeld met een onderzoeksaccount in een besloten groep), dan is dat <strong>stelselmatige inwinning van informatie</strong> (<strong>art. 126j Sv</strong>). Beide vereisen een bevel van de officier van justitie en waarborgen. Een burger of leerling heeft die bevoegdheden <em>niet</em>. En privacyregels gelden altijd (voor organisaties de AVG, voor de politie de Wet politiegegevens): verzamel niet meer persoonsgegevens dan je voor je vraag nodig hebt (dataminimalisatie).</p>
 
         <div class="callout danger"><strong>Oefen alleen fictief.</strong> Alle aliassen, domeinen en adressen in deze room zijn verzonnen (<code>.nm.lab</code>, documentatie-IP's). Richt deze technieken nooit op een echt persoon zonder grondslag en bevoegdheid. De vaardigheid die telt is niet "zoveel mogelijk vinden", maar "het juiste vinden, kunnen bewijzen, en binnen de regels blijven".</div>
       `,
       questions: [
         { q: 'Wat is het verschil tussen toegestaan (passief) en niet-toegestaan optreden in dit onderzoek?', options: ['Er is geen verschil', 'Passief = openbare bronnen lezen en combineren; niet toegestaan = inloggen, infiltreren of met een nep-account uitlokken', 'Passief mag alleen \'s nachts', 'Alleen de politie mag googelen'], answer: 1, explain: 'Observeren wat openbaar is, mag. Zodra je inlogt, een slot forceert of iemand actief misleidt, is het geen OSINT meer.' },
-        { q: 'Onder welk wetsartikel valt het stelselmatig inwinnen van informatie door een opsporingsambtenaar?', answer: ['art. 126j Sv', '126j Sv', '126j', 'artikel 126j sv'], hint: 'Een artikel uit het Wetboek van Strafvordering (Sv), nummer 126j.', explain: 'Art. 126j Sv regelt de stelselmatige inwinning van informatie; het is een bevoegdheid voor opsporing, met waarborgen — niet voor burgers.' },
+        { q: 'Onder welk wetsartikel valt het stelselmatig inwinnen van informatie door een opsporingsambtenaar die niet als zodanig kenbaar is?', answer: ['art. 126j Sv', '126j Sv', '126j', 'artikel 126j sv'], hint: 'Een artikel uit het Wetboek van Strafvordering (Sv), nummer 126j.', explain: 'Art. 126j Sv regelt de heimelijke, stelselmatige inwinning van informatie; stelselmatig volgen zonder contact is observatie (art. 126g Sv). Beide zijn bevoegdheden voor opsporing, met waarborgen — niet voor burgers.' },
         { q: 'Wat betekent OPSEC voor jou als onderzoeker?', answer: ['operational security', 'operationele veiligheid'], hint: 'Het gaat om het afschermen van je éígen sporen tijdens het onderzoek.', explain: 'OPSEC (Operational Security): maatregelen om je eigen identiteit en onderzoek af te schermen, bijv. een aparte onderzoeksomgeving.' },
         { q: 'Ik begrijp dat ik passief openbaar materiaal mag observeren, maar niet op eigen houtje mag inloggen, infiltreren of uitlokken — en dat ik dit alleen op fictieve zaken oefen.', noAnswer: true },
       ],
@@ -318,7 +318,7 @@ query           id=12</code></pre>
     { term: 'Infrastructuur-vingerafdruk', def: 'Een herhaalbaar kenmerk (favicon-hash, TLS-JA3, tracking-ID) waarmee je servers of sites aan dezelfde eigenaar clustert.' },
     { term: 'Zeldzaamheid', def: 'Hoe uniek een kenmerk is; hoe zeldzamer, hoe sterker de koppeling en hoe kleiner de kans op toeval (valse positief).' },
     { term: 'OPSEC', def: 'Operational Security: maatregelen om je eigen sporen en identiteit tijdens een onderzoek af te schermen.' },
-    { term: 'Art. 126j Sv', def: 'Bijzondere opsporingsbevoegdheid voor stelselmatige inwinning van informatie; met waarborgen, en niet voor burgers.' },
+    { term: 'Art. 126j Sv', def: 'Bijzondere opsporingsbevoegdheid voor stelselmatige inwinning van informatie door een opsporingsambtenaar die niet als zodanig kenbaar is. Stelselmatig volgen zonder contact is observatie (art. 126g Sv).' },
   ],
 
   resources: [

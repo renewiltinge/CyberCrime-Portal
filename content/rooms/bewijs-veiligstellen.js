@@ -131,13 +131,13 @@ CS.registerRoom({
           <li>Wat er is gedaan (geïmaged, gehasht, geanalyseerd, opgeborgen)</li>
           <li>Waar het bewaard wordt (verzegelde zak, kluis)</li>
         </ul>
-        <p>De norm <strong>ISO/IEC 27037</strong> vat de kerntaken samen in vier processen — <em>identificeren, verzamelen, verwerven (acquisitie) en bewaren</em> — en drie principes: <strong>controleerbaar, herhaalbaar en reproduceerbaar</strong>. De persoon die dit uitvoert heet daar de DEFR (Digital Evidence First Responder).</p>
+        <p>De norm <strong>ISO/IEC 27037</strong> vat de kerntaken samen in vier processen — <em>identificeren, verzamelen, verwerven (acquisitie) en bewaren</em> — en drie basisprincipes voor het bewijs zelf: <strong>relevant, betrouwbaar en voldoende</strong>. Voor de manier van werken stelt de norm vier eisen: <strong>controleerbaar, herhaalbaar, reproduceerbaar en verantwoord</strong> (auditability, repeatability, reproducibility, justifiability). De persoon die dit uitvoert heet daar de DEFR (Digital Evidence First Responder).</p>
         <div class="callout tip"><strong>Vuistregel:</strong> schrijf op wat je doet, terwijl je het doet. "Ik weet nog wel wat ik deed" is in de rechtszaal niets waard; een gedateerd, ondertekend logboek wél. Documenteren is geen bureaucratie — het ís het bewijs dat je bewijs klopt.</div>
       `,
       questions: [
         { q: 'Wat beantwoordt een goede chain of custody op elk moment?', options: ['Alleen wie de eigenaar is', 'Wie het bewijs had, wat ermee gebeurde, wanneer, waar en waarom', 'Hoeveel het bewijs waard is', 'Welke tool het snelst is'], answer: 1, explain: 'De bewijsketen legt wie/wat/wanneer/waar/waarom vast — onafgebroken.' },
         { q: 'Een periode waarin niemand kan aantonen waar het bewijs was, noemen we een ... in de keten.', answer: ['gat', 'onderbreking', 'hiaat', 'breuk'], hint: 'Een onderbreking.', explain: 'Een gat/onderbreking in de chain of custody maakt het bewijs aanvechtbaar.' },
-        { q: 'De norm ISO/IEC 27037 noemt drie principes. Welke rij klopt?', options: ['snel, goedkoop, mooi', 'controleerbaar, herhaalbaar, reproduceerbaar', 'geheim, versleuteld, gecomprimeerd', 'lokaal, online, offline'], answer: 1, explain: 'Controleerbaar (auditable), herhaalbaar (repeatable), reproduceerbaar (reproducible).' },
+        { q: 'ISO/IEC 27037 stelt eisen aan de manier van werken. Welke drie horen daarbij (naast verantwoord)?', options: ['snel, goedkoop, mooi', 'controleerbaar, herhaalbaar, reproduceerbaar', 'geheim, versleuteld, gecomprimeerd', 'lokaal, online, offline'], answer: 1, explain: 'Controleerbaar (auditable), herhaalbaar (repeatable), reproduceerbaar (reproducible).' },
       ],
     },
     {
@@ -164,7 +164,7 @@ CS.registerRoom({
         },
         denied: ['/root'],
         commands: {
-          'dd if=/dev/sdb of=bewijs.dd bs=4M': '7640+0 records in\n7640+0 records out\n32032092160 bytes (32 GB, 30 GiB) copied, 214.7 s, 149 MB/s\n(gesimuleerd image bewijs.dd aangemaakt)',
+          'dd if=/dev/sdb of=bewijs.dd bs=4M': '7637+1 records in\n7637+1 records out\n32032092160 bytes (32 GB, 30 GiB) copied, 214.7 s, 149 MB/s\n(gesimuleerd image bewijs.dd aangemaakt)',
           'sha256sum /dev/sdb': '9f2c4b7a1d3e5f60718293a4b5c6d7e8f90112233445566778899aabbccddeeff  /dev/sdb',
           'sha256sum bewijs.dd': '9f2c4b7a1d3e5f60718293a4b5c6d7e8f90112233445566778899aabbccddeeff  bewijs.dd',
         },

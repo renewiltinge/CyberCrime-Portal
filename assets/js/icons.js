@@ -43,7 +43,7 @@
     play: '<path d="M8 5.5v13l10-6.5-10-6.5Z"/>',
     menu: '<path d="M4 7h16M4 12h16M4 17h16"/>',
 
-    // de negen leerpaden
+    // de elf leerpaden
     'path-fundamenten': '<path d="M4 8.5 12 4l8 4.5-8 4.5-8-4.5Z"/><path d="m4 12.5 8 4.5 8-4.5M4 16.5 12 21l8-4.5"/>',
     'path-security-kern': '<circle cx="8" cy="15" r="4"/><path d="m11 12 8-8m-3 3 2.5 2.5M14 9l2 2"/>',
     'path-offensief': '<circle cx="12" cy="12" r="7"/><path d="M12 2.5v5M12 16.5v5M2.5 12h5M16.5 12h5"/>',
@@ -52,6 +52,8 @@
     'path-intelligence': '<circle cx="6" cy="7" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="12" cy="13" r="2.2"/><circle cx="7" cy="19" r="2"/><circle cx="18" cy="18" r="2"/><path d="m7.6 8.3 3 3.2M16.6 7.4l-3.2 3.9M10.8 14.8l-2.6 2.6M13.6 14.6l3 2.2"/>',
     'path-datastromen': '<path d="M3 8c3-3 6 3 9 0s6 3 9 0M3 16c3-3 6 3 9 0s6 3 9 0"/><path d="m17 11 2-3M7 13l-2 3"/>',
     'path-puzzels': '<path d="M4 4h7v3a2 2 0 1 0 4 0V4h5v7h-3a2 2 0 1 0 0 4h3v5h-7v-3a2 2 0 1 0-4 0v3H4v-7h3a2 2 0 1 0 0-4H4V4Z"/>',
+    'path-meesterproeven': '<path d="m3 20 6.5-11 3.5 6 2.5-4L21 20H3Z"/><path d="M9.5 9V4l3.5 1.5L9.5 7"/>',
+    'path-uitdagingen': '<path d="M12 3v3M12 18v3M3 12h3M18 12h3"/><circle cx="12" cy="12" r="6"/><path d="m10 10 4 4M14 10l-4 4"/>',
     'path-eindopdracht': '<path d="M6 21V4m0 0h12v8H6"/><path d="M10 4v8M14 4v8M6 8h12"/>',
   };
 

@@ -10,7 +10,7 @@ const vm = require('vm');
 const crypto = require('crypto');
 
 const ROOT = path.join(__dirname, '..');
-const PATHS = ['fundamenten', 'security-kern', 'offensief', 'defensief', 'forensie', 'intelligence', 'datastromen', 'puzzels', 'eindopdracht'];
+const PATHS = ['fundamenten', 'security-kern', 'offensief', 'defensief', 'forensie', 'intelligence', 'datastromen', 'puzzels', 'meesterproeven', 'uitdagingen', 'eindopdracht'];
 const DIFFS = ['Makkelijk', 'Gemiddeld', 'Moeilijk'];
 const LABS = ['terminal', 'cyberchef', 'hashcrack', 'password', 'phishing', 'logs', 'http', 'sqli', 'subnet', 'hexviewer', 'pcap',
   'jwt', 'regex', 'cvss', 'timestamp', 'ioc', 'url', 'yara', 'timeline', 'chmod', 'numconv',
@@ -18,7 +18,7 @@ const LABS = ['terminal', 'cyberchef', 'hashcrack', 'password', 'phishing', 'log
   'ach', 'crimescript', 'admiralty', 'probability', 'attackmap', 'pivot', 'bluf',
   'flow', 'ordering', 'regexgolf', 'osintpuzzle', 'connections', 'chaintrace',
   'netflow', 'structuring', 'emailheader', 'dnslog', 'recon', 'detectrule',
-  'fingerprint', 'scenario'];
+  'fingerprint', 'scenario', 'vigenere', 'xorcrib', 'rsa', 'vm', 'benford', 'bayes'];
 
 const args = process.argv.slice(2);
 const files = args.length
@@ -138,6 +138,7 @@ for (const file of files) {
     if (!t.title) err(rel, `${where}: geen title`);
     if (!t.content) err(rel, `${where}: geen content`);
     else { checkHtml(rel, t.content, where); allText.push(t.content); }
+    if (t.lab) allText.push(labText(t.lab)); // een vlag die letterlijk in een lab staat, telt ook als vindbaar
     if (t.lab) {
       allText.push(labText(t.lab));
       if (!LABS.includes(t.lab.type)) err(rel, `${where}: onbekend labtype "${t.lab.type}"`);
@@ -195,6 +196,18 @@ for (const file of files) {
       warn(rel, `taak ${ti + 1} vraag ${qi + 1}: vlag ${flag} komt niet letterlijk voor in tekst/lab (gecodeerd? zet dan encoded: true)`);
     }
   }));
+  // Uitdagingen zonder handleiding: een antwoord of vlag mag niet letterlijk in de taaktekst staan.
+  if (r.path === 'uitdagingen') {
+    const plain = r.tasks.map((t) => (t.content || '').replace(/<[^>]+>/g, ' ')).join('\n').toLowerCase();
+    r.tasks.forEach((t, ti) => (t.questions || []).forEach((q, qi) => {
+      if (q.noAnswer || Array.isArray(q.options)) return;
+      const answers = Array.isArray(q.answer) ? q.answer : [q.answer];
+      const inText = (a, txt) => new RegExp('(^|[^a-z0-9{_])' + a.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '($|[^a-z0-9}_])').test(txt);
+      const leak = answers.find((a) => a.length > 2 && inText(a, plain));
+      if (leak) err(rel, `taak ${ti + 1} vraag ${qi + 1}: antwoord "${leak}" staat letterlijk in de tekst van een uitdaging`);
+      if (q.hint && answers.some((a) => a.length > 2 && inText(a, q.hint.toLowerCase()))) err(rel, `taak ${ti + 1} vraag ${qi + 1}: de hint verraadt het antwoord`);
+    }));
+  }
   console.log(`    ${r.tasks.length} taken, ${qCount} vragen`);
 }
 

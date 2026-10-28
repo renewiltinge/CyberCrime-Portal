@@ -50,7 +50,7 @@ const SP_BLUF_SOURCE = [
   'Dag 1 10:02 — BEC-phishingmail "openstaande factuur" bij de financiële afdeling; From cfo@zuidkust-logistiek.nl, maar SPF=fail en Return-Path naar mail.boos.nm.lab. Oorspronkelijk IP 203.0.113.88.',
   'Dag 1 10:14 — Medewerker opent bijlage factuur.pdf.exe; malware actief op werkplek FIN-07.',
   'Dag 1 10:15+ — Beaconing naar cdn-telemetry.nm.lab (203.0.113.50), elke 300s, lage jitter.',
-  'Dag 1 02:40 (nacht) — ~180 MB klantenbestand geëxfiltreerd naar opslag-x9f3.nm.lab (203.0.113.77).',
+  'Dag 2 02:40 (nacht) — ~180 MB klantenbestand geëxfiltreerd naar opslag-x9f3.nm.lab (203.0.113.77).',
   'Dag 1 16:20 — Frauduleuze betaalopdracht € 48.500 namens de CFO naar een katvangerrekening.',
   'Dag 2-4 — Geld gesplitst over twee money mules, via een crypto-exchange, cash-out in het buitenland (€ 47.000).',
   'Certificate transparency: de C2 deelt certificaat A1B2C3D4 met een eerder BEC-dossier.',
@@ -59,7 +59,7 @@ const SP_BLUF_SOURCE = [
 const SP_BLUF_MODEL = [
   'BEOORDELING: Zeer waarschijnlijk is Zuidkust Logistiek getroffen door één georganiseerde cybercrimegroep die BEC-fraude combineert met een witwasnetwerk (betrouwbaarheid: hoog; de aanval-, exfiltratie- en geldstromen grijpen op elkaar in en delen infrastructuur).',
   'ONDERBOUWING: de spoofing-mail (SPF fail), de beaconing en nachtelijke exfiltratie, en de frauduleuze betaling van € 48.500 die via katvangers naar een crypto cash-out liep, vormen één keten. Het gedeelde certificaat A1B2C3D4 koppelt de C2 aan een eerder BEC-dossier (afgeleid, geen zekere attributie van een persoon).',
-  'ADVIES (eigenaar): (1) Terugboeking/kickback aanvragen — eigenaar: bank/betalingsverkeer. (2) Werkplek FIN-07 isoleren en forensisch veiligstellen, IOCs blokkeren — eigenaar: SOC/CSIRT. (3) Aangifte en vordering richting de crypto-exchange (KYC) — eigenaar: politie/OM. (4) Awareness + DMARC afdwingen op afrejectie — eigenaar: IT/CISO.',
+  'ADVIES (eigenaar): (1) Terugboeking (recall) aanvragen — eigenaar: bank/betalingsverkeer. (2) Werkplek FIN-07 isoleren en forensisch veiligstellen, IOCs blokkeren — eigenaar: SOC/CSIRT. (3) Aangifte en vordering richting de crypto-exchange (KYC) — eigenaar: politie/OM. (4) Awareness + DMARC afdwingen op reject (p=reject) — eigenaar: IT/CISO.',
 ].join('\n\n');
 
 CS.registerRoom({
@@ -83,7 +83,7 @@ CS.registerRoom({
     { term: 'Keten (kill chain)', def: 'De opeenvolgende fasen van een aanval, van initiële toegang tot het uiteindelijke doel (hier: de cash-out).' },
     { term: 'Exfiltratie', def: 'Het wegsluizen van data naar buiten, vaak ’s nachts of in brokken.' },
     { term: 'Layering', def: 'De witwasfase waarin de herkomst wordt versluierd met veel transacties en omzettingen.' },
-    { term: 'Cash-out-knelpunt', def: 'De plek waar het geld het systeem verlaat (exchange, buitenlandse rekening); het sterkste aangrijppunt voor opsporing.' },
+    { term: 'Cash-out-knelpunt', def: 'De plek waar het geld het systeem verlaat (exchange, buitenlandse rekening); het sterkste aangrijpingspunt voor opsporing.' },
     { term: 'Certificate transparency', def: 'Openbare logs van TLS-certificaten waarmee je een hergebruikt certificaat over dossiers terugvindt (zeldzaamheidstoets).' },
     { term: 'ACH', def: 'Analysis of Competing Hypotheses: hypothesen weerleggen; wat de minste inconsistenties heeft, blijft het sterkst.' },
     { term: 'BLUF', def: 'Bottom Line Up Front: conclusie en advies bovenaan, onderbouwing eronder.' },
@@ -203,7 +203,7 @@ CS.registerRoom({
       questions: [
         { q: 'Wat hoort in een BLUF-product bovenaan?', options: ['De conclusie en het advies (de kernboodschap)', 'De volledige chronologie', 'Alle IP-adressen', 'De namen van de analisten'], answer: 0, explain: 'BLUF = Bottom Line Up Front: eerst wat er aan de hand is en wat er moet gebeuren.' },
         { q: 'Waarom benoem je een eigenaar per advies?', options: ['Zodat duidelijk is wie welke actie uitvoert — anders gebeurt er niets', 'Om het product langer te maken', 'Omdat het verplicht is', 'Om de analist te beschermen'], answer: 0, explain: 'Een advies zonder actiehouder blijft liggen; de eigenaar maakt het uitvoerbaar.' },
-        { q: 'Welke interventie hoort bij de eigenaar "bank/betalingsverkeer"?', options: ['Terugboeking/kickback van de frauduleuze betaling aanvragen', 'Werkplek FIN-07 isoleren', 'Aangifte doen bij de politie', 'DMARC afdwingen'], answer: 0, explain: 'Snelheid telt: een kickback-verzoek bij de bank kan de betaling soms nog terughalen.' },
+        { q: 'Welke interventie hoort bij de eigenaar "bank/betalingsverkeer"?', options: ['Terugboeking (recall) van de frauduleuze betaling aanvragen', 'Werkplek FIN-07 isoleren', 'Aangifte doen bij de politie', 'DMARC afdwingen'], answer: 0, explain: 'Snelheid telt: een kickback-verzoek bij de bank kan de betaling soms nog terughalen.' },
         { q: 'Welke vlag staat in de tip-callout van deze taak?', answer: ['NM{bottom_line_up_front}'], hint: 'Lees de tip-callout.', explain: 'De vlag is NM{bottom_line_up_front}.' },
       ],
     },

@@ -246,7 +246,7 @@ CS.registerRoom({
 
         <h3>De drie controles</h3>
         <ul>
-          <li><strong>Segment A — omkeren:</strong> omgekeerd moet segment A gelijk zijn aan <code>1TVJ</code>. (Je kent de truc uit crackme 1: draai <code>1TVJ</code> om.)</li>
+          <li><strong>Segment A — omkeren:</strong> omgekeerd moet segment A gelijk zijn aan <code>10MN</code>. (Je kent de truc uit crackme 1: draai <code>10MN</code> om.)</li>
           <li><strong>Segment B — tekenrekenkunde:</strong> elk teken plus 1 (volgende tekencode) moet samen <code>s4w4</code> geven. Draai het om: trek bij elk teken van <code>s4w4</code> er 1 af.</li>
           <li><strong>Segment C — XOR:</strong> elk teken ge-XOR'd met <code>0x10</code> (16) moet de bytereeks <code>124, 113, 99, 100</code> geven. Draai het om: XOR elke byte opnieuw met 16 en lees het teken.</li>
         </ul>
@@ -254,7 +254,7 @@ CS.registerRoom({
         <h3>Aanpak: verdeel en heers</h3>
         <p>Een gecombineerde controle ziet er intimiderend uit, maar valt uiteen in <strong>losse, bekende puzzels</strong>. Los elk segment apart op en plak ze met koppeltekens aan elkaar:</p>
         <ol>
-          <li>Segment A: <code>1TVJ</code> omgekeerd.</li>
+          <li>Segment A: <code>10MN</code> omgekeerd.</li>
           <li>Segment B: elk teken van <code>s4w4</code> één tekencode terug. Bijvoorbeeld <code>s</code> (115) wordt <code>r</code> (114); <code>4</code> (52) wordt <code>3</code> (51).</li>
           <li>Segment C: XOR <code>124, 113, 99, 100</code> elk met 16. Bijvoorbeeld <code>124 XOR 16 = 108</code> = <code>l</code>.</li>
         </ol>
@@ -272,8 +272,8 @@ CS.registerRoom({
   if (delen.length !== 3) return false;
   var a = delen[0], b = delen[1], c = delen[2];
   if (a.length !== 4 || b.length !== 4 || c.length !== 4) return false;
-  // Segment A: omgekeerd moet '1TVJ' zijn
-  if (a.split('').reverse().join('') !== '1TVJ') return false;
+  // Segment A: omgekeerd moet '10MN' zijn
+  if (a.split('').reverse().join('') !== '10MN') return false;
   // Segment B: elk teken +1 (volgende tekencode) moet 's4w4' zijn
   if (b.split('').map(function (ch) {
     return String.fromCharCode(ch.charCodeAt(0) + 1);

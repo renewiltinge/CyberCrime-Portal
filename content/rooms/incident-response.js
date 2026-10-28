@@ -95,7 +95,7 @@ CS.registerRoom({
             <tr><td><strong>GOVERN</strong></td><td>Besturen</td><td>Strategie, rollen, beleid en risicomanagement: wie is waarvoor verantwoordelijk?</td></tr>
             <tr><td><strong>IDENTIFY</strong></td><td>Identificeren</td><td>Weten wat je hebt en wat de risico's zijn: systemen, data, kwetsbaarheden.</td></tr>
             <tr><td><strong>PROTECT</strong></td><td>Beschermen</td><td>Maatregelen om aanvallen te voorkomen: toegangsbeheer, updates, back-ups, training.</td></tr>
-            <tr><td><strong>DETECT</strong></td><td>Detecteren</td><td>Aanvallen en anomalieen op tijd opmerken: monitoring, logs, SIEM, IDS.</td></tr>
+            <tr><td><strong>DETECT</strong></td><td>Detecteren</td><td>Aanvallen en anomalieën op tijd opmerken: monitoring, logs, SIEM, IDS.</td></tr>
             <tr><td><strong>RESPOND</strong></td><td>Reageren</td><td>Handelen tijdens een incident: inperken, communiceren, onderzoeken.</td></tr>
             <tr><td><strong>RECOVER</strong></td><td>Herstellen</td><td>Terug naar normaal: systemen en data herstellen, en leren van wat gebeurde.</td></tr>
           </tbody>
@@ -147,7 +147,7 @@ CS.registerRoom({
           misbruikte account blokkeren, het gat (de kwetsbaarheid) dichten.</li>
           <li><strong>Herstel / recovery</strong> (Recover) — systemen en data schoon en veilig terugbrengen,
           bijvoorbeeld vanaf een betrouwbare back-up, en extra in de gaten houden of het echt weg is.</li>
-          <li><strong>Geleerde lessen / lessons learned</strong> (Recover, Govern) — kort na afloop: wat ging goed, wat
+          <li><strong>Geleerde lessen / lessons learned</strong> (Identify: verbetering, ID.IM) — kort na afloop: wat ging goed, wat
           kon beter, welke maatregel voorkomt herhaling? Dit sluit de cirkel en voedt weer de voorbereiding.</li>
         </ol>
 
@@ -190,7 +190,7 @@ CS.registerRoom({
           verbinding met een server van de aanvaller (<em>command and control</em>).</li>
           <li><strong>Back-ups saboteren.</strong> Slimme ransomware wist eerst je lokale herstelmogelijkheden, zodat
           je niet zomaar kunt terugdraaien. Filter op <code>vssadmin</code>: dat commando verwijdert de
-          <em>volume shadow copies</em> (schaduwkopieen) van Windows. Ook <code>wbadmin</code> en <code>bcdedit</code>
+          <em>volume shadow copies</em> (schaduwkopieën) van Windows. Ook <code>wbadmin</code> en <code>bcdedit</code>
           worden misbruikt om herstel onmogelijk te maken.</li>
           <li><strong>Versleutelen.</strong> Daarna hernoemt en versleutelt ze massaal bestanden. Filter op
           <code>kryptlock</code>: alle bestanden krijgen die extensie. Er verschijnt ook overal een losgeldbrief
@@ -206,7 +206,7 @@ CS.registerRoom({
           gebeurde.
         </div>
 
-        <p>Zie je dat de back-ups (schaduwkopieen) zijn gewist, dan weet je meteen dat lokaal herstellen niet gaat
+        <p>Zie je dat de back-ups (schaduwkopieën) zijn gewist, dan weet je meteen dat lokaal herstellen niet gaat
         lukken — en dat een goede, <em>offline</em> back-up (zie de volgende room) letterlijk je redding is.</p>
       `,
       lab: {
@@ -216,7 +216,7 @@ CS.registerRoom({
       },
       questions: [
         { q: "Welk verdacht bestand werd uitgevoerd dat zich voordeed als een PDF?", answer: ["factuur_oktober.pdf.exe", "factuur_oktober.pdf.exe"], hint: "Let op de dubbele extensie; het eindigt niet op .pdf maar op .exe.", explain: "factuur_oktober.pdf.exe is een programma vermomd als PDF: de dubbele extensie is een klassieke truc." },
-        { q: "Welk commando wiste de schaduwkopieen (volume shadow copies) om herstel te saboteren?", answer: ["vssadmin delete shadows /all /quiet", "vssadmin", "vssadmin.exe delete shadows /all /quiet"], hint: "Filter op vssadmin.", explain: "'vssadmin.exe delete shadows /all /quiet' verwijdert de Windows-schaduwkopieen, zodat lokaal terugdraaien niet meer kan." },
+        { q: "Welk commando wiste de schaduwkopieën (volume shadow copies) om herstel te saboteren?", answer: ["vssadmin delete shadows /all /quiet", "vssadmin", "vssadmin.exe delete shadows /all /quiet"], hint: "Filter op vssadmin.", explain: "'vssadmin.exe delete shadows /all /quiet' verwijdert de Windows-schaduwkopieën, zodat lokaal terugdraaien niet meer kan." },
         { q: "Welke extensie kregen de versleutelde bestanden?", answer: [".kryptlock", "kryptlock"], hint: "Filter op kryptlock.", explain: "Alle bestanden werden hernoemd naar ...kryptlock: het kenmerk van deze ransomware." },
         { q: "Wat is de vlag in de incident-tag van de eerste EDR-alert?", answer: ["NM{schaduwkopieen_gewist}"], hint: "Filter op ALERT en lees de incident-tag bij Ransom.Generic.Locker.", explain: "De EDR tagde het incident: NM{schaduwkopieen_gewist}." },
       ],
@@ -253,7 +253,7 @@ CS.registerRoom({
 
         <h3>3. Recovery — breng veilig terug naar normaal</h3>
         <ul>
-          <li>Herstel data vanaf een <strong>schone, offline back-up</strong>. Omdat de schaduwkopieen gewist zijn, is
+          <li>Herstel data vanaf een <strong>schone, offline back-up</strong>. Omdat de schaduwkopieën gewist zijn, is
           dat hier de enige veilige route. Herbouw de server zo nodig helemaal opnieuw.</li>
           <li>Herstel gefaseerd en houd de systemen daarna extra in de gaten (verscherpte monitoring) om zeker te
           weten dat de aanvaller echt weg is.</li>
@@ -269,7 +269,7 @@ CS.registerRoom({
         { q: "Waarom isoleer je een besmette machine liever van het netwerk dan dat je hem meteen uitzet?", options: ["Uitzetten wist het werkgeheugen (RAM), waar waardevol bewijs kan staan", "Uitzetten gaat te langzaam", "Een machine mag nooit uit", "Isoleren is hetzelfde als uitzetten"], answer: 0, explain: "Isoleren stopt de verspreiding terwijl je bewijs in het RAM behoudt; uitzetten kan dat bewijs vernietigen." },
         { q: "Hoe heet het nauwkeurig vastleggen wie wanneer welk bewijs behandelde?", answer: ["chain of custody", "bewijsketen"], hint: "Engelse term; letterlijk 'bewakingsketen' van bewijs.", explain: "De chain of custody (bewijsketen) maakt bewijs bruikbaar voor onderzoek en rechtszaak." },
         { q: "Wat is het advies van NCSC en Politie over het betalen van losgeld bij ransomware?", options: ["Niet betalen: geen garantie, je financiert criminelen en wordt een doelwit", "Altijd meteen betalen", "Onderhandelen tot de helft", "Alleen betalen bij kleine bedragen"], answer: 0, explain: "Betalen geeft geen garantie en houdt het verdienmodel in stand; een geteste back-up maakt het overbodig." },
-        { q: "Vanaf wat herstel je de data in dit geval, nu de schaduwkopieen gewist zijn?", answer: ["een schone offline back-up", "offline back-up", "back-up", "een back-up"], hint: "Lokale herstelpunten zijn weg; je hebt een externe, losgekoppelde kopie nodig.", explain: "Een schone, offline back-up is de enige veilige herstelroute als de schaduwkopieen zijn gewist." },
+        { q: "Vanaf wat herstel je de data in dit geval, nu de schaduwkopieën gewist zijn?", answer: ["een schone offline back-up", "offline back-up", "back-up", "een back-up"], hint: "Lokale herstelpunten zijn weg; je hebt een externe, losgekoppelde kopie nodig.", explain: "Een schone, offline back-up is de enige veilige herstelroute als de schaduwkopieën zijn gewist." },
       ],
     },
 
@@ -292,11 +292,10 @@ CS.registerRoom({
           hoeft nog niet alles te weten; je mag melden en later aanvullen. Beter op tijd en onvolledig dan te laat.
         </div>
 
-        <h3>2. Essentiele of belangrijke organisatie? NIS2 / Cyberbeveiligingswet</h3>
+        <h3>2. Essentiële of belangrijke organisatie? NIS2 / Cyberbeveiligingswet</h3>
         <p>De EU heeft met de <strong>NIS2-richtlijn</strong> strengere cybersecurity-eisen ingevoerd voor sectoren die
         de samenleving draaiende houden: energie, water, zorg, transport, digitale infrastructuur, overheid en meer.
-        Nederland zet NIS2 om in de <strong>Cyberbeveiligingswet</strong>, die naar verwachting <strong>per 15 augustus
-        2026</strong> in werking treedt. Valt jouw organisatie eronder als <em>essentiele</em> of <em>belangrijke</em>
+        Nederland zet NIS2 om in de <strong>Cyberbeveiligingswet</strong>, waarvan de inwerkingtreding meermaals is verschoven; controleer de actuele datum bij het NCSC of de Rijksoverheid. Valt jouw organisatie eronder als <em>essentiële</em> of <em>belangrijke</em>
         entiteit, dan gelden onder andere:</p>
         <ul>
           <li>Een <strong>zorgplicht</strong>: passende technische en organisatorische maatregelen nemen.</li>
@@ -315,9 +314,9 @@ CS.registerRoom({
       `,
       questions: [
         { q: "Binnen hoeveel uur moet een datalek met persoonsgegevens in beginsel bij de Autoriteit Persoonsgegevens gemeld worden?", answer: ["72", "72 uur"], hint: "Drie etmalen onder de AVG.", explain: "De AVG schrijft een melding binnen 72 uur voor nadat je van het datalek op de hoogte bent." },
-        { q: "Hoe heet de Nederlandse wet die de EU-richtlijn NIS2 omzet, met ingang naar verwachting per 15 augustus 2026?", answer: ["Cyberbeveiligingswet", "cyberbeveiligingswet", "de Cyberbeveiligingswet"], hint: "De wet die zorgplicht en meldplicht regelt voor essentiele en belangrijke organisaties.", explain: "Nederland implementeert NIS2 via de Cyberbeveiligingswet (verwachte inwerkingtreding 15 augustus 2026)." },
-        { q: "Voor wie gelden de verplichtingen van NIS2 / de Cyberbeveiligingswet vooral?", options: ["Essentiele en belangrijke organisaties in vitale sectoren", "Alleen voor particulieren thuis", "Alleen voor bedrijven buiten de EU", "Voor niemand, het is vrijwillig"], answer: 0, explain: "NIS2 richt zich op essentiele en belangrijke entiteiten in sectoren zoals energie, zorg, water en transport." },
-        { q: "Een ransomware-aanval bij een ziekenhuis lekt patientgegevens. Welke meldplichten spelen er?", options: ["Beide: datalek bij de AP (AVG) en incident onder de Cyberbeveiligingswet (NIS2)", "Alleen de AVG", "Alleen NIS2", "Geen enkele"], answer: 0, explain: "De sporen staan los: een datalek meld je bij de AP, en als essentiele organisatie meld je het incident ook onder NIS2." },
+        { q: "Hoe heet de Nederlandse wet die de EU-richtlijn NIS2 omzet?", answer: ["Cyberbeveiligingswet", "cyberbeveiligingswet", "de Cyberbeveiligingswet"], hint: "De wet die zorgplicht en meldplicht regelt voor essentiële en belangrijke organisaties.", explain: "Nederland implementeert NIS2 via de Cyberbeveiligingswet." },
+        { q: "Voor wie gelden de verplichtingen van NIS2 / de Cyberbeveiligingswet vooral?", options: ["Essentiële en belangrijke organisaties in vitale sectoren", "Alleen voor particulieren thuis", "Alleen voor bedrijven buiten de EU", "Voor niemand, het is vrijwillig"], answer: 0, explain: "NIS2 richt zich op essentiële en belangrijke entiteiten in sectoren zoals energie, zorg, water en transport." },
+        { q: "Een ransomware-aanval bij een ziekenhuis lekt patiëntgegevens. Welke meldplichten spelen er?", options: ["Beide: datalek bij de AP (AVG) en incident onder de Cyberbeveiligingswet (NIS2)", "Alleen de AVG", "Alleen NIS2", "Geen enkele"], answer: 0, explain: "De sporen staan los: een datalek meld je bij de AP, en als essentiële organisatie meld je het incident ook onder NIS2." },
       ],
     },
 
@@ -378,9 +377,9 @@ CS.registerRoom({
     { term: "Recovery", def: "Herstel: systemen en data veilig terugbrengen naar normaal, bij voorkeur vanaf een schone back-up." },
     { term: "Lessons learned", def: "Geleerde lessen: evaluatie na een incident om het proces te verbeteren en herhaling te voorkomen." },
     { term: "EDR", def: "Endpoint Detection and Response: software op werkplekken/servers die processen en bestandsacties bewaakt en kan ingrijpen." },
-    { term: "Ransomware", def: "Gijzelsoftware die bestanden versleutelt en losgeld eist; wist vaak eerst back-ups en schaduwkopieen." },
+    { term: "Ransomware", def: "Gijzelsoftware die bestanden versleutelt en losgeld eist; wist vaak eerst back-ups en schaduwkopieën." },
     { term: "Datalek", def: "Inbreuk waarbij persoonsgegevens worden gelekt, vernietigd of ingezien; onder de AVG vaak binnen 72 uur te melden bij de AP." },
-    { term: "NIS2 / Cyberbeveiligingswet", def: "EU-richtlijn en de Nederlandse wet (verwacht per 15-8-2026) met zorg- en meldplicht voor essentiele en belangrijke organisaties." },
+    { term: "NIS2 / Cyberbeveiligingswet", def: "EU-richtlijn en de Nederlandse wet met zorg- en meldplicht voor essentiële en belangrijke organisaties." },
     { term: "Chain of custody", def: "Bewijsketen: het nauwkeurig vastleggen wie wanneer welk bewijs behandelde, zodat het bruikbaar blijft." },
     { term: "Playbook", def: "Kant-en-klaar stappenplan (runbook) voor een specifiek type incident, zoals ransomware of een gephishte gebruiker." },
   ],

@@ -320,9 +320,9 @@ CS.registerRoom({
         <em>scope</em> (wat mag wel en niet) en een periode. Geen toestemming op papier betekent: niet doen.</p>
 
         <p>Wat als je per ongeluk een kwetsbaarheid vindt in een systeem van iemand anders, bijvoorbeeld in een website?
-        Dan is er een nette weg: <strong>Coordinated Vulnerability Disclosure (CVD)</strong>, in Nederland
-        gecoördineerd via het <strong>NCSC</strong>. Je meldt de kwetsbaarheid vertrouwelijk bij de eigenaar (of bij het
-        NCSC), geeft ze tijd om het op te lossen en maakt het niet meteen wereldkundig. Je gaat ook niet verder graven
+        Dan is er een nette weg: <strong>Coordinated Vulnerability Disclosure (CVD)</strong>. Je meldt de kwetsbaarheid vertrouwelijk bij de
+        eigenaar, volgens diens CVD-beleid (vaak in <code>/.well-known/security.txt</code>); het <strong>NCSC</strong> neemt meldingen
+        aan over de Rijksoverheid en vitale aanbieders en kan bemiddelen, geeft ze tijd om het op te lossen en maakt het niet meteen wereldkundig. Je gaat ook niet verder graven
         dan nodig om het probleem aan te tonen. Veel organisaties hebben hiervoor een <em>responsible disclosure</em>- of
         CVD-beleid op hun website staan.</p>
 
@@ -368,7 +368,7 @@ CS.registerRoom({
             tekst, dan plak je die in het antwoordveld. Hoofdletters en spaties aan het begin of eind maken niet uit.</li>
           <li><strong>Labs</strong> zijn kleine, veilige oefenomgevingen in je browser: een terminal, een loginformulier,
             een logviewer, enzovoort. Alles is nagebootst; je breekt dus nergens echt in.</li>
-          <li><strong>XP</strong> (ervaringspunten) verdien je met elke goede beantwoorde vraag. Zo zie je je voortgang.</li>
+          <li><strong>XP</strong> (ervaringspunten) verdien je met elke goed beantwoorde vraag. Zo zie je je voortgang.</li>
         </ul>
 
         <p>Hieronder staat een echte terminal (bash). De belangrijkste vaardigheid in security is: <em>rondkijken</em>.
@@ -429,7 +429,7 @@ CS.registerRoom({
     { term: 'Dreigingsactor', def: 'Een threat actor: een partij die een aanval uitvoert, zoals een cybercrimineel, statelijke actor, hacktivist, insider of script kiddie.' },
     { term: 'Pentester', def: 'Een penetratietester die met toestemming en binnen een afgesproken scope systemen op zwakke plekken test.' },
     { term: 'Computervredebreuk', def: 'Het zonder toestemming binnendringen in een computer of netwerk; in Nederland strafbaar onder artikel 138ab Sr.' },
-    { term: 'CVD', def: 'Coordinated Vulnerability Disclosure: een kwetsbaarheid vertrouwelijk melden (in Nederland via het NCSC) en de eigenaar tijd geven om het op te lossen.' },
+    { term: 'CVD', def: 'Coordinated Vulnerability Disclosure: een kwetsbaarheid vertrouwelijk melden bij de eigenaar (het NCSC kan bemiddelen) en de eigenaar tijd geven om het op te lossen.' },
   ],
   resources: [
     { title: 'NCSC (Nationaal Cyber Security Centrum)', url: 'https://www.ncsc.nl/' },

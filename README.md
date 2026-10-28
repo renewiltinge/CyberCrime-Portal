@@ -25,7 +25,7 @@ Gratis, valt nooit in slaap, eigen domein met HTTPS, en ook zakelijk gebruik is 
 4. **Save and Deploy**. Je Dojo staat daarna op `https://<projectnaam>.pages.dev`; elke push naar main zet hem automatisch opnieuw online.
 5. Eigen (sub)domein, bijvoorbeeld `dojo.nineminds.nl`: in het project → **Custom domains**.
 
-Het bestand [`_headers`](_headers) geeft Cloudflare een paar veilige HTTP-headers mee; andere hosts negeren het.
+Het bestand [`_headers`](_headers) geeft Cloudflare een paar veilige HTTP-headers mee; andere hosts negeren het. Het project draait als Cloudflare Worker met statische assets: [`wrangler.jsonc`](wrangler.jsonc) legt de naam en de map vast (nodig voor de builds van andere branches dan main), en [`.assetsignore`](.assetsignore) houdt `tools/`, `docs/` en de README's offline.
 
 > **Kies één vast adres en blijf daarbij.** Je voortgang staat in de browser, per adres. `*.pages.dev`, je eigen domein en `index.html` lokaal openen zijn voor de browser drie aparte plekken. Wissel je toch? Maak eerst een back-up (zie hieronder).
 
@@ -144,6 +144,22 @@ Leren door te doen — veel plezier met oplosbare cybercrime-puzzels.
 6. **Casus: bankhelpdeskfraude** — vishing, money mules en de geldstroom naar de cash-out.
 7. **Casus: botnet-takedown** — C2-verkeer, ATT&CK, pivoten en de stappen van een takedown.
 8. **Casus: het cryptomixer-onderzoek** — taint volgen door een mixer met de blockchain-tracer.
+9. **Casus: de digitale nalatenschap** — in opdracht van de executeur de herstelzin van opa's cryptowallet terugvinden in een gedicht (met head, tail en cut), het app-wachtwoord afleiden uit familiedocumenten en een herstelzwendel herkennen.
+10. **Casus: de kluis zonder beheerder** — na het uitvallen van de enige beheerder de juiste BitLocker-herstelsleutel in Active Directory vinden, een geheim reconstrueren uit drie van de vijf Shamir-aandelen, het herstelbestand ontsleutelen en sleutelbeheer verbeteren.
+
+### 🏔️ Meesterproeven (gevorderd)
+Voor wie de puzzels te makkelijk vond: zwaardere opgaven met meer achtergrond.
+1. **Cryptanalyse: Vigenère en de many-time pad kraken** — de sleutellengte vinden met Kasiski, de index of coincidence en Friedman, per kolom kraken met chi-kwadraat (inclusief een statistisch twijfelgeval), een hergebruikt one-time pad openbreken met crib dragging, en de moderne lessen (nonce-hergebruik, repeating-key XOR, Kerckhoffs).
+2. **Forensie gevorderd: tegenstrijdige sporen en misleidend bewijs** — timestomping betrappen via $SI, $FN, het USN-journaal en Prefetch, tijdstempels uit vijf formaten en tijdzones omrekenen, data achter het einde van een PNG vinden, false flags herkennen met ACH en rapporteren met bronbeoordeling.
+3. **Fraude in de cijfers: Benford, drempels en verzonnen bedragen** — de wet van Benford met MAD en chi-kwadraat, opgesplitste facturen onder een goedkeuringsgrens, verzonnen declaraties herkennen en een signaal uitwerken tot dossier.
+4. **Redeneren met kansen: Bayes voor analisten** — basispercentages, likelihood ratios en de odds-vorm van Bayes, meerdere hypothesen en afhankelijk bewijs, kalibratie met de Brier-score en een Key Assumptions Check.
+5. **Bewijs in de rechtszaal: digitaal bewijs wegen en rapporteren** — bron-, activiteits- en delictsniveau, de prosecutor's fallacy (Sally Clark, Lucia de Berk), de likelihood ratio met verbale schaal, het forensisch rapport en contextuele bias.
+
+### 🎯 Uitdagingen (zonder handleiding)
+Geen uitleg en geen stappenplan: alleen een opdracht en het bewijs. De antwoorden staan nergens in de tekst en de hints zijn bewust vaag; de validator controleert dat. Kies zelf je gereedschap.
+1. **★ Het lege bureau** — een vertrokken medewerker en zijn thuismap: wat nam hij mee, waarheen, en wanneer?
+2. **★★ De gelaagde boodschap** — een "factuur" die geen factuur is, een sleutel in de bestandsstructuur en een bericht in meerdere lagen.
+3. **★★★ De onverklaarde geldstroom** — bank, boekhouding, geldstroom en open bronnen combineren; de reconciliatie alleen vertelt niet het hele verhaal.
 
 ### 🏁 Eindopdracht
 1. **Mini-CTF: Operatie KoffieKlap** — breng alles samen in een afsluitende Capture The Flag met zes vlaggen.
@@ -182,7 +198,7 @@ Alle labs draaien **volledig in je browser** — veilig, offline, zonder dat er 
 | 🔐 **chmod & getallen** | Linux-rechten en getalstelsels (hex/binair/octaal) omrekenen. |
 | 🔃 **Crackme** | Reverse-engineering puzzel: lees de controlefunctie en vind de sleutel. |
 | ✨ **Multi-decoder** | Herkent en pelt lagen codering af (Base64/32, hex, binair, Morse, ROT13, URL…) en zoekt automatisch de vlag. |
-| 🌈 **Rainbow table** | Zie waarom onvergezouten hashes direct op te zoeken zijn — en hoe salt dat breekt. |
+| 🌈 **Rainbow table** | Zie waarom ongezouten hashes direct op te zoeken zijn — en hoe salt dat breekt. |
 | 🧮 **ACH-matrix** | Concurrerende hypothesen afwegen door bewijs te scoren (C/I/N) — de houdbaarste wint. |
 | 🎬 **Crime script-builder** | Een delict ontleden in zes fasen met een interventie per fase. |
 | 📊 **Bronbeoordeling** | Betrouwbaarheid (A–F) en geloofwaardigheid (1–6) apart beoordelen (Admiralty Code). |
@@ -203,6 +219,12 @@ Alle labs draaien **volledig in je browser** — veilig, offline, zonder dat er 
 | 📒 **Reconciliatie** | Bankafschrift en boekhouding naast elkaar leggen en de onverklaarde (fraude)post vinden. |
 | 🧰 **Detectieregel bouwen** | Zelf een detectieregel samenstellen en live testen op true/false positives tegen events. |
 | 🛰️ **Infrastructuur-fingerprinting** | Hosts clusteren op gedeelde kenmerken (favicon, analytics, JARM) met de zeldzaamheidstoets. |
+| 🗝️ **Vigenère-werkbank** | Vigenère kraken zonder sleutel: Kasiski-afstanden, IoC per sleutellengte en chi-kwadraat per kolom, met live ontsleutelen. |
+| ⊕ **Many-time pad** | Twee berichten met dezelfde sleutelstroom: een crib langs C1 ⊕ C2 slepen en beide berichten reconstrueren. |
+| 🔢 **RSA-werkbank** | RSA narekenen met grote getallen: factoriseren (proefdeling, Fermat, Pollard-rho, GCD), φ, d en ontsleutelen. |
+| 📊 **Benford-analyse** | De eerste cijfers van bedragen vergelijken met de wet van Benford, met MAD, chi-kwadraat en het afwijkende cijfer. |
+| 🎲 **Bayes-rekenaar** | Hypothesen bijwerken met bewijs: prior, likelihoods, likelihood ratio en posterior, stap voor stap. |
+| 🦉 **Nachtwacht-VM** | Een mini-assembler: lees de code, stap erdoorheen met registers en trace, en vind de invoer die `ok` bereikt. |
 | 🎲 **Beslissimulatie** | Beslissingen nemen onder druk (incident response/onderhandeling) en de gevolgen zien. |
 
 Alle tools zijn ook los te gebruiken via de **Gereedschapskist** (Gereedschap in de topbalk, of `#/tools`) — handig voor je eigen, ethische oefeningen.
@@ -241,6 +263,7 @@ Werkwijze:
 | `node tools/build-artifact.js` | Bouwt de losse versie `dist/nineminds-cyber-dojo.html` (alles in één bestand, ook de letters). |
 | `node tools/smoke.js` | Laadt het portaal in een headless browser en controleert dat alles rendert: de leerpaden, elke room, het NineMinds-teken. |
 | `node tools/labtest.js` + `labtest-extra.js` | Bedienen de labs echt en controleren de uitkomsten. |
+| `node tools/labtest-meester.js` | Test de labs van Meesterproeven (Vigenère, many-time pad, Benford, Bayes, RSA, VM), de sleutelcasussen en de antwoorden van die rooms. |
 
 *(De testscripts gebruiken Node + Playwright; de validator en build werken met alleen Node.)*
 

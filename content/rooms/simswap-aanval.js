@@ -9,7 +9,7 @@
 const SS_STEPS = [
   { id: '1', label: 'Aanvaller verzamelt persoonsgegevens (OSINT/datalek: naam, geboortedatum, telefoonnummer)' },
   { id: '2', label: 'Belt de telecomprovider, doet zich voor als het slachtoffer en vraagt een nieuwe SIM / nummerbehoud' },
-  { id: '3', label: 'De provider porteert het nummer naar de SIM van de aanvaller' },
+  { id: '3', label: 'De provider zet het nummer over op een nieuwe (e)SIM van de aanvaller' },
   { id: '4', label: 'De telefoon van het slachtoffer verliest bereik; de aanvaller ontvangt nu de sms-codes' },
   { id: '5', label: 'De aanvaller reset wachtwoorden via sms-OTP en neemt accounts over' },
   { id: '6', label: 'Geld/crypto wordt weggesluisd vóór het slachtoffer het doorheeft' },
@@ -36,7 +36,7 @@ const SS_SCEN = [
   {
     situation: 'Hoe maak je een SIM-swap vooraf moeilijker?',
     choices: [
-      { label: 'Een port-out-pin/poortblokkade bij je provider instellen en je nummer minder publiek delen', good: true, feedback: 'Goed: een extra geheim bij de provider en minder blootgestelde gegevens verkleinen de kans sterk.' },
+      { label: 'Een klantpincode of extra verificatie bij je provider instellen (plus een port-out-pin tegen overzetten naar een andere provider) en je nummer minder publiek delen', good: true, feedback: 'Goed: een extra geheim bij de provider en minder blootgestelde gegevens verkleinen de kans sterk.' },
       { label: 'Je telefoonnummer juist overal als 2FA gebruiken', good: false, feedback: 'Dan maak je het nummer tot een kroonjuweel én een single point of failure. Minder, niet meer.' },
       { label: 'Niets — dit overkomt alleen beroemdheden', good: false, feedback: 'SIM-swap treft ook gewone mensen met crypto of toegang. Onderschat het niet.' },
     ],
@@ -85,7 +85,7 @@ CS.registerRoom({
     'Uitleggen hoe een SIM-swap werkt en waarom sms-2FA er kwetsbaar voor is',
     'De SIM-swap-aanvalsketen op volgorde zetten',
     'De signalen herkennen en de juiste eerste reactie kiezen',
-    'Sterkere 2FA (authenticator/hardware/passkey) en port-out-bescherming benoemen',
+    'Sterkere 2FA (authenticator/hardware/passkey) en extra verificatie bij de provider benoemen',
     'Het geldspoor na een accountovername volgen tot de cash-out',
   ],
   terms: [
@@ -141,11 +141,11 @@ CS.registerRoom({
         items: SS_STEPS,
         correct: ['1', '2', '3', '4', '5', '6'],
         flag: 'NM{swap_keten_compleet}',
-        explain: 'Gegevens verzamelen → provider bellen → nummer porteren → sms onderscheppen → accounts overnemen → cash-out.',
+        explain: 'Gegevens verzamelen → provider bellen → vervangende SIM laten activeren → sms onderscheppen → accounts overnemen → cash-out.',
       },
       questions: [
-        { q: 'Wat is de eerste stap?', options: ['Persoonsgegevens verzamelen om geloofwaardig over te komen bij de provider', 'Het geld wegsluizen', 'Het nummer porteren', 'Een account overnemen'], answer: 0, explain: 'Met jouw gegevens klinkt de aanvaller overtuigend bij de helpdesk van de provider.' },
-        { q: 'Waar ligt de cruciale schakel die de provider kan beschermen?', options: ['Het porteren van het nummer: strengere identiteitscontrole en een port-out-pin', 'Het wegsluizen van geld', 'Het verzamelen van gegevens', 'Niets, de provider kan niets doen'], answer: 0, explain: 'Als het porteren niet zonder sterke verificatie kan, valt de hele keten stil.' },
+        { q: 'Wat is de eerste stap?', options: ['Persoonsgegevens verzamelen om geloofwaardig over te komen bij de provider', 'Het geld wegsluizen', 'De vervangende SIM laten activeren', 'Een account overnemen'], answer: 0, explain: 'Met jouw gegevens klinkt de aanvaller overtuigend bij de helpdesk van de provider.' },
+        { q: 'Waar ligt de cruciale schakel die de provider kan beschermen?', options: ['Het uitgeven van een vervangende SIM: strengere identiteitscontrole en een klantpincode', 'Het wegsluizen van geld', 'Het verzamelen van gegevens', 'Niets, de provider kan niets doen'], answer: 0, explain: 'Als een vervangende SIM niet zonder sterke verificatie wordt uitgegeven, valt de hele keten stil. (Overzetten naar een andere provider, porteren, is een verwante route; daartegen helpt een port-out-pin.)' },
         { q: 'Wat merkt het slachtoffer als teken?', options: ['Plots geen mobiel bereik meer (en soms een "SIM gewijzigd"-bericht)', 'Een snellere telefoon', 'Meer opslagruimte', 'Niets, nooit'], answer: 0, explain: 'Zodra het nummer is verhuisd, verliest jouw toestel bereik — een belangrijk vroeg signaal.' },
         { q: 'Welke vlag hoort bij de juiste volgorde?', answer: ['NM{swap_keten_compleet}'], hint: 'Verschijnt bij de juiste volgorde / staat in de tip-callout.', explain: 'De vlag is NM{swap_keten_compleet}.' },
       ],
@@ -167,7 +167,7 @@ CS.registerRoom({
       },
       questions: [
         { q: 'Je verliest plots bereik én krijgt een "SIM gewijzigd"-mail. Eerste actie?', options: ['Via een andere lijn je provider bellen om te blokkeren en je bank waarschuwen', 'Wachten tot het bereik terugkomt', 'Niets doen', 'Je telefoon opnieuw opstarten en afwachten'], answer: 0, explain: 'Dit is het klassieke SIM-swap-signaal; blokkeren en waarschuwen beperkt de schade.' },
-        { q: 'Hoe maak je een SIM-swap vooraf moeilijker?', options: ['Een port-out-pin instellen en je nummer minder publiek delen', 'Je nummer overal als 2FA gebruiken', 'Een langer wachtwoord', 'Niets, het is onvermijdelijk'], answer: 0, explain: 'Een extra geheim bij de provider en minder blootgestelde gegevens verkleinen de kans sterk.' },
+        { q: 'Hoe maak je een SIM-swap vooraf moeilijker?', options: ['Een klantpincode of extra verificatie bij je provider instellen en je nummer minder publiek delen', 'Je nummer overal als 2FA gebruiken', 'Een langer wachtwoord', 'Niets, het is onvermijdelijk'], answer: 0, explain: 'Een extra geheim bij de provider en minder blootgestelde gegevens verkleinen de kans sterk.' },
         { q: 'Je account is geplunderd. Wat doe je eerst?', options: ['Melden bij exchange/bank en politie, bevriezen wat kan, bewijs bewaren', 'Zelf de hacker opsporen', 'Afwachten', 'Je account verwijderen'], answer: 0, explain: 'Snel melden vergroot de kans op bevriezen; bewaar bewijs voor de opsporing.' },
         { q: 'Welke vlag hoort bij een goede afhandeling?', answer: ['NM{bereik_weg_alarm_aan}'], hint: 'Verschijnt bij ≥4/5 goed / staat in de tip-callout.', explain: 'De vlag is NM{bereik_weg_alarm_aan}.' },
       ],

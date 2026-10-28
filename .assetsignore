@@ -1,0 +1,11 @@
+# Niet online zetten: alleen voor ontwikkelen (zie wrangler.jsonc).
+.git
+.gitignore
+.wrangler
+node_modules
+tools
+docs
+wrangler.jsonc
+.assetsignore
+*.md
+nineminds/sync.ps1

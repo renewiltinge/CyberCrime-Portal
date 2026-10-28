@@ -138,8 +138,9 @@ CS.registerRoom({
 
         <div class="callout danger"><strong>De execution evidence hierarchy — onthoud dit goed:</strong>
           <ul>
-            <li><strong>Amcache</strong> en <strong>Prefetch</strong> → bewijzen <em>uitvoering</em> (het programma heeft echt gedraaid).</li>
-            <li><strong>ShimCache</strong>, <strong>ShellBags</strong> en <strong>UserAssist</strong> → bewijzen <em>niet per se uitvoering</em> (aanwezigheid, navigatie of GUI-interactie, maar geen harde run).</li>
+            <li><strong>Prefetch</strong> (en via de verkenner gestart: <strong>UserAssist</strong>) → bewijzen <em>uitvoering</em>, met tijden en aantallen.</li>
+            <li><strong>Amcache</strong> → toont het bestand met SHA-1-hash; vaak een sterke aanwijzing voor uitvoering, maar op recente Windows-versies vooral voor <em>aanwezigheid</em>. Combineer het met Prefetch.</li>
+            <li><strong>ShimCache</strong> en <strong>ShellBags</strong> → bewijzen <em>niet per se uitvoering</em> (aanwezigheid of navigatie).</li>
           </ul>
           Een rechercheur die zegt "het programma is uitgevoerd" leunt op Prefetch of Amcache, niet op ShimCache alleen.
         </div>
@@ -147,7 +148,7 @@ CS.registerRoom({
         <p>Waarom dit zo belangrijk is: in een zaak maakt het verschil of je kunt bewijzen dat een verdachte een tool <em>daadwerkelijk heeft gedraaid</em>, of alleen dat die tool ergens op de schijf <em>stond</em>. Het eerste is veel sterker bewijs dan het tweede.</p>
       `,
       questions: [
-        { q: 'Welke twee artefacten bewijzen dat een programma écht is uitgevoerd?', answer: ['amcache en prefetch', 'prefetch en amcache', 'amcache, prefetch', 'prefetch, amcache'], hint: 'De bovenste laag van de execution evidence hierarchy.', explain: 'Amcache en Prefetch bewijzen uitvoering; ShimCache/ShellBags/UserAssist doen dat niet per se.' },
+        { q: 'Welke twee artefacten combineer je om hard te onderbouwen dat een programma is uitgevoerd?', answer: ['amcache en prefetch', 'prefetch en amcache', 'amcache, prefetch', 'prefetch, amcache'], hint: 'De bovenste laag van de execution evidence hierarchy.', explain: 'Prefetch bewijst uitvoering; Amcache (met hash) versterkt dat. ShimCache en ShellBags doen dat niet per se.' },
         { q: 'Wat kun je uit een Prefetch (.pf)-bestand aflezen?', options: ['Alleen de bestandsgrootte', 'Dat een programma is uitgevoerd, hoe vaak en de laatste uitvoeringstijden', 'Het wachtwoord van de gebruiker', 'De inhoud van het programma'], answer: 1, explain: 'Prefetch bewijst uitvoering, met een run count en de laatste uitvoeringstijden.' },
         { q: 'Waarom is een vermelding in ShimCache (AppCompatCache) zwakker bewijs dan Prefetch?', options: ['ShimCache is versleuteld', 'Het bewijst dat het bestand bestond, niet per se dat het is uitgevoerd', 'ShimCache bestaat niet op moderne Windows', 'Het bevat geen tijden'], answer: 1, explain: 'ShimCache toont aanwezigheid/compatibiliteitscontacten, geen harde uitvoering.' },
         { q: 'Welk artefact bewaart de SHA-1-hash van een programma, vaak ook na verwijdering?', answer: ['amcache', 'amcache.hve'], hint: 'Uit te lezen met AmcacheParser.', explain: 'Amcache bewaart o.a. de SHA-1 van executables, zodat je ze aan bekende malware kunt koppelen.' },
@@ -254,7 +255,7 @@ Processing evil.exe.pf
 Executable name: EVIL.EXE
 Run count: 7
 Last run: 2026-10-02 03:03:20
-Other run times: 2026-10-02 03:02:55, 2026-10-02 03:01:10, 2026-10-01 23:40:02
+Other run times: 2026-10-02 03:02:55, 2026-10-02 03:01:10, 2026-10-01 23:40:02, 2026-10-01 23:12:44, 2026-10-01 22:58:31, 2026-10-01 22:41:07
 Volume: \\VOLUME{01d9...}  Serial: A4C1-9F02
 Referenced files: 14  (o.a. C:\\Users\\Public\\svc\\updater.exe)
 
@@ -269,7 +270,7 @@ Einde van zoekresultaten.`,
 Processing Amcache.hve
 
 Name          : evil.exe
-Path          : C:\\Users\\Public\\svc\\updater.exe
+Path          : C:\\Users\\Public\\svc\\evil.exe
 SHA-1         : 3a7ba6da29ca3e787a17dc968950b3a4aaa95a5f
 Compiled      : 2026-09-28 20:11:44
 
@@ -306,7 +307,7 @@ Compiled      : 2026-09-28 20:11:44
         <div class="callout tip"><strong>Tip voor verder leren:</strong> oefen met echte images op CyberDefenders en Forensic Focus (zie de bronnen). Download de Eric Zimmerman-tools en lees per tool welk artefact hij ontsluit; dan gaat de theorie uit deze room pas echt leven.</div>
       `,
       questions: [
-        { q: 'Welke bron gebruik je om hard te onderbouwen dat een programma is uitgevoerd?', options: ['ShimCache of ShellBags', 'Amcache of Prefetch', 'Alleen de bestandsnaam', 'De browsergeschiedenis'], answer: 1, explain: 'Amcache en Prefetch bewijzen uitvoering; de andere artefacten tonen aanwezigheid of interactie.' },
+        { q: 'Welke bron gebruik je om hard te onderbouwen dat een programma is uitgevoerd?', options: ['ShimCache of ShellBags', 'Amcache of Prefetch', 'Alleen de bestandsnaam', 'De browsergeschiedenis'], answer: 1, explain: 'Prefetch bewijst uitvoering, Amcache versterkt het met de hash; ShimCache en ShellBags tonen aanwezigheid of navigatie.' },
         { q: 'Welke tool gebruik je om een tijdlijn uit de $MFT te bouwen?', answer: ['mftecmd', 'mftecmd.exe'], hint: 'MFT staat in de naam.', explain: 'MFTECmd leest de $MFT en andere NTFS-metadata, ideaal voor een tijdlijn.' },
         { q: 'Waarom moet je in een rapport precies formuleren wat een artefact wél en níét aantoont?', options: ['Dat hoeft niet', 'Omdat een te sterke conclusie bij een kritische vraag onderuitgaat en het bewijs verzwakt', 'Om het rapport langer te maken', 'Omdat de software dat eist'], answer: 1, explain: 'Precisie houdt je conclusie overeind; "aanwezig" verwarren met "uitgevoerd" ondermijnt de hele zaak.' },
         { q: 'Ik kan de execution evidence hierarchy uitleggen en artefacten aan de juiste Zimmerman-tool koppelen.', noAnswer: true },
@@ -323,7 +324,7 @@ Compiled      : 2026-09-28 20:11:44
     { term: 'Prefetch', def: 'Snelheidsbestanden (.pf) in C:\\Windows\\Prefetch die uitvoering bewijzen, met run count en laatste uitvoeringstijden; lezen met PECmd.' },
     { term: 'Amcache', def: 'Artefact (Amcache.hve) met gegevens over programma\'s inclusief SHA-1, vaak ook na verwijdering; lezen met AmcacheParser.' },
     { term: 'ShimCache', def: 'AppCompatCache in de SYSTEM-hive; bewijst dat een bestand aanwezig was, niet per se dat het is uitgevoerd.' },
-    { term: 'Execution evidence hierarchy', def: 'Rangorde van bewijs: Amcache/Prefetch bewijzen uitvoering; ShimCache/ShellBags/UserAssist niet per se.' },
+    { term: 'Execution evidence hierarchy', def: 'Rangorde van bewijs: Prefetch (en UserAssist) bewijzen uitvoering, Amcache versterkt dat met de hash; ShimCache/ShellBags niet per se.' },
     { term: 'LNK-bestand', def: 'Snelkoppeling die pad, tijden en volume-serienummer van een geopend bestand bewaart; lezen met LECmd.' },
     { term: 'Jump List', def: 'Lijst met recent geopende bestanden per programma, zichtbaar via de taakbalk.' },
     { term: 'USBSTOR', def: 'Registry-locatie in de SYSTEM-hive met merk, model en serienummer van aangesloten USB-opslag.' },
