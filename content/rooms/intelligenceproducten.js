@@ -8,6 +8,8 @@ CS.registerRoom({
   icon: '📰',
   difficulty: 'Gemiddeld',
   minutes: 65,
+  level: 'Praktijk',
+  checked: '2026-11-12',
   summary: 'Van analyse naar een product dat iemand kan gebruiken: schrijf voor het juiste niveau (strategisch, tactisch, operationeel), kies de juiste productsoort, zet de conclusie vooraan met BLUF, vertaal je jargon, bouw een interventieadvies (wat, waarom, wie, wanneer, risico\'s), coach je team en vertaal je eigen ervaring met STAR.',
   objectives: [
     'Het strategische, tactische en operationele niveau onderscheiden: wie leest wat, en welke beslissing neemt die lezer',
@@ -21,6 +23,8 @@ CS.registerRoom({
   tasks: [
     {
       title: 'Taak 1 — Strategisch, tactisch, operationeel: wie leest wat?',
+      tryFirst: true,
+      intro: '<p>In het postvak van het intelteam liggen zes fragmenten, elk met een geadresseerde. Bepaal per fragment voor welke beslissing het bruikbaar is en of het bij de juiste lezer ligt. Beantwoord daarna de vragen met de codes P1 tot en met P6.</p>',
       content: `
         <p>De beste analyse van de wereld is waardeloos als ze bij de verkeerde lezer belandt, of in de verkeerde taal.
         Een directeur heeft niets aan een lijst met 400 IP-adressen; een SOC-analist heeft niets aan de boodschap "cyber
@@ -67,8 +71,7 @@ CS.registerRoom({
         </ul>
 
         <div class="callout tip">
-          <strong>Beloning:</strong> de eerste vlag van deze room vat het in één zin samen —
-          <code>NM{juiste_lezer_juist_niveau}</code>. Schrijf altijd voor de lezer en de beslissing, niet voor jezelf.
+          <strong>Vuistregel:</strong> schrijf altijd voor de lezer en de beslissing, niet voor jezelf.
         </div>
 
         <div class="callout warn">
@@ -77,16 +80,44 @@ CS.registerRoom({
           per lezer een eigen samenvatting.
         </div>
       `,
+      lab: {
+        type: 'osintpuzzle',
+        title: 'postvak van het intelteam',
+        scenario: 'Zes fragmenten uit producten van deze week (fictief). Bij elk fragment staat aan wie het is verstuurd. Bepaal per fragment het niveau (strategisch, tactisch, operationeel) en of de lezer er een beslissing mee kan nemen.',
+        records: [
+          { title: 'P1', lines: ['Aan: dienstdoende SOC-analist', 'Blokkeer 198.51.100.77 op de firewall en isoleer werkplek WS-FIN-12. Hashes en domeinen staan in de bijlage.'] },
+          { title: 'P2', lines: ['Aan: gemeentesecretaris', 'Lijst met 412 IP-adressen en 38 bestandshashes uit de campagne van deze week, gesorteerd op eerste waarneming.'] },
+          { title: 'P3', lines: ['Aan: teamleider opsporing', 'Nepfactuurfraude loopt in 9 van de 12 zaken via dezelfde structuur van geldezels. Voorstel: richt het team de komende maanden op die tussenschakel.'] },
+          { title: 'P4', lines: ['Aan: college van B en W', 'Helpdeskfraude tegen ouderen groeit drie jaar op rij. Advies: neem structureel budget voor preventie en een meldpunt op in de begroting van 2027.'] },
+          { title: 'P5', lines: ['Aan: coördinator incidentrespons', 'Werkwijze van deze groep: binnen via gelekte VPN-accounts, gemiddeld vier dagen tot versleuteling. Controleer bij dit type zaak als eerste de MFA bij ketenpartners.'] },
+          { title: 'P6', lines: ['Aan: directie, teamleiding en SOC', 'Cyber is een groeiend risico. We houden de ontwikkelingen in de gaten.'] },
+        ],
+      },
       questions: [
-        { q: 'Een bestuurder moet beslissen waar de organisatie de komende jaren geld en mensen op inzet. Welk niveau product past daarbij?', options: ['Strategisch', 'Tactisch', 'Operationeel', 'Geen enkel'], answer: 0, explain: 'Lange termijn, groot plaatje, een investerings- of beleidsbeslissing: dat is strategisch.' },
-        { q: 'Een SOC-analist moet nú iets doen met een verdachte verbinding in één zaak. Welk niveau past daarbij?', options: ['Strategisch', 'Tactisch', 'Operationeel'], answer: 2, explain: 'Het hier en nu, één concrete zaak met directe handvatten (IOC\'s, een blokkade): dat is operationeel.' },
-        { q: 'Op welk niveau bepaal je de aanpak en prioriteiten voor een heel type zaak of thema (bijvoorbeeld de moneymule-structuur)?', answer: ['tactisch', 'Tactisch', 'tactisch niveau'], hint: 'Tussen het grote plaatje en de losse zaak in.', explain: 'Het tactische niveau gaat over de aanpak van een thema of type zaak, voor teamleiding en coördinatie.' },
-        { q: 'Wat is de eerste vlag van deze room (zie de groene tip)?', answer: ['NM{juiste_lezer_juist_niveau}'], hint: 'Staat in de beloning onderaan de taak.' },
+        { q: 'Welk fragment (code) ondersteunt een beslissing over geld en mensen voor de komende jaren?', answer: ['P4'],
+          hints: ['Zoek het fragment met de langste tijdshorizon.', 'Kijk naar de geadresseerde: wie gaat er over een begroting?', 'Het fragment noemt de begroting van 2027.'],
+          wrong: { 'P3': 'P3 gaat over de aanpak van een type zaak in de komende maanden. Dat is tactisch, voor een teamleider.', 'P6': 'P6 gaat wel naar de directie, maar er staat geen beslissing in die zij kan nemen.' },
+          why: 'Een bestuurder beslist over budget en prioriteiten. Krijgt hij een product zonder die keuze erin, dan gebeurt er niets met je analyse.',
+          explain: 'P4 is strategisch: een meerjarige trend met een investeringsbeslissing, gericht aan het bestuur.' },
+        { q: 'Welk fragment is operationeel van inhoud, maar ligt bij de verkeerde lezer?', answer: ['P2'],
+          hints: ['Operationeel betekent: concrete handvatten voor nu, in één zaak.', 'Er zijn twee operationele fragmenten. Kijk bij allebei naar de regel "Aan:".', 'Een gemeentesecretaris kan niets met een lijst hashes.'],
+          wrong: { 'P1': 'P1 is operationeel en ligt precies goed: de dienstdoende SOC-analist kan er direct mee aan het werk.', 'P6': 'P6 heeft geen niveau: er staat geen handvat, aanpak of keuze in.' },
+          explain: 'P2 is een IOC-lijst. Die hoort bij het SOC. De gemeentesecretaris heeft een oordeel en een beslispunt nodig.' },
+        { q: 'Hoeveel van de zes fragmenten zijn tactisch?', answer: ['2', 'twee'],
+          hints: ['Tactisch: de aanpak en prioriteiten voor een type zaak of thema.', 'Let op de lezers: teamleiding en coördinatie.', 'Het zijn P3 en P5.'],
+          wrong: { '3': 'Je telt waarschijnlijk P6 mee omdat de teamleiding in de adresregel staat. P6 bevat geen aanpak.', '1': 'P5 beschrijft een werkwijze en een vaste eerste controle voor dit type zaak. Dat is ook tactisch.' },
+          explain: 'P3 (richt het team op de tussenschakel) en P5 (werkwijze en prioriteit bij dit type zaak) zijn tactisch.' },
+        { q: 'Welk fragment levert op geen enkel niveau een beslissing op en had zo niet verstuurd mogen worden?', answer: ['P6'],
+          hints: ['Stel bij elk fragment de vraag: wat gaat de lezer hierdoor anders doen?', 'Eén fragment gaat naar drie soorten lezers tegelijk.', 'Het is het fragment zonder cijfer, termijn of advies.'],
+          wrong: { 'P2': 'P2 ligt bij de verkeerde lezer, maar het SOC kan er wel iets mee.' },
+          explain: 'P6 is hetzelfde product voor alle drie de niveaus, zonder inhoud waar iemand op kan handelen.' },
       ],
     },
 
     {
       title: 'Taak 2 — Productsoorten: kies het juiste gereedschap',
+      tryFirst: true,
+      intro: '<p>Er liggen drie losse phishingzaken: Alfa, Bravo en Charlie. Je teamleider wil weten of ze bij elkaar horen. Loop in het lab de kenmerken langs, let op herkomst en tijd, en bepaal welk kenmerk twee zaken echt verbindt.</p>',
       content: `
         <p>Binnen de drie niveaus bestaan vaste <strong>productsoorten</strong>. Ze verschillen in wat er centraal staat:
         een verschijnsel, een dreiging, een netwerk, een persoon, of een patroon over meerdere zaken heen. Weten welke
@@ -127,16 +158,63 @@ CS.registerRoom({
           niveau en de taal.
         </div>
       `,
+      lab: {
+        type: 'pivot',
+        title: 'drie phishingzaken',
+        scenario: 'Drie aangiften van phishing uit februari en maart 2026 (fictief). Elke zaak heeft een eigen phishingdomein. Zoek het kenmerk dat twee zaken verbindt en dat zeldzaam genoeg is om iets te betekenen.',
+        entities: [
+          { id: 'za', type: 'file', label: 'Zaak Alfa' },
+          { id: 'zb', type: 'file', label: 'Zaak Bravo' },
+          { id: 'zc', type: 'file', label: 'Zaak Charlie' },
+          { id: 'd1', type: 'domain', label: 'mijn-pakketpost.nm.lab' },
+          { id: 'd2', type: 'domain', label: 'toeslag-terug.nm.lab' },
+          { id: 'd3', type: 'domain', label: 'pakket-herbezorgen.nm.lab' },
+          { id: 'ip1', type: 'ip', label: '203.0.113.80' },
+          { id: 'ip2', type: 'ip', label: '198.51.100.23' },
+          { id: 'as1', type: 'asn', label: 'AS64500 (shared hosting, duizenden sites per IP)' },
+          { id: 'c1', type: 'cert', label: '7C:41:D0:9E' },
+          { id: 'e1', type: 'email', label: 'registratie@snelmail.example' },
+          { id: 'al1', type: 'alias', label: 'koerier_77' },
+        ],
+        edges: [
+          { from: 'za', to: 'd1', rel: 'phishingdomein in deze zaak', time: '2026-02', source: 'aangifte' },
+          { from: 'zb', to: 'd2', rel: 'phishingdomein in deze zaak', time: '2026-02', source: 'aangifte' },
+          { from: 'zc', to: 'd3', rel: 'phishingdomein in deze zaak', time: '2026-03', source: 'aangifte' },
+          { from: 'd1', to: 'ip1', rel: 'resolvet naar', time: '2026-02', source: 'passive DNS' },
+          { from: 'd2', to: 'ip1', rel: 'resolvet naar', time: '2026-02', source: 'passive DNS' },
+          { from: 'ip1', to: 'as1', rel: 'valt onder', time: '2026-02', source: 'routeringsgegevens' },
+          { from: 'd3', to: 'ip2', rel: 'resolvet naar', time: '2026-03', source: 'passive DNS' },
+          { from: 'd1', to: 'c1', rel: 'presenteerde zelfondertekend certificaat met serienummer', time: '2026-02', source: 'eigen scan' },
+          { from: 'd3', to: 'c1', rel: 'presenteerde zelfondertekend certificaat met serienummer', time: '2026-03', source: 'eigen scan' },
+          { from: 'd2', to: 'e1', rel: 'geregistreerd met', time: '2026-02', source: 'WHOIS' },
+          { from: 'd3', to: 'al1', rel: 'phishingkit voor dit domein aangeboden door', time: '2026-03', source: 'forumbericht (ongeverifieerd)' },
+        ],
+        goal: 'Welk kenmerk verbindt twee van de drie zaken echt? (typ het label)',
+        bridge: ['7C:41:D0:9E', '7c41d09e'],
+      },
       questions: [
-        { q: 'Je wilt weten welke dreigingen het komende jaar op je afkomen en welke groter worden. Welke productsoort maak je?', options: ['Dreigingsbeeld', 'Subjectanalyse', 'Netwerkanalyse', 'Fenomeenanalyse'], answer: 0, explain: 'Een dreigingsbeeld weegt dreigingen af en benoemt de trend, vaak op strategisch niveau.' },
-        { q: 'Welke productsoort brengt in kaart wie met wie samenwerkt en wie de spil of zwakke schakel is?', answer: ['netwerkanalyse', 'Netwerkanalyse'], hint: 'Het gaat om relaties en rollen tussen actoren.', explain: 'Een netwerkanalyse tekent relaties en rollen; je zoekt de spil en de kwetsbare tussenschakel.' },
-        { q: 'Je vermoedt dat drie losse phishingzaken bij elkaar horen door een gedeeld certificaat. Welke productsoort past?', options: ['Zaakoverstijgende analyse', 'Fenomeenanalyse', 'Dreigingsbeeld', 'Subjectanalyse'], answer: 0, explain: 'Patronen en verbanden over meerdere zaken heen zoeken is een zaakoverstijgende analyse (het pivot-werk).' },
-        { q: 'Welke productsoort gaat in de diepte over één persoon of entiteit, waarbij je bekend/afgeleid/aanname streng labelt?', answer: ['subjectanalyse', 'Subjectanalyse'], hint: 'Het "subject" is het middelpunt.', explain: 'Een subjectanalyse draait om één entiteit; onzuiver labelen kan iemand onterecht raken.' },
+        { q: 'Welk kenmerk verbindt zaak Alfa en zaak Charlie? (typ het label uit het lab)', answer: ['7C:41:D0:9E', '7c41d09e', '7C41D09E'],
+          hints: ['Klik op het domein van Alfa en loop alle relaties langs. Doe daarna hetzelfde bij Charlie.', 'Zoek een entiteit die bij beide domeinen terugkomt en die niet door duizenden anderen wordt gedeeld.', 'Het is het serienummer van een zelfondertekend certificaat.'],
+          wrong: { '203.0.113.80': 'Dat IP-adres delen Alfa en Bravo, maar het is shared hosting met duizenden sites. Zo\'n kenmerk verbindt niets.', '/koerier/i': 'De alias hangt alleen aan Charlie, en de bron is een ongeverifieerd forumbericht.' },
+          why: 'Een zaakoverstijgende analyse staat of valt met de zeldzaamheid van het gedeelde kenmerk. Een gedeeld IP bij een grote hoster koppelt in de praktijk regelmatig zaken die niets met elkaar te maken hebben.',
+          explain: 'Beide domeinen presenteerden hetzelfde zelfondertekende certificaat. Dat maakt iemand zelf aan, dus het wijst op dezelfde opzet.' },
+        { q: 'Welke van de drie zaken laat je buiten de zaakoverstijgende analyse, omdat het enige gedeelde kenmerk niets zegt? (naam van de zaak)', answer: ['bravo', 'zaak bravo'],
+          hints: ['Welke zaak deelt alleen een kenmerk dat heel veel anderen ook hebben?', 'Klik op het IP-adres 203.0.113.80 en kijk onder welk netwerk het valt.', 'De zaak met het domein toeslag-terug.nm.lab.'],
+          wrong: { 'charlie': 'Charlie deelt het certificaat met Alfa. Dat is juist de sterke link.', 'alfa': 'Alfa deelt het certificaat met Charlie.' },
+          explain: 'Bravo deelt met Alfa alleen een IP-adres bij een shared hoster. Dat is ruis, geen verband.' },
+        { q: 'Je schrijft op dat Alfa en Charlie bij elkaar horen door het gedeelde certificaat. Welke productsoort is dit?', options: ['Zaakoverstijgende analyse', 'Fenomeenanalyse', 'Dreigingsbeeld', 'Subjectanalyse'], answer: 0,
+          wrong: { 1: 'Een fenomeenanalyse beschrijft hoe een verschijnsel als geheel werkt, los van deze specifieke zaken.', 2: 'Een dreigingsbeeld weegt dreigingen tegen elkaar af en benoemt een trend.', 3: 'Een subjectanalyse gaat over één persoon of entiteit. Hier leg je een verband tussen zaken.' },
+          explain: 'Patronen en verbanden over meerdere zaken heen zoeken is een zaakoverstijgende analyse (het pivot-werk).' },
+        { q: 'Je opdrachtgever wil daarna alles weten over wie er achter de alias uit de graaf zit, met elk gegeven streng gelabeld als bekend, afgeleid of aanname. Welke productsoort maak je?', answer: ['subjectanalyse', 'Subjectanalyse', 'een subjectanalyse'],
+          hints: ['Het product draait om één entiteit.', 'Kijk in de tabel met productsoorten onder "Staat centraal".', 'Het "subject" is het middelpunt.'],
+          explain: 'Een subjectanalyse draait om één entiteit; onzuiver labelen kan iemand onterecht raken. Hier is de enige bron een ongeverifieerd forumbericht, dus bijna alles is nog aanname.' },
       ],
     },
 
     {
       title: 'Taak 3 — BLUF: zet de conclusie vooraan',
+      tryFirst: true,
+      intro: '<p>In het lab staat een chronologisch verslag van een incident bij de fictieve Gemeente Veldewoud. Herschrijf het voor de gemeentesecretaris zodat hij na drie regels weet wat er aan de hand is en wat hij moet doen. Zoek daarvoor eerst in het verslag welke regels je conclusie dragen en welke alleen onzekerheid bevatten.</p>',
       content: `
         <p>Analisten schrijven graag als een detectiveverhaal: eerst alle aanwijzingen, de verdachten, de twists, en op de
         laatste bladzijde de ontknoping. Spannend voor een roman, rampzalig voor een intelligenceproduct. Je lezer is
@@ -176,10 +254,6 @@ CS.registerRoom({
         BLUF-product: conclusie en aanbevelingen bovenaan, onderbouwing eronder, onzekerheid apart. Klik daarna op
         "Toets tegen de rubric" voor een checklist (dat is geen AI-beoordeling, maar een geheugensteun), en vergelijk met
         het meegeleverde modelantwoord.</p>
-
-        <div class="callout tip">
-          <strong>Beloning:</strong> de tweede vlag is de hele les in twee woorden — <code>NM{conclusie_bovenaan}</code>.
-        </div>
       `,
       lab: {
         type: 'bluf',
@@ -210,10 +284,22 @@ Op de afdeling Financiën staan ook persoonsgegevens (salaris- en declaratiebest
 <p><em>Onderbouwing (chronologie) staat hieronder voor wie wil doorlezen: de bijlage om 08:14, de verbinding om 08:17, rclone om 12:40, de koppeling aan de eerdere zaak om 13:05, en de intacte offline back-ups om 13:30.</em></p>`,
       },
       questions: [
-        { q: 'Waar staat "BLUF" voor?', answer: ['Bottom Line Up Front', 'bottom line up front', 'bottom line upfront'], hint: 'Engels; letterlijk "de kern vooraan".', explain: 'BLUF = Bottom Line Up Front: de conclusie en aanbeveling bovenaan, de onderbouwing daaronder.' },
-        { q: 'Wat hoort volgens de vuistregels NIET in de eerste zinnen van een BLUF-product, maar pas daaronder?', options: ['De gedetailleerde chronologie en het bewijs', 'De conclusie', 'De aanbeveling', 'Het betrouwbaarheidsniveau'], answer: 0, explain: 'Conclusie, aanbeveling en de mate van zekerheid staan bovenaan; de details en de tijdlijn komen eronder.' },
-        { q: 'Waarom zet je achter elke aanbeveling een eigenaar?', options: ['Een advies zonder naam erbij voert niemand uit', 'Om het product langer te maken', 'Omdat dat verplicht is in de AVG', 'Om de bron te verbergen'], answer: 0, explain: 'Met een eigenaar (en een termijn) wordt een advies een actie; zonder eigenaar blijft het een vrome wens.' },
-        { q: 'Wat is de tweede vlag van deze room (zie de groene tip)?', answer: ['NM{conclusie_bovenaan}'], hint: 'Staat in de beloning onderaan de taak.' },
+        { q: 'Op welk tijdstip in het verslag staat de waarneming die het sterkst op datadiefstal wijst en dus in je eerste zin thuishoort? (UU:MM)', answer: ['12:40', '12.40', '1240'],
+          hints: ['Zoek de regel die iets zegt over wat de aanvaller met bestanden deed, niet over hoe hij binnenkwam.', 'Het gaat om een hulpmiddel dat bestanden in bulk naar externe opslag kopieert.', 'De regel waarin het EDR de uitvoering van rclone bevestigt.'],
+          wrong: { '08:14': 'Dat is het begin van het verhaal. In een chronologisch verslag staat het bovenaan, maar het is niet de kern.', '09:02': 'Een verbinding met een onbekend IP is verdacht, maar zegt nog niets over diefstal.', '13:05': 'De koppeling met een eerdere zaak is context uit een nog niet geverifieerde bron. Het is niet je sterkste eigen waarneming.' },
+          why: 'Wie chronologisch schrijft, begraaft zijn sterkste bewijs halverwege de pagina. Een lezer die na drie regels stopt, heeft het dan gemist.',
+          explain: 'Om 12:40 bevestigt het EDR dat rclone is uitgevoerd op WS-FIN-12. Dat is een eigen waarneming van een exfiltratiehulpmiddel en draagt de conclusie.' },
+        { q: 'Je eerste aanbeveling is: isoleer de getroffen werkplekken. Hoeveel werkplekken zijn dat volgens het verslag in totaal?', answer: ['3', 'drie'],
+          hints: ['Eén werkplek wordt bij naam genoemd. Lees verder of er meer zijn.', 'Kijk naar de regel van 11:15.', 'WS-FIN-12 plus twee andere.'],
+          wrong: { '1': 'Om 11:15 worden op twee andere werkplekken dezelfde verbindingen gezien.', '2': 'Tel WS-FIN-12 zelf ook mee.' },
+          explain: 'WS-FIN-12 en de twee werkplekken van 11:15. Een advies is pas uitvoerbaar als het aantal en de eigenaar erin staan.' },
+        { q: 'Waarom zet je achter elke aanbeveling een eigenaar?', options: ['Een advies zonder naam erbij voert niemand uit', 'Om het product langer te maken', 'Omdat dat verplicht is in de AVG', 'Om de bron te verbergen'], answer: 0,
+          wrong: { 1: 'Een BLUF-product wordt juist korter dan de bron.', 2: 'De AVG zegt niets over de vorm van een intelligenceproduct.', 3: 'De eigenaar van een advies is de uitvoerder, niet de bron.' },
+          explain: 'Met een eigenaar (en een termijn) wordt een advies een actie; zonder eigenaar blijft het een vrome wens.' },
+        { q: 'Welke regel uit het verslag hoort in het aparte blok "onzekerheid" en niet in je conclusie? Geef het tijdstip (UU:MM).', answer: ['14:00', '14.00', '1400'],
+          hints: ['Zoek de regel die vooral vertelt wat nog niet vaststaat.', 'Let op woorden als "nog onbekend" en "wordt nog geanalyseerd".', 'Het is de laatste regel met een tijdstip.'],
+          wrong: { '13:05': 'Daar staat ook een voorbehoud (nog niet zelf geverifieerd), maar de regel levert vooral een feit: het IP dook eerder op.', '13:30': 'Dat de back-ups intact zijn is een vastgesteld feit.' },
+          explain: 'Om 14:00 staat wat nog onbekend is: of er echt data weg is en hoeveel. Dat zet je apart, zodat de lezer je conclusie niet verwart met je voorbehoud.' },
       ],
     },
 
@@ -260,15 +346,50 @@ Op de afdeling Financiën staan ook persoonsgegevens (salaris- en declaratiebest
           voor de uitvoerders. Zo bedien je beide lezers zonder twee losse documenten te schrijven.
         </div>
       `,
+      lab: {
+        type: 'scenario',
+        title: 'vertaal voor de wethouder',
+        scenario: 'Je herschrijft vier zinnen uit een technische analyse voor een wethouder zonder IT-achtergrond. Kies steeds de versie die hij kan volgen en die nog precies hetzelfde beweert als de bron.',
+        pass: 4,
+        flag: 'NM{vertaal_niet_verdraai}',
+        steps: [
+          { situation: 'Bron: "De actor verkreeg initial access via T1566 en voerde daarna laterale beweging uit."', choices: [
+            { label: 'De actor verkreeg initial access (T1566) en deed daarna aan lateral movement.', good: false, feedback: 'Dit is dezelfde zin met dezelfde vaktermen. De wethouder moet nog steeds alles opzoeken.' },
+            { label: 'De aanvaller kwam binnen via een nepmail en werkte zich daarna van computer naar computer.', good: true, feedback: 'Zelfde bewering, gewone woorden, en een beeld dat de lezer meteen snapt.' },
+            { label: 'Een medewerker heeft de aanvaller binnengelaten.', good: false, feedback: 'Dit staat niet in de bron en legt de schuld bij een persoon. Vertalen is geen moment om iets toe te voegen.' },
+          ] },
+          { situation: 'Bron: "Waarschijnlijk (55 tot 75%) is er data weggesluisd. Betrouwbaarheidsniveau: midden. De volume-analyse loopt nog."', choices: [
+            { label: 'Er is data gestolen.', good: false, feedback: 'Van "waarschijnlijk" is "zeker" geworden. De wethouder gaat nu misschien een datalek melden dat er niet is.' },
+            { label: 'Er is mogelijk iets met data gebeurd.', good: false, feedback: 'Dit is vager dan de bron. De lezer kan hier geen beslissing op nemen.' },
+            { label: 'Er zijn waarschijnlijk bestanden naar buiten gekopieerd. Zeker weten we het nog niet: de meting loopt.', good: true, feedback: 'De waarschijnlijkheid blijft staan en de onzekerheid staat er apart bij.' },
+          ] },
+          { situation: 'Bron: "De shadow copies zijn gewist met vssadmin. Herstel uit de offline back-up kost circa twee dagen."', choices: [
+            { label: 'Lokaal terugdraaien kan niet meer. Herstel moet uit de offline back-up en duurt ongeveer twee dagen.', good: true, feedback: 'Je vertaalt het gevolg in plaats van het mechanisme. Hiermee kan de lezer plannen.' },
+            { label: 'De aanvaller heeft het programma vssadmin gebruikt.', good: false, feedback: 'De naam van het hulpmiddel zegt de wethouder niets. Wat betekent het voor de gemeente?' },
+            { label: 'Er zijn kopieën gewist.', good: false, feedback: 'Zonder het gevolg (twee dagen herstel) weet de lezer niet waarom dit ertoe doet.' },
+          ] },
+          { situation: 'Je hebt ook 38 bestandshashes, de toolnaam rclone en zes ATT&CK-codes. Waar laat je die in het product voor de wethouder?', choices: [
+            { label: 'In de samenvatting bovenaan, zodat hij ziet dat het onderzoek grondig was.', good: false, feedback: 'De samenvatting is voor de beslissing. Technische details bovenaan jagen de lezer weg.' },
+            { label: 'Nergens. Een bestuurder heeft er niets aan.', good: false, feedback: 'De wethouder niet, maar het SOC wel. Weglaten kost de uitvoerders hun handvatten.' },
+            { label: 'In een bijlage onderaan, voor de uitvoerders.', good: true, feedback: 'Twee lagen in één product: bovenaan gewone taal voor de beslisser, onderaan de techniek voor het SOC.' },
+          ] },
+        ],
+      },
       questions: [
-        { q: 'Je schrijft voor een bestuurder. Wat doe je met de zin "de actor exfiltreerde data met rclone over een versleuteld C2-kanaal"?', options: ['Je vertaalt het naar gewone taal, bijvoorbeeld "de aanvaller kopieerde bestanden naar buiten via een verborgen verbinding"', 'Je laat het precies zo staan', 'Je voegt nog meer afkortingen toe', 'Je laat de hele zin weg'], answer: 0, explain: 'Vertaal naar het gevolg in gewone taal; de tool-naam en technische term horen in een bijlage voor de uitvoerders.' },
-        { q: 'Hoe heet de controle waarbij je je samenvatting laat lezen door iemand buiten je vakgebied?', answer: ['collega-test', 'collegatest', 'oma-test', 'de collega-test'], hint: 'Ook wel de "oma-test" genoemd.', explain: 'Struikelt een niet-specialist over een woord, dan vertaal je het. Dat is de collega- of oma-test.' },
+        { q: 'Je schrijft voor een bestuurder. Wat doe je met de zin "de actor exfiltreerde data met rclone over een versleuteld C2-kanaal"?', options: ['Je vertaalt het naar gewone taal, bijvoorbeeld "de aanvaller kopieerde bestanden naar buiten via een verborgen verbinding"', 'Je laat het precies zo staan', 'Je voegt nog meer afkortingen toe', 'Je laat de hele zin weg'], answer: 0,
+          wrong: { 1: 'Dan moet de bestuurder drie termen opzoeken voordat hij kan beslissen.', 3: 'Dat er data naar buiten is gegaan is juist de kern. Alleen de toolnaam en de vakterm kunnen weg.' },
+          explain: 'Vertaal naar het gevolg in gewone taal; de tool-naam en technische term horen in een bijlage voor de uitvoerders.' },
+        { q: 'Maak in het lab alle vier de vertaalkeuzes goed. Welke vlag krijg je?', answer: ['NM{vertaal_niet_verdraai}'],
+          hints: ['Lees bij elke keuze eerst de bron en vraag je af: beweert deze versie precies hetzelfde?', 'Er is steeds één versie die nog jargon is, één die de inhoud verandert en één die klopt.', 'Bij een fout kun je met "Opnieuw" de reeks nog eens doorlopen. De feedback zegt wat er misging.'],
+          explain: 'Vier keer dezelfde regel: vereenvoudig de taal, niet de inhoud of de onzekerheid.' },
         { q: 'Wat mag je bij het vertalen van jargon nooit doen?', options: ['De inhoud of de onzekerheid verdraaien (bijvoorbeeld "waarschijnlijk" tot "zeker" maken)', 'Een analogie gebruiken', 'Een term één keer uitleggen', 'Technische details naar een bijlage verplaatsen'], answer: 0, explain: 'Je vereenvoudigt de taal, niet de inhoud: een aanname blijft een aanname en "waarschijnlijk" blijft "waarschijnlijk".' },
       ],
     },
 
     {
       title: 'Taak 5 — Een interventieadvies opbouwen',
+      tryFirst: true,
+      intro: '<p>Vijf collega\'s leveren elk een concept-advies in (A tot en met E). Vier ervan kunnen zo niet de deur uit, omdat er iets ontbreekt waardoor het advies niet wordt uitgevoerd of niet kan worden afgewogen. Zoek per concept uit wat er mist.</p>',
       content: `
         <p>Analyse zonder advies is een diagnose zonder recept. Het sluitstuk van bijna elk product is een
         <strong>interventieadvies</strong>: een voorstel voor wat er moet gebeuren. Een goed advies is geen losse kreet
@@ -307,20 +428,46 @@ Op de afdeling Financiën staan ook persoonsgegevens (salaris- en declaratiebest
         </div>
 
         <div class="callout tip">
-          <strong>Beloning:</strong> de derde vlag herinnert je aan de bouwsteen die het vaakst wordt vergeten —
-          <code>NM{advies_met_eigenaar}</code>. Een advies zonder eigenaar en termijn gebeurt niet.
+          <strong>Vaakst vergeten:</strong> de eigenaar. Een advies zonder eigenaar en termijn gebeurt niet.
         </div>
       `,
+      lab: {
+        type: 'osintpuzzle',
+        title: 'vijf concept-adviezen',
+        scenario: 'Vijf concept-adviezen uit verschillende zaken (fictief). Leg elk concept langs de vijf bouwstenen: wat, waarom, wie, wanneer, risico\'s.',
+        records: [
+          { title: 'Concept A', lines: ['Zet MFA aan op de VPN.', 'De laatste twee inbraken begonnen met een gelekt VPN-wachtwoord.', 'Uiterlijk 1 december.', 'Neveneffect: medewerkers zonder zakelijke telefoon kunnen niet inloggen; regel hardwaretokens.'] },
+          { title: 'Concept B', lines: ['Blokkeer uitvoerbare bijlagen op de mailgateway.', 'De laatste drie incidenten begonnen met zo\'n bijlage.', 'Uitvoering: team e-mailbeheer, binnen één week.', 'Neveneffect: legitieme bijlagen kunnen sneuvelen; richt een uitzonderingsproces in. Niets doen houdt de route open.'] },
+          { title: 'Concept C', lines: ['Laat de bank overboekingen naar nieuwe tegenrekeningen 24 uur vertragen.', 'In 9 van de 12 fraudes liep het geld via een pas geopende rekening.', 'Uitvoering: fraudeteam van de bank.', 'Neveneffect: daders wijken mogelijk uit naar betalingen in crypto.'] },
+          { title: 'Concept D', lines: ['Zet het kassanetwerk in een eigen segment.', 'Uitvoering: netwerkbeheer, voor 1 maart.', 'Neveneffect: kans op storing tijdens de ombouw; plan het buiten openingstijd.'] },
+          { title: 'Concept E', lines: ['Train de servicedesk op telefonische verzoeken om een wachtwoordreset.', 'De laatste inbraak begon met zo\'n telefoontje.', 'Uitvoering: hoofd servicedesk, dit kwartaal.'] },
+        ],
+      },
       questions: [
-        { q: 'Welke vijf bouwstenen horen in een volledig interventieadvies?', answer: ['wat waarom wie wanneer risico\'s', 'wat, waarom, wie, wanneer, risico\'s', 'wat waarom wie wanneer risicos'], hint: 'Een concrete maatregel, de onderbouwing, de eigenaar, de termijn en de neveneffecten.', explain: 'Wat, waarom, wie (eigenaar), wanneer (termijn) en risico\'s maken van een zorg een uitvoerbaar advies.' },
-        { q: 'Welke bouwsteen koppelt het advies aan je bevinding en aan de "so what?"-test?', options: ['Waarom', 'Wat', 'Wanneer', 'Wie'], answer: 0, explain: 'Het "waarom" geeft de onderbouwing en het verwachte effect; zonder dat kan de lezer niet afwegen.' },
-        { q: 'Een dader wijkt na je maatregel uit naar een andere route. Hoe heet dit neveneffect dat je bij de risico\'s benoemt?', answer: ['displacement', 'verplaatsing'], hint: 'Engelse term uit de crime-scripting-room; het probleem verplaatst zich.', explain: 'Displacement (verplaatsing) hoort bij de risico\'s: de interventie verplaatst het probleem in plaats van het op te lossen.' },
-        { q: 'Wat is de derde vlag van deze room (zie de groene tip)?', answer: ['NM{advies_met_eigenaar}'], hint: 'Staat in de beloning onderaan de taak.' },
+        { q: 'Welk concept (letter) is als enige compleet en kan zo naar de beslisser?', answer: ['B', 'concept B'],
+          hints: ['Loop per concept de vijf bouwstenen af en streep af wat er staat.', 'Let ook op de prijs van niets doen: die hoort bij de risico\'s.', 'Het concept over de mailgateway.'],
+          wrong: { 'A': 'A heeft een maatregel, een reden, een datum en een neveneffect. Maar wie gaat het doen?', 'C': 'C heeft geen termijn.' },
+          explain: 'B noemt de maatregel, de onderbouwing, de eigenaar, de termijn en zowel het neveneffect als de prijs van niets doen.' },
+        { q: 'Welk concept (letter) mist een eigenaar?', answer: ['A', 'concept A'],
+          hints: ['Zoek het concept waarin geen team, rol of naam staat.', 'In vier concepten staat een regel die met "Uitvoering:" begint.', 'Het concept over MFA op de VPN.'],
+          wrong: { 'D': 'D noemt netwerkbeheer als uitvoerder. D mist iets anders.' },
+          why: 'In de praktijk is dit de fout die het vaakst voorkomt: iedereen is het eens met het advies en niemand voert het uit.',
+          explain: 'Concept A zegt wat, waarom, wanneer en welk neveneffect, maar niet wie het oppakt.' },
+        { q: 'In welk concept (letter) staat displacement als risico benoemd: de dader wijkt na de maatregel uit naar een andere route?', answer: ['C', 'concept C'],
+          hints: ['Displacement betekent verplaatsing: het probleem verschuift.', 'Zoek een neveneffect dat over het gedrag van de dader gaat, niet over hinder voor de eigen organisatie.', 'Het concept waarin daders overstappen op crypto.'],
+          wrong: { 'B': 'Bij B gaat het neveneffect over legitieme bijlagen die sneuvelen. Dat is hinder voor gebruikers, geen uitwijkgedrag van de dader.' },
+          explain: 'Concept C benoemt dat daders kunnen uitwijken naar crypto. Dat is displacement, en het hoort bij de risico\'s.' },
+        { q: 'Welk concept (letter) mist de onderbouwing, zodat de beslisser het niet kan afwegen?', answer: ['D', 'concept D'],
+          hints: ['Zoek het concept dat niet zegt welke bevinding erachter zit.', 'Vier concepten noemen een incident, een patroon of een aantal als reden.', 'Het concept over het kassanetwerk.'],
+          wrong: { 'E': 'E geeft wel een reden (de laatste inbraak begon met een telefoontje). E mist de risico\'s.' },
+          explain: 'Concept D zegt wat, wie, wanneer en welk neveneffect, maar niet waarom. Zonder "waarom" is er geen koppeling met een bevinding en geen "so what?".' },
       ],
     },
 
     {
       title: 'Taak 6 — Coachen: til je team op',
+      tryFirst: true,
+      intro: '<p>Een collega vraagt je om zijn concept-notitie tegen te lezen voordat die naar de directie gaat. Het concept staat in het lab, met regelnummers. Zoek de regels waar je als reviewer een opmerking bij zou zetten.</p>',
       content: `
         <p>Naarmate je ervarener wordt, verschuift je waarde. Je maakt niet alleen betere producten, je maakt je
         <em>team</em> beter. Dat is coachen: niet het werk overnemen, maar ervoor zorgen dat de volgende analist het
@@ -362,10 +509,29 @@ Op de afdeling Financiën staan ook persoonsgegevens (salaris- en declaratiebest
           ingebedde methoden en betere tooling zorgen dat kwaliteit niet aan één persoon hangt, maar aan het team.
         </div>
       `,
+      lab: {
+        type: 'logs',
+        title: 'concept-dreigingsnotitie.txt',
+        lines: `CONCEPT dreigingsnotitie nepfactuurcampagne, voor: directie Noordkade Logistiek (fictief)
+Op 3 maart kwam de eerste melding binnen, op 5 maart de tweede, op 9 maart nog vier.
+Alle zes mails gebruikten dezelfde nepfactuur en hetzelfde afzenderdomein factuur-check.nm.lab. (bekend)
+De mails komen van groep KOFFIEKAT.
+Het afzenderdomein is op 1 maart geregistreerd. (bekend, bron: WHOIS)
+Waarschijnlijk volgt er deze maand een nieuwe golf. (afgeleid; betrouwbaarheidsniveau: midden)
+Advies: blokkeer factuur-check.nm.lab op de mailgateway. Eigenaar: team e-mailbeheer. Termijn: vandaag.
+Advies: waarschuw de crediteurenadministratie voor de nepfactuur.
+Conclusie: Noordkade is doelwit van een gerichte nepfactuurcampagne; er is nog geen betaling gedaan.`,
+      },
       questions: [
         { q: 'Wat is het belangrijkste kenmerk van een goede peer review?', options: ['Blame-vrij en gericht op het product, niet op de persoon', 'Zo hard mogelijk kritiek geven op de collega', 'Alleen spelfouten zoeken', 'Pas doen nadat het product al verstuurd is'], answer: 0, explain: 'Een blame-vrije review op het product vangt fouten én verspreidt de beste aanpak door het team.' },
-        { q: 'Waarom bed je methoden in een sjabloon en checklist in plaats van ze alleen in een cursus te behandelen?', options: ['Een methode in het sjabloon wordt gebruikt; een methode in een cursus wordt vergeten', 'Sjablonen zijn goedkoper dan cursussen', 'Omdat cursussen verboden zijn', 'Zodat niemand de methode hoeft te kennen'], answer: 0, explain: 'Door de methode in het werkproces te bedden, gebeurt goed gedrag vanzelf en hangt kwaliteit niet af van wie de zaak draait.' },
-        { q: 'Welk soort werk is de beste kandidaat om te automatiseren of met betere tooling aan te pakken?', answer: ['saai herhaald werk', 'herhaald werk', 'repeterend werk', 'sleur'], hint: 'Denk aan IOC\'s overtikken of steeds dezelfde bronnen aflopen.', explain: 'Saai, herhaald werk (zoals IOC\'s overtikken of defangen) kost tijd en voegt weinig denkwerk toe; automatiseer dat.' },
+        { q: 'Op welke regel van het concept staat een aanname die als feit is opgeschreven? (regelnummer)', answer: ['4', 'regel 4'],
+          hints: ['Zoek een bewering zonder label en zonder bron.', 'De meeste regels hebben (bekend) of (afgeleid) erachter. Welke stellige bewering heeft niets?', 'De regel waarin een groep bij naam wordt genoemd.'],
+          wrong: { '6': 'Regel 6 is netjes gelabeld als afgeleid, met waarschijnlijkheidstaal en een betrouwbaarheidsniveau. Zo hoort het.', '9': 'Regel 9 staat op de verkeerde plek (de conclusie hoort bovenaan), maar het is geen aanname.' },
+          explain: 'Regel 4 schrijft de mails zonder bron of label toe aan een groep. Attributie zonder onderbouwing is een aanname en moet zo gelabeld worden, of eruit.' },
+        { q: 'Op welke regel staat een advies dat zo niet uitgevoerd wordt, omdat eigenaar en termijn ontbreken? (regelnummer)', answer: ['8', 'regel 8'],
+          hints: ['Er staan twee adviezen in het concept. Vergelijk ze.', 'Eén advies noemt een team en een termijn, het andere niet.', 'Het advies over de crediteurenadministratie.'],
+          wrong: { '7': 'Regel 7 heeft een eigenaar (team e-mailbeheer) en een termijn (vandaag).' },
+          explain: 'Regel 8 zegt wat er moet gebeuren, maar niet wie het doet en wanneer. In een vast sjabloon met een adviesblok valt zo\'n gat meteen op.' },
       ],
     },
 
