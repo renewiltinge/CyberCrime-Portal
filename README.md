@@ -229,7 +229,20 @@ Alle labs draaien **volledig in je browser** — veilig, offline, zonder dat er 
 
 Alle tools zijn ook los te gebruiken via de **Gereedschapskist** (Gereedschap in de topbalk, of `#/tools`) — handig voor je eigen, ethische oefeningen.
 
-Je verdient **XP** en **badges**, en je voortgang wordt per vraag bewaard (lokaal, in `localStorage`).
+Je verdient **XP**, **badges** en een **rang**, en je voortgang wordt per vraag bewaard (lokaal, in `localStorage`).
+
+### Oefenen en terugkomen
+
+| Onderdeel | Wat het doet |
+|---|---|
+| **Dagpuzzel en weekopdracht** (`#/puzzel`) | Elke dag één kleine opgave om te kraken (Caesar, Base64, hex, binair, subnet, logregels, tijdstempel, poorten), elke week een vlag in drie lagen. Voor iedereen dezelfde, met een reeks. |
+| **Herhalen** (`#/herhalen`) | Wat je fout had, komt na 1, 3 en 7 dagen terug. Drie keer goed en het is weg. |
+| **Oefenarena** | Vrij oefenen, survival (tot je eerste fout) of een tijdsaanval van 90 seconden. |
+| **Scorebord** | Je rang, je zwakke plekken per onderwerp met een knop "Oefen dit", je badges en records. |
+| **Check jezelf** | Onderaan elke room: vijf vragen in een ander jasje, in drie minuten. |
+| **Resultaatkaart** (`#/kaart`) | Een afdrukbare kaart per voltooid leerpad. Geen erkend certificaat; je naam blijft in je browser. |
+
+Hints zijn gelaagd en kosten een deel van de XP van de vraag; een fout antwoord krijgt waar mogelijk een specifieke uitleg. Het waarom staat in [ADR-0002](docs/adr/0002-spelmechanieken-binnen-de-huisstijl.md).
 
 **Back-up van je voortgang.** Klik rechtsboven op je XP → **Back-up downloaden**. Je krijgt een `.json`-bestand dat je via **Back-up terugzetten** weer inleest: na het wissen van je browser, in een andere browser of op een ander apparaat. Zet het bestand bijvoorbeeld in OneDrive of Google Drive.
 
@@ -263,6 +276,7 @@ Werkwijze:
 | `node tools/build-artifact.js` | Bouwt de losse versie `dist/nineminds-cyber-dojo.html` (alles in één bestand, ook de letters). |
 | `node tools/smoke.js` | Laadt het portaal in een headless browser en controleert dat alles rendert: de leerpaden, elke room, het NineMinds-teken. |
 | `node tools/labtest.js` + `labtest-extra.js` | Bedienen de labs echt en controleren de uitkomsten. |
+| `node tools/labtest-spel.js [--shots map]` | Test de dagpuzzel, weekopdracht, rangen, zwakke plekken, arena-modi, "Check jezelf" en de resultaatkaart, ook op 390 px. |
 | `node tools/labtest-leerlus.js` | Test de leerlus in een proefroom: gelaagde hints en hun XP-prijs, foutfeedback, herhaling en oude voortgang. |
 | `node tools/audit.js [--md]` | Classificeert elke vraag (herinneren, toepassen, analyseren) en zet de rooms op volgorde van zwakste eerst. |
 | `node tools/labtest-meester.js` | Test de labs van Meesterproeven (Vigenère, many-time pad, Benford, Bayes, RSA, VM), de sleutelcasussen en de antwoorden van die rooms. |

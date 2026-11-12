@@ -120,6 +120,9 @@ Velden:
 - `optional: true`: de vragen leveren XP op maar tellen niet mee voor "room af". Niet elke taak mag optional zijn.
 - `kind: 'verdieping'` of `'examen'` zet het juiste stempel boven de taak.
 
+`check: [ { q, options, answer, explain } ]` op de room (optioneel, minstens drie): eigen vragen voor "Check jezelf"
+onderaan de room. Zonder `check` draait de engine de begrippenlijst om (omschrijving gegeven, kies het begrip).
+
 Op de room zelf: `level: 'Instap' | 'Praktijk' | 'Gevorderd' | 'Expert'` en `checked: '2026-11-12'` (laatst
 inhoudelijk gecontroleerd). Beide zijn optioneel.
 
