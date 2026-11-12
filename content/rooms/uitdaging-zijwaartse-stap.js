@@ -1,4 +1,4 @@
-/* Uitdaging ★★★ — De zijwaartse stap (zonder handleiding) */
+/* Uitdaging ★★★: De zijwaartse stap (zonder handleiding) */
 
 // Alles FICTIEF: Veldman & Ko, de accounts, de hosts en de adressen zijn verzonnen.
 // Let op bij het nalopen: in de nacht van 24 op 25 oktober 2026 gaat om 01:00 UTC de klok in Nederland van 03:00 terug naar 02:00.

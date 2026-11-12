@@ -1,4 +1,4 @@
-/* Uitdaging ★★ — De kapotte back-up (zonder handleiding) */
+/* Uitdaging ★★: De kapotte back-up (zonder handleiding) */
 
 // Alles FICTIEF: De Glimlach, de patiënten, de beheerder en de sleutel zijn verzonnen.
 // De back-ups zijn echt doorgerekend: SQL-dump → XOR met de sleutel → Base64. Twee bestanden zijn beschadigd.

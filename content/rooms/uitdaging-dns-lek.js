@@ -1,4 +1,4 @@
-/* Uitdaging ★★★ — Het lek in de DNS (zonder handleiding) */
+/* Uitdaging ★★★: Het lek in de DNS (zonder handleiding) */
 
 // Alles FICTIEF: Drukkerij De Pers BV, de werkplekken, de klanten en de domeinen zijn verzonnen.
 // De datastukken in de DNS-namen zijn echte Base32 (kleine letters, zonder opvulling) van één tekst, in stukken van 24 tekens.

@@ -1,4 +1,4 @@
-/* Uitdaging ★★ — De open .git-map (zonder handleiding) */
+/* Uitdaging ★★: De open .git-map (zonder handleiding) */
 
 // Alles FICTIEF: Spaak & Zn, de ontwikkelaar, de sleutels en de adressen zijn verzonnen.
 // De git-objecten zijn echt: de hashes kloppen met de inhoud en .git/objects bevat de zlib-gecomprimeerde objecten.
