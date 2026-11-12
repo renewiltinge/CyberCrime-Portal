@@ -222,7 +222,7 @@
   //  RENDER: topbalk
   // =======================================================================
   const NAV = [
-    { hash: '#/', label: 'Leerpaden', icon: 'paths', match: (h) => h === '#/' || h === '' || /^#\/(pad|room)\//.test(h) },
+    { hash: '#/', label: 'Leerpaden', icon: 'paths', match: (h) => h === '#/' || h === '' || /^#\/(pad|room|route|routes|proefexamen)/.test(h) },
     { hash: '#/oefenen', label: 'Oefenen', icon: 'practice', match: (h) => /^#\/(oefenen|arena|flashcards|examen|daily|herhalen|puzzel|kaart|scorebord)/.test(h) },
     { hash: '#/tools', label: 'Gereedschap', icon: 'tools', match: (h) => h === '#/tools' },
   ];
@@ -330,6 +330,7 @@
     { hash: '#/arena', icon: 'practice', title: 'Oefenarena', desc: 'Willekeurige vragen uit alle lessen. Hoe lang wordt je reeks?' },
     { hash: '#/flashcards', icon: 'cards', title: 'Begrippentrainer', desc: 'Alle vakbegrippen als kaarten. Wat je nog niet kent, komt vaker terug.' },
     { hash: '#/examen', icon: 'exam', title: 'Examen', desc: 'Een getimede toets met vragen uit alle lessen. Vanaf 70% ben je geslaagd.' },
+    { hash: '#/proefexamen', icon: 'exam', title: 'Proefexamen', desc: '40 tot 90 vragen zonder terugkoppeling onderweg, met markeren voor later en een analyse per domein.' },
     { hash: '#/daily', icon: 'calendar', title: 'Dagchallenge', desc: 'Elke dag vijf vragen, voor iedereen dezelfde. Bouw een reeks op.' },
     { hash: '#/puzzel', icon: 'path-puzzels', title: 'Dagpuzzel', desc: 'Elke dag één kleine opgave om te kraken, en elke week een zwaardere.' },
     { hash: '#/herhalen', icon: 'reset', title: 'Herhalen', desc: 'Wat je eerder fout had, komt na 1, 3 en 7 dagen terug.' },
@@ -420,6 +421,8 @@
       ])));
     });
     home.append(homeSection('Leerpaden', 'Volg ze van boven naar beneden; elke room bouwt voort op de vorige.', list));
+    home.append(homeSection('Leerroutes naar een doel', 'Dezelfde rooms, in de volgorde van één rol, met een proefexamen als eindtoets.',
+      el('div', { class: 'practice-grid' }, ROUTES.map((rt) => el('button', { class: 'tile', onclick: () => go('#/route/' + rt.id) }, [CS.icon('target', 20), el('div', {}, [el('h3', { text: rt.title }), el('p', { text: rt.desc })])]))), 'routes'));
     home.append(homeSection('Oefenen', 'Herhalen, jezelf toetsen en losse gereedschappen.', practiceGrid(), 'oefenen'));
 
     root.append(home);
@@ -486,7 +489,7 @@
     const done = roomDone(room);
     // Zachte volgorde: een room is "op slot" tot de vorige in dit pad af is. Het is
     // een advies, geen muur; de melding zegt welke eerst.
-    const locked = idx > 0 && !roomDone(siblings[idx - 1]) && prog === 0;
+    const locked = idx > 0 && !!siblings[idx - 1] && !roomDone(siblings[idx - 1]) && prog === 0;
     const open = () => {
       if (!locked) go('#/room/' + room.id);
       else toast('Eerst de vorige room', 'Rond eerst "' + siblings[idx - 1].title + '" af.');
@@ -1721,7 +1724,7 @@
     const body = el('tbody');
     rows.forEach((r) => body.append(el('tr', {}, [
       el('td', { text: r.path.title }),
-      el('td', { class: 'num', text: r.miss + ' op ' + r.qs + (r.qs === 1 ? ' vraag' : ' vragen') }),
+      el('td', { class: 'num', text: r.miss + '× bij ' + r.qs + (r.qs === 1 ? ' vraag' : ' vragen') }),
       el('td', { class: 'num', text: Math.round(r.rate * 100) + '%' }),
       el('td', {}, r.worst ? el('a', { href: '#/room/' + r.worst.id, text: r.worst.title }) : null),
       el('td', {}, el('a', { class: 'btn small', href: '#/arena/zwak/' + r.path.id, text: 'Oefen dit' })),
@@ -1914,6 +1917,200 @@
   }
 
   // =======================================================================
+  //  LEERROUTES naar een doel, met een proefexamen als eindtoets
+  // =======================================================================
+  // Een route zet bestaande rooms in een verstandige volgorde voor één rol. Het is geen
+  // opleiding en geen certificaat: het zegt wat je in de dojo kunt oefenen voor dat werk.
+  const ROUTES = [
+    { id: 'soc-analist', title: 'SOC-analist', desc: 'Aanvallen zien in logs en verkeer, er een regel voor schrijven en er goed op reageren.',
+      rooms: ['intro-cybersecurity', 'netwerken-basis', 'hoe-het-web-werkt', 'linux-basis', 'windows-basis', 'logs-detectie', 'threat-intel-attack', 'detectie-engineering', 'detectie-bouwen', 'netwerkstromen-analyse', 'dns-datastromen', 'email-forensics', 'incident-response', 'ransomware-respons', 'insider-threat', 'phishing-kit-infrastructuur'] },
+    { id: 'digitaal-rechercheur', title: 'Digitaal rechercheur', desc: 'Sporen veiligstellen, onderzoeken en zo opschrijven dat het standhoudt.',
+      rooms: ['intro-forensie', 'bewijs-veiligstellen', 'schijf-bestandssysteem-forensie', 'memory-forensie', 'netwerk-forensie', 'windows-artefacten', 'mobiel-cloud-forensie', 'tijdlijnanalyse', 'malware-analyse-basis', 'osint-opsporing', 'email-forensics', 'forensie-misleiding', 'bewijs-in-de-rechtszaal', 'forensie-ctf'] },
+    { id: 'intelligence-analist', title: 'Intelligence-analist', desc: 'Van fenomeen naar oordeel: bronnen wegen, hypothesen toetsen en een product schrijven waar iemand op kan handelen.',
+      rooms: ['cybercrime-ecosysteem', 'crime-scripting', 'intelligencecyclus', 'ti-modellen', 'threat-intel-attack', 'osint-pivoting', 'osint-infrastructuur', 'darkweb-vendor-osint', 'redeneren-met-kansen', 'intelligenceproducten', 'praktijkcase-intel'] },
+    { id: 'financieel-rechercheur', title: 'Financieel rechercheur', desc: 'Het geld volgen: fraudevormen, witwassen, crypto en de cijfers die niet kloppen.',
+      rooms: ['fraudevormen', 'money-mule-ronseling', 'carding-economie', 'witwassen-structurering', 'follow-the-money', 'crypto-witwassen', 'cryptomixer-onderzoek', 'financiele-recherche', 'fraude-in-de-cijfers'] },
+    { id: 'security-tester', title: 'Security-tester (basis)', desc: 'Begrijpen hoe een aanval werkt, zodat je kwetsbaarheden kunt vinden, wegen en melden. Altijd in een lab of met schriftelijke toestemming.',
+      rooms: ['intro-cybersecurity', 'netwerken-basis', 'hoe-het-web-werkt', 'linux-basis', 'cryptografie', 'kwetsbaarheden-cvss', 'owasp-top-10', 'verkenning-scannen', 'webhacking-sqli', 'wachtwoorden-kraken', 'reverse-engineering'] },
+  ];
+  const routeRooms = (rt) => rt.rooms.map((id) => ROOMS.find((r) => r.id === id)).filter(Boolean);
+  function renderRoutes() {
+    const root = $('#app'); root.innerHTML = '';
+    const wrap = el('section', { class: 'roomview wrap' });
+    wrap.append(crumbs([['Overzicht', '#/'], ['Leerroutes']]), pageHead('target', 'Leerroutes naar een doel', 'Een route zet rooms uit verschillende leerpaden in een volgorde die past bij één rol, en sluit af met een proefexamen. De dojo vervangt geen opleiding of erkend examen; de dekkingsmatrix in docs/ laat zien wat er wel en niet in zit.'));
+    const list = el('ol', { class: 'pathlist' });
+    ROUTES.forEach((rt, i) => {
+      const rs = routeRooms(rt), done = rs.filter(roomDone).length;
+      const best = (STATE.exams || {})[rt.id];
+      list.append(el('li', {}, el('a', { class: 'pathrow' + (done === rs.length ? ' done' : ''), href: '#/route/' + rt.id }, [
+        el('span', { class: 'no', text: String(i + 1).padStart(2, '0') }),
+        el('span', { class: 'glyph' }, CS.icon('target', 20)),
+        el('div', {}, [el('h3', { text: rt.title }), el('p', { text: rt.desc })]),
+        el('div', { class: 'prog' }, [el('span', { class: 'num', text: done + '/' + rs.length + ' rooms' + (best != null ? ' · eindtoets ' + best + '%' : '') }), meterLine(done / rs.length, done === rs.length)]),
+        el('span', { class: 'go' }, CS.icon('chevron', 18)),
+      ])));
+    });
+    wrap.append(list);
+    root.append(wrap); renderFooter(root); window.scrollTo(0, 0);
+  }
+  function renderRoute(id) {
+    const rt = ROUTES.find((x) => x.id === id);
+    if (!rt) { renderRoutes(); return; }
+    const root = $('#app'); root.innerHTML = '';
+    const rs = routeRooms(rt), done = rs.filter(roomDone).length;
+    const view = el('section', { class: 'pathview wrap' });
+    view.append(crumbs([['Overzicht', '#/'], ['Leerroutes', '#/routes'], [rt.title]]));
+    view.append(el('header', { class: 'path-hero' }, [
+      el('span', { class: 'glyph' }, CS.icon('target', 28)),
+      el('div', {}, [
+        el('span', { class: 'label', text: 'Leerroute' }),
+        el('h1', { text: rt.title }),
+        el('p', { text: rt.desc }),
+        el('div', { class: 'meta-row' }, [el('span', { class: 'num', text: done + '/' + rs.length + ' rooms af' }), metaItem('clock', fmtMinutes(rs.reduce((n, r) => n + r.minutes, 0)))]),
+        meterLine(done / rs.length, done === rs.length),
+      ]),
+    ]));
+    const spine = el('ol', { class: 'spine' });
+    // In een route is niets op slot: de rooms komen uit verschillende paden.
+    rs.forEach((r, i) => spine.append(el('li', {}, roomRow(r, [], i))));
+    view.append(spine);
+    const best = (STATE.exams || {})[rt.id];
+    view.append(el('section', { class: 'task' }, [
+      el('span', { class: 'stamp', text: 'Eindtoets' }),
+      el('h2', { text: 'Proefexamen ' + rt.title }),
+      el('p', { text: 'Een gemengde set uit de rooms van deze route, met een tijdslimiet. Je ziet pas aan het eind wat goed was, met een analyse per domein.' + (best != null ? ' Je beste score: ' + best + '%.' : '') }),
+      el('a', { class: 'btn primary', href: '#/proefexamen/' + rt.id }, [el('span', { text: 'Naar het proefexamen' }), CS.icon('arrowRight', 18)]),
+    ]));
+    root.append(view); renderFooter(root); window.scrollTo(0, 0);
+  }
+
+  // Proefexamen: geen feedback tot het eind, markeren voor later, tijdslimiet, analyse per domein.
+  function renderMock(routeId) {
+    const rt = ROUTES.find((x) => x.id === routeId);
+    const root = $('#app'); root.innerHTML = '';
+    const wrap = el('section', { class: 'roomview wrap' });
+    wrap.append(crumbs([['Overzicht', '#/'], ['Leerroutes', '#/routes'], rt ? [rt.title, '#/route/' + rt.id] : ['Alles'], ['Proefexamen']]),
+      pageHead('exam', 'Proefexamen' + (rt ? ' ' + rt.title : ''), 'Zoals een echt examen: een vaste tijd, geen terugkoppeling onderweg, en vragen die je kunt markeren om later op terug te komen. Na afloop zie je per domein waar je zwak zit. Dit is oefening; het levert geen certificaat op.'));
+    const ids = rt ? new Set(routeRooms(rt).map((r) => r.id)) : null;
+    // Examenstijlvragen en boss-vragen eerst, dan de rest.
+    const weight = (x) => (x.room.tasks[x.ti].kind === 'examen' ? 0 : x.q.boss ? 1 : 2);
+    const pool = shuffle(allQuestions('alles').filter((x) => !ids || ids.has(x.room.id))).sort((a, b) => weight(a) - weight(b));
+    let len = Math.min(40, pool.length);
+    const lenRow = el('div', { class: 'chip-row' });
+    [40, 60, 90].filter((n, i) => i === 0 || n <= pool.length).forEach((n) => {
+      const real = Math.min(n, pool.length);
+      const c = el('span', { class: 'chip' + (real === len ? ' on' : ''), text: real + ' vragen · ' + real + ' min', onclick: () => { len = real; $$('.chip', lenRow).forEach((x) => x.classList.remove('on')); c.classList.add('on'); } });
+      lenRow.append(c);
+    });
+    const area = el('div', {});
+    const startBtn = el('button', { class: 'btn primary', text: 'Start het proefexamen', style: 'margin-top:14px' });
+    wrap.append(el('label', { text: 'Lengte' }), lenRow, startBtn, area);
+    root.append(wrap); renderFooter(root); window.scrollTo(0, 0);
+
+    startBtn.addEventListener('click', () => {
+      // De helft examenstijl (voor zover aanwezig), de rest gemengd, daarna door elkaar.
+      const top = pool.filter((x) => weight(x) < 2).slice(0, Math.ceil(len / 2));
+      const rest = shuffle(pool.filter((x) => !top.includes(x))).slice(0, len - top.length);
+      const qs = shuffle(top.concat(rest));
+      if (!qs.length) { area.append(el('div', { class: 'callout warn', text: 'Geen vragen beschikbaar.' })); return; }
+      lenRow.style.display = 'none'; startBtn.style.display = 'none';
+      const given = qs.map(() => null), marked = qs.map(() => false);
+      let cur = 0; const end = Date.now() + qs.length * 60000;
+      const clock = el('span', { class: 'num' });
+      const head = el('div', { class: 'mockhead' });
+      const grid = el('div', { class: 'mockgrid', role: 'navigation', 'aria-label': 'Vragen' });
+      const qbox = el('div', {}), nav = el('div', { class: 'room-foot' });
+      area.append(head, grid, qbox, nav);
+      const timer = setInterval(() => {
+        if (!document.body.contains(area)) { clearInterval(timer); return; }
+        const left = Math.max(0, Math.round((end - Date.now()) / 1000));
+        clock.textContent = Math.floor(left / 60) + ':' + String(left % 60).padStart(2, '0');
+        if (!left) finish(true);
+      }, 500);
+      const paintGrid = () => {
+        grid.innerHTML = '';
+        qs.forEach((_, i) => grid.append(el('button', { class: 'mockcell' + (i === cur ? ' on' : '') + (given[i] != null ? ' filled' : '') + (marked[i] ? ' marked' : ''), 'aria-label': 'Vraag ' + (i + 1) + (given[i] != null ? ', beantwoord' : ', open') + (marked[i] ? ', gemarkeerd' : ''), onclick: () => { cur = i; show(); } }, [document.createTextNode(String(i + 1)), marked[i] ? el('i', { text: '?' }) : null])));
+      };
+      function show() {
+        const item = qs[cur];
+        head.innerHTML = ''; qbox.innerHTML = ''; nav.innerHTML = '';
+        head.append(el('span', { class: 'num', text: 'Vraag ' + (cur + 1) + ' / ' + qs.length + ' · ' + given.filter((g) => g != null).length + ' beantwoord · tijd ' }), clock);
+        const card = el('div', { class: 'q quizcard' });
+        card.append(el('div', { class: 'qtext', style: 'font-weight:600;margin-bottom:12px', html: esc(item.q.q) }));
+        if (Array.isArray(item.q.options)) {
+          const mc = el('div', { class: 'mc' });
+          item.q.options.forEach((opt, oi) => mc.append(el('button', { class: given[cur] === oi ? 'picked' : '', html: esc(opt), 'aria-pressed': String(given[cur] === oi), onclick: () => { given[cur] = oi; show(); } })));
+          card.append(mc);
+        } else {
+          const input = el('input', { type: 'text', placeholder: 'antwoord…', autocomplete: 'off', spellcheck: 'false', value: given[cur] || '', 'aria-label': 'Jouw antwoord', oninput: () => { given[cur] = input.value.trim() ? input.value : null; } });
+          input.addEventListener('change', paintGrid);
+          card.append(el('div', { class: 'ans-row' }, input));
+        }
+        qbox.append(card);
+        nav.append(
+          el('button', { class: 'btn', text: 'Vorige', disabled: cur === 0, onclick: () => { cur--; show(); } }),
+          el('button', { class: 'btn', text: marked[cur] ? 'Markering weg' : 'Markeer voor later', onclick: () => { marked[cur] = !marked[cur]; show(); } }),
+          cur < qs.length - 1 ? el('button', { class: 'btn primary next', text: 'Volgende', onclick: () => { cur++; show(); } })
+            : el('button', { class: 'btn primary next', text: 'Inleveren', onclick: () => { const open = given.filter((g) => g == null).length; if (!open || confirm(open + ' vragen zijn nog open. Toch inleveren?')) finish(false); } }),
+        );
+        paintGrid();
+      }
+      function finish(timeUp) {
+        clearInterval(timer);
+        const res = qs.map((item, i) => {
+          const g = given[i];
+          const ok = g != null && (Array.isArray(item.q.options) ? g === item.q.answer : (Array.isArray(item.q.answer) ? item.q.answer : [item.q.answer]).some((a) => norm(a).toLowerCase() === norm(g).toLowerCase()));
+          if (!ok) recordMiss(item.room.id, item.ti, item.qi);
+          return ok;
+        });
+        const score = res.filter(Boolean).length, pct = Math.round((score / qs.length) * 100), pass = pct >= 70;
+        STATE.exams = STATE.exams || {};
+        const k = rt ? rt.id : 'alles';
+        if (STATE.exams[k] == null || pct > STATE.exams[k]) STATE.exams[k] = pct;
+        if (!STATE.examBest || pct > STATE.examBest) STATE.examBest = pct;
+        bump('mock'); saveState(); checkBadges();
+        area.innerHTML = '';
+        area.append(el('div', { class: 'callout ' + (pass ? 'tip' : 'warn'), html: '<strong>' + (pass ? 'Gehaald.' : 'Nog niet gehaald.') + '</strong> ' + (timeUp ? 'De tijd was om. ' : '') + score + ' van ' + qs.length + ' goed (' + pct + '%). De grens is 70%.' }));
+        if (pass) { const sealBox = el('div', { class: 'room-done' }, [markNode('seal', false), el('div', {}, [el('h3', { text: 'Proefexamen gehaald' }), el('p', { text: (rt ? rt.title : 'Alle onderwerpen') + ' · ' + pct + '% · ' + qs.length + ' vragen. Oefening, geen erkend examen.' })])]); area.append(sealBox); proveMark(); }
+        // Analyse per domein (leerpad), zwakste eerst.
+        const dom = {};
+        qs.forEach((item, i) => { const d = dom[item.room.path] = dom[item.room.path] || { n: 0, ok: 0, rooms: {} }; d.n++; if (res[i]) d.ok++; else d.rooms[item.room.id] = (d.rooms[item.room.id] || 0) + 1; });
+        const t = el('table', { class: 'weak' });
+        t.append(el('thead', {}, el('tr', {}, ['Domein', 'Goed', 'Score', 'Herhaal deze room'].map((h) => el('th', { text: h })))));
+        const tb = el('tbody');
+        Object.keys(dom).sort((a, b) => dom[a].ok / dom[a].n - dom[b].ok / dom[b].n).forEach((pid) => {
+          const d = dom[pid], worst = Object.keys(d.rooms).sort((x, y) => d.rooms[y] - d.rooms[x])[0];
+          const wr = worst && ROOMS.find((r) => r.id === worst);
+          tb.append(el('tr', {}, [el('td', { text: (PATHS.find((p) => p.id === pid) || { title: pid }).title }), el('td', { class: 'num', text: d.ok + '/' + d.n }), el('td', { class: 'num', text: Math.round((d.ok / d.n) * 100) + '%' }), el('td', {}, wr ? el('a', { href: '#/room/' + wr.id, text: wr.title }) : el('span', { class: 'found-note', text: 'alles goed' }))]));
+        });
+        t.append(tb);
+        area.append(el('h2', { style: 'margin-top:32px', text: 'Analyse per domein' }), el('div', { class: 'tablewrap' }, t));
+        // Nabespreking: alleen wat fout ging, met het goede antwoord en de uitleg.
+        const wrongs = qs.map((item, i) => ({ item, i })).filter((x) => !res[x.i]);
+        if (wrongs.length) {
+          area.append(el('h2', { style: 'margin-top:32px', text: 'Nabespreking: ' + wrongs.length + ' fout' }));
+          area.append(el('p', { class: 'found-note', text: 'Deze vragen komen ook terug onder Herhalen.' }));
+          wrongs.forEach(({ item, i }) => {
+            const good = Array.isArray(item.q.options) ? item.q.options[item.q.answer] : (Array.isArray(item.q.answer) ? item.q.answer[0] : item.q.answer);
+            const mine = given[i] == null ? 'niet beantwoord' : (Array.isArray(item.q.options) ? item.q.options[given[i]] : given[i]);
+            const note = given[i] == null ? null : wrongNote(item.q, Array.isArray(item.q.options) ? given[i] : norm(given[i]).toLowerCase());
+            area.append(el('div', { class: 'q quizcard' }, [
+              el('div', { class: 'stamp', style: 'display:block;margin-bottom:8px', text: 'Vraag ' + (i + 1) + ' · ' + item.room.title }),
+              el('div', { class: 'qtext', style: 'font-weight:600;margin-bottom:8px', html: esc(item.q.q) }),
+              el('div', { class: 'feedback show no' }, [CS.icon('cross', 16), el('span', { html: 'Jouw antwoord: ' + esc(mine) + (note ? '. ' + esc(note) : '') })]),
+              el('div', { class: 'feedback show ok' }, [CS.icon('check', 16), el('span', { html: 'Goed: ' + esc(good) })]),
+              item.q.explain ? el('div', { class: 'explain show', html: esc(item.q.explain) }) : null,
+            ]));
+          });
+        }
+        area.append(el('div', { class: 'room-foot', style: 'margin-top:18px' }, [el('button', { class: 'btn', text: 'Opnieuw', onclick: () => renderMock(routeId) }), el('a', { class: 'btn primary next', href: rt ? '#/route/' + rt.id : '#/routes', text: 'Terug naar de route' })]));
+        window.scrollTo(0, 0);
+      }
+      show();
+    });
+  }
+
+  // =======================================================================
   //  Voet + router
   // =======================================================================
   // NineMinds staat onderaan, één keer: de dojo staat voorop, het merk dat
@@ -1927,6 +2124,7 @@
 
   function go(hash) { if (location.hash === hash) route(); else location.hash = hash; }
   CS.go = go;
+  CS.routes = ROUTES;
   function route() {
     const h = location.hash || '#/';
     closeSearch();
@@ -1943,6 +2141,9 @@
     else if (h === '#/daily') renderDaily();
     else if (h === '#/herhalen') renderReview();
     else if (h === '#/puzzel') renderPuzzle();
+    else if (h === '#/routes') renderRoutes();
+    else if (/^#\/route\//.test(h)) renderRoute(decodeURIComponent(h.slice(8)));
+    else if (/^#\/proefexamen/.test(h)) renderMock(decodeURIComponent(h.slice(14)));
     else if (/^#\/kaart/.test(h)) renderCard(decodeURIComponent(h.slice(8)));
     else if (/^#\/arena\/zwak/.test(h)) renderArena({ weak: true, path: decodeURIComponent(h.slice(13)) || 'alles' });
     else if (h === '#/scorebord') renderScorebord();

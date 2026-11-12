@@ -776,3 +776,12 @@ table.weak th { font-size: var(--nm-size-label); letter-spacing: var(--nm-tracki
   body { background: #fff; }
   .resultcard { border-color: #000; max-width: none; }
 }
+
+/* ---------- Proefexamen ---------- */
+.mockhead { margin: 18px 0 10px; font-size: 0.86rem; color: var(--muted); }
+.mockgrid { display: flex; flex-wrap: wrap; gap: 4px; margin: 0 0 16px; }
+.mockcell { position: relative; min-width: 36px; height: 36px; padding: 0 6px; background: var(--surface); border: 1px dashed var(--border-strong); color: var(--muted); font-family: var(--mono); font-size: 0.74rem; cursor: pointer; }
+.mockcell.filled { border-style: solid; color: var(--text); background: var(--surface-2); }
+.mockcell.on { border: 2px solid var(--text); color: var(--text); }
+.mockcell i { position: absolute; top: 1px; right: 3px; font-style: normal; font-size: 0.62rem; color: var(--text); }
+.mc button.picked { border-color: var(--text); border-width: 2px; background: var(--surface-2); font-weight: 600; }

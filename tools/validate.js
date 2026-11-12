@@ -259,5 +259,15 @@ if (!require('./house').upToDate()) {
   console.log('  ✗ assets/js/house.js loopt achter op nineminds/ — draai node tools/build.js');
 }
 
+// Leerroutes (assets/js/app.js): elke genoemde room moet bestaan.
+if (!args.length) {
+  const app = fs.readFileSync(path.join(ROOT, 'assets/js/app.js'), 'utf8');
+  const block = (app.match(/const ROUTES = \[([\s\S]*?)\n  \];/) || [])[1] || '';
+  (block.match(/rooms: \[[^\]]*\]/g) || []).forEach((lst) => (lst.match(/'([^']+)'/g) || []).forEach((q) => {
+    const id = q.slice(1, -1);
+    if (!seenIds.has(id)) { errors++; console.log(`  ✗ leerroute verwijst naar een room die niet bestaat: ${id}`); }
+  }));
+}
+
 console.log(`\n${files.length} bestand(en), ${errors} fout(en), ${warnings} waarschuwing(en)`);
 process.exit(errors ? 1 : 0);
