@@ -733,3 +733,22 @@ hr { border: 0; border-top: 1px solid var(--border); margin: 24px 0; }
   .toast-wrap { left: 12px; right: 12px; bottom: 12px; }
   .toast { max-width: none; }
 }
+
+/* ---------- Leerlus: gelaagde hints, boss-vraag, eerst proberen, triomf ----------
+   Binnen de huisstijl: inkt en haarlijnen. Alleen de triomfregel is violet, want
+   die zegt dat er iets bewezen is. */
+.q .hintlist { display: block; }
+.q .hintlist .hintline .num { color: var(--muted); }
+.q.boss { border-style: solid; border-width: 2px; border-color: var(--text); }
+.q.boss.correct { border-color: var(--good); }
+.q .bossmark { display: block; margin-bottom: 8px; color: var(--text); }
+.q .explain.why { border-top-style: dashed; }
+.q .triumph { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 12px; padding: 8px 12px; background: var(--screen-bg); color: var(--good); font-family: var(--mono); font-size: 0.8rem; letter-spacing: 0.04em; }
+.q .triumph .tx { margin-left: auto; }
+.task details.uitleg { border: 1px solid var(--border); background: var(--surface); margin: 16px 0; max-width: var(--read); }
+.task details.uitleg > summary { cursor: pointer; font-weight: 500; padding: 12px 16px; list-style: none; display: flex; align-items: center; gap: 10px; min-height: 44px; }
+.task details.uitleg > summary::-webkit-details-marker { display: none; }
+.task details.uitleg[open] > summary { border-bottom: 1px solid var(--border); }
+.task details.uitleg > .body { padding: 0 16px 6px; }
+.review-note { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin: 14px 0 0; padding: 12px 14px; border: 1px solid var(--border); background: var(--surface); font-size: 0.92rem; }
+.review-note .num { color: var(--muted); }

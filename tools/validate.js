@@ -54,6 +54,7 @@ function checkHtml(file, html, where) {
   if (/\$\{/.test(html)) warn(file, `${where}: bevat "\${" — bedoeld?`);
 }
 
+const hintsText = (q) => (Array.isArray(q.hints) ? q.hints : (q.hint ? [q.hint] : []));
 function labText(lab) {
   return JSON.stringify(lab);
 }
@@ -126,7 +127,10 @@ for (const file of files) {
   if (typeof r.order !== 'number') err(rel, 'order moet een getal zijn');
   if (typeof r.minutes !== 'number') err(rel, 'minutes moet een getal zijn');
   if (!Array.isArray(r.objectives) || r.objectives.length < 2) warn(rel, 'weinig of geen objectives');
+  if (r.level != null && !['Instap', 'Praktijk', 'Gevorderd', 'Expert'].includes(r.level)) err(rel, `onbekend level "${r.level}"`);
+  if (r.checked != null && !/^\d{4}-\d{2}-\d{2}$/.test(r.checked)) err(rel, 'checked moet een datum JJJJ-MM-DD zijn');
   if (!Array.isArray(r.tasks) || !r.tasks.length) { err(rel, 'geen tasks'); continue; }
+  if (r.tasks.every((t) => t.optional)) err(rel, 'alle taken zijn optional: de room kan nooit af');
   if (!Array.isArray(r.terms) || r.terms.length < 3) warn(rel, 'weinig of geen terms');
   (r.terms || []).forEach((t, i) => { if (!t.term || !t.def) err(rel, `term ${i} mist term/def`); });
   (r.resources || []).forEach((x, i) => { if (!x.title || !/^https:\/\//.test(x.url || '')) err(rel, `resource ${i} mist titel of https-url`); });
@@ -136,6 +140,10 @@ for (const file of files) {
   r.tasks.forEach((t, ti) => {
     const where = `taak ${ti + 1}`;
     if (!t.title) err(rel, `${where}: geen title`);
+    if (t.tryFirst && !t.intro) err(rel, `${where}: tryFirst vraagt om een intro (de opdracht die open staat)`);
+    if (t.tryFirst && !t.lab && !(t.questions || []).length) err(rel, `${where}: tryFirst zonder lab of vragen: er valt niets te proberen`);
+    if (t.intro) checkHtml(rel, t.intro, where + ' intro');
+    if (t.kind != null && !['verdieping', 'examen'].includes(t.kind)) err(rel, `${where}: onbekende kind "${t.kind}"`);
     if (!t.content) err(rel, `${where}: geen content`);
     else { checkHtml(rel, t.content, where); allText.push(t.content); }
     if (t.lab) allText.push(labText(t.lab)); // een vlag die letterlijk in een lab staat, telt ook als vindbaar
@@ -174,6 +182,32 @@ for (const file of files) {
       const w = `${where} vraag ${qi + 1}`;
       if (!q.q) err(rel, `${w}: geen vraagtekst`);
       if (q.noAnswer) return;
+      // Leerlus-velden (zie docs/CONTENT-SPEC.md): hints, wrong, why, boss.
+      if (q.hints != null) {
+        if (!Array.isArray(q.hints) || !q.hints.length || q.hints.length > 3 || q.hints.some((h) => typeof h !== 'string' || !h.trim())) err(rel, `${w}: hints moet een lijst van 1 tot 3 teksten zijn`);
+        if (q.hint) err(rel, `${w}: gebruik hint of hints, niet allebei`);
+      }
+      if (q.why != null && (typeof q.why !== 'string' || !q.why.trim())) err(rel, `${w}: why moet tekst zijn`);
+      if (q.wrong != null) {
+        if (typeof q.wrong !== 'object' || Array.isArray(q.wrong)) err(rel, `${w}: wrong moet een object { antwoord: uitleg } zijn`);
+        else for (const k of Object.keys(q.wrong)) {
+          if (typeof q.wrong[k] !== 'string' || !q.wrong[k].trim()) err(rel, `${w}: wrong["${k}"] heeft geen uitleg`);
+          const cut = k.lastIndexOf('/');
+          if (k.length > 2 && k[0] === '/' && cut > 0) { try { new RegExp(k.slice(1, cut), k.slice(cut + 1) || 'i'); } catch (e) { err(rel, `${w}: wrong-patroon ${k} is geen geldige regex`); } }
+          if (Array.isArray(q.options)) {
+            if (!/^\d+$/.test(k) || +k >= q.options.length) err(rel, `${w}: wrong["${k}"] is geen index van een optie`);
+            else if (+k === q.answer) err(rel, `${w}: wrong["${k}"] wijst naar het goede antwoord`);
+          } else {
+            const good = (Array.isArray(q.answer) ? q.answer : [q.answer]).map((a) => String(a).trim().toLowerCase());
+            if (good.includes(k.trim().toLowerCase())) err(rel, `${w}: wrong["${k}"] is zelf een goed antwoord`);
+          }
+        }
+      }
+      if (q.boss && hintsText(q).length && r.path !== 'uitdagingen') {
+        const plainTask = (t.content || '').replace(/<[^>]+>/g, ' ').toLowerCase();
+        const a0 = String(Array.isArray(q.answer) ? q.answer[0] : q.answer).toLowerCase();
+        if (!Array.isArray(q.options) && a0.length > 2 && plainTask.includes(a0)) err(rel, `${w}: het antwoord op een boss-vraag staat letterlijk in de taaktekst`);
+      }
       if (Array.isArray(q.options)) {
         if (typeof q.answer !== 'number' || q.answer < 0 || q.answer >= q.options.length) err(rel, `${w}: answer moet index binnen options zijn`);
         return;
@@ -205,7 +239,7 @@ for (const file of files) {
       const inText = (a, txt) => new RegExp('(^|[^a-z0-9{_])' + a.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '($|[^a-z0-9}_])').test(txt);
       const leak = answers.find((a) => a.length > 2 && inText(a, plain));
       if (leak) err(rel, `taak ${ti + 1} vraag ${qi + 1}: antwoord "${leak}" staat letterlijk in de tekst van een uitdaging`);
-      if (q.hint && answers.some((a) => a.length > 2 && inText(a, q.hint.toLowerCase()))) err(rel, `taak ${ti + 1} vraag ${qi + 1}: de hint verraadt het antwoord`);
+      if (hintsText(q).slice(0, 2).some((h) => answers.some((a) => a.length > 2 && inText(a, h.toLowerCase())))) err(rel, `taak ${ti + 1} vraag ${qi + 1}: de hint verraadt het antwoord`);
     }));
   }
   console.log(`    ${r.tasks.length} taken, ${qCount} vragen`);

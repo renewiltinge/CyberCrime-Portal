@@ -81,6 +81,48 @@ Velden:
 - `xp` (optioneel): standaard 10 voor open, 5 voor meerkeuze, 2 voor noAnswer.
 - `encoded: true` (optioneel): de vlag staat gecodeerd in de room (bijv. Base64 of ROT13), zodat de validator hem niet letterlijk vindt.
 
+### De leerlus: hints in lagen, foutfeedback, boss-vraag
+
+```js
+{ q: 'Welk account is overgenomen?', answer: ['svc-backup'],
+  hints: ['Kijk waar de mislukte aanmeldingen ophouden.',        // 1: een richting
+          'Filter het log op 4624 direct na de reeks 4625.',     // 2: het gereedschap of de plek
+          'Het is een serviceaccount; de naam begint met svc-.'],// 3: bijna het antwoord
+  wrong: { 'administrator': 'Daar wordt wel op geprobeerd, maar geen enkele poging slaagt.',
+           '/^10\\./': 'Je geeft een IP-adres; gevraagd is het account.' },
+  why: 'Serviceaccounts hebben vaak geen MFA en een wachtwoord dat nooit verloopt.',
+  explain: 'Na 41 mislukte pogingen volgt één 4624 voor svc-backup.' }
+```
+
+- `hints` (1 tot 3 teksten) vervangt `hint`. Elke geopende hint kost 15% van de XP van de vraag; dat staat op de knop.
+  Een bestaand `hint: '...'` blijft werken als één laag. Gebruik niet allebei.
+- `wrong`: uitleg bij een typisch fout antwoord. De sleutel is het foute antwoord (hoofdletters en spaties tellen
+  niet mee), een regex als `'/patroon/i'`, of bij meerkeuze de index van de optie. Bij examenstijlvragen leg je zo
+  uit waarom elke afleider fout is.
+- `why`: één of twee zinnen "waarom dit ertoe doet in de praktijk", zichtbaar na een goed antwoord.
+- `boss: true`: de boss-vraag van de room, standaard 25 XP. Het antwoord mag niet in de taaktekst staan (de
+  validator controleert dat) en vraagt om twee of meer technieken uit de room.
+- Een fout antwoord komt na 1, 3 en 7 dagen terug op `#/herhalen`. Daar hoef je niets voor te doen.
+
+### Eerst proberen, dan lezen; Verdieping; examenvragen
+
+```js
+{ title: 'Taak 2 — Wie logde er in?', tryFirst: true,
+  intro: '<p>De opdracht in twee zinnen. Dit staat open.</p>',
+  content: '<p>De uitleg. Die staat ingeklapt onder "Uitleg: lees dit als je vastzit".</p>',
+  lab: { ... }, questions: [ ... ] }
+
+{ title: 'Taak 7 — Verdieping: hoe Kerberos echt werkt', kind: 'verdieping', optional: true, content: '...', questions: [ ... ] }
+{ title: 'Taak 8 — Zo komt dit voor op een examen', kind: 'examen', optional: true, content: '...', questions: [ ... ] }
+```
+
+- `tryFirst: true` vraagt om een `intro` en om een lab of vragen.
+- `optional: true`: de vragen leveren XP op maar tellen niet mee voor "room af". Niet elke taak mag optional zijn.
+- `kind: 'verdieping'` of `'examen'` zet het juiste stempel boven de taak.
+
+Op de room zelf: `level: 'Instap' | 'Praktijk' | 'Gevorderd' | 'Expert'` en `checked: '2026-11-12'` (laatst
+inhoudelijk gecontroleerd). Beide zijn optioneel.
+
 Controleer je room met `node tools/validate.js content/rooms/<room-id>.js`.
 
 Regels voor goede vragen:

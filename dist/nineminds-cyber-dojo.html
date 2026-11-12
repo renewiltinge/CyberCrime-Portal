@@ -1068,6 +1068,25 @@ hr { border: 0; border-top: 1px solid var(--border); margin: 24px 0; }
   .toast { max-width: none; }
 }
 
+/* ---------- Leerlus: gelaagde hints, boss-vraag, eerst proberen, triomf ----------
+   Binnen de huisstijl: inkt en haarlijnen. Alleen de triomfregel is violet, want
+   die zegt dat er iets bewezen is. */
+.q .hintlist { display: block; }
+.q .hintlist .hintline .num { color: var(--muted); }
+.q.boss { border-style: solid; border-width: 2px; border-color: var(--text); }
+.q.boss.correct { border-color: var(--good); }
+.q .bossmark { display: block; margin-bottom: 8px; color: var(--text); }
+.q .explain.why { border-top-style: dashed; }
+.q .triumph { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 12px; padding: 8px 12px; background: var(--screen-bg); color: var(--good); font-family: var(--mono); font-size: 0.8rem; letter-spacing: 0.04em; }
+.q .triumph .tx { margin-left: auto; }
+.task details.uitleg { border: 1px solid var(--border); background: var(--surface); margin: 16px 0; max-width: var(--read); }
+.task details.uitleg > summary { cursor: pointer; font-weight: 500; padding: 12px 16px; list-style: none; display: flex; align-items: center; gap: 10px; min-height: 44px; }
+.task details.uitleg > summary::-webkit-details-marker { display: none; }
+.task details.uitleg[open] > summary { border-bottom: 1px solid var(--border); }
+.task details.uitleg > .body { padding: 0 16px 6px; }
+.review-note { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin: 14px 0 0; padding: 12px 14px; border: 1px solid var(--border); background: var(--surface); font-size: 0.92rem; }
+.review-note .num { color: var(--muted); }
+
 </style>
 
 <header id="topbar" class="topbar"></header>
@@ -1221,19 +1240,35 @@ hr { border: 0; border-top: 1px solid var(--border); margin: 24px 0; }
     try { localStorage.setItem(LS_KEY, JSON.stringify(STATE)); } catch (e) { /* privémodus e.d. */ }
   }
   // STATE vorm: { answered: { "roomId::t::q": true }, xp: 0, badges: {id:true}, seenIntro: true, name: "" }
-  STATE.answered = STATE.answered || {};
-  STATE.xp = STATE.xp || 0;
-  STATE.badges = STATE.badges || {};
+  // Sinds v2 (alleen uitbreidend, zie migrate): hintsUsed {key: n}, miss {key: n},
+  // srs {key: {due, step}}, firstTry, noHint, checks {roomId: score}, game {...}, daily, puzzle.
+  function migrate(st) {
+    st.answered = st.answered || {};
+    st.xp = st.xp || 0;
+    st.badges = st.badges || {};
+    st.hintsUsed = st.hintsUsed || {};
+    st.miss = st.miss || {};
+    st.srs = st.srs || {};
+    st.checks = st.checks || {};
+    st.game = st.game || {};
+    st.count = st.count || {};
+    st.v = 2;
+    return st;
+  }
+  migrate(STATE);
+  const dayKey = (offset) => { const d = new Date(); d.setDate(d.getDate() + (offset || 0)); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
+  const bump = (name, n) => { STATE.count[name] = (STATE.count[name] || 0) + (n == null ? 1 : n); };
 
   const qKey = (roomId, ti, qi) => `${roomId}::${ti}::${qi}`;
   const isAnswered = (roomId, ti, qi) => !!STATE.answered[qKey(roomId, ti, qi)];
 
+  // Een taak met optional: true (Verdieping, examenvragen) telt niet mee voor "room af".
   function roomQuestionCount(room) {
-    return (room.tasks || []).reduce((n, t) => n + (t.questions ? t.questions.length : 0), 0);
+    return (room.tasks || []).reduce((n, t) => n + (t.questions && !t.optional ? t.questions.length : 0), 0);
   }
   function roomAnsweredCount(room) {
     let n = 0;
-    (room.tasks || []).forEach((t, ti) => (t.questions || []).forEach((q, qi) => { if (isAnswered(room.id, ti, qi)) n++; }));
+    (room.tasks || []).forEach((t, ti) => { if (!t.optional) (t.questions || []).forEach((q, qi) => { if (isAnswered(room.id, ti, qi)) n++; }); });
     return n;
   }
   function roomDone(room) {
@@ -1369,7 +1404,7 @@ hr { border: 0; border-top: 1px solid var(--border); margin: 24px 0; }
   // =======================================================================
   const NAV = [
     { hash: '#/', label: 'Leerpaden', icon: 'paths', match: (h) => h === '#/' || h === '' || /^#\/(pad|room)\//.test(h) },
-    { hash: '#/oefenen', label: 'Oefenen', icon: 'practice', match: (h) => /^#\/(oefenen|arena|flashcards|examen|daily|scorebord)/.test(h) },
+    { hash: '#/oefenen', label: 'Oefenen', icon: 'practice', match: (h) => /^#\/(oefenen|arena|flashcards|examen|daily|herhalen|scorebord)/.test(h) },
     { hash: '#/tools', label: 'Gereedschap', icon: 'tools', match: (h) => h === '#/tools' },
   ];
   function renderTopbar() {
@@ -1477,6 +1512,7 @@ hr { border: 0; border-top: 1px solid var(--border); margin: 24px 0; }
     { hash: '#/flashcards', icon: 'cards', title: 'Begrippentrainer', desc: 'Alle vakbegrippen als kaarten. Wat je nog niet kent, komt vaker terug.' },
     { hash: '#/examen', icon: 'exam', title: 'Examen', desc: 'Een getimede toets met vragen uit alle lessen. Vanaf 70% ben je geslaagd.' },
     { hash: '#/daily', icon: 'calendar', title: 'Dagchallenge', desc: 'Elke dag vijf vragen, voor iedereen dezelfde. Bouw een reeks op.' },
+    { hash: '#/herhalen', icon: 'reset', title: 'Herhalen', desc: 'Wat je eerder fout had, komt na 1, 3 en 7 dagen terug.' },
     { hash: '#/tools', icon: 'tools', title: 'Gereedschapskist', desc: 'Alle labs los, voor je eigen ethische oefeningen.' },
     { hash: '#/scorebord', icon: 'chart', title: 'Scorebord', desc: 'Je voortgang, badges en records op één plek.' },
   ];
@@ -1541,6 +1577,8 @@ hr { border: 0; border-top: 1px solid var(--border); margin: 24px 0; }
       cell(STATE.flags || 0, null, 'vlaggen'),
       cell('LV ' + L.lvl, null, STATE.xp + ' XP'),
     ]));
+    const dueN = srsDue().length;
+    if (dueN) cont.append(el('div', { class: 'review-note' }, [el('span', { text: dueN + (dueN === 1 ? ' vraag staat' : ' vragen staan') + ' klaar om te herhalen.' }), el('a', { class: 'btn small', href: '#/herhalen', text: 'Herhaal nu' })]));
     home.append(el('div', { class: 'home-top' }, [intro, cont]));
 
     // De leerpaden: een lijst, niet 78 kaarten. Een pad openen toont zijn rooms.
@@ -1788,7 +1826,7 @@ hr { border: 0; border-top: 1px solid var(--border); margin: 24px 0; }
     const seal = markNode('seal', true);
     box.append(el('div', { class: 'room-done', role: 'status' }, [
       seal,
-      el('div', {}, [el('h3', { text: 'Room voltooid' }), el('p', { text: 'Alle ' + roomQuestionCount(room) + ' vragen goed. ' + roomMaxXP(room) + ' XP verdiend.' })]),
+      el('div', {}, [el('h3', { text: 'Room voltooid' }), el('p', { text: 'Alle ' + roomQuestionCount(room) + ' vragen goed. ' + roomEarnedXP(room) + ' van ' + roomMaxXP(room) + ' XP verdiend.' })]),
     ]));
     const svg = seal.querySelector('svg');
     if (svg) svg.setAttribute('data-state', fresh ? 'verified' : 'static');
@@ -1796,10 +1834,57 @@ hr { border: 0; border-top: 1px solid var(--border); margin: 24px 0; }
 
   function roomMaxXP(room) {
     let xp = 0;
-    (room.tasks || []).forEach((t) => (t.questions || []).forEach((q) => { xp += qXP(q); }));
+    (room.tasks || []).forEach((t) => { if (!t.optional) (t.questions || []).forEach((q) => { xp += qXP(q); }); });
     return xp;
   }
-  function qXP(q) { return q.xp != null ? q.xp : (q.noAnswer ? 2 : (Array.isArray(q.options) ? 5 : 10)); }
+  function roomEarnedXP(room) {
+    let xp = 0;
+    (room.tasks || []).forEach((t, ti) => { if (!t.optional) (t.questions || []).forEach((q, qi) => { if (isAnswered(room.id, ti, qi)) xp += earnedXP(room.id, ti, qi, q); }); });
+    return xp;
+  }
+  function qXP(q) { return q.xp != null ? q.xp : (q.noAnswer ? 2 : q.boss ? 25 : (Array.isArray(q.options) ? 5 : 10)); }
+  // Gelaagde hints: hint 1 een richting, 2 het gereedschap of de plek, 3 bijna het antwoord.
+  // Elke geopende hint kost 15% van de XP van die vraag (minstens 1 XP blijft over).
+  const HINT_COST = 0.15;
+  const hintsOf = (q) => (Array.isArray(q.hints) ? q.hints : (q.hint ? [q.hint] : []));
+  function hintCost(q, n) { return n ? Math.min(qXP(q) - 1, Math.max(n, Math.round(qXP(q) * HINT_COST * n))) : 0; }
+  function earnedXP(roomId, ti, qi, q) { return qXP(q) - hintCost(q, STATE.hintsUsed[qKey(roomId, ti, qi)] || 0); }
+  // Specifieke terugkoppeling bij een typisch fout antwoord: wrong: { 'antwoord': 'uitleg' }.
+  // Een sleutel als '/patroon/i' is een regex; bij meerkeuze is de sleutel de index van de optie.
+  function wrongNote(q, val) {
+    const w = q.wrong; if (!w) return null;
+    for (const k of Object.keys(w)) {
+      const cut = k.lastIndexOf('/');
+      if (k.length > 2 && k[0] === '/' && cut > 0) {
+        try { if (new RegExp(k.slice(1, cut), k.slice(cut + 1) || 'i').test(val)) return w[k]; } catch (e) { /* kapot patroon: overslaan */ }
+      } else if (norm(k).toLowerCase() === String(val)) return w[k];
+    }
+    return null;
+  }
+  // Een fout antwoord telt mee voor het zwakke-plekken-overzicht en komt na 1, 3 en 7 dagen terug.
+  const SRS_DAYS = [1, 3, 7];
+  function recordMiss(roomId, ti, qi) {
+    const k = qKey(roomId, ti, qi);
+    STATE.miss[k] = (STATE.miss[k] || 0) + 1;
+    STATE.srs[k] = { due: dayKey(SRS_DAYS[0]), step: 0 };
+    saveState();
+  }
+  function srsDue() {
+    const today = dayKey(0);
+    return Object.keys(STATE.srs).filter((k) => STATE.srs[k].due <= today).map((k) => {
+      const [rid, ti, qi] = k.split('::');
+      const room = ROOMS.find((r) => r.id === rid);
+      const q = room && room.tasks[+ti] && (room.tasks[+ti].questions || [])[+qi];
+      return q && !q.noAnswer ? { room, ti: +ti, qi: +qi, q, key: k } : null;
+    }).filter(Boolean);
+  }
+  function srsResult(key, ok) {
+    const c = STATE.srs[key]; if (!c) return;
+    if (!ok) { c.step = 0; c.due = dayKey(SRS_DAYS[0]); }
+    else if (c.step + 1 >= SRS_DAYS.length) { delete STATE.srs[key]; bump('srsKlaar'); }
+    else { c.step++; c.due = dayKey(SRS_DAYS[c.step]); }
+    saveState();
+  }
   function taskComplete(room, ti) {
     const t = room.tasks[ti];
     if (!t.questions || !t.questions.length) return true;
@@ -1808,9 +1893,19 @@ hr { border: 0; border-top: 1px solid var(--border); margin: 24px 0; }
 
   function renderTask(room, task, ti) {
     const node = el('section', { class: 'task', id: 'task-' + ti });
-    node.append(el('span', { class: 'stamp', text: 'Taak ' + (ti + 1) + ' van ' + room.tasks.length }));
+    const kindLabel = { verdieping: 'Verdieping · voor wie meer wil', examen: 'Zo komt dit voor op een examen' }[task.kind];
+    node.append(el('span', { class: 'stamp', text: 'Taak ' + (ti + 1) + ' van ' + room.tasks.length + (kindLabel ? ' · ' + kindLabel : '') + (task.optional ? ' · telt niet mee voor "room af"' : '') }));
     node.append(el('h2', { text: taskTitle(task.title) }));
-    node.append(el('div', { class: 'body', html: task.content || '' }));
+    if (task.tryFirst) {
+      // Eerst proberen, dan lezen: de opdracht staat open, de uitleg is ingeklapt.
+      node.classList.add('tryfirst');
+      node.append(el('div', { class: 'body', html: task.intro || '' }));
+      const det = el('details', { class: 'uitleg' }, [el('summary', {}, [CS.icon('hint', 16), el('span', { text: 'Uitleg: lees dit als je vastzit, of achteraf' })]), el('div', { class: 'body', html: task.content || '' })]);
+      det.addEventListener('toggle', () => { if (det.open) { STATE.count.uitlegOpen = (STATE.count.uitlegOpen || 0) + 1; saveState(); } });
+      node.append(det);
+    } else {
+      node.append(el('div', { class: 'body', html: task.content || '' }));
+    }
 
     if (task.lab) {
       const labBox = el('div', {});
@@ -1836,8 +1931,14 @@ hr { border: 0; border-top: 1px solid var(--border); margin: 24px 0; }
     // vlaggen tellen
     const ansFirst = Array.isArray(q.answer) ? q.answer[0] : q.answer;
     if (typeof ansFirst === 'string' && /^NM\{/.test(ansFirst)) { STATE.flags = (STATE.flags || 0) + 1; }
+    if (!q.noAnswer) {
+      if (!STATE.miss[key]) bump('firstTry');
+      if (!STATE.hintsUsed[key] && hintsOf(q).length) bump('noHint');
+      if (q.boss) bump('boss' + (STATE.hintsUsed[key] ? '' : 'Clean'));
+      if (room.tasks[ti].lab) { STATE.labTypes = STATE.labTypes || {}; STATE.labTypes[room.tasks[ti].lab.type] = true; }
+    }
     saveState();
-    addXP(qXP(q), 'vraag');
+    addXP(earnedXP(room.id, ti, qi, q), 'vraag');
     updateTaskNav(room);
     proveMark();
     if (roomDone(room)) {
@@ -1866,13 +1967,31 @@ hr { border: 0; border-top: 1px solid var(--border); margin: 24px 0; }
   }
 
   function renderQuestion(room, task, ti, q, qi) {
+    const key = qKey(room.id, ti, qi);
     const already = isAnswered(room.id, ti, qi);
-    const node = el('div', { class: 'q' + (already ? ' correct' : '') });
-    node.append(el('div', { class: 'qtext' }, [el('span', { html: esc(q.q) }), el('span', { class: 'badge-xp', text: '+' + qXP(q) + ' XP' })]));
+    const node = el('div', { class: 'q' + (already ? ' correct' : '') + (q.boss ? ' boss' : '') });
+    if (q.boss) node.append(el('span', { class: 'stamp bossmark', text: 'Boss-vraag · combineer wat je in deze room deed' }));
+    const xpBadge = el('span', { class: 'badge-xp' });
+    const paintXP = () => { const n = STATE.hintsUsed[key] || 0; xpBadge.textContent = '+' + earnedXP(room.id, ti, qi, q) + ' XP'; xpBadge.title = n ? n + ' hint' + (n === 1 ? '' : 's') + ' gebruikt (van ' + qXP(q) + ' XP)' : ''; };
+    paintXP();
+    node.append(el('div', { class: 'qtext' }, [el('span', { html: esc(q.q) }), xpBadge]));
 
     const feedback = el('div', { class: 'feedback', 'aria-live': 'polite' });
     const explainBox = q.explain ? el('div', { class: 'explain' + (already ? ' show' : ''), html: esc(q.explain) }) : null;
-    const solved = () => { node.classList.add('correct'); if (explainBox) explainBox.classList.add('show'); markAnswered(room, ti, qi, q); };
+    const whyBox = q.why ? el('div', { class: 'explain why' + (already ? ' show' : '') }, [el('strong', { text: 'Waarom dit ertoe doet. ' }), el('span', { html: esc(q.why) })]) : null;
+    const isFlag = !q.noAnswer && !Array.isArray(q.options) && /^NM\{/i.test(String(Array.isArray(q.answer) ? q.answer[0] : q.answer));
+    const solved = () => {
+      node.classList.add('correct');
+      if (explainBox) explainBox.classList.add('show');
+      if (whyBox) whyBox.classList.add('show');
+      const gain = earnedXP(room.id, ti, qi, q);
+      markAnswered(room, ti, qi, q);
+      if (isFlag || q.boss) triumph(node, isFlag ? 'VLAG GEACCEPTEERD' : 'BOSS VERSLAGEN', gain);
+    };
+    const miss = (val) => {
+      recordMiss(room.id, ti, qi);
+      return wrongNote(q, val);
+    };
 
     if (q.noAnswer) {
       // Geen antwoord nodig: lezen en bevestigen.
@@ -1896,7 +2015,7 @@ hr { border: 0; border-top: 1px solid var(--border); margin: 24px 0; }
             setFeedback(feedback, true, 'Goed.');
             solved();
           } else {
-            setFeedback(feedback, false, 'Niet helemaal. Kies opnieuw.');
+            setFeedback(feedback, false, miss(oi) || 'Niet helemaal. Kies opnieuw.');
             setTimeout(() => { b.classList.remove('chosen', 'no'); }, 1100);
           }
         });
@@ -1919,33 +2038,66 @@ hr { border: 0; border-top: 1px solid var(--border); margin: 24px 0; }
         const ok = answers.some((a) => norm(a).toLowerCase() === val);
         if (ok) {
           input.classList.add('ok'); input.classList.remove('no'); input.disabled = true; submit.disabled = true; submit.classList.remove('primary'); paint(true);
-          setFeedback(feedback, true, /^NM\{/i.test(answers[0]) ? 'Vlag gevonden.' : 'Correct.');
+          setFeedback(feedback, true, isFlag ? 'Vlag gevonden.' : 'Correct.');
           solved();
         } else {
           input.classList.remove('no'); void input.offsetWidth; input.classList.add('no');
-          setFeedback(feedback, false, q.hint ? 'Nog niet goed. Lees de uitleg nog eens, of open de hint.' : 'Nog niet goed. Lees de uitleg nog eens.');
+          const left = hintsOf(q).length - (STATE.hintsUsed[key] || 0);
+          setFeedback(feedback, false, miss(val) || (left > 0 ? 'Nog niet goed. Probeer het anders, of open een hint.' : 'Nog niet goed. Kijk nog eens naar wat het lab of de tekst je laat zien.'));
         }
       };
       submit.addEventListener('click', check);
       input.addEventListener('keydown', (e) => { if (e.key === 'Enter') check(); });
       node.append(el('div', { class: 'ans-row' }, [input, submit]));
+    }
 
-      if (q.hint) {
-        const hintLine = el('div', { class: 'hintline' }, [CS.icon('hint', 16), el('span', { text: q.hint })]);
-        const hintBtn = el('button', { class: 'lnk', text: 'Toon een hint', 'aria-expanded': 'false' });
-        hintBtn.addEventListener('click', () => {
-          const open = hintLine.classList.toggle('show');
-          hintBtn.textContent = open ? 'Verberg de hint' : 'Toon een hint';
-          hintBtn.setAttribute('aria-expanded', String(open));
-        });
-        node.append(el('div', { class: 'hintrow' }, hintBtn));
-        node.append(hintLine);
-      }
+    // Hints, in lagen. Een geopende hint blijft open en kost XP; na een goed antwoord zijn ze gratis.
+    const hints = q.noAnswer ? [] : hintsOf(q);
+    if (hints.length) {
+      const list = el('div', { class: 'hintlist' });
+      const btn = el('button', { class: 'lnk' });
+      const paintHints = () => {
+        const used = STATE.hintsUsed[key] || 0;
+        const shown = isAnswered(room.id, ti, qi) ? Math.max(used, list.children.length) : used;
+        list.innerHTML = '';
+        hints.slice(0, shown).forEach((h, i) => list.append(el('div', { class: 'hintline show' }, [CS.icon('hint', 16), el('span', {}, [hints.length > 1 ? el('span', { class: 'num', text: 'Hint ' + (i + 1) + ' · ' }) : null, el('span', { text: h })])])));
+        if (shown >= hints.length) { btn.style.display = 'none'; return; }
+        const free = isAnswered(room.id, ti, qi);
+        const cost = hintCost(q, shown + 1) - hintCost(q, shown);
+        btn.textContent = (hints.length > 1 ? 'Toon hint ' + (shown + 1) + ' van ' + hints.length : 'Toon een hint') + (free || !cost ? '' : ' (kost ' + cost + ' XP)');
+      };
+      btn.addEventListener('click', () => {
+        if (isAnswered(room.id, ti, qi)) { list.append(el('span')); paintHints(); return; }
+        STATE.hintsUsed[key] = Math.min(hints.length, (STATE.hintsUsed[key] || 0) + 1);
+        saveState(); paintXP(); paintHints();
+      });
+      paintHints();
+      node.append(el('div', { class: 'hintrow' }, btn));
+      node.append(list);
     }
     node.append(feedback);
     if (explainBox) node.append(explainBox);
+    if (whyBox) node.append(whyBox);
     return node;
   }
+
+  // Triomf: één regel die een machine typt, in het bewezen blok. Staat stil bij "minder beweging".
+  function triumph(node, word, gain) {
+    const line = el('div', { class: 'triumph', role: 'status' }, [el('span', { class: 'tw' }), el('span', { class: 'tx' })]);
+    node.append(line);
+    const text = '> ' + word, tw = line.firstChild, tx = line.lastChild;
+    const still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (still) { tw.textContent = text; tx.textContent = '+' + gain + ' XP'; return; }
+    let i = 0;
+    const type = setInterval(() => {
+      tw.textContent = text.slice(0, ++i);
+      if (i < text.length) return;
+      clearInterval(type);
+      let n = 0; const step = Math.max(1, Math.ceil(gain / 12));
+      const tick = setInterval(() => { n = Math.min(gain, n + step); tx.textContent = '+' + n + ' XP'; if (n >= gain) clearInterval(tick); }, 40);
+    }, 28);
+  }
+  CS.triumph = triumph;
 
   // =======================================================================
   //  Zoeken
@@ -2079,7 +2231,7 @@ hr { border: 0; border-top: 1px solid var(--border); margin: 24px 0; }
     body.append(el('p', { class: 'found-note', style: 'margin-top:16px', text: 'Wissen kan niet ongedaan worden gemaakt.' }));
     body.append(el('button', { class: 'btn small', onclick: () => {
       if (confirm('Weet je het zeker? Al je voortgang, XP en badges worden gewist.')) {
-        STATE = { answered: {}, xp: 0, badges: {}, flags: 0 }; saveState(); renderXP();
+        STATE = migrate({ flags: 0 }); saveState(); renderXP();
         dlg.close(); route();
       }
     } }, [CS.icon('reset', 16), el('span', { text: 'Voortgang wissen' })]));
@@ -2108,10 +2260,7 @@ hr { border: 0; border-top: 1px solid var(--border); margin: 24px 0; }
       }
       const n = Object.keys(st.answered || {}).length;
       if (!confirm('Je huidige voortgang wordt vervangen door de back-up (' + n + ' vragen, ' + (st.xp || 0) + ' XP). Doorgaan?')) return;
-      STATE = st;
-      STATE.answered = STATE.answered || {};
-      STATE.xp = STATE.xp || 0;
-      STATE.badges = STATE.badges || {};
+      STATE = migrate(st);
       saveState(); renderXP();
       toast('Back-up teruggezet', n + ' vragen, ' + STATE.xp + ' XP.', 'proof');
       done();
@@ -2177,6 +2326,7 @@ hr { border: 0; border-top: 1px solid var(--border); margin: 24px 0; }
       const nextBtn = el('button', { class: 'btn primary', text: 'Volgende', onclick: () => { idx++; next(); } });
       nextBtn.style.display = 'none';
       const afterAnswer = (correct) => {
+        quizOutcome(item, correct);
         answered++;
         if (correct) { score++; streak++; if (streak > (STATE.bestStreak || 0)) { STATE.bestStreak = streak; saveState(); checkBadges(); } }
         else { streak = 0; }
@@ -2377,6 +2527,13 @@ hr { border: 0; border-top: 1px solid var(--border); margin: 24px 0; }
   // =======================================================================
   //  Gedeelde quizkaart (voor examen & dagchallenge)
   // =======================================================================
+  // Een fout in een toets komt in de herhaling; een goed antwoord op een herhaalkaart schuift hem op.
+  function quizOutcome(item, ok) {
+    if (item.ti == null) return; // vraag uit een losse vragenbank
+    const k = qKey(item.room.id, item.ti, item.qi);
+    if (STATE.srs[k]) srsResult(k, ok);
+    else if (!ok) recordMiss(item.room.id, item.ti, item.qi);
+  }
   function quizCard(item, onDone) {
     const card = el('div', { class: 'q quizcard' });
     card.append(el('div', { class: 'stamp', style: 'display:block;margin-bottom:8px', text: item.room.title }));
@@ -2391,8 +2548,9 @@ hr { border: 0; border-top: 1px solid var(--border); margin: 24px 0; }
           const ok = oi === item.q.answer;
           bt.classList.add('chosen', ok ? 'ok' : 'no');
           $$('button', mc).forEach((x, xi) => { x.disabled = true; if (xi === item.q.answer) x.classList.add('reveal-ok'); });
-          setFeedback(fb, ok, ok ? 'Goed.' : 'Mis.');
+          setFeedback(fb, ok, ok ? 'Goed.' : (wrongNote(item.q, oi) || 'Mis.'));
           if (item.q.explain) card.append(el('div', { class: 'explain show', html: esc(item.q.explain) }));
+          quizOutcome(item, ok);
           onDone(ok);
         } });
         mc.append(bt);
@@ -2407,8 +2565,10 @@ hr { border: 0; border-top: 1px solid var(--border); margin: 24px 0; }
         const ok = answers.some((a) => norm(a).toLowerCase() === val);
         done = true; input.disabled = true; submit.disabled = true;
         input.classList.add(ok ? 'ok' : 'no');
-        setFeedback(fb, ok, ok ? 'Correct.' : 'Het juiste antwoord: ' + answers[0]);
+        const note = ok ? null : wrongNote(item.q, val);
+        setFeedback(fb, ok, ok ? 'Correct.' : (note ? note + ' ' : '') + 'Het juiste antwoord: ' + answers[0]);
         if (item.q.explain) card.append(el('div', { class: 'explain show', html: esc(item.q.explain) }));
+        quizOutcome(item, ok);
         onDone(ok);
       };
       submit.addEventListener('click', check);
@@ -2546,6 +2706,36 @@ hr { border: 0; border-top: 1px solid var(--border); margin: 24px 0; }
   }
 
   // =======================================================================
+  //  HERHALEN — wat je eerder fout had, na 1, 3 en 7 dagen opnieuw
+  // =======================================================================
+  function renderReview() {
+    const root = $('#app'); root.innerHTML = '';
+    const wrap = el('section', { class: 'roomview wrap' });
+    wrap.append(crumbs([['Overzicht', '#/'], ['Oefenen', '#/oefenen'], ['Herhalen']]), pageHead('reset', 'Herhalen', 'Een vraag die je fout had, komt hier na 1, 3 en 7 dagen terug. Drie keer goed en hij is weg; fout en hij begint opnieuw. Alles blijft in je browser en zit in je back-up.'));
+    const due = srsDue();
+    const waiting = Object.keys(STATE.srs).length - due.length;
+    wrap.append(el('div', { class: 'stat-row', style: 'margin:10px 0 16px' }, [stat(String(due.length), 'nu te herhalen'), stat(String(waiting), 'staan klaar voor later'), stat(String(STATE.count.srsKlaar || 0), 'afgeleerd')]));
+    const qbox = el('div', {}), nav = el('div', { class: 'room-foot' });
+    wrap.append(qbox, nav);
+    root.append(wrap); renderFooter(root); window.scrollTo(0, 0);
+    let idx = 0, good = 0;
+    function next() {
+      qbox.innerHTML = ''; nav.innerHTML = '';
+      if (idx >= due.length) {
+        qbox.append(el('div', { class: 'callout tip', text: due.length ? 'Klaar voor vandaag: ' + good + ' van ' + due.length + ' goed.' : 'Niets te herhalen. Fouten die je maakt in een room, de arena of een toets komen hier vanzelf terecht.' }));
+        nav.append(el('span', {}), el('button', { class: 'btn primary next', text: 'Naar het overzicht', onclick: () => go('#/') }));
+        return;
+      }
+      const item = due[idx];
+      const nextBtn = el('button', { class: 'btn primary next', text: idx === due.length - 1 ? 'Afronden' : 'Volgende', disabled: true, onclick: () => { idx++; next(); } });
+      qbox.append(el('div', { class: 'found-note', text: 'Kaart ' + (idx + 1) + ' / ' + due.length }));
+      qbox.append(quizCard(item, (ok) => { if (ok) good++; nextBtn.disabled = false; }));
+      nav.append(el('a', { class: 'btn', href: '#/room/' + item.room.id, text: 'Open de room' }), nextBtn);
+    }
+    next();
+  }
+
+  // =======================================================================
   //  SCOREBORD — persoonlijk voortgangsoverzicht (lokaal)
   // =======================================================================
   function renderScorebord() {
@@ -2616,6 +2806,7 @@ hr { border: 0; border-top: 1px solid var(--border); margin: 24px 0; }
     else if (h === '#/tools') renderTools();
     else if (h === '#/examen') renderExam();
     else if (h === '#/daily') renderDaily();
+    else if (h === '#/herhalen') renderReview();
     else if (h === '#/scorebord') renderScorebord();
     else renderHome();
     markNav();
