@@ -91,7 +91,7 @@ genormaliseerd:  tijd_utc=2026-11-03 08:14:02  actie=toegestaan  bron_ip=203.0.1
           explain: '09:14:02+01:00 is 08:14:02 UTC: drie seconden voor de geslaagde VPN-aanmelding van k.dijkstra.' },
         { q: 'Hoeveel regels horen bij de sessie van k.dijkstra als je haar volgt via het externe én het interne adres?', answer: ['9', 'negen'],
           hints: ['De VPN-regel van 08:14:05 noemt beide adressen.', 'Filter met een regex die beide adressen toelaat, met een | ertussen. Escape de punten.', 'Probeer /203\\.0\\.113\\.45|192\\.0\\.2\\.131/'],
-          wrong: { '5': 'Je filtert alleen op het interne adres 192.0.2.131. De firewall- en VPN-regels met het externe adres horen er ook bij.', '4': 'Je filtert alleen op het externe adres. Op de domeincontroller en de proxy verschijnt de sessie onder het interne adres.', '6': 'Je filtert op de naam. Op de firewall staat geen gebruikersnaam: daar vind je de sessie alleen via het adres.' },
+          wrong: { '6': 'Je filtert alleen op het interne adres 192.0.2.131. De firewall- en VPN-regels met het externe adres horen er ook bij.', '4': 'Je filtert alleen op het externe adres. Op de domeincontroller en de proxy verschijnt de sessie onder het interne adres.' },
           explain: 'Negen regels: twee firewallregels, de VPN-aanmelding en de afmelding, twee aanmeldingen op de domeincontroller en drie proxyregels, waaronder een upload naar files-deel.example.' },
         { q: 'Een ander extern adres probeerde in dezelfde periode in te loggen als k.dijkstra. Welk adres?', answer: ['198.51.100.200'],
           hints: ['Filter op het woord fail.', 'Beide mislukte pogingen komen van hetzelfde adres.', 'Hetzelfde adres werd eerder door de firewall op poort 445 tegengehouden.'],
