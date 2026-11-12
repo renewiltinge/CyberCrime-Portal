@@ -8,6 +8,8 @@ Kopieer alles onder de streep als opdracht voor Fable (of een andere agent) in d
 
 Je bent een senior security-trainer, game designer en front-end engineer in één. Je werkt aan **Cyber Dojo**, het Nederlandstalige cybersecurity-leerportaal van NineMinds (statische site: HTML, CSS, JS, geen server, geen build). Het portaal is inhoudelijk breed en sterk (88 rooms, 11 leerpaden, ruim 50 interactieve labs, een eigen validator en browsertests). Het is nu vooral een **goed naslagwerk met oefeningen**. Jouw taak is het te veranderen in iets waar mensen **uit zichzelf voor terugkomen**: leren door te doen, door te winnen, door vast te zitten en dan door te breken.
 
+Naast leuker moet het ook **zwaarder en completer** worden: wie het portaal volledig doorwerkt, moet op het niveau zitten dat een opleiding of certificering van je verwacht. Leuk én diep, geen van beide ten koste van de ander.
+
 Leidend principe: **elke minuut leesstof moet binnen enkele minuten worden gevolgd door iets waarbij de leerling zelf iets moet doen, ontdekken of kraken.** Beloning komt uit het bereiken van inzicht, niet uit het aanklikken van dingen.
 
 ## Eerst lezen (verplicht, voordat je iets wijzigt)
@@ -41,7 +43,7 @@ Schrijf daarna een **kort auditverslag** (`docs/audit-leerervaring.md`, max. 2 p
 
 ## Wat je gaat bouwen
 
-Werk in **vier werkstromen**. Lever per werkstroom iets dat af, getest en gecommit is voordat je aan de volgende begint. Begin met werkstroom A en B; die geven het snelste zichtbare effect.
+Werk in **vijf werkstromen**. Lever per werkstroom iets dat af, getest en gecommit is voordat je aan de volgende begint. Begin met werkstroom A en B; die geven het snelste zichtbare effect. Werkstroom E bepaalt hoe diep alles wordt en loopt als kwaliteitslat door de andere vier heen.
 
 ### Werkstroom A — Betere challenges in de bestaande rooms
 
@@ -117,6 +119,25 @@ Kies wat past; voeg niets toe dat de stijl breekt. Leg elke keuze kort uit in ee
 - **Herhaling**: een lichte spaced-repetition-laag die een vraag die je eerder fout had na 1, 3 en 7 dagen opnieuw als flashcard aanbiedt (alles in `localStorage`, meegenomen in de bestaande back-up).
 - **Toetsmomenten**: een korte "Check jezelf" (5 vragen, tijd) aan het eind van elke room die het geleerde in een ander jasje stopt.
 
+### Werkstroom E — Diepte en niveau: opleidings- en certificeringsklaar
+
+Doel: wie het hele portaal doorwerkt, moet **aantoonbaar op het niveau zitten dat een opleiding of certificering verwacht**. Nu is de stof breed maar op veel plekken een introductie. Maak haar waar nodig **uitgebreider, dieper en toetsbaar**, zonder dat het een droge syllabus wordt.
+
+1. **Eindtermen in kaart brengen.** Maak `docs/dekking-certificeringen.md`: een matrix van onderwerpen uit de officiële examendoelen (of openbare syllabi) naar de rooms die ze dekken, met per rij: **gedekt / deels / ontbreekt**. Gebruik minimaal:
+   - Instap: **CompTIA Security+ (SY0-701)** en **Network+**-onderdelen, ISC2 **CC**.
+   - Praktisch offensief: **eJPT** en de basis van **PNPT/OSCP** (verkenning, web, privilege escalation, pivoting, rapporteren).
+   - Defensief/SOC: **CompTIA CySA+**, **BTL1** en **GCIH**-thema's (detectie, incident response, logs, threat hunting).
+   - Forensie: **GCFA/CHFI**-thema's en de werkwijze van opsporing (chain of custody, rapportage, bewijswaarde).
+   - Intelligence: **MITRE ATT&CK**, diamond model, structured analytic techniques.
+   - Nederlandse context: relevante onderdelen van **HBO-ICT/Cyber Security**, de **Wwft**, **AVG**, **NIS2**, **Wet computercriminaliteit III**, en wat een digitaal rechercheur of SOC-analist hier verwacht.
+   Gebruik alleen wat je zeker weet over de examenstructuur; vermeld bij onzekerheid "controleer de actuele syllabus" in plaats van iets te verzinnen. Geef nooit de indruk dat dit portaal een erkend examen vervangt of een certificaat oplevert.
+2. **Gaten dichten.** Schrijf nieuwe rooms voor de belangrijkste ontbrekende onderwerpen (verwacht o.a.: risicomanagement en frameworks zoals ISO 27001/NIST/CIS, IAM en Zero Trust, cloudbeveiliging (AWS/Azure-basis, gedeelde verantwoordelijkheid, verkeerd ingestelde storage), TLS/PKI in detail, draadloze beveiliging, container- en Linux-hardening, Active Directory-aanvallen en -verdediging, SIEM-gebruik en threat hunting, secure coding en code-review, beveiligingsrapportage en pentest-methodiek (PTES/OWASP WSTG), privacy- en wetgeving. Controleer eerst wat er al is; dubbel werk is waardeloos.
+3. **Bestaande rooms verdiepen.** Per room die je aanraakt: voeg een **"Verdieping"-taak** toe voor wie meer wil (de theorie achter het gereedschap, randgevallen, hoe het echt in de praktijk gaat, veelgemaakte fouten) en een korte **"Zo komt dit voor op een examen"**-sectie met 3 à 5 examenstijlvragen (scenario-gebaseerd, meerkeuze met plausibele afleiders, en een prestatiegerichte vraag). Streef naar examenniveau, niet naar quizniveau: afleiders moeten echt verleidelijk zijn en uitleg moet ook de foute opties verklaren.
+4. **Niveaus en leerroutes.** Voeg per room een niveauaanduiding toe (Instap / Praktijk / Gevorderd / Expert) en maak **leerroutes naar een doel** (bijvoorbeeld "SOC-analist", "Pentester", "Digitaal rechercheur", "Intelligence-analist") die rooms en game rooms in een verstandige volgorde zetten, met per route een **eindtoets**.
+5. **Eindtoetsen en proefexamens.** Bouw een **proefexamenmodus**: een gemengde set van 40 tot 90 vragen uit een gekozen route, met tijdslimiet, markeren-voor-later, geen directe feedback tot het einde, en daarna een **analyse per domein** (waar zit je zwak) met doorverwijzing naar de juiste room. Vragenbank per domein, met minstens 30 originele vragen per domein; schrijf alle vragen zelf, kopieer nooit echte examenvragen of "braindumps".
+6. **Bronvermelding en actualiteit.** Elke inhoudelijke claim over standaarden, wetten en frameworks moet een **versie of jaartal** dragen (bijvoorbeeld "OWASP Top 10 2025", "NIST CSF 2.0"). Voeg per room "Laatst gecontroleerd: <datum>" toe en verwijs naar primaire bronnen (standaard, wettekst, vendor-documentatie) in plaats van blogs. Een nieuw script `tools/` mag verouderde of onvolledige bronnen signaleren.
+7. **Kwaliteitsbewaking op inhoud.** Draai per nieuwe of herziene room een **inhoudelijke review**: klopt elke feitelijke bewering, zijn getallen en commando's juist, en is niets zo vereenvoudigd dat het onwaar wordt? Rapporteer onzekerheden expliciet in plaats van ze glad te strijken.
+
 ## Randvoorwaarden (niet onderhandelbaar)
 
 - **Huisstijl en design**: lees `DESIGN.md` en ADR-0001 volledig. Violet betekent alleen "bewezen/goed", vermiljoen alleen "fout/gefaald", inkt voor al het andere. Geen derde signaalkleur, geen schaduwen, vierkante hoeken, Martian Mono alleen voor machine-output. Heb je een nieuwe visuele taal nodig (bijvoorbeeld een HUD of een "ontdekkingsmeter"), ontwerp die binnen die regels en leg de afweging vast in een ADR en in `DESIGN.md`. Alle beweging uit bij `prefers-reduced-motion`. Kleur is nooit het enige signaal.
@@ -131,7 +152,7 @@ Kies wat past; voeg niets toe dat de stijl breekt. Leg elke keuze kort uit in ee
 ## Werkwijze en oplevering
 
 1. Werk op de toegewezen branch. Commit in **kleine, logische stappen** met duidelijke Nederlandstalige commitberichten (één werkstroom of één room per commit). Push regelmatig.
-2. Volgorde: auditverslag → werkstroom D (hints en feedback, want die ondersteunen de rest) → werkstroom A (de zwakste 20 rooms en de 15 uitdagingen, in batches van 5) → werkstroom B (engine eerst, dan de rooms één voor één, elk met oplossingstest) → werkstroom C (mechanieken en juice).
+2. Volgorde: auditverslag en dekkingsmatrix (E.1) → werkstroom D (hints en feedback, want die ondersteunen de rest) → werkstroom A (de zwakste 20 rooms en de 15 uitdagingen, in batches van 5) → werkstroom B (engine eerst, dan de rooms één voor één, elk met oplossingstest) → werkstroom C (mechanieken en juice) → werkstroom E (gaten dichten, verdiepen, proefexamens), waarbij je de verdieping per room liefst meeneemt op het moment dat je die room toch al herwerkt.
 3. Na elke batch: validator, smoke en labtests draaien, daarna **in een headless browser (Playwright, zie `tools/_playwright.js`) de nieuwe rooms echt doorspelen** en screenshots maken op 390 px (telefoon) en 1280 px. Controleer licht en donker thema en `prefers-reduced-motion`.
 4. Werk `README.md` (leerpaden, labs, hulpscripts) en `docs/CONTENT-SPEC.md` (nieuwe velden, de game-engine en hoe je een game room schrijft) bij, zodat de volgende auteur het kan uitbreiden zonder jou.
 5. Maak **geen pull request** tenzij daar om gevraagd wordt.
@@ -139,11 +160,14 @@ Kies wat past; voeg niets toe dat de stijl breekt. Leg elke keuze kort uit in ee
 
 ## Definition of done
 
-- De auditdocumenten en ADR's staan er.
+- De auditdocumenten, de dekkingsmatrix voor certificeringen en de ADR's staan er.
 - Gelaagde hints, `wrong`-feedback en spaced repetition werken en zijn getest.
 - Minstens 20 bestaande rooms zijn herwerkt volgens "eerst proberen, dan lezen" en hebben een boss-vraag.
 - Minstens 15 nieuwe uitdagingen zonder handleiding staan in het pad Uitdagingen.
 - Minstens 8 game rooms (waaronder minstens één blue-team-room en de Red-vs-Blue-room) zijn speelbaar, oplosbaar (automatische oplossingstest) en hebben een debrief.
 - Dagelijkse puzzel, rangen, extra badges, triomf-effecten en het zwakke-plekken-overzicht werken en zijn stijlconform.
+- Elke herziene room heeft een Verdieping-taak en examenstijlvragen; de ontbrekende onderwerpen uit de dekkingsmatrix zijn als nieuwe rooms geschreven of bewust met reden uitgesteld.
+- Er zijn leerroutes met eindtoets en een proefexamenmodus met domeinanalyse, gevuld met originele vragen.
 - Alle bestaande tests en de nieuwe tests zijn groen en `dist/nineminds-cyber-dojo.html` is opnieuw gegenereerd.
+- Wie een leerroute afrondt, kan zonder lacunes de bijbehorende examendoelen benoemen en toepassen (zie de dekkingsmatrix).
 - Een nieuwe leerling kan binnen 10 minuten na het openen van de site iets echts kraken of binnendringen, zonder eerst een uur te lezen.
