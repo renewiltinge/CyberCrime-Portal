@@ -10,7 +10,7 @@ const vm = require('vm');
 const crypto = require('crypto');
 
 const ROOT = path.join(__dirname, '..');
-const PATHS = ['fundamenten', 'security-kern', 'offensief', 'defensief', 'forensie', 'intelligence', 'datastromen', 'puzzels', 'meesterproeven', 'uitdagingen', 'eindopdracht'];
+const PATHS = ['fundamenten', 'security-kern', 'offensief', 'defensief', 'forensie', 'intelligence', 'datastromen', 'puzzels', 'meesterproeven', 'gamerooms', 'uitdagingen', 'eindopdracht'];
 const DIFFS = ['Makkelijk', 'Gemiddeld', 'Moeilijk'];
 const LABS = ['terminal', 'cyberchef', 'hashcrack', 'password', 'phishing', 'logs', 'http', 'sqli', 'subnet', 'hexviewer', 'pcap',
   'jwt', 'regex', 'cvss', 'timestamp', 'ioc', 'url', 'yara', 'timeline', 'chmod', 'numconv',
@@ -18,7 +18,35 @@ const LABS = ['terminal', 'cyberchef', 'hashcrack', 'password', 'phishing', 'log
   'ach', 'crimescript', 'admiralty', 'probability', 'attackmap', 'pivot', 'bluf',
   'flow', 'ordering', 'regexgolf', 'osintpuzzle', 'connections', 'chaintrace',
   'netflow', 'structuring', 'emailheader', 'dnslog', 'recon', 'detectrule',
-  'fingerprint', 'scenario', 'vigenere', 'xorcrib', 'rsa', 'vm', 'benford', 'bayes'];
+  'fingerprint', 'scenario', 'vigenere', 'xorcrib', 'rsa', 'vm', 'benford', 'bayes', 'incident'];
+
+// De incidentconsole (assets/js/game.js) laden zonder browser, om elke game room na te spelen.
+const GAME = (() => { const sb = { window: { CS: {} }, console }; vm.runInNewContext(fs.readFileSync(path.join(ROOT, 'assets/js/game.js'), 'utf8'), sb); return sb.window.CS.game; })();
+function checkIncident(rel, where, lab) {
+  for (const k of ['title', 'role', 'story', 'start', 'flag']) if (!lab[k]) err(rel, `${where}: incident mist ${k}`);
+  if (!Array.isArray(lab.mandate) || lab.mandate.length < 2) err(rel, `${where}: incident heeft een mandaat van minstens twee regels nodig`);
+  if (!Array.isArray(lab.objectives) || !lab.objectives.length) err(rel, `${where}: incident heeft geen doelen`);
+  if (!Array.isArray(lab.solution) || !lab.solution.length) { err(rel, `${where}: incident heeft geen oplossingsroute (solution)`); return; }
+  if (!lab.debrief) err(rel, `${where}: incident heeft geen nabespreking (debrief)`);
+  const ids = new Set((lab.threats || []).map((t) => t.id));
+  (lab.threats || []).forEach((t) => { if (!t.id || t.at == null || !t.text) err(rel, `${where}: dreiging mist id/at/text`); if (t.requires && !ids.has(t.requires)) err(rel, `${where}: dreiging ${t.id} wacht op onbekende ${t.requires}`); });
+  // Elke variant: de oplossingsroute wint zonder misgreep en zonder schade; niets doen wint niet.
+  const seeds = [1, 2, 3, 7, 42, 1234, 99991, 31337];
+  for (const seed of seeds) {
+    const g = GAME.create(lab, seed);
+    const left = JSON.stringify(g.cfg).match(/\{\{\w+\}\}/);
+    if (left) { err(rel, `${where}: variabele ${left[0]} heeft geen waarde in vars`); return; }
+    const log = [];
+    g.solution.forEach((c) => g.exec(c).forEach((l) => { if (l.cls === 'err' && !/^\s+Gevolg/.test(l.text) && !g.S.ended) log.push(c + ' -> ' + l.text); }));
+    if (!g.S.ended) g.exec('report');
+    const r = g.result();
+    if (log.length) err(rel, `${where}: oplossingsroute (seed ${seed}) geeft fouten: ${log.slice(0, 2).join(' | ')}`);
+    if (!r.won || !r.clean) { err(rel, `${where}: oplossingsroute wint niet schoon bij seed ${seed} (score ${r.score}/${r.max}, aftrek ${r.pen}, schade ${r.damage}, reden ${r.reason}${r.penalties.length ? ': ' + r.penalties[0].text : ''})`); return; }
+    const idle = GAME.create(lab, seed); idle.exec('report');
+    if (idle.result().won) { err(rel, `${where}: wie meteen afsluit, wint ook (seed ${seed})`); return; }
+  }
+  console.log(`    (incident: oplossingsroute wint in ${seeds.length} varianten)`);
+}
 
 const args = process.argv.slice(2);
 const files = args.length
@@ -172,6 +200,7 @@ for (const file of files) {
           if (!Array.isArray(m.body)) err(rel, `${where}: email ${mi} body moet een array zijn`);
         });
       }
+      if (t.lab.type === 'incident') checkIncident(rel, where, t.lab);
       if (t.lab.type === 'http') {
         (t.lab.routes || []).forEach((rt, ri) => { if (!rt.method || !rt.path || !rt.status) err(rel, `${where}: route ${ri} mist method/path/status`); });
       }

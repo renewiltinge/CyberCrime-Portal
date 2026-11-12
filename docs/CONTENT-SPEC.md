@@ -10,7 +10,7 @@ laadt de bestanden als gewone `<script>`-tags, zodat het ook werkt door `index.h
 /* Room: Netwerken — de basis */
 CS.registerRoom({
   id: 'netwerken-basis',            // gelijk aan de bestandsnaam, kebab-case
-  path: 'fundamenten',              // 'fundamenten' | 'security-kern' | 'offensief' | 'defensief' | 'forensie' | 'intelligence' | 'datastromen' | 'puzzels' | 'meesterproeven' | 'eindopdracht'
+  path: 'fundamenten',              // 'fundamenten' | 'security-kern' | 'offensief' | 'defensief' | 'forensie' | 'intelligence' | 'datastromen' | 'puzzels' | 'meesterproeven' | 'gamerooms' | 'uitdagingen' | 'eindopdracht'
   order: 2,                         // volgorde binnen het leerpad
   title: 'Netwerken: de basis',
   icon: '🌐',                       // optioneel; de interface toont het niet meer (een leerpad heeft een getekend teken, zie docs/adr/0001)
@@ -808,6 +808,60 @@ Toont per eerste cijfer het waargenomen en het verwachte percentage (log10(1 + 1
 Nigrini (≤ 0,006 · ≤ 0,012 · ≤ 0,015), χ² met de 5%-grens (15,51 bij 8 vrijheidsgraden) en het sterkst
 oververtegenwoordigde cijfer. **Genereer datasets deterministisch en reken de uitkomst na** met `CS.stats.benfordStats`.
 Bedenk dat de MAD-grenzen voor grote reeksen bedoeld zijn: bij een paar honderd bedragen is ruis normaal.
+
+### `incident`: game room met toestand (incidentconsole)
+
+Een verdedigende simulatie: de leerling typt opdrachten in een console, elke opdracht kost minuten, de aanval loopt door
+tot hij gestopt is, en een verkeerde ingreep heeft gevolgen. De engine staat in `assets/js/game.js`; het waarom in
+[ADR-0003](adr/0003-game-rooms-zijn-verdedigend.md). Een game room staat in het pad `gamerooms`; kijk naar
+`content/rooms/game-nachtdienst.js` als voorbeeld.
+
+```js
+lab: {
+  type: 'incident',
+  title: 'Kade Transport BV · nachtdienst',
+  role: 'Wie de leerling is en welk mandaat hij heeft.',
+  story: 'Twee zinnen: wat er aan de hand is.',
+  mandate: ['Alles gebeurt in deze simulatie ...', 'Je mag ...', ...],   // minstens twee regels; de leerling accepteert ze
+  vars: { ip: ['203.0.113.47', '198.51.100.61'], user: ['m.jansen', 's.bakker'] },  // per leerling één waarde; {{ip}} overal
+  start: '02:10', deadline: 50, maxDamage: 60,          // klok, einde van de dienst (minuten), schade waarbij je verliest
+  hosts: [ { name: 'ws-{{ws}}', ip: '...', role: '...', compromised: true },        // besmet: isoleren is terecht
+           { name: 'fs-01', role: '...', critical: true, compromisedBy: 'zijwaarts' }, // kritiek: zonder reden isoleren kost punten
+           { name: 'bak-01', role: '...', critical: true, safeToIsolate: true } ],    // afschermen is een goede zet
+  accounts: [ { name: '{{user}}', role: '...', compromised: true }, { name: 'svc-backup', role: '...', critical: true, lockText: '...' } ],
+  legit: [ { value: '198.51.100.20', text: 'Waarom blokkeren hier fout is.' } ],     // adressen of domeinen die niet geblokkeerd mogen
+  alerts: [ { t: -3, text: '...' }, { t: 12, text: '...', unless: ['isolate:ws-{{ws}}'] }, { t: 17, text: '...', after: 'dump' } ],
+  logs: { 'vpn-gw': [ { t: -8, line: '...' } ], firewall: [ ... ] },            // logs <bron> [zoekterm]
+  procs: { 'ws-{{ws}}': [ { pid: '612', name: 'lsass.exe', user: 'SYSTEM', critical: true, killText: '...' } ] },
+  mails: [ { id: 'm-1', t: -25, from: '...', subject: '...', to: 38, reported: 3, malicious: true, detail: ['header', ...] } ],
+  show: { ssh: ['regel', ...] },                                                  // show <onderwerp>
+  fixes: [ { id: 'ssh-root', good: true, text: '...', done: '...' }, { id: 'ssh-uit', good: false, points: 15, text: '...', why: '...' } ],
+  restore: ['fs-01'],                                                             // hosts met een offline back-up
+  rules: [ { on: 'restore:fs-01', unless: ['isolate:ws-31'], points: 20, text: 'Gevolg als je dit doet zonder het andere.' } ],
+  threats: [ { id: 'dump', at: 16, label: 'Kort, met ATT&CK-ID', text: 'Wat er gebeurt.', stoppedBy: ['isolate:ws-{{ws}}'], damage: 15 },
+             { id: 'exfil', at: 34, requires: 'zijwaarts', stoppedBy: ['block:{{ip}}'], ... },   // alleen als 'zijwaarts' gebeurde
+             { id: 'terug', at: 35, stoppedByAll: ['fix:a', 'fix:b'], stoppedBy: ['isolate:app-02'], ... } ],
+  objectives: [ { text: '...', all: ['block:{{ip}}'], points: 10 }, { text: '...', any: ['isolate:ws-{{ws}}'], before: 16, required: true } ],
+  pass: 30,                                                                       // standaard 70% van de punten
+  flag: 'NM{...}',
+  solution: ['alerts', 'logs vpn-gw {{ip}}', 'block {{ip}}', ..., 'report'],     // de oplossingsroute, ook de walkthrough
+  solutionNotes: ['Waarom deze stap', ...],                                       // één per stap
+  debrief: '<h4>Wat de aanvaller deed</h4> ... <h4>Wat je had kunnen zien</h4> ... <h4>Wat het had gestopt</h4> ...',
+  ask: [ { q: 'Vanaf welk IP-adres kwam de aanval?', answer: ['{{ip}}'] } ],    // in de nabespreking, over de eigen variant
+}
+```
+
+- **Handelingen** en hun sleutels: `isolate:<host>`, `shutdown:<host>` (telt ook als isolate), `block:<ip of domein>`,
+  `reset:<account>`, `disable:<account>`, `kill:<host>:<pid>`, `snapshot:<host>`, `restore:<host>`, `purge:<mail-id>`,
+  `fix:<id>`. Doelen, dreigingen en regels verwijzen naar deze sleutels.
+- **Tijd**: `t` en `at` zijn minuten vanaf `start` (negatief is al gebeurd). Een handeling telt op het moment dat ze klaar is.
+  Wie afsluit terwijl er nog dreigingen openstaan, ziet die alsnog gebeuren als ze niet gestopt zijn.
+- **Gevolgen die de engine zelf geeft**: een niet-besmette kritieke host isoleren of uitzetten (15), een besmette host
+  uitzetten zonder snapshot (15), een `legit` adres blokkeren, een kritiek account uitschakelen, een kritiek proces stoppen,
+  een echte mail verwijderen, een `fix` met `good: false`. Eigen gevolgen leg je vast in `rules`.
+- **De validator** speelt `solution` na in acht varianten. De route moet winnen zonder gevolgen en zonder schade, en meteen
+  afsluiten mag niet winnen. Zet de vlag als gewone vraag in dezelfde taak; de leerling krijgt hem in de nabespreking.
+- **Ethiek**: game rooms zijn verdedigend (ADR-0003). Het mandaat begint met de regel dat alles een simulatie is.
 
 ### `bayes`: hypothesen bijwerken met bewijs
 

@@ -155,6 +155,14 @@ Voor wie de puzzels te makkelijk vond: zwaardere opgaven met meer achtergrond.
 4. **Redeneren met kansen: Bayes voor analisten** — basispercentages, likelihood ratios en de odds-vorm van Bayes, meerdere hypothesen en afhankelijk bewijs, kalibratie met de Brier-score en een Key Assumptions Check.
 5. **Bewijs in de rechtszaal: digitaal bewijs wegen en rapporteren** — bron-, activiteits- en delictsniveau, de prosecutor's fallacy (Sally Clark, Lucia de Berk), de likelihood ratio met verbale schaal, het forensisch rapport en contextuele bias.
 
+### 🛡️ Game rooms: verdedigen onder druk
+Je staat in een incidentconsole terwijl de aanval doorgaat. De klok loopt mee met wat je doet, een verkeerde ingreep legt het bedrijf stil, en te laat ingrijpen kost schade. Elke leerling krijgt een eigen variant; na afloop volgt een nabespreking met ATT&CK-technieken en een walkthrough.
+1. **De Nachtdienst** — een inbraak via de VPN om twee uur 's nachts: blokkeren, resetten, bewijs veiligstellen en isoleren vóór de wachtwoorden weg zijn, zonder de back-up te breken.
+2. **Ochtendspits in de mailbox** — een phishingcampagne: de juiste mail weghalen, vinden wie zijn wachtwoord afgaf, en de echte loonstrook laten staan.
+3. **Zes uur: de bestanden gaan op slot** — ransomware: patient zero vinden, het beheeraccount stilleggen, de back-up redden en in de goede volgorde terugzetten.
+4. **De vergeten server** — hardening onder tijdsdruk: wat moet dicht, en welke stevige maatregel legt de webshop plat?
+5. **De ochtend erna** — de sporen van een indringer lezen, eerst bewijs veiligstellen, en alle vier zijn wegen terug in één keer dichtzetten.
+
 ### 🎯 Uitdagingen (zonder handleiding)
 Geen uitleg en geen stappenplan: alleen een opdracht en het bewijs. De antwoorden staan nergens in de tekst en de hints zijn bewust vaag; de validator controleert dat. Kies zelf je gereedschap.
 1. **★ Het lege bureau** — een vertrokken medewerker en zijn thuismap: wat nam hij mee, waarheen, en wanneer?
@@ -225,6 +233,7 @@ Alle labs draaien **volledig in je browser** — veilig, offline, zonder dat er 
 | 📊 **Benford-analyse** | De eerste cijfers van bedragen vergelijken met de wet van Benford, met MAD, chi-kwadraat en het afwijkende cijfer. |
 | 🎲 **Bayes-rekenaar** | Hypothesen bijwerken met bewijs: prior, likelihoods, likelihood ratio en posterior, stap voor stap. |
 | 🦉 **Nachtwacht-VM** | Een mini-assembler: lees de code, stap erdoorheen met registers en trace, en vind de invoer die `ok` bereikt. |
+| 🛡️ **Incidentconsole** | Een game room met toestand: logs lezen, isoleren, blokkeren, resetten, veiligstellen en herstellen terwijl de klok loopt, met gevolgen voor elke ingreep. |
 | 🎲 **Beslissimulatie** | Beslissingen nemen onder druk (incident response/onderhandeling) en de gevolgen zien. |
 
 Alle tools zijn ook los te gebruiken via de **Gereedschapskist** (Gereedschap in de topbalk, of `#/tools`) — handig voor je eigen, ethische oefeningen.
@@ -280,6 +289,7 @@ Werkwijze:
 | `node tools/labtest.js` + `labtest-extra.js` | Bedienen de labs echt en controleren de uitkomsten. |
 | `node tools/labtest-spel.js [--shots map]` | Test de dagpuzzel, weekopdracht, rangen, zwakke plekken, arena-modi, "Check jezelf" en de resultaatkaart, ook op 390 px. |
 | `node tools/labtest-examen.js` | Test de leerroutes en het proefexamen: geen terugkoppeling onderweg, markeren, analyse per domein. |
+| `node tools/labtest-game.js [--shots map]` | Speelt elke game room in de browser met zijn oplossingsroute, en test misgrepen, verliezen en de telefoonweergave. |
 | `node tools/labtest-leerlus.js` | Test de leerlus in een proefroom: gelaagde hints en hun XP-prijs, foutfeedback, herhaling en oude voortgang. |
 | `node tools/audit.js [--md]` | Classificeert elke vraag (herinneren, toepassen, analyseren) en zet de rooms op volgorde van zwakste eerst. |
 | `node tools/labtest-meester.js` | Test de labs van Meesterproeven (Vigenère, many-time pad, Benford, Bayes, RSA, VM), de sleutelcasussen en de antwoorden van die rooms. |
@@ -318,6 +328,7 @@ assets/
   js/icons.js           # getekende iconen, één per leerpad en voor de bediening
   js/app.js             # engine: routering, leerpaden, voortgang, XP, badges, zoeken
   js/labs.js            # alle interactieve labs + crypto-helpers
+  js/game.js            # de incidentconsole voor de game rooms (zie docs/adr/0003)
 content/
   rooms/*.js            # de lesinhoud (één bestand per room)
 docs/CONTENT-SPEC.md    # handleiding om content te schrijven

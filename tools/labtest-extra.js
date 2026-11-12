@@ -42,10 +42,11 @@ const url = 'file://' + path.join(__dirname, '..', 'index.html');
 
   // Subnet-lab (subnetting)
   await p.goto(url + '#/room/subnetting', { waitUntil: 'networkidle' });
-  await p.waitForSelector('.lab-pad');
-  const si = await p.$('.lab-pad input[type=text]');
-  await si.fill('192.168.10.64/26'); await p.click('.lab-pad button.primary'); await p.waitForTimeout(100);
-  const so = await p.$eval('.lab-out', (e) => e.textContent);
+  // Het subnet-lab, niet het eerste lab op de pagina: de room begint sinds de herwerking met een getallen-lab.
+  const sub = await p.evaluateHandle(() => [...document.querySelectorAll('.task')].find((t) => /Subnet/i.test(t.querySelector('.lab-head') ? t.querySelector('.lab-head').textContent : '')));
+  const si = await sub.$('.lab-pad input[type=text]');
+  await si.fill('192.168.10.64/26'); await (await sub.$('.lab-pad button.primary')).click(); await p.waitForTimeout(100);
+  const so = await (await sub.$('.lab-out')).textContent();
   ok('Subnet-lab: /26 broadcast = .127', so.includes('192.168.10.127'));
   ok('Subnet-lab: /26 = 62 hosts', so.includes('62'));
 

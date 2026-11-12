@@ -785,3 +785,49 @@ table.weak th { font-size: var(--nm-size-label); letter-spacing: var(--nm-tracki
 .mockcell.on { border: 2px solid var(--text); color: var(--text); }
 .mockcell i { position: absolute; top: 1px; right: 3px; font-style: normal; font-size: 0.62rem; color: var(--text); }
 .mc button.picked { border-color: var(--text); border-width: 2px; background: var(--surface-2); font-weight: 600; }
+
+/* ---------- Game rooms: de incidentconsole ----------
+   Inkt en haarlijnen. De console is een donker scherm zoals de terminal.
+   Een melding is vet, een uitgevoerde ingreep gewone tekst (uitvoeren is nog
+   niet goed handelen), een gevolg vermiljoen (gefaald) met het woord "Gevolg".
+   Alleen een gehaald doel en de gewonnen nabespreking zijn violet. */
+.incident .hud { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-bottom: 1px solid var(--border); }
+.incident .hud .cell { padding: 12px 16px; border-right: 1px solid var(--border); display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.incident .hud .cell:last-of-type { border-right: 0; }
+.incident .hud .big { font-size: 1.1rem; }
+.incident .hud .meter-line { margin-top: 6px; }
+.incident .hud .goals { grid-column: 1 / -1; border-top: 1px solid var(--border); }
+.incident .goals { list-style: none; margin: 0; padding: 10px 16px; display: grid; gap: 6px; font-size: 0.9rem; }
+.incident .goals li { display: flex; gap: 8px; align-items: flex-start; }
+.incident .goals li .ic { flex: none; margin-top: 3px; color: var(--muted); }
+.incident .goals li.ok .ic { color: var(--good); }
+.incident .goals li.no .ic { color: var(--bad); }
+.incident .term { height: 420px; }
+.incident .term .alertline { color: var(--syn-text); font-weight: 600; }
+.incident .term .okline { color: var(--syn-text); }
+.incident .incident-foot { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; }
+.incident .incident-foot .chip-row { margin: 0; }
+.incident .walk { flex-basis: 100%; }
+.incident .walk details > summary { cursor: pointer; font-weight: 500; min-height: 32px; }
+.incident .walklist { font-size: 0.88rem; line-height: 1.7; }
+.incident .walklist code { font-family: var(--mono); font-size: 0.8rem; }
+.incident .mandaat { margin: 6px 0 14px; padding-left: 20px; line-height: 1.6; }
+.incident .mandaat-ok { display: flex; gap: 10px; align-items: center; min-height: 44px; font-weight: 500; color: var(--text); cursor: pointer; }
+.incident .mandaat-ok input { width: 20px; height: 20px; }
+.incident .incident-start { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 12px; }
+.incident .debrief { border-top: 2px solid var(--text); }
+.incident .debrief.won { border-top-color: var(--good); }
+.incident .debrief h3 { display: flex; gap: 8px; align-items: center; margin: 6px 0; }
+.incident .debrief.won h3 .ic { color: var(--good); }
+.incident .debrief .goals { padding-left: 0; }
+.incident .debrief .askrow { margin: 10px 0; }
+.incident .debrief .askrow label { display: block; margin: 0 0 6px; }
+.incident .flagline { font-family: var(--mono); color: var(--good); }
+.incident .triumph { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 12px; padding: 8px 12px; background: var(--screen-bg); color: var(--good); font-family: var(--mono); font-size: 0.8rem; letter-spacing: 0.04em; }
+.incident .triumph .tx { margin-left: auto; }
+@media (max-width: 640px) {
+  .incident .hud { grid-template-columns: 1fr 1fr; }
+  .incident .hud .cell:nth-child(2) { border-right: 0; }
+  .incident .hud .cell:nth-child(3) { grid-column: 1 / -1; border-top: 1px solid var(--border); border-right: 0; }
+  .incident .term { height: 360px; }
+}

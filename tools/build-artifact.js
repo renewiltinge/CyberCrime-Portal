@@ -18,7 +18,7 @@ const vm = require('vm');
 
 const ROOT = path.join(__dirname, '..');
 const OUT = process.argv[2] || path.join(ROOT, 'dist', 'nineminds-cyber-dojo.html');
-const ORDER = ['fundamenten', 'security-kern', 'offensief', 'defensief', 'forensie', 'intelligence', 'datastromen', 'puzzels', 'meesterproeven', 'uitdagingen', 'eindopdracht'];
+const ORDER = ['fundamenten', 'security-kern', 'offensief', 'defensief', 'forensie', 'intelligence', 'datastromen', 'puzzels', 'meesterproeven', 'gamerooms', 'uitdagingen', 'eindopdracht'];
 
 const read = (p) => fs.readFileSync(path.join(ROOT, p), 'utf8');
 const safeJs = (s) => s.replace(/<\/(script)/gi, '<\\/$1'); // voorkom vroegtijdig sluiten van <script>
@@ -68,6 +68,9 @@ ${safeJs(app)}
 </script>
 <script>
 ${safeJs(labs)}
+</script>
+<script>
+${safeJs(read('assets/js/game.js'))}
 </script>
 ${roomScripts}
 <script>CS.boot();</script>

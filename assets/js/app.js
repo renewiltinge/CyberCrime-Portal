@@ -23,6 +23,7 @@
     { id: 'datastromen',   title: 'Datastromen volgen',        desc: 'Word expert in geld- en datastromen: volg witwasconstructies en structurering, betrap beaconing en exfiltratie in netwerkverkeer, en traceer de herkomst van een e-mail. De rode draad van cybercrime: het geld en de data.' },
     { id: 'puzzels',       title: 'Puzzels & uitdagingen',  desc: 'Leren door te doen: volg geld- en datastromen, ontmasker operators met OSINT, groepeer en reconstrueer, en los een grote cybercrime-CTF op. Alle oefening, veel plezier.' },
     { id: 'meesterproeven', title: 'Meesterproeven (gevorderd)', desc: 'Voor wie de puzzels te makkelijk vond: zwaardere opgaven met meer achtergrond. Cryptanalyse zonder sleutel, forensie met tegenstrijdige sporen, fraude ontdekken met de wet van Benford, redeneren met kansen (Bayes en kalibratie) en digitaal bewijs eerlijk wegen in de rechtszaal.' },
+    { id: 'gamerooms', title: 'Game rooms: verdedigen onder druk', desc: 'Je staat in de incidentconsole terwijl de aanval doorgaat. De klok loopt mee met wat je doet, een verkeerde ingreep legt het bedrijf stil, en te laat ingrijpen kost schade. Elke leerling krijgt een eigen variant. Na afloop een nabespreking: wat deed de aanvaller, wat had je kunnen zien, wat had het gestopt.' },
     { id: 'uitdagingen', title: 'Uitdagingen (zonder handleiding)', desc: 'Geen uitleg, geen stappenplan: alleen een opdracht en het bewijs. Je kiest zelf je gereedschap (de Gereedschapskist staat bovenin). De antwoorden staan nergens in de tekst; hints zijn bewust vaag. Oplopend van één tot drie sterren.' },
     { id: 'eindopdracht',  title: 'Eindopdracht',           desc: 'Breng alles samen in een afsluitende mini-CTF. Bewijs aan jezelf wat je kunt.' },
   ];
@@ -75,6 +76,9 @@
     return st;
   }
   migrate(STATE);
+  // De game rooms (assets/js/game.js) bewaren hun pogingen en hun variant in STATE.game.
+  CS.store = () => STATE;
+  CS.saveStore = () => saveState();
   const dayKey = (offset) => { const d = new Date(); d.setDate(d.getDate() + (offset || 0)); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
   const bump = (name, n) => { STATE.count[name] = (STATE.count[name] || 0) + (n == null ? 1 : n); };
 
@@ -127,6 +131,7 @@
     { id: 'tracer',      icon: 'path-datastromen', name: 'Stromenvolger', desc: 'Alle Datastromen-rooms af', test: () => pathDone('datastromen') },
     { id: 'puzzler',     icon: 'path-puzzels', name: 'Puzzelmeester', desc: 'Alle Puzzels & uitdagingen af', test: () => pathDone('puzzels') },
     { id: 'meester',     icon: 'path-meesterproeven', name: 'Meester', desc: 'Alle Meesterproeven af', test: () => pathDone('meesterproeven') },
+    { id: 'wachtploeg', icon: 'path-gamerooms', name: 'Wachtploeg', desc: 'Alle game rooms af', test: () => pathDone('gamerooms') },
     { id: 'zelfstandig', icon: 'path-uitdagingen', name: 'Zelfstandig onderzoeker', desc: 'Alle uitdagingen zonder handleiding af', test: () => pathDone('uitdagingen') },
     { id: 'arena10',     icon: 'practice', name: 'Scherpschutter', desc: 'Reeks van 10 in de Oefenarena', test: () => (STATE.bestStreak || 0) >= 10 },
     { id: 'hacker10',    icon: 'seal', name: 'Doorzetter', desc: '10 rooms afgerond', test: () => ROOMS.filter(roomDone).length >= 10 },
@@ -160,6 +165,7 @@
     setTimeout(() => { t.style.transition = 'opacity .4s, transform .4s'; t.style.opacity = '0'; t.style.transform = 'translateY(8px)'; setTimeout(() => t.remove(), 400); }, 3400);
   }
   CS.toast = toast;
+  CS.checkBadges = () => checkBadges();
 
   // ---- Het NineMinds-teken -----------------------------------------------
   // Komt uit de huislaag (assets/js/house.js, gegenereerd uit nineminds/). Het
@@ -1676,6 +1682,9 @@
     { id: 'boss-1', icon: 'seal', name: 'Eerste boss', desc: 'Een boss-vraag opgelost', test: () => cnt('boss') + cnt('bossClean') >= 1 },
     { id: 'boss-10', icon: 'seal', name: 'Boss-jager', desc: 'Tien boss-vragen opgelost', test: () => cnt('boss') + cnt('bossClean') >= 10 },
     { id: 'boss-schoon', icon: 'seal', name: 'Zonder hulp verslagen', desc: 'Vijf boss-vragen opgelost zonder hint', test: () => cnt('bossClean') >= 5 },
+    { id: 'game-1', icon: 'path-gamerooms', name: 'Eerste dienst', desc: 'Een game room gewonnen', test: () => Object.keys(STATE.game).some((k) => (STATE.game[k].wins || 0) > 0) },
+    { id: 'game-schoon', icon: 'path-gamerooms', name: 'Zonder kleerscheuren', desc: 'Een game room gewonnen zonder schade en zonder misgreep', test: () => Object.keys(STATE.game).some((k) => STATE.game[k].clean) },
+    { id: 'game-varianten', icon: 'path-gamerooms', name: 'Elke nacht anders', desc: 'Dezelfde game room in drie varianten gewonnen', test: () => Object.keys(STATE.game).some((k) => (STATE.game[k].wins || 0) >= 3) },
     { id: 'uitdaging-schoon', icon: 'path-uitdagingen', name: 'Blanco aanpak', desc: 'Een uitdaging afgerond zonder één hint', test: cleanChallenge },
     { id: 'labs-10', icon: 'tools', name: 'Gereedschapskenner', desc: 'Tien verschillende soorten labs gebruikt', test: () => labKinds() >= 10 },
     { id: 'labs-25', icon: 'tools', name: 'Volle kist', desc: '25 verschillende soorten labs gebruikt', test: () => labKinds() >= 25 },
@@ -1923,15 +1932,15 @@
   // opleiding en geen certificaat: het zegt wat je in de dojo kunt oefenen voor dat werk.
   const ROUTES = [
     { id: 'soc-analist', title: 'SOC-analist', desc: 'Aanvallen zien in logs en verkeer, er een regel voor schrijven en er goed op reageren.',
-      rooms: ['intro-cybersecurity', 'netwerken-basis', 'hoe-het-web-werkt', 'linux-basis', 'windows-basis', 'logs-detectie', 'threat-intel-attack', 'detectie-engineering', 'detectie-bouwen', 'netwerkstromen-analyse', 'dns-datastromen', 'email-forensics', 'incident-response', 'ransomware-respons', 'insider-threat', 'phishing-kit-infrastructuur'] },
+      rooms: ['intro-cybersecurity', 'netwerken-basis', 'hoe-het-web-werkt', 'linux-basis', 'windows-basis', 'logs-detectie', 'threat-intel-attack', 'detectie-engineering', 'detectie-bouwen', 'netwerkstromen-analyse', 'dns-datastromen', 'email-forensics', 'incident-response', 'ransomware-respons', 'insider-threat', 'phishing-kit-infrastructuur', 'game-ochtendspits', 'game-nachtdienst', 'game-ransomware-zes-uur'] },
     { id: 'digitaal-rechercheur', title: 'Digitaal rechercheur', desc: 'Sporen veiligstellen, onderzoeken en zo opschrijven dat het standhoudt.',
-      rooms: ['intro-forensie', 'bewijs-veiligstellen', 'schijf-bestandssysteem-forensie', 'memory-forensie', 'netwerk-forensie', 'windows-artefacten', 'mobiel-cloud-forensie', 'tijdlijnanalyse', 'malware-analyse-basis', 'osint-opsporing', 'email-forensics', 'forensie-misleiding', 'bewijs-in-de-rechtszaal', 'forensie-ctf'] },
+      rooms: ['intro-forensie', 'bewijs-veiligstellen', 'schijf-bestandssysteem-forensie', 'memory-forensie', 'netwerk-forensie', 'windows-artefacten', 'mobiel-cloud-forensie', 'tijdlijnanalyse', 'malware-analyse-basis', 'osint-opsporing', 'email-forensics', 'forensie-misleiding', 'bewijs-in-de-rechtszaal', 'game-ochtend-erna', 'forensie-ctf'] },
     { id: 'intelligence-analist', title: 'Intelligence-analist', desc: 'Van fenomeen naar oordeel: bronnen wegen, hypothesen toetsen en een product schrijven waar iemand op kan handelen.',
       rooms: ['cybercrime-ecosysteem', 'crime-scripting', 'intelligencecyclus', 'ti-modellen', 'threat-intel-attack', 'osint-pivoting', 'osint-infrastructuur', 'darkweb-vendor-osint', 'redeneren-met-kansen', 'intelligenceproducten', 'praktijkcase-intel'] },
     { id: 'financieel-rechercheur', title: 'Financieel rechercheur', desc: 'Het geld volgen: fraudevormen, witwassen, crypto en de cijfers die niet kloppen.',
       rooms: ['fraudevormen', 'money-mule-ronseling', 'carding-economie', 'witwassen-structurering', 'follow-the-money', 'crypto-witwassen', 'cryptomixer-onderzoek', 'financiele-recherche', 'fraude-in-de-cijfers'] },
     { id: 'security-tester', title: 'Security-tester (basis)', desc: 'Begrijpen hoe een aanval werkt, zodat je kwetsbaarheden kunt vinden, wegen en melden. Altijd in een lab of met schriftelijke toestemming.',
-      rooms: ['intro-cybersecurity', 'netwerken-basis', 'hoe-het-web-werkt', 'linux-basis', 'cryptografie', 'kwetsbaarheden-cvss', 'owasp-top-10', 'verkenning-scannen', 'webhacking-sqli', 'wachtwoorden-kraken', 'reverse-engineering'] },
+      rooms: ['intro-cybersecurity', 'netwerken-basis', 'hoe-het-web-werkt', 'linux-basis', 'cryptografie', 'kwetsbaarheden-cvss', 'owasp-top-10', 'verkenning-scannen', 'webhacking-sqli', 'wachtwoorden-kraken', 'reverse-engineering', 'game-vergeten-server'] },
   ];
   const routeRooms = (rt) => rt.rooms.map((id) => ROOMS.find((r) => r.id === id)).filter(Boolean);
   function renderRoutes() {

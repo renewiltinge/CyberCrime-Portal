@@ -46,6 +46,7 @@ Hoofdsecties sluiten af met een harde lijn van 2px in inkt, zoals de werkkaart v
 | Zwakke plekken | `weakTable` | Een tabel met haarlijnen; het aandeel fouten is een getal in Martian Mono, niet vermiljoen (het is een overzicht, geen oordeel) |
 | Dagpuzzel | `renderPuzzle` | De opgave op het donkere scherm, het antwoord als open plek |
 | Resultaatkaart | `renderCard` | Een kaart met een rand van 2px in inkt en het teken in violet; drukt af zonder balk en voet |
+| Incidentconsole | `game.js` | Een HUD met klok, schade en doelen in drie vakken, daaronder het donkere scherm. Een melding is vet, een gevolg vermiljoen met het woord "Gevolg", een gehaald doel en de gewonnen nabespreking violet |
 | Lab | `labs.js` | Een raam met een kopregel `LAB`; machine-uitvoer is een donker scherm in beide thema's |
 | Room af | `renderRoomDone` | Het bewezen blok met het NineMinds-teken in violet |
 | Voet | `renderFooter` | *Een product van* met het woordmerk, en de regel over ethiek |
