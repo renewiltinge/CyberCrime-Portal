@@ -8,6 +8,8 @@ CS.registerRoom({
   icon: '🔄',
   difficulty: 'Gemiddeld',
   minutes: 75,
+  level: 'Praktijk',
+  checked: '2026-11-12',
   summary: 'Van ruwe data naar een onderbouwd oordeel: de intelligencecyclus en de "so what?"-test, CSAE, bronnen beoordelen met de Admiralty Code, waarschijnlijkheidstaal met een apart betrouwbaarheidsniveau, hypothesen afwegen met ACH en je eigen denkfouten bestrijden.',
   objectives: [
     'De stappen van de intelligencecyclus benoemen en op elk product de "so what?"-test toepassen',
@@ -20,6 +22,8 @@ CS.registerRoom({
   tasks: [
     {
       title: 'Taak 1 — De intelligencecyclus en de "so what?"-test',
+      tryFirst: true,
+      intro: '<p>Het intelteam van een fictief waterschap heeft een week lang aan één vraag gewerkt. In het lab staan zes momenten uit die week, door elkaar. Zet ze in de volgorde waarin ze logisch op elkaar volgen en benoem voor jezelf wat er in elke stap gebeurt.</p>',
       content: `
         <p>Een analist krijgt elke dag meer binnen dan hij kan verwerken: logs, rapporten, tips, tweets, meldingen.
         Zonder structuur word je een doorgeefluik van losse feitjes. De <strong>intelligencecyclus</strong> is het
@@ -81,20 +85,46 @@ CS.registerRoom({
         dit aan".</p>
 
         <div class="callout tip">
-          <strong>Beloning:</strong> je eerste vlag voor deze room is <code>NM{so_what_maakt_intel}</code>. Onthoud
-          waarom: data wordt pas intelligence als de "so what?" beantwoord is.
+          <strong>Onthoud:</strong> data wordt pas intelligence als de "so what?" beantwoord is.
         </div>
       `,
+      lab: {
+        type: 'ordering',
+        title: 'een week bij het intelteam',
+        prompt: 'Zes momenten uit één werkweek van het intelteam van Waterschap Lage Venen (fictief). Zet ze in de volgorde van het werkproces.',
+        items: [
+          { id: 'a', label: 'De CISO vraagt: "Welke groepen vallen deze maand waterschappen aan, en hoe komen ze binnen?"' },
+          { id: 'b', label: 'De analist haalt de firewall-logs, twee partnerrapporten en de adviezen van het NCSC op.' },
+          { id: 'c', label: 'Dubbele meldingen worden samengevoegd en alle IP-adressen en domeinen komen in één vast formaat te staan.' },
+          { id: 'd', label: 'De analist weegt de bronnen en concludeert: waarschijnlijk komt deze groep binnen via ongepatchte VPN-gateways.' },
+          { id: 'e', label: 'Het SOC krijgt een IOC-lijst en de directie een notitie van een halve pagina met het advies om vanavond te patchen.' },
+          { id: 'f', label: 'De CISO meldt terug: "Bruikbaar, maar ik miste wat dit voor onze gemalen betekent."' },
+        ],
+        correct: ['a', 'b', 'c', 'd', 'e', 'f'],
+        flag: 'NM{so_what_maakt_intel}',
+        explain: 'Richten, verzamelen, verwerken, analyseren, verspreiden en dan feedback, die de volgende ronde stuurt.',
+      },
       questions: [
-        { q: 'In welke stap vertaal je de vraag van de opdrachtgever naar een concrete intelligence requirement?', options: ['Richten', 'Verzamelen', 'Verwerken', 'Verspreiden'], answer: 0, explain: 'Richten (direction) bepaalt wat je wilt weten; zonder die vraag verzamel je willekeurig.' },
-        { q: 'Welk element verbindt alle stappen en stuurt de volgende ronde van de cyclus?', answer: ['feedback', 'terugkoppeling'], hint: 'Was het product bruikbaar? Wat miste de ontvanger?', explain: 'Feedback scherpt je requirements aan en maakt van de cyclus een kringloop in plaats van een eenmalige lijn.' },
-        { q: 'Wat is de kern van de "so what?"-test?', options: ['Vragen welke handeling of beslissing dit feit oplevert voor de lezer', 'Zoveel mogelijk feiten toevoegen', 'Alleen technische details vermelden', 'De bron verzwijgen'], answer: 0, explain: 'Levert een feit geen handeling of beslissing op, dan is het ruis en haal je het weg.' },
-        { q: 'Wat is de vlag die als beloning in deze taak staat?', answer: ['NM{so_what_maakt_intel}'], hint: 'Kijk in de groene tip onderaan de taak.' },
+        { q: 'Zet de zes momenten in het lab in de juiste volgorde. Op welke positie (1 tot en met 6) staat het moment dat "verwerken" is?', answer: ['3'],
+          hints: ['Verwerken is het saaie tussenwerk: ordenen zonder al te duiden.', 'Zoek het moment waarop data wordt opgeschoond en in één formaat gezet.', 'Het komt direct na het ophalen van de bronnen.'],
+          wrong: { '4': 'Op positie 4 trekt de analist een conclusie. Dat is analyseren. Verwerken gaat daaraan vooraf.', '2': 'Op positie 2 worden bronnen opgehaald. Dat is verzamelen.' },
+          explain: 'Positie 3: ontdubbelen en in een vast formaat zetten. Pas daarna kun je betrouwbaar analyseren.' },
+        { q: 'Welk element verbindt alle stappen en stuurt de volgende ronde van de cyclus?', answer: ['feedback', 'terugkoppeling'],
+          hints: ['Het is het laatste moment in het lab.', 'De ontvanger zegt wat hij miste.', 'In de figuur staat het in het midden van de kring.'],
+          explain: 'Feedback scherpt je requirements aan en maakt van de cyclus een kringloop in plaats van een eenmalige lijn.' },
+        { q: 'Wat is de kern van de "so what?"-test?', options: ['Vragen welke handeling of beslissing dit feit oplevert voor de lezer', 'Zoveel mogelijk feiten toevoegen', 'Alleen technische details vermelden', 'De bron verzwijgen'], answer: 0,
+          wrong: { 1: 'Meer feiten maken een product langer, niet bruikbaarder.', 2: 'Technische details zijn alleen nuttig voor de lezer die ermee moet werken.' },
+          explain: 'Levert een feit geen handeling of beslissing op, dan is het ruis en haal je het weg.' },
+        { q: 'Welke vlag verschijnt in het lab als alle zes momenten op de juiste plek staan?', answer: ['NM{so_what_maakt_intel}'],
+          hints: ['Begin bij de vraag van de opdrachtgever en eindig bij zijn reactie.', 'Tussen ophalen en concluderen zit nog een stap.', 'Vraag, bronnen ophalen, opschonen, concluderen, versturen, reactie.'],
+          explain: 'De week eindigt met een advies (vanavond patchen) en met feedback. Dat advies is het antwoord op de "so what?".' },
       ],
     },
 
     {
       title: 'Taak 2 — Van losse data naar entiteiten: CSAE',
+      tryFirst: true,
+      intro: '<p>In het lab staat een kleine graaf rond het phishingdomein betaal-portaal.nm.lab. Elke relatie heeft een bron en een maand. Zoek uit naar welk IP-adres het domein in maart wees, en welk ander domein je juist niet aan de actor mag koppelen.</p>',
       content: `
         <p>De intelligencecyclus zegt <em>wat</em> je doet; <strong>CSAE</strong> is een handig ezelsbruggetje voor
         <em>hoe</em> je met de informatie zelf omgaat. CSAE staat voor <strong>Collect, Store, Analyse, Engage</strong>.</p>
@@ -145,15 +175,49 @@ CS.registerRoom({
         </div>
       `,
       questions: [
-        { q: 'Wat staat de E van CSAE voor?', answer: ['Engage', 'engage', 'betrekken'], hint: 'De juiste partners betrekken.', explain: 'Engage: betrek op tijd je SOC, partners, ISAC, NCSC of politie — en vraag ook om wat anderen zien.' },
-        { q: 'Welke twee dingen leg je volgens de Store-stap altijd bij een entiteit vast?', options: ['Herkomst en tijd', 'Kleur en grootte', 'Prijs en eigenaar', 'Taal en land'], answer: 0, explain: 'Zonder herkomst kun je betrouwbaarheid niet wegen; zonder tijd weet je niet of de indicator nog klopt.' },
+        { q: 'Naar welk IP-adres wees betaal-portaal.nm.lab in maart 2026?', answer: ['198.51.100.61'],
+          hints: ['Klik in het lab op het domein en lees bij elke relatie de maand.', 'Er staan twee relaties "resolvet naar". Ze gelden niet tegelijk.', 'Het adres dat begint met 198.'],
+          wrong: { '203.0.113.24': 'Dat gold in januari. In maart wees het domein naar een ander adres.' },
+          why: 'Een indicator zonder tijd blokkeert vroeg of laat de verkeerde partij. IP-adressen wisselen voortdurend van gebruiker.',
+          explain: 'Volgens passive DNS wees het domein in januari naar 203.0.113.24 en in maart naar 198.51.100.61.' },
+        { q: 'Welk domein in de graaf mag je niet aan de actor koppelen, omdat het pas op het oude IP-adres verschijnt nadat de actor daar weg was?', answer: ['webwinkel-fietsen.example'],
+          hints: ['Klik op het IP-adres uit januari en kijk wat er nog meer aan hangt.', 'Vergelijk de maanden: wanneer stond het phishingdomein daar, en wanneer het andere domein?', 'Het is een webwinkel.'],
+          wrong: { 'factuur-check.nm.lab': 'Dat domein deelt in dezelfde maand zowel het IP-adres als het certificaat met het phishingdomein. Dat is juist een sterke link.' },
+          explain: 'webwinkel-fietsen.example staat pas in april op 203.0.113.24. De actor zat daar in januari. Zonder tijd bij de relatie had je een onschuldige webwinkel in je dreigingslijst gezet.' },
         { q: 'Je schrijft: "De actor is vermoedelijk Russisch", zonder enig bewijs. Welk label hoort hierbij?', options: ['bekend', 'afgeleid', 'aanname'], answer: 2, explain: 'Onbewezen en nog in te vullen: dat is een aanname. Presenteer het nooit als feit.' },
         { q: 'Je ziet in je eigen, geverifieerde log dat host WS-07 om 02:14 verbinding maakte met een C2-domein. Welk label past?', options: ['bekend', 'afgeleid', 'aanname'], answer: 0, explain: 'Een directe, geverifieerde waarneming is bekend (een feit).' },
       ],
+      lab: {
+        type: 'pivot',
+        title: 'herkomst en tijd',
+        scenario: 'Entiteiten rond het phishingdomein betaal-portaal.nm.lab (fictief). Bij elke relatie staan de maand en de bron. Lees ze allebei.',
+        entities: [
+          { id: 'd1', type: 'domain', label: 'betaal-portaal.nm.lab' },
+          { id: 'd2', type: 'domain', label: 'factuur-check.nm.lab' },
+          { id: 'd3', type: 'domain', label: 'webwinkel-fietsen.example' },
+          { id: 'ip1', type: 'ip', label: '203.0.113.24' },
+          { id: 'ip2', type: 'ip', label: '198.51.100.61' },
+          { id: 'c1', type: 'cert', label: '4F:9A:22:B7' },
+          { id: 'e1', type: 'email', label: 'beheer@postvak.example' },
+        ],
+        edges: [
+          { from: 'd1', to: 'ip1', rel: 'resolvet naar', time: '2026-01', source: 'passive DNS' },
+          { from: 'd1', to: 'ip2', rel: 'resolvet naar', time: '2026-03', source: 'passive DNS' },
+          { from: 'd2', to: 'ip2', rel: 'resolvet naar', time: '2026-03', source: 'passive DNS' },
+          { from: 'd1', to: 'c1', rel: 'presenteerde zelfondertekend certificaat', time: '2026-03', source: 'eigen scan' },
+          { from: 'd2', to: 'c1', rel: 'presenteerde zelfondertekend certificaat', time: '2026-03', source: 'eigen scan' },
+          { from: 'd2', to: 'e1', rel: 'geregistreerd met', time: '2026-02', source: 'WHOIS' },
+          { from: 'd3', to: 'ip1', rel: 'resolvet naar', time: '2026-04', source: 'passive DNS' },
+        ],
+        goal: 'Welk kenmerk verbindt betaal-portaal.nm.lab en factuur-check.nm.lab het sterkst? (typ het label)',
+        bridge: ['4F:9A:22:B7', '4f9a22b7'],
+      },
     },
 
     {
       title: 'Taak 3 — Kwantitatief én kwalitatief combineren',
+      tryFirst: true,
+      intro: '<p>Je teamleider zegt: "Het aantal meldingen is in week 12 verdubbeld, de dreiging neemt toe." In het lab staat het meldingenlog van week 10 tot en met 12. Gebruik het filter en controleer of die conclusie klopt voordat hij in een rapport belandt.</p>',
       content: `
         <p>Informatie komt in twee smaken. <strong>Kwantitatieve</strong> informatie is te tellen of te meten: 2.000
         scanpogingen, 14 besmette werkplekken, 300 GB uitgaand verkeer, een piek om 02:00 uur. <strong>Kwalitatieve</strong>
@@ -189,10 +253,47 @@ CS.registerRoom({
         geef je een kwalitatief oordeel ("waarschijnlijk"), gebruik dan vaste waarschijnlijkheidstaal — daarover gaat
         taak 5.</p>
       `,
+      lab: {
+        type: 'logs',
+        title: 'meldingen-week10-12.log',
+        lines: `2026-03-02 week=10 sensor=mailgw sector=logistiek onderwerp=nepfactuur
+2026-03-03 week=10 sensor=mailgw sector=zorg onderwerp=wachtwoordreset
+2026-03-04 week=10 sensor=mailgw sector=logistiek onderwerp=nepfactuur
+2026-03-05 week=10 sensor=mailgw sector=overheid onderwerp=nepfactuur
+2026-03-06 week=10 sensor=mailgw sector=productie onderwerp=nepfactuur
+2026-03-09 week=11 sensor=mailgw sector=logistiek onderwerp=nepfactuur
+2026-03-10 week=11 sensor=mailgw sector=logistiek onderwerp=nepfactuur
+2026-03-11 week=11 sensor=mailgw sector=zorg onderwerp=pakketbericht
+2026-03-12 week=11 sensor=mailgw sector=logistiek onderwerp=nepfactuur
+2026-03-12 week=11 sensor=mailgw sector=overheid onderwerp=wachtwoordreset
+2026-03-13 week=11 sensor=mailgw sector=logistiek onderwerp=nepfactuur
+2026-03-16 week=12 sensor=mailgw sector=logistiek onderwerp=nepfactuur
+2026-03-16 week=12 sensor=edr sector=logistiek onderwerp=macro-document
+2026-03-17 week=12 sensor=mailgw sector=zorg onderwerp=nepfactuur
+2026-03-17 week=12 sensor=edr sector=zorg onderwerp=macro-document
+2026-03-18 week=12 sensor=mailgw sector=logistiek onderwerp=nepfactuur
+2026-03-18 week=12 sensor=mailgw sector=productie onderwerp=pakketbericht
+2026-03-18 week=12 sensor=edr sector=logistiek onderwerp=macro-document
+2026-03-19 week=12 sensor=mailgw sector=logistiek onderwerp=nepfactuur
+2026-03-19 week=12 sensor=edr sector=productie onderwerp=verdachte-download
+2026-03-19 week=12 sensor=edr sector=zorg onderwerp=macro-document
+2026-03-20 week=12 sensor=mailgw sector=zorg onderwerp=wachtwoordreset
+2026-03-20 week=12 sensor=edr sector=logistiek onderwerp=verdachte-download`,
+      },
       questions: [
-        { q: 'Welk soort informatie is "het motief en de intentie van een aanvalsgroep"?', options: ['Kwantitatief', 'Kwalitatief'], answer: 1, explain: 'Motief en intentie zijn niet te tellen; het is kwalitatieve, betekenisgevende informatie.' },
-        { q: 'Waarom kan "het aantal aanvallen is verdubbeld" misleidend zijn zonder context?', options: ['Omdat de stijging door een nieuwe sensor kan komen die meer ziet, niet door meer dreiging', 'Omdat aanvallen nooit toenemen', 'Omdat cijfers altijd fout zijn', 'Omdat verdubbelen onmogelijk is'], answer: 0, explain: 'Een veranderde meting is niet hetzelfde als een veranderde werkelijkheid; context duidt het cijfer.' },
-        { q: 'Je baseert "73%" op 11 gevallen. Wat is een eerlijker formulering?', options: ['8 van de 11', 'Bijna driekwart gegarandeerd', '73,0%', 'Heel veel'], answer: 0, explain: 'Bij kleine aantallen suggereert een percentage een precisie die er niet is; noem het absolute aantal.' },
+        { q: 'In week 11 waren er 6 meldingen, in week 12 zijn het er 12. Hoeveel meldingen in week 12 komen van de sensor die er in week 11 ook al was?', answer: ['6'],
+          hints: ['Kijk welke sensoren er in week 11 meldingen deden.', 'Filter op week=12 en tel alleen de regels van die ene sensor. Een filter als /week=12 sensor=mailgw/ doet het in één keer.', 'Het zijn er evenveel als in week 11.'],
+          wrong: { '12': 'Dat is het totaal van week 12, inclusief de meldingen van een sensor die er in week 11 nog niet was.' },
+          why: 'Een stijging die door een nieuwe meetbron komt, wordt in de praktijk regelmatig als "toenemende dreiging" gerapporteerd. Vergelijk altijd gelijk met gelijk.',
+          explain: 'De mailgateway zag in week 11 zes meldingen en in week 12 ook zes. De verdubbeling komt volledig van de nieuwe sensor.' },
+        { q: 'In welke week verschijnt de tweede sensor voor het eerst in het log? (weeknummer)', answer: ['12', 'week 12'],
+          hints: ['Zoek op de naam van de sensor die niet mailgw heet.', 'Filter op sensor=edr en kijk naar de eerste regel.', 'De week die op 16 maart begint.'],
+          wrong: { '11': 'In week 11 komen alle meldingen nog van de mailgateway.' },
+          explain: 'De EDR-sensor meldt vanaf 16 maart, week 12. Dat is context die je bij het cijfer moet vermelden.' },
+        { q: 'Filter op nepfactuur. Welk deel van die meldingen komt uit de logistiek? Schrijf het op zoals de uitleg aanraadt bij kleine aantallen: x van de y.', answer: ['9 van de 12', '9 van 12', '9/12', '9 uit 12'],
+          hints: ['Tel eerst alle regels met onderwerp=nepfactuur.', 'Tel daarna hoeveel daarvan sector=logistiek hebben. Met het filter /logistiek.*nepfactuur/ gaat dat snel.', 'Het totaal is 12.'],
+          wrong: { '/75/': 'Dat klopt rekenkundig, maar een percentage suggereert bij twaalf gevallen een precisie die er niet is. Noem de aantallen.', '/^8 van/': 'Dat is het voorbeeld uit de uitleg. Tel de regels in dit log.', '/van de 11/': 'Tel het totaal nog eens: ook week 10 heeft vier nepfactuurmeldingen.' },
+          explain: 'Negen van de twaalf nepfactuurmeldingen komen uit de logistiek. Dat is het meetbare patroon (bekend); dat de actor zich op de logistiek richt, blijft een afgeleide conclusie.' },
       ],
     },
 
@@ -242,8 +343,8 @@ CS.registerRoom({
         scherp.</p>
         <div class="callout warn">
           <strong>Veelgemaakte fout:</strong> een anonieme tip krijgt vaak automatisch een hoge geloofwaardigheid als
-          hij "eng genoeg" klinkt. Fout: een anonieme bron heeft geen trackrecord (lage letter) én een onbevestigde
-          claim blijft laag op de cijferschaal — tenzij een onafhankelijke bron hem bevestigt.
+          hij "eng genoeg" klinkt. Fout: een anonieme bron heeft geen trackrecord (F: niet te beoordelen) én een
+          onbevestigde claim blijft laag op de cijferschaal — tenzij een onafhankelijke bron hem bevestigt.
         </div>
 
         <h3>Oefening</h3>
@@ -251,16 +352,12 @@ CS.registerRoom({
         daarna met het expertoordeel. Denk hardop: wat weet ik over het trackrecord van deze bron, en hoe sterk is
         juist deze claim?</p>
 
-        <div class="callout tip">
-          <strong>Beloning:</strong> de tweede vlag van deze room vat het kernidee samen —
-          <code>NM{bron_en_info_apart}</code>. Beoordeel bron en informatie altijd los van elkaar.
-        </div>
       `,
       lab: {
         type: 'admiralty',
         items: [
           { source: 'Een gebeurtenis in je eigen SIEM, bevestigd door een tweede, onafhankelijke logbron', info: 'Werkplek WS-07 maakte om 02:14 verbinding met een bekend C2-domein', reliability: 'A', credibility: '1', explain: 'Je eigen, geverifieerde telemetrie is een volledig betrouwbare bron (A). Een tweede onafhankelijke logbron bevestigt de waarneming, dus de info is bevestigd (1): A1.' },
-          { source: 'Een anonieme, onbevestigde tip via Meld Misdaad Anoniem', info: 'Bedrijf X wordt volgende week geraakt door ransomware', reliability: 'F', credibility: '4', explain: 'Een anonieme bron heeft geen trackrecord en is niet te verifiëren: betrouwbaarheid niet te beoordelen (F; E is voor een bron die eerder onbetrouwbaar bleek) — in de praktijk scoor je die laag (E). De claim staat op zichzelf en is twijfelachtig (4): E4.' },
+          { source: 'Een anonieme, onbevestigde tip via Meld Misdaad Anoniem', info: 'Bedrijf X wordt volgende week geraakt door ransomware', reliability: 'F', credibility: '4', explain: 'Een anonieme bron heeft geen trackrecord en is niet te verifiëren: betrouwbaarheid niet te beoordelen (F). E is voor een bron die eerder onbetrouwbaar bleek. De claim staat op zichzelf en is twijfelachtig (4): F4.' },
           { source: 'Een sectorpartner (ISAC) die je al jaren kent en die een goed trackrecord heeft, nog niet door jou geverifieerd', info: 'Er circuleert een nieuwe phishinggolf tegen de logistiek', reliability: 'B', credibility: '2', explain: 'Een partner met een goed trackrecord is meestal betrouwbaar (B). De claim klinkt plausibel maar is door jou nog niet bevestigd: waarschijnlijk waar (2): B2.' },
           { source: 'Een claim op de leksite van een ransomwaregroep zelf', info: 'Wij hebben gemeente Y versleuteld en 300 GB data buitgemaakt', reliability: 'D', credibility: '3', explain: 'Criminele groepen overdrijven, hergebruiken oude slachtoffers en liegen om druk te zetten: niet altijd betrouwbaar (D). De claim kan kloppen maar is onbevestigd: mogelijk waar (3): D3.' },
           { source: 'Een technisch rapport van een gerenommeerde securityleverancier met IOC\'s en onderbouwing', info: 'Campagne Z gebruikt een kwetsbaarheid in een VPN-gateway voor initiële toegang', reliability: 'B', credibility: '2', explain: 'Een gerenommeerde leverancier is doorgaans betrouwbaar (B). Het rapport is onderbouwd maar nog niet in jouw omgeving bevestigd (2): B2. Verifieer in je eigen logs om naar 1 te komen.' },
@@ -268,9 +365,18 @@ CS.registerRoom({
       },
       questions: [
         { q: 'Wat meet de letterschaal A–F in de Admiralty Code?', options: ['De betrouwbaarheid (het trackrecord) van de bron', 'De geloofwaardigheid van de claim', 'De ernst van de aanval', 'De snelheid van de reactie'], answer: 0, explain: 'A–F gaat over de bron; het cijfer 1–6 gaat apart over de specifieke informatie.' },
-        { q: 'Welke score hoort bij een geverifieerde, door een tweede bron bevestigde waarneming uit je eigen SIEM?', answer: ['A1', 'a1'], hint: 'Volledig betrouwbare bron + bevestigde info.', explain: 'Eigen geverifieerde telemetrie = A; bevestigd door een onafhankelijke bron = 1. Samen A1.' },
-        { q: 'Een partner met een goed trackrecord meldt iets wat jij nog niet hebt kunnen bevestigen. Welke score past het best?', options: ['A1', 'B2', 'E4', 'F6'], answer: 1, explain: 'Betrouwbare bron (B), plausibele maar onbevestigde claim (2): B2. Verifieer voor je er zwaar op leunt.' },
-        { q: 'Wat is de vlag die hoort bij het kernidee van deze taak?', answer: ['NM{bron_en_info_apart}'], hint: 'Staat in de groene tip onderaan.' },
+        { q: 'Scoor in het lab de claim op de leksite van de ransomwaregroep. Welke score geeft het expertoordeel? (letter plus cijfer)', answer: ['D3'],
+          hints: ['Scoor eerst de bron: hoe is het trackrecord van een criminele groep die over zichzelf schrijft?', 'Scoor dan de claim los daarvan: bevestigd, waarschijnlijk, mogelijk of twijfelachtig?', 'Niet altijd betrouwbaar, mogelijk waar.'],
+          wrong: { '/^e/i': 'E is voor een bron die aantoonbaar onbetrouwbaar is. Leksites noemen vaak echte slachtoffers, maar overdrijven ook: niet altijd betrouwbaar.', '/^f/i': 'F is voor een bron die je niet kunt beoordelen. Van deze bron weet je juist wie het is en welk belang hij heeft.', '/1$/': 'Bevestigd (1) is het pas als een onafhankelijke bron hetzelfde zegt. De groep is hier de enige bron.' },
+          why: 'Leksites zijn een dagelijkse bron voor analisten. Wie een claim daar als feit doorgeeft, laat de daders zijn rapport schrijven.',
+          explain: 'D3: de bron is niet altijd betrouwbaar (D) en de claim is mogelijk waar maar onbevestigd (3).' },
+        { q: 'Een partner met een goed trackrecord meldt iets wat jij nog niet hebt kunnen bevestigen. Welke score past het best?', options: ['A1', 'B2', 'E4', 'F6'], answer: 1,
+          wrong: { 0: 'A1 vraagt een volledig betrouwbare bron en bevestiging door een tweede, onafhankelijke bron.', 2: 'E4 past bij een onbetrouwbare bron met een twijfelachtige claim.', 3: 'F6 betekent dat je bron en claim allebei niet kunt beoordelen. Van deze partner ken je het trackrecord.' },
+          explain: 'Betrouwbare bron (B), plausibele maar onbevestigde claim (2): B2. Verifieer voor je er zwaar op leunt.' },
+        { q: 'Hoeveel van de vijf situaties in het lab krijgen in het expertoordeel geloofwaardigheid 2 (waarschijnlijk waar)?', answer: ['2'],
+          hints: ['Scoor alle vijf en vergelijk met het expertoordeel.', 'Let alleen op het cijfer, niet op de letter.', 'Het zijn de sectorpartner en het rapport van de leverancier.'],
+          wrong: { '3': 'De waarneming uit je eigen SIEM is door een tweede logbron bevestigd. Die krijgt een 1.' },
+          explain: 'Twee: de melding van de sectorpartner en het leveranciersrapport. Allebei plausibel en onderbouwd, maar door jou nog niet bevestigd.' },
       ],
     },
 
@@ -332,7 +438,10 @@ CS.registerRoom({
         ],
       },
       questions: [
-        { q: 'Welk percentagebereik hoort bij de term "waarschijnlijk" op de yardstick?', answer: ['55-75', '55–75', '55 tot 75', '55-75%'], hint: 'Kijk in de tabel met standaardbanden.', explain: 'In deze yardstick staat "waarschijnlijk" voor ongeveer 55–75%.' },
+        { q: 'Een collega schrijft "reële kans" en bedoelt daarmee 65%. Hoeveel procentpunt zit zijn getal boven de bovengrens van de band die bij zijn woord hoort?', answer: ['15', '15 procentpunt'],
+          hints: ['Zoek in het lab of de tabel de band van "reële kans".', 'De bovengrens van die band is 50%.', 'Trek 50 af van 65.'],
+          wrong: { '25': 'Je rekent vanaf de ondergrens (40%). Gevraagd is het verschil met de bovengrens.', '/waarschijnlijk/i': 'Dat is het woord dat hij had moeten gebruiken. Gevraagd is hoeveel procentpunt hij ernaast zit.' },
+          explain: 'De band van "reële kans" loopt van 40 tot 50%. Bij 65% hoort "waarschijnlijk" (55 tot 75%). De lezer denkt dus aan een kans die minstens 15 procentpunt lager ligt dan de schrijver bedoelt.' },
         { q: 'Waarom zitten er gaten tussen de banden van de yardstick?', options: ['Om schijnprecisie te voorkomen — een oordeel is niet op de procent nauwkeurig', 'Omdat sommige percentages verboden zijn', 'Om ruimte te laten voor reclame', 'Dat is een drukfout'], answer: 0, explain: 'De gaten laten zien dat je een inschatting geeft, geen meting.' },
         { q: 'Je leunt op één wankele bron, maar vindt de bewering toch heel waarschijnlijk. Wat geef je apart aan?', options: ['Een laag betrouwbaarheidsniveau', 'Een hoger percentage', 'Niets, dat hoeft niet', 'Een andere yardstick'], answer: 0, explain: 'Waarschijnlijkheid en betrouwbaarheid staan los: hoge waarschijnlijkheid kan samengaan met een laag betrouwbaarheidsniveau.' },
         { q: 'Wat drukt het betrouwbaarheidsniveau (confidence) uit?', options: ['Hoe stevig je oordeel is, op basis van bron-kwaliteit, aantal en aannames', 'De kans dat de bewering waar is', 'De snelheid van de aanval', 'Het aantal slachtoffers'], answer: 0, explain: 'Confidence gaat over de stevigheid van je oordeel, niet over de kans zelf.' },
@@ -397,15 +506,20 @@ CS.registerRoom({
         ],
       },
       questions: [
-        { q: 'Welke letter tel je in ACH om de zwakste hypothesen weg te strepen?', answer: ['I', 'i', 'inconsistent', 'inconsistenties'], hint: 'Je weerlegt, je bevestigt niet.', explain: 'Je telt de inconsistenties (I). De hypothese met de minste I\'s blijft het sterkst overeind.' },
+        { q: 'Welke letter tel je in ACH om de zwakste hypothesen weg te strepen?', answer: ['I', 'i', 'inconsistent', 'inconsistenties'], hints: ['Je weerlegt, je bevestigt niet.', 'Het lab telt deze letter onder elke kolom.', 'De eerste letter van "inconsistent".'], explain: 'Je telt de inconsistenties (I). De hypothese met de minste I\'s blijft het sterkst overeind.' },
         { q: 'Welke hypothese houdt in de oefening de minste inconsistenties over en wint dus?', options: ['Statelijke actor (spionage)', 'Financieel gemotiveerde ransomwaregroep', 'Hacktivistisch collectief', 'Ze eindigen gelijk'], answer: 1, explain: 'Losgeldportaal, RaaS, brede/opportunistische doelwitten en dubbele afpersing zijn allemaal consistent met een financieel gemotiveerde groep; die houdt nul I\'s over.' },
-        { q: '"De aanval begon met phishing" is consistent met alle drie de hypothesen. Hoe heet zulk bewijs?', options: ['Niet-diagnostisch', 'Doorslaggevend', 'Een false flag', 'Een indicator'], answer: 0, explain: 'Bewijs dat bij alle hypothesen past, helpt je niet kiezen: het is niet-diagnostisch.' },
+        { q: 'Vul de matrix in en vergelijk met het expertoordeel. Hoeveel inconsistenties houdt de hypothese "statelijke actor (spionage)" over?', answer: ['3'],
+          hints: ['Tel alleen de I\'s in de eerste kolom.', 'Vraag per bewijsstuk: zou een spionageactor dit doen? Losgeld eisen, gehuurde ransomware gebruiken, willekeurige sectoren raken?', 'De eerste drie bewijsstukken spreken spionage tegen; het vierde is neutraal, het vijfde consistent.'],
+          wrong: { '4': 'Dubbele afpersing is voor deze hypothese neutraal, niet inconsistent: een statelijke actor kan data stelen, al past de leksite er niet goed bij.', '0': 'Dat is het aantal voor de ransomwaregroep. Kijk naar de eerste kolom.' },
+          explain: 'Drie: de losgeldbrief, de gehuurde RaaS en de willekeurige sectoren passen niet bij spionage. Het spearphishing-bewijs is bij alle hypothesen consistent en dus niet-diagnostisch.' },
         { q: 'Wat controleer je met een gevoeligheidscheck?', options: ['Of je conclusie omvalt als één sleutelbewijs vals of misleidend blijkt', 'Hoeveel C\'s een hypothese heeft', 'Hoe snel je rapport af is', 'Welke kleur de matrix heeft'], answer: 0, explain: 'Je toetst hoe afhankelijk je oordeel is van een enkel bewijsstuk (bijvoorbeeld een bewuste false flag).' },
       ],
     },
 
     {
       title: 'Taak 7 — Denkfouten en hoe je ze bestrijdt',
+      tryFirst: true,
+      intro: '<p>Bij het fictieve Drukkerij Holtkamp is ingebroken en het team zit aan tafel. In het lab staan zes uitspraken uit dat overleg (U1 tot en met U6). In elke uitspraak neemt iemand een sluiproute in zijn denken. Zoek uit welke. Onderaan staat de bewijslijst van het team; die heb je nodig voor de laatste vraag.</p>',
       content: `
         <p>De gevaarlijkste fout in analyse zit niet in de data, maar in je eigen hoofd. Je brein neemt voortdurend
         sluiproutes (biases). Ze maken je snel, maar ook vatbaar voor systematische vergissingen. Wie ze kent, kan
@@ -450,11 +564,128 @@ CS.registerRoom({
           en iemand laten tegenspreken.
         </div>
       `,
+      lab: {
+        type: 'osintpuzzle',
+        title: 'overleg over de inbraak bij Holtkamp',
+        scenario: 'Zes uitspraken uit het teamoverleg en daaronder de hypothesen en de bewijslijst van het team (alles fictief). Achter elk bewijsstuk staat de Admiralty-score van de bron en welke hypothesen het tegenspreekt.',
+        records: [
+          { title: 'U1', lines: ['"Het is dezelfde loader als in de zaak van vorige maand. Dus het is dezelfde groep."'] },
+          { title: 'U2', lines: ['"Een professionele groep slaat nooit op vrijdagmiddag toe. Dat zou ik ook niet doen, dan is iedereen nog op kantoor."'] },
+          { title: 'U3', lines: ['"Sinds die grote ransomwarezaak in het nieuws was, zie ik in elke storing ransomware."'] },
+          { title: 'U4', lines: ['"De teamleider zei ransomware, en niemand aan tafel had daar nog iets op aan te merken."'] },
+          { title: 'U5', lines: ['"De eerste schatting was vijftig getroffen systemen. Laten we daar maar van blijven uitgaan."'] },
+          { title: 'U6', lines: ['"Ik heb drie logs gevonden die bij ransomware passen. De rest heb ik niet meer bekeken."'] },
+          { title: 'Hypothesen', lines: ['H1: externe ransomware-affiliate', 'H2: ontevreden oud-medewerker', 'H3: gecompromitteerde leverancier'] },
+          { title: 'Bewijslijst', lines: [
+            'B1 [A1] Eigen EDR en bestandsserver: geen versleuteling en geen losgeldbrief. Spreekt tegen: H1.',
+            'B2 [B2] De leverancier meldt dat haar beheeraccount twee dagen eerder is buitgemaakt. Spreekt tegen: H2.',
+            'B3 [F6] Anoniem forumbericht: "Bij Holtkamp heeft een oud-beheerder wraak genomen." Spreekt tegen: H1 en H3.',
+            'B4 [F4] Anonieme e-mail: "De leverancier heeft hier niets mee te maken." Spreekt tegen: H3.',
+            'B5 [A2] Eigen VPN-log: de aanmelding kwam met het leveranciersaccount, vanaf het vaste IP-adres van de leverancier. Spreekt tegen: H1 en H2.',
+          ] },
+        ],
+      },
       questions: [
-        { q: 'Twee aanvallen gebruiken dezelfde gehuurde RaaS, en je concludeert meteen "zelfde dader". Welke denkfout is dit?', options: ['"Tool = actor"', 'Anchoring', 'Availability bias', 'Groupthink'], answer: 0, explain: 'Gedeeld gereedschap is geen gedeelde identiteit; RaaS wordt door veel verschillende affiliates gebruikt.' },
-        { q: 'Hoe heet de denkfout waarbij je aanneemt dat de tegenstander denkt en handelt zoals jij zou doen?', answer: ['mirror imaging', 'mirrorimaging', 'spiegelen'], hint: 'Je spiegelt je eigen logica op de ander.', explain: 'Mirror imaging: "dat zou ik nooit zo doen" is geen bewijs dat de tegenstander het ook niet doet.' },
+        { q: 'Welke uitspraak (code) is de denkfout "tool = actor"?', answer: ['U1'],
+          hints: ['Zoek de uitspraak waarin gereedschap wordt gebruikt om een dader aan te wijzen.', 'Een loader wordt als dienst verhuurd aan veel verschillende daders.', 'De uitspraak over de zaak van vorige maand.'],
+          wrong: { 'U6': 'U6 zoekt alleen bewijs dat het eerste idee bevestigt. Dat is confirmation bias.', 'U3': 'U3 ziet overal wat pas in het nieuws was. Dat is availability bias.' },
+          explain: 'U1: dezelfde loader betekent niet dezelfde groep. Gedeeld gereedschap is een aanwijzing, geen bewijs van identiteit.' },
+        { q: 'Welke uitspraak (code) is mirror imaging?', answer: ['U2'],
+          hints: ['Zoek de uitspraak waarin iemand zijn eigen logica aan de tegenstander toeschrijft.', 'Let op de woorden "dat zou ik ook niet doen".', 'De uitspraak over vrijdagmiddag.'],
+          wrong: { 'U5': 'U5 blijft hangen aan het eerste getal. Dat is anchoring.', 'U4': 'U4 beschrijft een team waarin niemand twijfel uitspreekt. Dat is groupthink.' },
+          explain: 'U2: "dat zou ik nooit zo doen" zegt iets over de spreker, niet over de dader.' },
         { q: 'Welke tegenmaatregel laat je je voorstellen dat je conclusie over een half jaar fout blijkt, om vooraf de zwakke plekken te vinden?', options: ['Pre-mortem', 'Anchoring', 'Confirmation bias', 'Mirror imaging'], answer: 0, explain: 'Bij een pre-mortem reconstrueer je vooraf hoe het mis kon gaan, zodat je de risico\'s op tijd ziet.' },
-        { q: 'Je wijst expres iemand aan die het tegendeel van de teamconclusie moet verdedigen. Hoe heet die rol?', answer: ['devil\'s advocate', 'devils advocate', 'advocaat van de duivel'], hint: 'Advocaat van de duivel.', explain: 'De devil\'s advocate dwingt het team om de sterkste tegenargumenten serieus te horen en bestrijdt groupthink.' },
+        { q: 'Je wijst expres iemand aan die het tegendeel van de teamconclusie moet verdedigen. Hoe heet die rol?', answer: ['devil\'s advocate', 'devils advocate', 'advocaat van de duivel'],
+          hints: ['Het is een van de drie tegenmaatregelen uit de uitleg.', 'Deze rol helpt tegen de denkfout uit U4.', 'In het Nederlands: advocaat van de duivel.'],
+          explain: 'De devil\'s advocate dwingt het team om de sterkste tegenargumenten serieus te horen en bestrijdt groupthink.' },
+        { q: 'Boss: het team telde in de bewijslijst de inconsistenties per hypothese en kwam uit op een gelijkspel tussen twee hypothesen. Weeg nu eerst de bronnen zoals in taak 4 en laat bewijs van een bron die je niet kunt beoordelen buiten de telling. Welke hypothese (code) kun je daarna als enige niet wegstrepen?', boss: true, answer: ['H3', 'h 3', 'hypothese 3', 'gecompromitteerde leverancier'],
+          hints: ['Tel eerst zoals het team deed: per hypothese het aantal bewijsstukken dat haar tegenspreekt.', 'Kijk daarna naar de letter in elke Admiralty-score. Welke letter betekent "betrouwbaarheid niet te beoordelen"?', 'Schrap B3 en B4 en tel opnieuw. Eén hypothese houdt nul inconsistenties over.'],
+          wrong: { 'H1': 'H1 wordt tegengesproken door je twee beste eigen waarnemingen: geen versleuteling, en een aanmelding vanaf het vaste adres van de leverancier.', 'H2': 'H2 houdt ook na het schrappen twee inconsistenties over (B2 en B5).', '/h2 en h3|h3 en h2/i': 'Dat is het gelijkspel van het team, met de anonieme bronnen meegeteld. Weeg eerst de bronnen.' },
+          explain: 'Met alle bewijs: H1 drie, H2 twee, H3 twee inconsistenties. B3 en B4 komen van anonieme bronnen (F). Zonder die twee: H1 twee, H2 twee, H3 nul. De twee stukken die H3 tegenspraken, waren precies de stukken die je niet kunt wegen.' },
+      ],
+    },
+
+    {
+      title: 'Taak 8: Verdieping: waar de methoden knellen',
+      kind: 'verdieping',
+      optional: true,
+      content: `
+        <p>De cyclus, de Admiralty Code, de yardstick en ACH zijn hulpmiddelen. Ze maken je redenering zichtbaar en
+        controleerbaar. Ze garanderen geen goed oordeel. Hieronder staat waar ze in de praktijk wringen.</p>
+
+        <h3>De cyclus is geen lopende band</h3>
+        <p>In het echt lopen de stappen door elkaar. Je ontdekt tijdens het analyseren dat je vraag verkeerd was, of
+        je moet al iets verspreiden terwijl je nog verzamelt. Arthur Hulnick beschreef dat in 2006 in het artikel
+        <em>What's Wrong with the Intelligence Cycle</em>. Gebruik de cyclus als controlelijst (heb ik een vraag, heb
+        ik feedback gekregen?) en niet als verplichte volgorde.</p>
+
+        <h3>Niet elke yardstick is dezelfde</h3>
+        <p>De banden in deze room zijn die van de Britse Probability Yardstick (PHIA), met gaten ertussen. De
+        Amerikaanse standaard ICD 203 (2015) gebruikt zeven termen die op elkaar aansluiten, waarbij "likely" loopt
+        van 55 tot 80% en "very likely" van 80 tot 95%. Hetzelfde woord betekent dus niet overal hetzelfde. Zet in je
+        product welke schaal je gebruikt, zeker als je met buitenlandse partners deelt.</p>
+
+        <h3>Admiralty: wat "bevestigd" echt vraagt</h3>
+        <p>Een 1 krijg je alleen bij <em>onafhankelijke</em> bevestiging. Drie rapporten die allemaal dezelfde
+        oorspronkelijke melding overschrijven, zijn samen één bron. Dat heet circular reporting en het komt bij open
+        bronnen veel voor. Verder is F geen slecht cijfer maar een eerlijk "weet ik niet"; behandel het ook zo.</p>
+
+        <h3>ACH: nuttig, niet magisch</h3>
+        <p>Heuer beschreef ACH in <em>Psychology of Intelligence Analysis</em> (1999). De uitkomst hangt af van wat
+        je erin stopt: een hypothese die je niet opschrijft, kan niet winnen. Alle I's even zwaar tellen is een
+        vereenvoudiging, want één hard feit weegt zwaarder dan drie vage aanwijzingen. Experimenteel onderzoek, onder
+        meer van Dhami, Belton en Mandel (2019), vond geen duidelijk bewijs dat ACH oordelen nauwkeuriger maakt. De
+        waarde zit vooral in het expliciet maken: een collega kan je matrix nalopen en zien waar hij het oneens is.</p>
+
+        <h3>Veelgemaakte fouten</h3>
+        <ul>
+          <li>Verzamelen zonder vraag, en achteraf een vraag bij de data zoeken.</li>
+          <li>De Admiralty-score één keer invullen en nooit bijwerken als er bevestiging komt.</li>
+          <li>Waarschijnlijkheid verhogen omdat de gevolgen ernstig zijn. Ernst en kans zijn twee verschillende assen.</li>
+          <li>ACH invullen nadat de conclusie al vaststaat, als versiering.</li>
+        </ul>
+      `,
+      questions: [
+        { q: 'In ICD 203 loopt "likely" van 55 tot 80%. In de yardstick uit taak 5 loopt "waarschijnlijk" van 55 tot 75%. Hoeveel procentpunt breder is de Amerikaanse band? (cijfer)', answer: ['5'],
+          hints: ['Bereken van elke band de breedte.', 'De ene band is 25 procentpunt breed, de andere 20.', '25 min 20.'],
+          explain: 'Vijf procentpunt. Een kans van 78% is in de ene schaal "likely" en valt in de andere in een gat. Vermeld daarom je schaal.' },
+        { q: 'Drie nieuwssites melden dezelfde inbraak. Alle drie citeren ze hetzelfde bericht van één onderzoeker. Hoeveel onafhankelijke bronnen heb je voor de Admiralty-score? (cijfer)', answer: ['1'],
+          hints: ['Vraag je af waar elke site zijn informatie vandaan heeft.', 'Overschrijven is geen bevestigen.', 'Alle drie leiden terug naar dezelfde oorsprong.'],
+          wrong: { '3': 'Drie publicaties, maar één oorsprong. Dit is circular reporting.' },
+          explain: 'Eén. De claim is dus niet bevestigd en krijgt geen 1, hoe vaak hij ook is herhaald.' },
+        { q: 'Een analist vult een ACH-matrix in met twee hypothesen en concludeert dat de tweede wint. Een collega bedenkt een derde verklaring die niemand had opgeschreven. Wat betekent dat voor de uitkomst?', options: ['De matrix moet opnieuw: een hypothese die er niet in staat, kon niet winnen', 'Niets: de tweede hypothese had de minste inconsistenties en blijft dus staan', 'De derde hypothese wint, omdat ze nog geen inconsistenties heeft', 'ACH is hiermee ongeldig en moet worden vervangen door een pre-mortem'], answer: 0,
+          wrong: { 1: 'De minste inconsistenties binnen een onvolledige set zegt weinig. De echte verklaring stond er misschien niet bij.', 2: 'Nul inconsistenties omdat er nog niets is getoetst, is geen steun.', 3: 'De methode is niet ongeldig; de invoer was onvolledig. Een pre-mortem helpt juist om zulke gaten te vinden, naast ACH.' },
+          explain: 'De uitkomst van ACH is zo goed als de lijst met hypothesen. Voeg de derde toe en toets al het bewijs opnieuw.' },
+      ],
+    },
+
+    {
+      title: 'Taak 9: Zo komt dit voor op een examen',
+      kind: 'examen',
+      optional: true,
+      content: `
+        <p>Examens over analysemethoden toetsen vooral of je twee dingen uit elkaar houdt die op elkaar lijken: bron
+        en informatie, kans en zekerheid, steun en weerlegging. De afleiders zijn antwoorden die je krijgt als je die
+        twee door elkaar haalt. Lees de casus, benoem voor jezelf beide assen, en kies dan pas.</p>
+        <p>De vier vragen hieronder zijn zelf geschreven in die stijl. Alle organisaties en zaken zijn fictief.</p>
+      `,
+      questions: [
+        { q: 'Een informant levert al jaren informatie die bijna altijd klopt. Nu meldt hij iets dat door geen enkele andere bron wordt gesteund en dat technisch onwaarschijnlijk is. Welke Admiralty-score past het best?',
+          options: ['B2', 'B5', 'E5', 'F6'], answer: 1,
+          wrong: { 0: 'Hier laat je de goede naam van de bron doorwerken in het cijfer. De claim zelf is onwaarschijnlijk.', 2: 'Hier laat je de vreemde claim doorwerken in de letter. Het trackrecord van de bron is niet veranderd.', 3: 'Je kunt zowel de bron (lang trackrecord) als de claim (onwaarschijnlijk) wel beoordelen.' },
+          explain: 'Bron en informatie apart: meestal betrouwbaar (B), claim onwaarschijnlijk (5).' },
+        { q: 'Vier onafhankelijke bronnen van goede kwaliteit wijzen er allemaal op dat de kans op een aanval deze maand ongeveer even groot is als de kans dat hij uitblijft. Hoe formuleer je dat?',
+          options: ['Waarschijnlijk; betrouwbaarheidsniveau hoog', 'Reële kans; betrouwbaarheidsniveau laag, want de uitkomst is onzeker', 'Reële kans; betrouwbaarheidsniveau hoog', 'Zeer waarschijnlijk; betrouwbaarheidsniveau midden'], answer: 2,
+          wrong: { 0: 'Goede bronnen maken de kans niet hoger. Ze maken je oordeel over die kans steviger.', 1: 'Een onzekere uitkomst is iets anders dan een wankel oordeel. Je bronnen zijn goed en eensgezind.', 3: 'Niets in de casus wijst op een kans van 80 tot 90%.' },
+          explain: 'Ongeveer fifty-fifty is "reële kans" (40 tot 50%). Veel goede, onafhankelijke bronnen geven een hoog betrouwbaarheidsniveau.' },
+        { q: 'Een ACH-matrix met vijf bewijsstukken geeft: hypothese 1 vier keer C en één keer I; hypothese 2 twee keer C en drie keer N; hypothese 3 drie keer C en twee keer I. Welke hypothese heeft de voorkeur?',
+          options: ['Hypothese 1, want die heeft de meeste steun', 'Hypothese 2, want die heeft geen inconsistenties', 'Hypothese 3, want die heeft meer steun dan hypothese 2', 'Geen: hypothese 2 heeft te weinig steun om te kiezen'], answer: 1,
+          wrong: { 0: 'In ACH tel je de I\'s. Eén tegenbewijs weegt zwaarder dan vier keer "past ook".', 2: 'Hypothese 3 heeft twee inconsistenties en valt als eerste af.', 3: 'ACH kiest de hypothese die je het minst kunt weerleggen. Weinig C\'s is een reden voor een lager betrouwbaarheidsniveau, niet om niet te kiezen.' },
+          explain: 'De hypothese met de minste inconsistenties wint. Zeg er wel bij dat ze op weinig positief bewijs rust.' },
+        { q: 'Een analist verzamelt een week lang alles wat hij over ransomware kan vinden en stuurt het SOC een rapport van veertig pagina\'s. Het SOC reageert: "Wij wilden alleen weten of onze VPN-gateway wordt aangevallen." In welke stap ging het mis?',
+          options: ['Verzamelen: er zijn te weinig bronnen geraadpleegd', 'Verwerken: de data is niet goed geordend', 'Verspreiden: het rapport is in de verkeerde vorm verstuurd', 'Richten: de vraag van de ontvanger is vooraf niet vastgesteld'], answer: 3,
+          wrong: { 0: 'Er is juist te veel verzameld, zonder vraag die bepaalt wat relevant is.', 1: 'Ook een perfect geordend rapport had de vraag van het SOC niet beantwoord.', 2: 'De vorm is een gevolg. Ook als IOC-lijst had dit rapport de vraag over de VPN-gateway niet beantwoord.' },
+          explain: 'Zonder requirement verzamel je willekeurig. De reactie van het SOC is de feedback waarmee de volgende ronde wel goed gericht kan worden.' },
       ],
     },
   ],

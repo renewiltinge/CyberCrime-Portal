@@ -289,7 +289,7 @@ Op de afdeling Financiën staan ook persoonsgegevens (salaris- en declaratiebest
           wrong: { '08:14': 'Dat is het begin van het verhaal. In een chronologisch verslag staat het bovenaan, maar het is niet de kern.', '09:02': 'Een verbinding met een onbekend IP is verdacht, maar zegt nog niets over diefstal.', '13:05': 'De koppeling met een eerdere zaak is context uit een nog niet geverifieerde bron. Het is niet je sterkste eigen waarneming.' },
           why: 'Wie chronologisch schrijft, begraaft zijn sterkste bewijs halverwege de pagina. Een lezer die na drie regels stopt, heeft het dan gemist.',
           explain: 'Om 12:40 bevestigt het EDR dat rclone is uitgevoerd op WS-FIN-12. Dat is een eigen waarneming van een exfiltratiehulpmiddel en draagt de conclusie.' },
-        { q: 'Je eerste aanbeveling is: isoleer de getroffen werkplekken. Hoeveel werkplekken zijn dat volgens het verslag in totaal?', answer: ['3', 'drie'],
+        { q: 'Je eerste aanbeveling is: isoleer de getroffen werkplekken. Hoeveel werkplekken zijn dat volgens het verslag in totaal? (cijfer)', answer: ['3'],
           hints: ['Eén werkplek wordt bij naam genoemd. Lees verder of er meer zijn.', 'Kijk naar de regel van 11:15.', 'WS-FIN-12 plus twee andere.'],
           wrong: { '1': 'Om 11:15 worden op twee andere werkplekken dezelfde verbindingen gezien.', '2': 'Tel WS-FIN-12 zelf ook mee.' },
           explain: 'WS-FIN-12 en de twee werkplekken van 11:15. Een advies is pas uitvoerbaar als het aantal en de eigenaar erin staan.' },
@@ -586,11 +586,124 @@ Conclusie: Noordkade is doelwit van een gerichte nepfactuurcampagne; er is nog g
           ervaring met <strong>STAR</strong>.</li>
         </ul>
       `,
+      lab: {
+        type: 'ordering',
+        title: 'memo voor de directie',
+        prompt: 'Na het incident bij Gemeente Veldewoud schrijf je een kort memo voor de directie over wat je ervan hebt geleerd. De acht alinea\'s liggen door elkaar. Zet ze in de volgorde waarin dit memo de deur uit moet.',
+        items: [
+          { id: 'a', label: 'Het SOC kan een aanval als die van 6 oktober nu waarschijnlijk binnen een uur stoppen in plaats van binnen een dag. Betrouwbaarheidsniveau: midden.' },
+          { id: 'b', label: 'Advies: maak het nieuwe isolatiestappenplan vast beleid. Eigenaar: CISO. Termijn: voor 1 januari.' },
+          { id: 'c', label: 'Wat we nog niet weten: het stappenplan is één keer in een oefening getest, nog niet bij een echt incident.' },
+          { id: 'd', label: 'Op 6 oktober maakten drie werkplekken van Financiën verbinding met een onbekend extern adres, en het was onduidelijk of er data weg was.' },
+          { id: 'e', label: 'Aan mij was de vraag om als analist binnen een dag vast te stellen of er gegevens waren weggesluisd, voor de datalekmelding.' },
+          { id: 'f', label: 'Ik reconstrueerde de tijdlijn uit de EDR-logs en schreef op basis daarvan het isolatiestappenplan.' },
+          { id: 'g', label: 'De drie werkplekken waren dezelfde middag geïsoleerd en de melding ging binnen 72 uur onderbouwd de deur uit.' },
+          { id: 'h', label: 'Voor het SOC: de IP-adressen, bestandshashes en toolnamen uit deze zaak.' },
+        ],
+        correct: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'],
+        flag: 'NM{kern_eerst_bewijs_daarna}',
+        explain: 'Oordeel, advies en onzekerheid bovenaan. Daaronder de eigen ervaring als onderbouwing, in de volgorde situatie, taak, actie, resultaat. De technische details staan onderaan voor de uitvoerders.',
+      },
       questions: [
-        { q: 'Waar staat de A in de STAR-methode voor?', answer: ['Actie', 'actie', 'Action'], hint: 'Wat deed jíj concreet?', explain: 'A = Actie: wat je zelf concreet deed, bij voorkeur in de ik-vorm.' },
+        { q: 'Zet het memo in het lab in de juiste volgorde. Op welke positie (1 tot en met 8) staat de alinea die de Actie uit STAR is?', answer: ['6', 'zes'],
+          hints: ['Zoek eerst de vier alinea\'s die samen één ervaring vertellen.', 'De Actie is de alinea in de ik-vorm die zegt wat de schrijver zelf deed.', 'De ervaring komt na oordeel, advies en onzekerheid. De Actie is de derde van de vier.'],
+          wrong: { '3': 'Dan heb je de ervaring bovenaan gezet. Een directielid dat na drie regels stopt, mist dan het oordeel en het advies.', '5': 'Op positie 5 staat de Taak: wat er aan de schrijver gevraagd werd. De Actie is wat hij daarna deed.' },
+          explain: 'Positie 6: "Ik reconstrueerde de tijdlijn ..." Dat is de Actie, in de ik-vorm, na Situatie (4) en Taak (5) en voor Resultaat (7).' },
         { q: 'Welk onderdeel van STAR vergeten mensen het vaakst, terwijl het laat zien of het werkte?', options: ['Resultaat', 'Situatie', 'Taak', 'Actie'], answer: 0, explain: 'Zonder Resultaat (liefst meetbaar) weet de luisteraar niet wat je actie opleverde.' },
         { q: 'Waarom gebruik je bij de Actie bewust de ik-vorm in plaats van "we"?', options: ['De luisteraar wil jóúw aandeel horen, niet dat van het hele team', 'Omdat "we" grammaticaal fout is', 'Om het team te kleineren', 'Dat hoeft niet, "we" mag altijd'], answer: 0, explain: 'STAR draait om jouw bijdrage; de ik-vorm maakt duidelijk wat jij deed binnen het teamwerk.' },
         { q: 'Ik kan voor het juiste niveau een product kiezen, een BLUF-advies schrijven met eigenaar en onzekerheid, en mijn eigen ervaring met STAR vertellen.', noAnswer: true },
+        { q: 'Boss: het memo in het lab is tegelijk een BLUF-product, een STAR-verhaal en een product in twee lagen. Zet alle acht alinea\'s goed. Welke vlag verschijnt?', boss: true, answer: ['NM{kern_eerst_bewijs_daarna}'],
+          hints: ['Bedenk wat een directielid moet weten als hij na drie alinea\'s stopt met lezen.', 'Het voorbehoud staat in deze room steeds direct na de aanbevelingen, vóór de onderbouwing. Kijk naar het modelantwoord van taak 3.', 'Volgorde: oordeel, advies, onzekerheid, dan de vier STAR-alinea\'s, en als laatste de alinea voor het SOC.'],
+          wrong: { '/^nm\\{conclusie/i': 'Dat was een vlag uit een eerdere versie van deze room. De vlag verschijnt in het lab zodra alle acht alinea\'s goed staan.' },
+          explain: 'Je combineert drie technieken: BLUF bepaalt de eerste drie alinea\'s, STAR de volgorde van de onderbouwing, en de twee lagen uit taak 4 zetten de techniek onderaan.' },
+      ],
+    },
+
+    {
+      title: 'Taak 8: Verdieping: waar BLUF en schattingstaal vandaan komen',
+      kind: 'verdieping',
+      optional: true,
+      content: `
+        <p>De technieken uit deze room zijn ontstaan omdat het zonder herhaaldelijk misging. Wie de achtergrond kent,
+        snapt ook waar ze ophouden te werken.</p>
+
+        <h3>Schattingstaal: het probleem van Sherman Kent</h3>
+        <p>In 1964 beschreef CIA-analist Sherman Kent in het essay <em>Words of Estimative Probability</em> hoe een
+        inschatting over een mogelijke Sovjet-aanval op Joegoslavië (1951) de woorden "serious possibility" gebruikte.
+        Toen Kent collega's vroeg welke kans zij daarbij dachten, liepen de antwoorden uiteen van 20% tot 80%. De
+        lezers hadden dus elk een ander rapport gelezen. Daar komt de vaste waarschijnlijkheidstaal vandaan die je in
+        de intelligencecyclus-room leert.</p>
+
+        <h3>BLUF: van voorschrift naar gewoonte</h3>
+        <p>BLUF komt uit de militaire correspondentie, waar een lezer onder tijdsdruk in de eerste regels moet zien
+        wat er van hem wordt gevraagd. In intelligenceproducten heet het bovenste blok vaak <em>key judgements</em>:
+        een paar genummerde oordelen, elk met een waarschijnlijkheid en een betrouwbaarheidsniveau.</p>
+
+        <h3>Randgevallen</h3>
+        <ul>
+          <li><strong>De kern is "we weten het niet".</strong> Dat is ook een bottom line. Schrijf wat je wel weet,
+          wat ontbreekt, en wanneer je meer weet. Een verzonnen stelligheid is erger dan een eerlijk gat.</li>
+          <li><strong>Het oordeel verandert.</strong> Breng een nieuwe versie uit met datum en met de zin "dit vervangt
+          de versie van ...". Stilzwijgend aanpassen kost je het vertrouwen van de lezer.</li>
+          <li><strong>Het product mag niet overal heen.</strong> Zet er een verspreidingslabel op. Gangbaar is het
+          Traffic Light Protocol, versie 2.0 (FIRST, 2022): TLP:RED (alleen de ontvangers zelf), TLP:AMBER+STRICT
+          (alleen binnen de eigen organisatie), TLP:AMBER (eigen organisatie en haar klanten, voor wie het moet
+          weten), TLP:GREEN (binnen de gemeenschap) en TLP:CLEAR (vrij te delen).</li>
+          <li><strong>Analist en beslisser.</strong> Jij adviseert, de opdrachtgever beslist. Geef daarom liever twee
+          opties met voor- en nadelen dan één dwingend advies buiten je mandaat.</li>
+        </ul>
+
+        <h3>Veelgemaakte fouten in de praktijk</h3>
+        <ul>
+          <li>Een BLUF die het verhaal samenvat ("dit rapport beschrijft ...") in plaats van een oordeel te geven.</li>
+          <li>Waarschijnlijkheid en betrouwbaarheid in één woord proppen ("vrij zeker"). De lezer weet dan niet of
+          je de kans hoog vindt of je bronnen goed.</li>
+          <li>Adviezen aan "de organisatie". Dat is geen eigenaar.</li>
+          <li>Geen datum van de informatie. Een product zonder "informatie tot en met ..." veroudert ongemerkt.</li>
+        </ul>
+      `,
+      questions: [
+        { q: 'Kents collega\'s gaven voor dezelfde woorden schattingen van 20% tot 80%. Hoeveel procentpunt lagen de uitersten uit elkaar?', answer: ['60', '60%', '60 procentpunt'],
+          hints: ['Trek de laagste schatting af van de hoogste.', 'Het gaat om het verschil tussen 80 en 20.', 'Zes tientallen.'],
+          explain: '60 procentpunt. Met zo\'n spreiding kan een lezer bij "serious possibility" zowel "bijna niet" als "bijna zeker" denken.' },
+        { q: 'Je notitie mag alleen binnen je eigen organisatie blijven, dus ook niet naar klanten. Welk label uit TLP 2.0 zet je erop?', answer: ['TLP:AMBER+STRICT', 'AMBER+STRICT', 'tlp amber strict', 'amber strict', 'tlp:amber+strict'],
+          hints: ['Het is strenger dan het gewone oranje label.', 'TLP 2.0 heeft twee oranje varianten. Welke sluit klanten uit?', 'AMBER met een toevoeging.'],
+          wrong: { '/^(tlp:?\\s*)?amber$/i': 'Gewoon TLP:AMBER staat delen met klanten toe, voor wie het moet weten.', '/red/i': 'TLP:RED is nog strenger: alleen de individuele ontvangers, dus ook niet de rest van je organisatie.' },
+          explain: 'TLP:AMBER+STRICT beperkt het delen tot de eigen organisatie.' },
+        { q: 'Na twee dagen onderzoek kun je niet vaststellen of er data is gestolen. Wat zet je bovenaan je product?', options: ['Dat het nog niet vaststaat, wat je wel weet, wat ontbreekt en wanneer je meer weet', 'De meest waarschijnlijke uitkomst, stellig geformuleerd, zodat de lezer kan beslissen', 'De chronologie, zodat de lezer zelf een conclusie kan trekken', 'Niets; je wacht met publiceren tot je het zeker weet'], answer: 0,
+          wrong: { 1: 'Stelligheid die je niet kunt onderbouwen is een valse vertaling van je eigen analyse.', 2: 'Dan schuif je het analysewerk door naar de lezer. Dat is het tegenovergestelde van BLUF.', 3: 'De lezer moet nu beslissen, bijvoorbeeld over een datalekmelding. Zwijgen helpt hem niet.' },
+          explain: '"We weten het nog niet" is ook een bottom line, zolang je erbij zet wat wel vaststaat en wanneer er meer duidelijk is.' },
+      ],
+    },
+
+    {
+      title: 'Taak 9: Zo komt dit voor op een examen',
+      kind: 'examen',
+      optional: true,
+      content: `
+        <p>Examens over intelligenceproducten vragen zelden naar een definitie. Je krijgt een korte situatie en moet
+        kiezen welk product, welke formulering of welk advies het best past. De afleiders zijn meestal half goed: ze
+        kloppen voor een andere lezer of missen één onderdeel. Lees daarom eerst wie de lezer is en welke beslissing
+        hij moet nemen, en kijk dan pas naar de opties.</p>
+        <p>De vier vragen hieronder zijn zelf geschreven in die stijl. Alle organisaties en zaken zijn fictief.</p>
+      `,
+      questions: [
+        { q: 'Een analist heeft twee weken aan een ransomwarezaak bij een gemeente gewerkt. De burgemeester heeft morgen vijf minuten leestijd voor een persmoment. Welk product past het best?',
+          options: ['De volledige tijdlijn met alle IOC\'s, zodat niets ontbreekt', 'Een halve pagina met het oordeel in waarschijnlijkheidstaal, wat de gemeente nu doet en wat nog onzeker is', 'De technische bijlage met een korte inleiding in gewone taal', 'Een mondelinge toelichting zonder document, om lekken te voorkomen'], answer: 1,
+          wrong: { 0: 'Volledig, maar geschreven voor het SOC. De burgemeester haalt hier in vijf minuten geen boodschap uit.', 2: 'Een inleiding maakt van een operationeel product nog geen product voor een bestuurder. De kern staat dan nog steeds niet bovenaan.', 3: 'Zonder document is er niets om op terug te vallen en kan niemand het oordeel later controleren. Verspreiding beperk je met een label, niet door niets op te schrijven.' },
+          explain: 'Strategische lezer, weinig tijd, een publieke beslissing: een kort BLUF-product met oordeel, handeling en onzekerheid.' },
+        { q: 'Een analist baseert zich op één ongeverifieerd forumbericht en schrijft: "Het staat vast dat groep Zandloper achter de inbraak zit." Zij vindt de toeschrijving zelf goed mogelijk. Welke herschrijving is het best?',
+          options: ['"Het is vrijwel zeker dat groep Zandloper achter de inbraak zit."', '"Groep Zandloper zit achter de inbraak (bron: forum)."', '"Er is een reële kans dat groep Zandloper achter de inbraak zit. Betrouwbaarheidsniveau: laag, want dit berust op één ongeverifieerde bron."', '"Mogelijk speelt een groep een rol bij de inbraak."'], answer: 2,
+          wrong: { 0: 'Dit gebruikt wel de vaste woorden, maar "vrijwel zeker" is met één ongeverifieerde bron niet te verdedigen.', 1: 'Een bronvermelding maakt een aanname niet tot een feit. De zin blijft stellig.', 3: 'Dit is zo vaag dat de lezer er niets mee kan, en de naam die de analist wel heeft is weggelaten.' },
+          explain: 'Waarschijnlijkheid (reële kans) en betrouwbaarheid (laag) staan apart, en de lezer ziet waarop het oordeel rust.' },
+        { q: 'Na drie inbraken via hergebruikte wachtwoorden moet je één advies kiezen voor de beslisnotitie. Welke formulering is het sterkst?',
+          options: ['"De organisatie moet op korte termijn iets doen aan wachtwoordhergebruik, anders gaat het opnieuw mis."', '"Voer een wachtwoordmanager in voor alle medewerkers. Eigenaar: hoofd IT. Termijn: voor 1 april."', '"Voer een wachtwoordmanager in, want drie inbraken begonnen met een hergebruikt wachtwoord. Eigenaar: hoofd IT. Termijn: voor 1 april. Risico: lage acceptatie; plan een korte instructie. Niets doen laat deze route open."', '"Voer een wachtwoordmanager in, want drie inbraken begonnen met een hergebruikt wachtwoord. Dit is dringend. Risico: lage acceptatie."'], answer: 2,
+          wrong: { 0: 'Dit is een zorg, geen advies: geen concrete maatregel, geen eigenaar, geen termijn.', 1: 'Maatregel, eigenaar en termijn staan er, maar de beslisser weet niet waarom en wat het kost of oplevert.', 3: '"Dringend" is geen termijn en er is geen eigenaar. Dit advies blijft liggen.' },
+          explain: 'Alleen deze optie heeft alle vijf de bouwstenen: wat, waarom, wie, wanneer en risico\'s, inclusief de prijs van niets doen.' },
+        { q: 'Een teamleider ziet deze maand drie fraudezaken waarin dezelfde twee bankrekeningen terugkomen. Hij vraagt of het team ze als één onderzoek moet oppakken. Welk product vraagt hij?',
+          options: ['Een fenomeenanalyse van bankfraude, op strategisch niveau', 'Een subjectanalyse van elke rekeninghouder, op operationeel niveau', 'Een dreigingsbeeld van fraude voor het komende jaar', 'Een zaakoverstijgende analyse, op tactisch niveau'], answer: 3,
+          wrong: { 0: 'Een fenomeenanalyse beschrijft hoe bankfraude in het algemeen werkt. De teamleider vraagt naar deze drie zaken.', 1: 'Dat kan een vervolgstap zijn, maar beantwoordt de vraag niet of de zaken bij elkaar horen.', 2: 'Een dreigingsbeeld weegt dreigingen en trends af voor bestuurders. Hier gaat het om de aanpak van concrete zaken.' },
+          explain: 'Verband tussen losse zaken via een gedeeld kenmerk is zaakoverstijgend. De beslissing (samen oppakken of niet) is van een teamleider: tactisch.' },
       ],
     },
   ],

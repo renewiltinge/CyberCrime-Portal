@@ -79,6 +79,8 @@ CS.registerRoom({
   icon: '🩹',
   difficulty: 'Gemiddeld',
   minutes: 60,
+  level: 'Praktijk',
+  checked: '2026-11-12',
   summary: 'Van kwetsbaarheid tot patch: leer CVE, CWE en het EUVD lezen, scoor zelf kwetsbaarheden met CVSS, combineer ernst met EPSS en de KEV-catalogus en prioriteer patches als een echte beheerder.',
   objectives: [
     'Uitleggen wat een kwetsbaarheid, een exploit en een zero-day zijn',
@@ -91,6 +93,8 @@ CS.registerRoom({
   tasks: [
     {
       title: 'Taak 1 — Kwetsbaarheid, exploit en zero-day',
+      tryFirst: true,
+      intro: '<p>In het lab staat de levensloop van één lek in het fictieve planpakket PlanBord, van de dag dat de fout in de software kwam tot de dag dat een klant de patch installeerde. Zoek uit hoe lang aanvallers het lek konden misbruiken terwijl er nog geen patch bestond, en hoe lang de klant daarna nog kwetsbaar bleef.</p>',
       content: `
         <p>Stel je een kantoorpand voor met honderd ramen. Eén raam op de begane grond sluit niet goed: als je er
         hard genoeg tegen duwt, schuift het open. Dat slecht sluitende raam is een <strong>kwetsbaarheid</strong>
@@ -139,16 +143,43 @@ CS.registerRoom({
           Zonder toestemming binnendringen in een systeem is in Nederland strafbaar (computervredebreuk, art. 138ab Sr).
         </div>
       `,
+      lab: {
+        type: 'logs',
+        title: 'levensloop-planbord-lek.log',
+        lines: `2026-03-02 leverancier  PlanBord 3.4.0 uitgebracht met een nieuwe exportfunctie (hier zit de fout in)
+2026-03-30 klant        Veenstra Logistiek (fictief) installeert PlanBord 3.4.0
+2026-04-19 aanvaller    eerste misbruik van de exportfunctie bij een klant (achteraf vastgesteld uit logs)
+2026-04-24 aanvaller    misbruik bij Veenstra Logistiek: klantenbestand gedownload
+2026-04-27 onderzoeker  meldt het lek vertrouwelijk bij de leverancier
+2026-04-28 leverancier  bevestigt de melding en reserveert een CVE-ID
+2026-05-06 leverancier  PlanBord 3.4.2 uitgebracht: lek gedicht, beveiligingsadvies gepubliceerd
+2026-05-08 onderzoeker  publiceert een proof of concept
+2026-05-11 aanvaller    geautomatiseerd scannen naar kwetsbare PlanBord-servers begint
+2026-05-18 klant        Veenstra Logistiek installeert PlanBord 3.4.2`,
+      },
       questions: [
-        { q: 'Hoe heet een concrete methode of stuk code waarmee je een kwetsbaarheid daadwerkelijk misbruikt?', answer: ['exploit', 'een exploit'], hint: 'In de analogie: weten hoe hard en waar je tegen het raam moet duwen.', explain: 'Een exploit misbruikt de kwetsbaarheid echt; de kwetsbaarheid zelf is alleen de zwakke plek.' },
-        { q: 'Wat is een zero-day?', options: ['Een kwetsbaarheid die al bekend is bij aanvallers of misbruikt wordt terwijl er nog geen patch is', 'Een kwetsbaarheid die op dag nul na de release wordt gepatcht', 'Een kwetsbaarheid met een CVSS-score van 0.0'], answer: 0, explain: 'De leverancier heeft "nul dagen" gehad om het op te lossen: er is nog geen patch beschikbaar.' },
-        { q: 'Welke CVSS-score kreeg Log4Shell (CVE-2021-44228)?', answer: ['10.0', '10', '10,0'], hint: 'De hoogst mogelijke score.', explain: 'Log4Shell kreeg 10.0: op afstand, zonder account en zonder hulp van een gebruiker code uitvoeren, met impact buiten de bibliotheek zelf.' },
-        { q: 'In welke software zat Heartbleed (CVE-2014-0160)?', options: ['OpenSSL', 'Log4j', 'Windows Defender'], answer: 0, explain: 'Heartbleed zat in OpenSSL en liet servers stukjes werkgeheugen lekken.' },
+        { q: 'Hoeveel dagen was dit lek een zero-day: van het eerste misbruik tot de dag dat de patch uitkwam?', answer: ['17', '17 dagen'],
+          hints: ['Zoek in het log de regel met het eerste misbruik en de regel waarin het lek wordt gedicht.', 'Het loopt van 19 april tot 6 mei. April heeft 30 dagen.', '11 dagen in april plus 6 in mei.'],
+          wrong: { '9': 'Je rekent vanaf de melding door de onderzoeker. Het lek werd toen al acht dagen misbruikt.', '65': 'Je rekent vanaf de dag dat de fout in de software kwam. Een zero-day begint pas te tellen als aanvallers het lek kennen of misbruiken.' },
+          why: 'In die periode kan geen enkele klant patchen. Alleen mitigaties en detectie helpen dan. Daarom gaat taak 6 ook over wat je doet als patchen nog niet kan.',
+          explain: 'Van 19 april tot 6 mei is 17 dagen. Zolang was er misbruik zonder dat er een patch bestond.' },
+        { q: 'Wat is een zero-day?', options: ['Een kwetsbaarheid die al bekend is bij aanvallers of misbruikt wordt terwijl er nog geen patch is', 'Een kwetsbaarheid die op dag nul na de release wordt gepatcht', 'Een kwetsbaarheid met een CVSS-score van 0.0'], answer: 0,
+          wrong: { 1: 'De "nul dagen" slaan op de tijd die de leverancier heeft gehad om het lek te dichten, niet op het moment van patchen.', 2: 'De naam zegt niets over de ernst. Zero-days scoren vaak juist hoog.' },
+          explain: 'De leverancier heeft "nul dagen" gehad om het op te lossen: er is nog geen patch beschikbaar.' },
+        { q: 'Welke CVSS-score kreeg Log4Shell (CVE-2021-44228)?', answer: ['10.0', '10', '10,0'],
+          hints: ['Het staat bij de twee voorbeelden uit de echte wereld.', 'Het lek was op afstand te misbruiken, zonder account en zonder hulp van een gebruiker.', 'De hoogst mogelijke score.'],
+          explain: 'Log4Shell kreeg 10.0: op afstand, zonder account en zonder hulp van een gebruiker code uitvoeren, met impact buiten de bibliotheek zelf.' },
+        { q: 'Hoeveel dagen na het uitkomen van de patch bleef Veenstra Logistiek nog kwetsbaar?', answer: ['12', '12 dagen'],
+          hints: ['Zoek wanneer de patch uitkwam en wanneer deze klant hem installeerde.', 'Van 6 mei tot 18 mei.', '18 min 6.'],
+          wrong: { '10': 'Je rekent vanaf de publicatie van de proof of concept. De patch was er al twee dagen eerder.', '7': 'Je rekent vanaf het begin van het scannen. Gevraagd is de tijd sinds de patch.' },
+          explain: 'Twaalf dagen. In die periode verscheen een proof of concept en begon het geautomatiseerd scannen. Een lek is na de patch vaak gevaarlijker dan ervoor, omdat iedereen nu weet waar het zit.' },
       ],
     },
 
     {
       title: 'Taak 2 — CVE, CWE, NVD en het EUVD',
+      tryFirst: true,
+      intro: '<p>Een collega heeft tien regels uit beveiligingsadviezen overgetikt. Niet elk nummer is een geldig CVE-ID. Schrijf in het lab één patroon dat alleen de geldige CVE-ID\'s raakt, en tel daarna hoe vaak hetzelfde soort fout terugkomt.</p>',
       content: `
         <p>Als duizenden organisaties over hetzelfde lek praten, heb je een gemeenschappelijke naam nodig. Anders
         noemt de ene leverancier het "het Log4j-probleem", de ander "LOG-2021-17" en de derde "dat Java-lek". Daarvoor
@@ -204,14 +235,32 @@ CS.registerRoom({
       `,
       questions: [
         { q: 'Wat betekent "2021" in CVE-2021-44228?', options: ['Het jaar waarin het CVE-ID is toegekend of gereserveerd', 'Het aantal getroffen systemen', 'De ernst van de kwetsbaarheid'], answer: 0, explain: 'Het jaartal is het jaar van toekenning; het volgnummer zegt niets over de ernst.' },
-        { q: 'Welk CWE-nummer hoort bij SQL-injectie?', answer: ['CWE-89', 'cwe 89', '89'], hint: 'Kijk in de tabel.', explain: 'CWE-89 is "Improper Neutralization of Special Elements used in an SQL Command", oftewel SQL-injectie.' },
-        { q: 'Hoe heten organisaties die zelf CVE-ID\'s mogen uitdelen?', answer: ['CNA', "CNA's", 'cnas', 'cve numbering authority', 'cve numbering authorities'], hint: 'CVE Numbering ...', explain: 'CVE Numbering Authorities (CNA\'s) kennen ID\'s toe voor hun eigen producten of terrein.' },
-        { q: 'Welke Europese organisatie beheert het EUVD?', answer: ['ENISA'], hint: 'Het Europese agentschap voor cyberbeveiliging.', explain: 'ENISA beheert de European Vulnerability Database, die voortkomt uit NIS2.' },
+        { q: 'Schrijf in het lab een patroon dat alleen geldige CVE-ID\'s raakt. Hoeveel treffers krijg je?', answer: ['5'],
+          hints: ['Een geldig ID heeft het voorvoegsel CVE, een jaartal van vier cijfers en een volgnummer.', 'Het volgnummer heeft minstens vier cijfers en mag langer zijn. In een regex schrijf je "vier of meer" als {4,}.', 'Probeer CVE-\\d{4}-\\d{4,}'],
+          wrong: { '7': 'Je patroon laat ook een jaartal van twee cijfers of een volgnummer van drie cijfers door. Leg het aantal cijfers vast.', '4': 'Het volgnummer mag langer zijn dan vier cijfers. Het ID met zeven cijfers is ook geldig.', '10': 'Je telt alle regels. Vijf ervan hebben een fout in het voorvoegsel, het jaartal, het volgnummer of de streepjes.' },
+          why: 'Scanners, ticketsystemen en dreigingsfeeds koppelen alles aan het CVE-ID. Een ID dat niet precies klopt, wordt door geen enkel systeem teruggevonden.',
+          explain: 'Vijf regels hebben een geldig ID. De andere vijf vallen af op een te kort volgnummer, een jaartal van twee cijfers, het voorvoegsel CWE, een ontbrekend streepje of liggende streepjes.' },
+        { q: 'Hoe heten organisaties die zelf CVE-ID\'s mogen uitdelen?', answer: ['CNA', "CNA's", 'cnas', 'cve numbering authority', 'cve numbering authorities'],
+          hints: ['Het staat onder "Wie doet wat?".', 'Grote softwareleveranciers zijn het vaak zelf.', 'CVE Numbering ...'],
+          explain: 'CVE Numbering Authorities (CNA\'s) kennen ID\'s toe voor hun eigen producten of terrein.' },
+        { q: 'Kijk alleen naar de regels met een geldig CVE-ID. Hoeveel daarvan zijn SQL-injectie?', answer: ['3'],
+          hints: ['Zoek in de tabel van de uitleg welk CWE-nummer bij SQL-injectie hoort.', 'Tel CWE-89 alleen op regels waar je patroon een treffer geeft.', 'KoffieCMS, VoorraadPlus en LoonPortaal.'],
+          wrong: { '5': 'Je telt CWE-89 op alle tien de regels. Twee daarvan hebben geen geldig CVE-ID.', '4': 'Eén van de regels met CWE-89 heeft een volgnummer van drie cijfers en telt dus niet mee.' },
+          explain: 'Drie van de vijf geldige CVE\'s hebben CWE-89. Zie je dat in je eigen software, dan is dat een signaal om structureel prepared statements te gaan gebruiken.' },
       ],
+      lab: {
+        type: 'regex',
+        pattern: 'CVE-',
+        flags: 'g',
+        text: 'CVE-2099-0417     KoffieCMS      CWE-89\nCVE-2099-12345    BrouwMail      CWE-79\nCVE-2099-123      PlanBord       CWE-89\nCVE-99-10444      BonenKassa     CWE-22\nCWE-2099-0417     RoosterApp     CWE-89\nCVE-2099-1000001  VoorraadPlus   CWE-89\nCVE2099-0555      KassaLink      CWE-787\nCVE-2099-0907     LoonPortaal    CWE-89\nCVE-2099-4410     AgendaWeb      CWE-22\nCVE_2099_7781     TicketDesk     CWE-79',
+      },
     },
 
     {
       title: 'Taak 3 — CVSS v3.1: de acht basismetrieken',
+      tryFirst: true,
+      intro: '<p>In de calculator staat de vector van Heartbleed (7.5). Verander steeds één metriek en kijk wat er met de score gebeurt. Zo ontdek je welke knoppen zwaar wegen. De vragen vertellen welke wijzigingen je moet proberen.</p>',
+      lab: { type: 'cvss', vector: 'CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N' },
       content: `
         <p>Een CVE-ID zegt <em>welk</em> lek het is, maar niet hoe erg. Daarvoor is er <strong>CVSS</strong>, het
         <em>Common Vulnerability Scoring System</em>, beheerd door FIRST. CVSS geeft een kwetsbaarheid een score van
@@ -276,10 +325,17 @@ CS.registerRoom({
         </div>
       `,
       questions: [
-        { q: 'Welke waarde van Attack Vector (AV) kies je als de aanvaller het lek via internet kan misbruiken?', answer: ['N', 'network', 'AV:N'], hint: 'De afkorting van "Network".', explain: 'AV:N (Network) betekent op afstand via het netwerk, de ergste waarde voor deze metriek.' },
+        { q: 'Neem de Heartbleed-vector in de calculator en zet alleen Attack Vector op Local. Wat wordt de basisscore?', answer: ['6.2', '6,2'],
+          hints: ['De vector van Heartbleed staat al in de calculator.', 'Klik bij AV op L en laat de andere zeven metrieken staan.', 'De score zakt van High naar Medium.'],
+          wrong: { '7.5': 'Dat is de score met AV:N. Zet Attack Vector op Local.', '5.9': 'Je hebt Attack Complexity op High gezet in plaats van Attack Vector op Local.' },
+          explain: 'AV:L/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N = 6.2. Alleen al het feit dat de aanvaller op het systeem moet zitten, scheelt 1.3 punt.' },
         { q: 'Een slachtoffer moet op een kwaadaardige link klikken. Welke metriek en waarde horen daarbij?', options: ['UI:R (User Interaction: Required)', 'PR:H (Privileges Required: High)', 'AC:H (Attack Complexity: High)'], answer: 0, explain: 'Als een gebruiker iets moet doen, is User Interaction Required.' },
-        { q: 'In welke ernstklasse valt een score van 7.5?', options: ['Medium', 'High', 'Critical'], answer: 1, explain: '7.0 tot en met 8.9 is High.' },
-        { q: 'Welke metriek zegt of de schade buiten het kwetsbare onderdeel terechtkomt (bijvoorbeeld uitbreken uit een VM)?', answer: ['Scope', 'S', 'scope (s)'], hint: 'Waarden Unchanged en Changed.', explain: 'Scope Changed (S:C) betekent dat ook andere onderdelen dan het kwetsbare onderdeel geraakt worden.' },
+        { q: 'Plak nu de vector van Log4Shell uit de uitleg in de calculator en zet alleen Scope op Unchanged. Wat wordt de basisscore?', answer: ['9.8', '9,8'],
+          hints: ['De vector van Log4Shell staat in de uitleg onder "De vectorstring".', 'Verander alleen S van C naar U.', 'De score blijft Critical, maar is geen 10 meer.'],
+          wrong: { '10': 'Dat is de score met S:C. Zet Scope op Unchanged.', '10.0': 'Dat is de score met S:C. Zet Scope op Unchanged.' },
+          why: 'Het verschil tussen 9.8 en 10.0 is precies de vraag of de schade buiten het kwetsbare onderdeel komt. Wie Scope verkeerd inschat, zit er bij lagere scores soms meer dan een punt naast.',
+          explain: 'AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H = 9.8. Alleen met Scope Changed haalt deze vector de 10.0.' },
+        { q: 'Welke metriek zegt of de schade buiten het kwetsbare onderdeel terechtkomt (bijvoorbeeld uitbreken uit een VM)?', answer: ['Scope', 'S', 'scope (s)'], hints: ['Het is de metriek die je bij de vorige vraag hebt omgezet.', 'De waarden zijn Unchanged en Changed.', 'Eén letter in de vector: S.'], explain: 'Scope Changed (S:C) betekent dat ook andere onderdelen dan het kwetsbare onderdeel geraakt worden.' },
       ],
     },
 
@@ -348,6 +404,8 @@ CS.registerRoom({
 
     {
       title: 'Taak 5 — CVSS v4.0, EPSS en de KEV-catalogus',
+      tryFirst: true,
+      intro: '<p>De scanner van Brandpunt Koffie heeft tien bevindingen opgeleverd. Je hebt vanavond tijd voor één patch. In het lab staat per bevinding de CVSS-score, de EPSS-kans, of het lek in KEV staat, of de host aan internet hangt en of het een kroonjuweel is. Bepaal welke bevinding bovenaan komt.</p>',
       content: `
         <h3>CVSS v4.0 in het kort</h3>
         <p>In november 2023 publiceerde FIRST <strong>CVSS v4.0</strong>. Het idee is hetzelfde (een score van 0 tot
@@ -403,15 +461,42 @@ CS.registerRoom({
         </div>
       `,
       questions: [
-        { q: 'Welke nieuwe basismetriek in CVSS v4.0 beschrijft of er speciale omstandigheden op het doelsysteem nodig zijn?', answer: ['AT', 'attack requirements', 'AT (attack requirements)'], hint: 'Twee letters, Attack ...', explain: 'Attack Requirements (AT) is nieuw in v4.0; het haalt een deel uit de oude Attack Complexity.' },
-        { q: 'Wat voorspelt EPSS?', options: ['De kans dat een CVE in de komende 30 dagen misbruikt wordt', 'De technische ernst van een kwetsbaarheid', 'Hoeveel dagen een patch duurt'], answer: 0, explain: 'EPSS geeft een kans tussen 0 en 1 op misbruik in de komende 30 dagen.' },
-        { q: 'Welke Amerikaanse organisatie beheert de Known Exploited Vulnerabilities-catalogus?', answer: ['CISA'], hint: 'Cybersecurity and Infrastructure Security Agency.', explain: 'CISA houdt de KEV-catalogus bij met kwetsbaarheden die aantoonbaar misbruikt worden.' },
-        { q: 'Lek X: CVSS 9.1, EPSS 0.01, niet in KEV. Lek Y: CVSS 7.5, EPSS 0.92, wel in KEV. Beide op een internetserver. Welke patch je eerst?', options: ['Lek Y, omdat het al actief misbruikt wordt', 'Lek X, omdat de CVSS-score hoger is', 'Allebei pas bij de volgende kwartaalupdate'], answer: 0, explain: 'Bewezen misbruik (KEV) en een hoge EPSS wegen zwaarder dan een paar punten CVSS.' },
+        { q: 'Welke nieuwe basismetriek in CVSS v4.0 beschrijft of er speciale omstandigheden op het doelsysteem nodig zijn?', answer: ['AT', 'attack requirements', 'AT (attack requirements)'],
+          hints: ['Het staat in het lijstje onder "CVSS v4.0 in het kort".', 'In v3.1 zat dit deels verstopt in Attack Complexity.', 'Twee letters: Attack ...'],
+          explain: 'Attack Requirements (AT) is nieuw in v4.0; het haalt een deel uit de oude Attack Complexity.' },
+        { q: 'Wat voorspelt EPSS?', options: ['De kans dat een CVE in de komende 30 dagen misbruikt wordt', 'De technische ernst van een kwetsbaarheid', 'Hoeveel dagen een patch duurt'], answer: 0,
+          wrong: { 1: 'Dat is CVSS. EPSS zegt niets over hoe erg het is, alleen hoe waarschijnlijk misbruik is.', 2: 'EPSS gaat over misbruik door aanvallers, niet over het werk van beheerders.' },
+          explain: 'EPSS geeft een kans tussen 0 en 1 op misbruik in de komende 30 dagen.' },
+        { q: 'Welke bevinding uit het lab patch je vanavond als eerste? (ID, bijvoorbeeld V-09)', answer: ['V-01', 'V01', 'V-1', 'v 01'],
+          hints: ['Sorteer niet op CVSS. Kijk eerst welke lekken aantoonbaar misbruikt worden.', 'Filter op kev=ja. Er blijven twee bevindingen over. Welke daarvan is vanaf internet bereikbaar?', 'De bevinding op web01 met CVSS 7.5.'],
+          wrong: { 'V-02': 'Een 9.8, maar op een interne testserver, met een EPSS van 0.02 en geen bekend misbruik.', 'V-08': 'Staat in KEV, maar de printserver is alleen intern bereikbaar en geen kroonjuweel. Dit is nummer twee.', 'V-03': 'Hoog en aan internet, maar geen bekend misbruik en een EPSS van 0.01.', 'V-06': 'Aan internet en een flinke EPSS, maar niet in KEV. Belangrijk, alleen niet de eerste.' },
+          why: 'Wie op CVSS sorteert, patcht hier eerst een testserver terwijl de webshop openstaat voor een lek waarvan vaststaat dat het wordt misbruikt.',
+          explain: 'V-01: in KEV, bereikbaar vanaf internet en een kroonjuweel. Dat gaat voor alles, ook voor de twee bevindingen met 9.8.' },
+        { q: 'Hoeveel bevindingen in het lab hebben een CVSS van 9.0 of hoger, maar een EPSS onder 0.05 en geen vermelding in KEV?', answer: ['3'],
+          hints: ['Zoek eerst alle bevindingen met een score van 9.0 of hoger. Het filter /cvss=9/ helpt.', 'Streep daarvan weg wat in KEV staat of een hoge EPSS heeft.', 'V-02, V-03 en V-07.'],
+          wrong: { '4': 'V-08 heeft ook een 9.8, maar staat in KEV en heeft een EPSS van 0.89.', '2': 'Ook precies 9.0 telt mee: V-07.' },
+          explain: 'Drie. Op papier zijn ze Critical, maar er is nu geen aanwijzing voor misbruik. Ze komen na de lekken die wel misbruikt worden.' },
       ],
+      lab: {
+        type: 'logs',
+        title: 'scanresultaten-brandpunt.txt',
+        lines: `V-01  host=web01     bereik=internet  cvss=7.5  epss=0.91  kev=ja   kroonjuweel=ja
+V-02  host=test03    bereik=intern    cvss=9.8  epss=0.02  kev=nee  kroonjuweel=nee
+V-03  host=mail01    bereik=internet  cvss=9.1  epss=0.01  kev=nee  kroonjuweel=nee
+V-04  host=kassa02   bereik=intern    cvss=7.8  epss=0.04  kev=nee  kroonjuweel=ja
+V-05  host=web01     bereik=internet  cvss=5.3  epss=0.03  kev=nee  kroonjuweel=ja
+V-06  host=vpn01     bereik=internet  cvss=8.1  epss=0.35  kev=nee  kroonjuweel=nee
+V-07  host=hr-db01   bereik=intern    cvss=9.0  epss=0.03  kev=nee  kroonjuweel=ja
+V-08  host=print04   bereik=intern    cvss=9.8  epss=0.89  kev=ja   kroonjuweel=nee
+V-09  host=wiki01    bereik=intern    cvss=6.5  epss=0.12  kev=nee  kroonjuweel=nee
+V-10  host=backup01  bereik=intern    cvss=8.8  epss=0.40  kev=nee  kroonjuweel=ja`,
+      },
     },
 
     {
       title: 'Taak 6 — Patchmanagement, prioriteren en verantwoord melden',
+      tryFirst: true,
+      intro: '<p>Stel dat je een lek vindt in de webshop van Brandpunt Koffie en het netjes wilt melden. Zoek in het lab uit waar en hoe dat moet. Het verzoek dat klaarstaat levert niets op: bedenk waar een organisatie dit hoort te publiceren.</p>',
       content: `
         <p>Weten dat er een lek is, is pas het begin. <strong>Patchmanagement</strong> is het proces waarmee je
         ervoor zorgt dat updates op tijd, gecontroleerd en zonder brokken worden doorgevoerd.</p>
@@ -468,11 +553,28 @@ CS.registerRoom({
         </div>
       `,
       questions: [
-        { q: 'Hoe heet een afgesproken tijdstip waarop patches mogen worden uitgerold omdat storing dan acceptabel is?', answer: ['onderhoudsvenster', 'maintenance window', 'onderhoudsvensters'], hint: 'In het voorbeeld: dinsdag 22:00-23:00.', explain: 'In een onderhoudsvenster is downtime afgesproken; bij actief misbruik plan je een noodwijziging.' },
+        { q: 'Vraag in het lab het security.txt-bestand van Brandpunt Koffie op. Tot welke datum is het geldig? (JJJJ-MM-DD)', answer: ['2027-06-30', '30-06-2027', '30 juni 2027'],
+          hints: ['Het verzoek naar /security.txt geeft een 404. RFC 9116 schrijft een andere plek voor.', 'Het bestand staat in een vaste map die met een punt begint: /.well-known/', 'Lees de regel die met Expires begint.'],
+          wrong: { '/404|not found/i': 'Dat is het antwoord op het verkeerde pad. Probeer /.well-known/security.txt' },
+          explain: 'Het veld Expires staat op 30 juni 2027. Een security.txt met een verlopen datum mag je niet meer vertrouwen; daarom is dat veld verplicht.' },
         { q: 'Een medisch apparaat kan niet gepatcht worden. Wat is een goede mitigatie?', options: ['Het apparaat in een afgeschermd netwerksegment plaatsen en toegang beperken', 'Het lek negeren tot er een nieuw apparaat komt', 'Het apparaat rechtstreeks op internet zetten voor updates'], answer: 0, explain: 'Segmentatie en toegangsbeperking verkleinen het risico zolang patchen niet kan.' },
-        { q: 'Op welk pad staat volgens RFC 9116 het security.txt-bestand?', answer: ['/.well-known/security.txt', '.well-known/security.txt'], hint: 'Het begint met /.well-known/', explain: 'security.txt staat op /.well-known/security.txt en vertelt waar je een lek kunt melden.' },
+        { q: 'Naar welk e-mailadres meld je volgens dat bestand een lek bij Brandpunt Koffie?', answer: ['security@brandpunt-koffie.example', 'mailto:security@brandpunt-koffie.example'],
+          hints: ['Je hebt het bestand nodig dat op /.well-known/security.txt staat.', 'Lees de regel die met Contact begint.', 'Het adres begint met security@'],
+          wrong: { '/well-known/i': 'Dat is het pad van het bestand. Gevraagd is het adres dat erin staat.', '/^info@/i': 'Een algemeen adres is juist wat je wilt vermijden: een melding over een lek hoort bij het securityteam.' },
+          explain: 'Het veld Contact noemt security@brandpunt-koffie.example. Lees ook het beleid waarnaar Policy verwijst voordat je iets test of meldt.' },
         { q: 'Wat hoort bij coordinated vulnerability disclosure?', options: ['Vertrouwelijk melden bij de eigenaar en die tijd geven om het op te lossen', 'Het lek direct op sociale media zetten', 'Zoveel mogelijk data downloaden als bewijs'], answer: 0, explain: 'Bij CVD meld je vertrouwelijk, doe je niet meer dan nodig en maak je het pas openbaar na herstel.' },
       ],
+      lab: {
+        type: 'http',
+        host: 'www.brandpunt-koffie.example',
+        start: { method: 'GET', path: '/security.txt', headers: {}, body: '' },
+        routes: [
+          { method: 'GET', path: '/', status: 200, headers: { 'Content-Type': 'text/plain' }, body: 'Brandpunt Koffie B.V. (fictief) - webshop\nVers gebrande koffie, voor 16:00 besteld is morgen in huis.' },
+          { method: 'GET', path: '/.well-known/security.txt', status: 200, headers: { 'Content-Type': 'text/plain; charset=utf-8' }, body: 'Contact: mailto:security@brandpunt-koffie.example\nExpires: 2027-06-30T22:00:00.000Z\nPreferred-Languages: nl, en\nPolicy: https://www.brandpunt-koffie.example/cvd-beleid\n' },
+          { method: 'GET', path: '/cvd-beleid', status: 200, headers: { 'Content-Type': 'text/plain; charset=utf-8' }, body: 'Beleid voor coordinated vulnerability disclosure - Brandpunt Koffie B.V. (fictief)\n\nMeld een lek vertrouwelijk via het adres in ons security.txt-bestand.\nWij bevestigen je melding binnen 5 werkdagen en streven ernaar het lek binnen 60 dagen te verhelpen.\n\nNiet toegestaan: meer gegevens inzien dan nodig is om het lek aan te tonen, gegevens kopieren of bewaren,\nde dienst verstoren, of het lek delen voordat het is opgelost.\n\nHoud je je aan deze regels, dan doen wij geen aangifte.' },
+          { method: 'GET', path: '/security.txt', status: 404, headers: { 'Content-Type': 'text/plain' }, body: 'Not Found' },
+        ],
+      },
     },
 
     {
@@ -534,6 +636,106 @@ grep -r KoffieCMS advies</code></pre>
         { q: 'In welke versie is het lek uit NM-SA-2026-014 opgelost?', answer: ['4.2.3', 'koffiecms 4.2.3'], hint: 'Zoek de regel "Opgelost in" in het advies.', explain: 'Het lek is opgelost in 4.2.3; tot die update gebruik je de workaround.' },
         { q: 'Welke controlecode (vlag) staat onderaan het advies over KoffieCMS?', answer: ['NM{advies_gelezen_versie_kwetsbaar}'], hint: 'grep -r KoffieCMS advies, en dan cat op het juiste bestand.', explain: 'Je hebt het juiste advies gevonden en volledig gelezen.' },
         { q: 'Welke vlag staat bij de instelling import_api in het configuratiebestand?', answer: ['NM{workaround_eerst_dan_patchen}'], hint: 'grep import_api /etc/koffiecms/koffiecms.conf', explain: 'De workaround (import_api uit) koopt tijd, maar de echte oplossing blijft de update naar 4.2.3.' },
+        { q: 'Boss: de leverancier van KoffieCMS brengt een rectificatie uit. Het kwetsbare endpoint blijkt alleen bereikbaar vanaf een aangrenzend netwerk en alleen voor iemand met een beheerdersaccount. De rest van de beoordeling blijft gelijk. Welke basisscore hoort bij het gecorrigeerde advies?', boss: true, answer: ['6.8', '6,8'],
+          hints: ['Je hebt de oorspronkelijke vector nodig. Die staat in het advies op de server, niet in de uitleg.', 'Twee metrieken veranderen: vanaf waar de aanvaller moet komen en welk account hij vooraf nodig heeft. Gebruik de calculator van taak 4.', 'Zet in de vector uit het advies AV op A en PR op H en laat de rest staan.'],
+          wrong: { '9.8': 'Dat is de score uit het oorspronkelijke advies. Verwerk de twee correcties.', '8.8': 'Je hebt één van de twee correcties verwerkt. Het gaat om Attack Vector en om Privileges Required.', '7.2': 'Privileges Required klopt nu. Attack Vector moet nog van Network naar Adjacent.', '8.0': 'Je hebt PR op Low gezet. Een beheerdersaccount is High.' },
+          explain: 'In NM-SA-2026-014 staat CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H (9.8). Met AV:A en PR:H wordt dat 6.8, Medium. Zelfde fout in de code, bijna drie punten lager, alleen doordat de aanvaller er moeilijker bij kan.' },
+      ],
+    },
+
+    {
+      title: 'Taak 8: Verdieping: wat er achter het cijfer zit',
+      kind: 'verdieping',
+      optional: true,
+      content: `
+        <p>Een CVSS-score ziet eruit als een meting. Het is een afspraak: een formule met gewichten die experts hebben
+        gekozen. Wie de formule kent, snapt ook waarom scores soms verrassen.</p>
+
+        <h3>Hoe de basisscore van v3.1 tot stand komt</h3>
+        <p>Elke metriekwaarde heeft een gewicht. Voor de impact geldt: High = 0.56, Low = 0.22, None = 0. Daaruit volgt
+        de <em>Impact Sub Score</em>:</p>
+        <pre><code>ISS = 1 - (1 - C) x (1 - I) x (1 - A)</code></pre>
+        <p>Bij Scope Unchanged is de impact 6.42 x ISS. De exploitability is 8.22 x AV x AC x PR x UI. De basisscore is
+        de som van die twee, met een maximum van 10 en <strong>altijd naar boven afgerond</strong> op één decimaal.
+        Bij Scope Changed geldt een andere impactformule en wordt de som nog met 1.08 vermenigvuldigd. Ook wegen
+        Privileges Required Low en High dan minder zwaar als drempel. Daarom doet Scope zoveel met de uitkomst.</p>
+        <p>Twee gevolgen. De schaal is niet lineair: een 8.0 is niet "twee keer zo erg" als een 4.0. En drie keer
+        High impact levert geen 3 x 0.56 op, omdat de factoren met elkaar vermenigvuldigd worden.</p>
+
+        <h3>Randgevallen uit de praktijk</h3>
+        <ul>
+          <li><strong>Twee scores voor één CVE.</strong> De leverancier en de NVD scoren hetzelfde lek soms
+          verschillend, omdat ze andere aannames doen over bijvoorbeeld Scope of de benodigde rechten. Kijk welke
+          vector erbij staat en wie hem heeft toegekend.</li>
+          <li><strong>CVE's zonder score.</strong> Sinds begin 2024 loopt de NVD achter met het verrijken van nieuwe
+          CVE's. Een CVE zonder score is dus niet ongevaarlijk. Kijk dan naar de score van de CNA of naar het EUVD.</li>
+          <li><strong>Niet in KEV.</strong> De catalogus bevat alleen lekken waarvan misbruik voor CISA vaststaat.
+          Ontbreken betekent "niet aangetoond", niet "veilig". De verplichte termijnen gelden voor Amerikaanse federale
+          instanties en komen uit de richtlijn BOD 22-01 (2021).</li>
+          <li><strong>EPSS verandert.</strong> De kans wordt dagelijks herberekend. Een lek met 0.02 kan na een
+          gepubliceerde exploit binnen dagen naar boven schieten. Kijk dus op de dag dat je plant.</li>
+        </ul>
+
+        <h3>Van score naar besluit</h3>
+        <p>FIRST zegt het zelf in de documentatie bij v3.1: de basisscore meet ernst, geen risico. Om tot een besluit
+        te komen is er naast "CVSS plus EPSS plus KEV" ook SSVC (<em>Stakeholder-Specific Vulnerability
+        Categorization</em>), een beslisboom van het CERT/CC en CISA. Die levert geen getal op maar een handeling,
+        bijvoorbeeld "volgen" of "nu handelen", op basis van misbruik, blootstelling en het belang van het systeem.</p>
+
+        <h3>Veelgemaakte fouten</h3>
+        <ul>
+          <li>Een v3.1-score en een v4.0-score naast elkaar zetten alsof het dezelfde schaal is.</li>
+          <li>Alleen "alles vanaf 9.0" patchen en de 7.5 in KEV laten liggen.</li>
+          <li>De basisscore aanpassen omdat het systeem bij jou afgeschermd staat. Daarvoor zijn de
+          environmental-metrieken; de basisscore blijft voor iedereen gelijk.</li>
+          <li>Een workaround noteren als "opgelost" en de patch nooit meer plannen.</li>
+        </ul>
+      `,
+      questions: [
+        { q: 'Bereken de Impact Sub Score voor een lek met C:H, I:H en A:N. Rond af op twee decimalen.', answer: ['0.81', '0,81', '0.8064', '0,8064', '0.806', '0,806'],
+          hints: ['Vul de gewichten in de formule in: High = 0.56 en None = 0.', '1 min 0.56 is 0.44. Dat komt twee keer voor; de derde factor is 1.', '1 - (0.44 x 0.44 x 1)'],
+          wrong: { '1.12': 'Je telt de gewichten op. In de formule worden de "restjes" (1 min het gewicht) met elkaar vermenigvuldigd.', '0.19': 'Dat is 0.44 x 0.44. Trek die uitkomst nog van 1 af.' },
+          explain: '1 - (0.44 x 0.44 x 1) = 1 - 0.1936 = 0.8064. Twee keer High geeft dus geen 1.12, maar 0.81.' },
+        { q: 'De formule geeft voor een lek een ruwe uitkomst van 7.01. Welke basisscore wordt er gepubliceerd?', answer: ['7.1', '7,1'],
+          hints: ['CVSS rondt niet af zoals je op school leerde.', 'Lees in de uitleg hoe de som wordt afgerond.', 'Altijd naar boven, op één decimaal.'],
+          wrong: { '7.0': 'Bij gewoon afronden wel. CVSS rondt altijd naar boven af.', '7': 'Bij gewoon afronden wel. CVSS rondt altijd naar boven af.' },
+          explain: '7.1. Door het naar boven afronden kan een minimaal verschil in de formule net een hogere score of zelfs een hogere ernstklasse opleveren.' },
+        { q: 'Een beheerder zoekt een CVE op en ziet dat het lek niet in de KEV-catalogus staat. Wat mag hij daaruit concluderen?', options: ['Dat misbruik niet is aangetoond; het lek kan wel degelijk misbruikt worden', 'Dat het lek niet misbruikt wordt en dus kan wachten', 'Dat de CVSS-score lager dan 7.0 is', 'Dat er nog geen exploit voor bestaat'], answer: 0,
+          wrong: { 1: 'KEV is een lijst van bewezen gevallen. Wat er niet op staat, kan nog steeds worden misbruikt zonder dat het is vastgesteld.', 2: 'KEV kijkt naar misbruik, niet naar ernst. Er staan ook lekken met een lage score op.', 3: 'Er kan een publieke exploit bestaan zonder dat misbruik in het wild is aangetoond.' },
+          explain: 'Niet in KEV betekent "niet aangetoond". Kijk ook naar EPSS en naar meldingen van je eigen leveranciers en het NCSC.' },
+      ],
+    },
+
+    {
+      title: 'Taak 9: Zo komt dit voor op een examen',
+      kind: 'examen',
+      optional: true,
+      content: `
+        <p>Examens over kwetsbaarheidsbeheer geven je een beschrijving van een lek of een lijst met bevindingen en
+        vragen om een score, een prioriteit of een volgende stap. De afleiders bij scorevragen zijn scores die je
+        krijgt als je precies één metriek verkeerd kiest. Vertaal de beschrijving daarom metriek voor metriek en
+        reken het na in de calculator hieronder. Bij prioriteitsvragen is de hoogste CVSS-score zelden het goede
+        antwoord.</p>
+        <p>De vier vragen zijn zelf geschreven in die stijl. Alle producten en organisaties zijn fictief.</p>
+      `,
+      lab: { type: 'cvss' },
+      questions: [
+        { q: 'In het fictieve RoosterApp kan een ingelogde gewone gebruiker via internet de roosters en persoonsgegevens van alle collega\'s lezen, wijzigen en wissen. Het werkt elke keer, er is geen andere gebruiker voor nodig en de schade blijft binnen de applicatie. Welke CVSS v3.1-basisscore hoort hierbij?',
+          options: ['9.8 (Critical)', '8.8 (High)', '7.2 (High)', '9.9 (Critical)'], answer: 1,
+          wrong: { 0: 'Dat is de score zonder benodigd account (PR:N). Hier moet de aanvaller ingelogd zijn.', 2: 'Dat hoort bij een beheerdersaccount (PR:H). Een gewone gebruiker is PR:L.', 3: 'Dat krijg je met Scope Changed. De schade blijft hier binnen de applicatie.' },
+          explain: 'CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H = 8.8.' },
+        { q: 'Je hebt vanavond één onderhoudsvenster. Welke bevinding pak je op?',
+          options: ['CVSS 9.8 op een interne testserver; EPSS 0.02; niet in KEV', 'CVSS 8.8 op het interne HR-systeem (kroonjuweel); EPSS 0.10; niet in KEV', 'CVSS 7.2 op de VPN-gateway aan internet; staat in KEV', 'Alle drie, in volgorde van CVSS-score, zover de tijd reikt'], answer: 2,
+          wrong: { 0: 'De hoogste score, maar intern, zonder aanwijzing voor misbruik en op een systeem zonder waarde.', 1: 'Een kroonjuweel telt zwaar, maar er is geen aangetoond misbruik en het systeem is niet vanaf internet bereikbaar.', 3: 'Dan begin je bij de testserver en komt de gateway die nu wordt aangevallen misschien niet meer aan de beurt.' },
+          explain: 'Aantoonbaar misbruik plus bereikbaar vanaf internet gaat voor. De VPN-gateway is bovendien de voordeur naar de andere twee.' },
+        { q: 'Een advies vermeldt de vector CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N. Een collega zoekt de metriek Scope en vindt hem niet. Wat klopt?',
+          options: ['De vector is onvolledig en dus ongeldig', 'Scope ontbreekt en is daarom Unchanged', 'Attack Requirements (AT) heeft Scope vervangen', 'In v4.0 bestaat Scope niet meer; de impact op volgende systemen staat in SC, SI en SA'], answer: 3,
+          wrong: { 0: 'Dit is een volledige basisvector van v4.0. Kijk naar het voorvoegsel.', 1: 'Dat is v3.1-denken. In v4.0 wordt niets "aangenomen": de impact buiten het kwetsbare systeem staat er expliciet in.', 2: 'AT is nieuw, maar komt uit de oude Attack Complexity en heeft niets met Scope te maken.' },
+          explain: 'CVSS v4.0 splitst de impact in het kwetsbare systeem (VC, VI, VA) en volgende systemen (SC, SI, SA). Hier zijn die laatste drie None.' },
+        { q: 'Een student ontdekt dat hij in de webshop van een bakker de bestellingen van andere klanten kan zien door het klantnummer in de URL te veranderen. De bakker heeft geen security.txt en geen CVD-beleid. Wat is de beste stap?',
+          options: ['Een paar honderd bestellingen downloaden, zodat de bakker het probleem wel moet geloven', 'Het lek direct openbaar maken om de andere klanten te waarschuwen', 'Stoppen zodra het lek is aangetoond, niets bewaren, de bakker vertrouwelijk benaderen en bij uitblijven van een reactie een tussenpartij zoals het NCSC of DIVD om hulp vragen', 'Niets melden, want zonder CVD-beleid is elke melding strafbaar'], answer: 2,
+          wrong: { 0: 'Dat is meer doen dan nodig en het kopiëren van persoonsgegevens. Daarmee overschrijd je de grens, ook met goede bedoelingen.', 1: 'Dan kan iedereen het lek misbruiken voordat het dicht is. Openbaar maken komt na herstel, in overleg.', 3: 'Het ontbreken van beleid maakt melden niet strafbaar. Wat telt is hoe je hebt gehandeld: niet verder gaan dan nodig en vertrouwelijk melden.' },
+          explain: 'De kern van CVD: aantonen, niet uitbuiten, vertrouwelijk melden en de eigenaar tijd geven. Een garantie tegen vervolging is het niet; proportioneel handelen wel je beste bescherming.' },
       ],
     },
   ],
