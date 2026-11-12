@@ -1,4 +1,4 @@
-/* Uitdaging ★★★ — De offerte die niet opende (zonder handleiding) */
+/* Uitdaging ★★★: De offerte die niet opende (zonder handleiding) */
 
 // Alles FICTIEF: Velders Installatietechniek BV, Staalhandel Noord, de domeinen, adressen en hosts zijn verzonnen.
 // Het macro-uittreksel is onschadelijk: de aanroepen zijn verzonnen namen, er staat geen werkende code in.
@@ -26,12 +26,12 @@ CS.registerRoom({
     { term: 'Beacon', def: 'Een besmet systeem dat zich met een vast ritme bij de server van de aanvaller meldt om opdrachten op te halen.' },
   ],
   resources: [
-    { title: 'MITRE ATT&CK — T1566.001 Spearphishing Attachment', url: 'https://attack.mitre.org/techniques/T1566/001/' },
-    { title: 'DMARC.org — Overview', url: 'https://dmarc.org/overview/' },
+    { title: 'MITRE ATT&CK: T1566.001 Spearphishing Attachment', url: 'https://attack.mitre.org/techniques/T1566/001/' },
+    { title: 'DMARC.org: Overview', url: 'https://dmarc.org/overview/' },
   ],
   tasks: [
     {
-      title: 'Bron 1 — de mail en de bijlage',
+      title: 'Bron 1: de mail en de bijlage',
       content: `
         <p>Velders Installatietechniek BV (fictief) koopt al jaren staal in bij Staalhandel Noord. Op dinsdag 6 oktober
         2026 ontvangt de gedeelde inkoopmailbox een offerte als Word-bijlage. Een inkoper opent hem, ziet een leeg document
@@ -114,7 +114,7 @@ CS.registerRoom({
       ],
     },
     {
-      title: 'Bron 2 — waar haalt de macro iets op?',
+      title: 'Bron 2: waar haalt de macro iets op?',
       content: `
         <p>De macro bouwt een adres op uit een tekenreeks die op het eerste gezicht nergens op lijkt. Het SOC wil weten
         welk domein het moet blokkeren.</p>
@@ -129,7 +129,7 @@ CS.registerRoom({
       ],
     },
     {
-      title: 'Bron 3 — de proxy',
+      title: 'Bron 3: de proxy',
       content: `
         <p>Het SIEM levert de proxyregels van de inkoopafdeling en de mailgateway tussen 08:25 en 09:20 (UTC). Welke werkplek
         is besmet, en welke niet?</p>

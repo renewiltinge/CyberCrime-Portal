@@ -1,4 +1,4 @@
-/* Uitdaging ★★★ — De beheerder die er niet was (zonder handleiding) */
+/* Uitdaging ★★★: De beheerder die er niet was (zonder handleiding) */
 
 // Alles FICTIEF: Groenhuis Verhuur BV, het klantportaal, de accounts, tokens en adressen zijn verzonnen.
 // De tokens zijn alleen om te lezen en te beoordelen; ze horen bij geen enkele echte dienst.
@@ -26,12 +26,12 @@ CS.registerRoom({
     { term: 'Sessie-id', def: 'Een kenmerk dat bij het aanmelden wordt toegekend. Komt hetzelfde kenmerk in een ander token terug, dan komt dat token waarschijnlijk uit dezelfde sessie.' },
   ],
   resources: [
-    { title: 'RFC 7519 — JSON Web Token', url: 'https://www.rfc-editor.org/rfc/rfc7519' },
-    { title: 'OWASP — JSON Web Token Cheat Sheet', url: 'https://cheatsheetseries.owasp.org/cheatsheets/JSON_Web_Token_for_Java_Cheat_Sheet.html' },
+    { title: 'RFC 7519: JSON Web Token', url: 'https://www.rfc-editor.org/rfc/rfc7519' },
+    { title: 'OWASP: JSON Web Token Cheat Sheet', url: 'https://cheatsheetseries.owasp.org/cheatsheets/JSON_Web_Token_for_Java_Cheat_Sheet.html' },
   ],
   tasks: [
     {
-      title: 'Bron 1 — het applicatielog',
+      title: 'Bron 1: het applicatielog',
       content: `
         <p>Groenhuis Verhuur BV (fictief) verhuurt woningen en heeft een klantportaal. Op 6 november merkt de privacy officer
         dat er een export van alle huurders is gemaakt op naam van beheerder M. de Vries, op een avond dat zij vrij was.
@@ -106,7 +106,7 @@ CS.registerRoom({
       ],
     },
     {
-      title: 'Bron 2 — de tokens',
+      title: 'Bron 2: de tokens',
       content: `
         <p>Het eerste geaccepteerde token staat al in de inspecteur. De andere tokens staan in de DEBUG-regels van het log;
         plak ze erin om ze te vergelijken.</p>
@@ -126,14 +126,14 @@ CS.registerRoom({
       ],
     },
     {
-      title: 'Bron 3 — na de patch',
+      title: 'Bron 3: na de patch',
       content: `
         <p>Op 5 november om 08:30 kwam een fix. Toch accepteerde het portaal die avond weer beheerverzoeken die niet van een
         beheerder kwamen, nu met een token dat wel ondertekend was. Een ontwikkelaar vond dit fragment in het JavaScript dat
         het portaal naar elke bezoeker stuurt:</p>
         <pre><code>/* app.4c1e9f.js (geminificeerd, fragment) */
 ...;window.__PORTAAL_CFG__="65794a6863476b694f694976595842704c335930496977696232316e5a585a70626d63694f694a77636d396b64574e30615755694c434a71643352485a57686c615730694f694a6e636d396c626d683161584d794d444930496977695a475669645764426458526f496a7030636e566c66513d3d";
-function laadCfg(){return JSON.parse(atob(hexNaarTekst(window.__PORTAAL_CFG__)))};...</code></pre>
+...;function laadCfg(){return JSON.parse(atob(hexNaarTekst(window.__PORTAAL_CFG__)))};...</code></pre>
       `,
       lab: { type: 'multidecode', input: '' },
       questions: [
