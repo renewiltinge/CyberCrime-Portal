@@ -349,7 +349,7 @@ R8  verouderd parkeersysteem (besturingssysteem buiten ondersteuning) manager pa
         <em>profiel</em>, en het verschil ertussen wordt hun werkplan.</p>
         <h3>CIS Controls v8</h3>
         <p>Het Center for Internet Security publiceerde in 2021 de CIS Controls v8: 18 controls met daaronder concrete
-        <em>safeguards</em>, in volgorde van wat het meeste oplevert. Een paar voorbeelden: Control 1 gaat over de
+        <em>safeguards</em>, geprioriteerd naar wat in de praktijk de meeste aanvallen tegenhoudt. Een paar voorbeelden: Control 1 gaat over de
         inventaris van apparaten, Control 3 over gegevensbescherming, Control 6 over toegangsbeheer en Control 17 over
         incidentrespons. De safeguards zijn ingedeeld in drie <strong>Implementation Groups</strong>: IG1 is de basis
         die elke organisatie zou moeten hebben, IG2 en IG3 bouwen daarop voort. Wie klein begint, begint bij IG1.</p>
@@ -467,6 +467,9 @@ M11  Beoordeling van leveranciers op informatiebeveiliging bij inkoop           
           <li>Bij acceptatie: let op wie besluit. Een antwoord waarin de IT-afdeling of de security officer een
           bedrijfsrisico accepteert, is bijna altijd fout.</li>
         </ul>
+        <p>Rekenvragen komen ook voor: een kans en een impact, of een SLE en een ARO, met als afleiders de uitkomsten
+        van de meest gemaakte rekenfouten. Schrijf de tussenstap altijd op, ook als je het antwoord meteen denkt te
+        zien.</p>
         <p>Warm op met het lab: zet de stappen van het risicoproces in de juiste volgorde. De vijf vragen eronder zijn
         zelf geschreven in examenstijl. Alle organisaties zijn fictief.</p>
       `,
@@ -523,9 +526,9 @@ M11  Beoordeling van leveranciers op informatiebeveiliging bij inkoop           
   ],
 
   resources: [
-    { title: 'ISO: ISO/IEC 27001:2022 Information security management systems', url: 'https://www.iso.org/standard/27001' },
+    { title: 'ISO: ISO/IEC 27001:2022 Information security management systems', url: 'https://www.iso.org/standard/82875.html' },
     { title: 'NIST: Cybersecurity Framework 2.0 (2024)', url: 'https://www.nist.gov/cyberframework' },
     { title: 'CIS: Critical Security Controls', url: 'https://www.cisecurity.org/controls' },
-    { title: 'Digitale Overheid: Baseline Informatiebeveiliging Overheid (BIO)', url: 'https://www.digitaleoverheid.nl/overzicht-van-alle-onderwerpen/cybersecurity/bio-en-ensia/' },
+    { title: 'Digitale Overheid: informatie over de BIO en ENSIA', url: 'https://www.digitaleoverheid.nl/' },
   ],
 });
