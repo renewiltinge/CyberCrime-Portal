@@ -831,3 +831,7 @@ table.weak th { font-size: var(--nm-size-label); letter-spacing: var(--nm-tracki
   .incident .hud .cell:nth-child(3) { grid-column: 1 / -1; border-top: 1px solid var(--border); border-right: 0; }
   .incident .term { height: 360px; }
 }
+
+/* Snel beginnen: een tweede, rustige ingang voor wie nog niets deed. */
+.continue .quickstart { border-top: 1px solid var(--border); }
+.continue .quickstart .where { margin: 0 0 10px; }

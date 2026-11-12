@@ -389,6 +389,12 @@
         meterLine(roomProgress(next)),
         el('button', { class: 'btn primary', onclick: () => go('#/room/' + next.id) }, [el('span', { text: inRoom ? 'Verder met deze room' : 'Start deze room' }), CS.icon('arrowRight', 18)]),
       ]));
+      // Wie nog niets deed, kan ook meteen iets kraken in plaats van eerst te lezen.
+      const quick = ROOMS.find((r) => r.id === 'uitdaging-nachtelijke-inlog');
+      if (!started && quick) cont.append(el('div', { class: 'body quickstart' }, [
+        el('p', { class: 'where', text: 'Liever meteen iets doen? Een inbraak bij een hockeyclub, tien minuten, geen voorkennis nodig.' }),
+        el('a', { class: 'btn', href: '#/room/' + quick.id }, [CS.icon('flag', 16), el('span', { text: 'Kraak meteen iets' })]),
+      ]));
     } else {
       cont.append(el('div', { class: 'head' }, [
         el('span', { class: 'label', text: 'Alles voltooid' }),
