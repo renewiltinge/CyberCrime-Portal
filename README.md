@@ -68,6 +68,9 @@ De bouwstenen van beveiliging.
 9. **SIM-swap & accountovername** — hoe het nummer-kapen sms-2FA breekt, de aanvalsketen, een beslissimulatie en sterkere 2FA.
 10. **Vishing & deepfake-stemmen** — voice-fraude en AI-stemkloning herkennen, de kanalen (phishing/vishing/smishing/quishing) en de juiste reacties.
 11. **Phishing gevorderd** — spear phishing, thread-hijacking, quishing en clone phishing herkennen in een lastige inbox (inclusief een legitieme mail), en verifiëren.
+12. **Identiteit, toegang en Zero Trust**: Wie ben je, wat mag je, en waarom nog steeds?
+13. **Risicomanagement en frameworks: ISO 27001, NIST CSF en BIO**: Niet alles kan tegelijk.
+14. **TLS en PKI in de praktijk**: Wat gebeurt er echt achter het slotje?
 
 ### ⚔️ Offensief (red team)
 Denken als een aanvaller — altijd in een veilig lab.
@@ -78,6 +81,8 @@ Denken als een aanvaller — altijd in een veilig lab.
 5. **Crack the Hash — de uitdaging** — een oplopende reeks hashes om zelf te herkennen en te kraken.
 6. **Reverse engineering: crackmes kraken** — lees de controle en vind de sleutel (met een echte crackme-lab).
 7. **Decoderen & multi-decode (CTF)** — gelaagde codering afpellen met de multi-decoder en CyberChef.
+8. **Verkenning en scannen**: Leer hoe een pentester een doelwit in kaart brengt: passieve en actieve verkenning, OSINT, footprinting en poortscannen met nmap — en waarom dit alleen mag met schriftelijke toestemming.
+9. **Veilig ontwikkelen en code-review**: Kwetsbaarheden vind je het goedkoopst voordat ze live staan.
 
 ### 🛡️ Defensief (blue team)
 Denken als een verdediger.
@@ -91,6 +96,14 @@ Denken als een verdediger.
 8. **Phishing-kit & -infrastructuur ontleden** — een phishing-kit van buitenaf analyseren (URL, IOCs, pivot) tot aan de takedown.
 9. **OT/ICS & ransomware op kritieke infra** — waarom OT anders is dan IT, hoe ransomware van IT naar OT springt en hoe je het fysieke proces beschermt.
 10. **Insider threat & datadiefstal** — soorten insider, de signalen, exfiltratie detecteren in netwerkverkeer en het zorgvuldige responsproces.
+11. **Logs lezen en aanvallen detecteren**: Blue team-werk: begrijpen wat logs zijn, wat een SIEM, IDS/IPS en SOC doen, en in echte logregels een brute force, een poortscan en een verdachte webscan opsporen.
+12. **Veilig thuis en op het werk**: Praktische digitale weerbaarheid die je vandaag nog kunt toepassen: updaten, back-ups (3-2-1), MFA en een wachtwoordmanager, veilig wifi, USB en publieke netwerken, privacy, en wat te doen als het tóch misgaat.
+13. **Cloudbeveiliging: verantwoordelijkheid, rechten en sporen**: De cloud is iemand anders zijn computer, maar jouw configuratie.
+14. **SIEM en threat hunting**: Leer hoe een SIEM logs verzamelt, normaliseert, correleert en alarmeert.
+15. **Netwerkbeveiliging en zakelijke wifi**: Een netwerk ontwerp je zo dat een inbraak op één plek niet overal een inbraak wordt.
+16. **Bedrijfscontinuïteit en herstel**: Wat moet het eerst weer draaien, hoeveel gegevens mag je kwijt, en lukt dat ook echt?
+17. **Active Directory verdedigen**: Active Directory is de sleutelbos van bijna elk Windows-netwerk.
+18. **Linux en containers harden**: Een server of container is zo veilig als zijn standaardinstellingen.
 
 ### 🕵️ Digitale forensie & opsporing
 De weg naar digitaal rechercheur — sporen vinden, veiligstellen en duiden.
@@ -106,6 +119,8 @@ De weg naar digitaal rechercheur — sporen vinden, veiligstellen en duiden.
 10. **Tijdlijnanalyse** — van tijdstempel tot super-timeline.
 11. **Forensie-CTF: Zaak Zilverlab** — een volledig onderzoek als oefening.
 12. **Verder leren** — boeken, tools en platforms.
+13. **Opsporingsbevoegdheden in het digitale onderzoek**: Wat mag een digitaal rechercheur, en wie moet toestemming geven?
+14. **Privacy en wetgeving in de praktijk**: De AVG breder dan de meldplicht, NIS2 en de Cyberbeveiligingswet, en de Wwft.
 
 ### 🧠 Cyber-intelligence & opsporing
 Van fenomeen naar interventie: denken en werken als intelligence-analist.
@@ -168,6 +183,21 @@ Geen uitleg en geen stappenplan: alleen een opdracht en het bewijs. De antwoorde
 1. **★ Het lege bureau** — een vertrokken medewerker en zijn thuismap: wat nam hij mee, waarheen, en wanneer?
 2. **★★ De gelaagde boodschap** — een "factuur" die geen factuur is, een sleutel in de bestandsstructuur en een bericht in meerdere lagen.
 3. **★★★ De onverklaarde geldstroom** — bank, boekhouding, geldstroom en open bronnen combineren; de reconciliatie alleen vertelt niet het hele verhaal.
+4. **★★ De open .git-map**: Een webshop zette per ongeluk zijn .git-map online.
+5. **★★ De kapotte back-up**: Een tandartspraktijk is zijn database kwijt.
+6. **★★★ De zijwaartse stap**: Een accountantskantoor vindt op maandag een onbekende dienst op een server.
+7. **★★★ Het lek in de DNS**: Een werkplek op de drukvloer stelt midden in de nacht vreemde DNS-vragen.
+8. **★★★★ De foto van gisteravond**: Een afperser stuurt een foto "van gisteravond".
+9. **★★★ De offerte die niet opende**: Een inkoper opent een offerte van een vaste leverancier en er gebeurt niets.
+10. **★★★ De beheerder die er niet was**: Het klantportaal van een verhuurder heeft een complete huurderslijst geëxporteerd, zogenaamd door een beheerder die die avond niet werkte.
+11. **★★★★ Twee keer dezelfde ruis**: Iemand heeft midden in de nacht het beheeraccount van een datacentrum overgenomen via een resetlink.
+12. **★★★★ Een vertrouwd toestelnummer**: Eerst zit je zelf aan de telefoon van de servicedesk, met een beller die haast heeft.
+13. **★★★★★ Drie sloten, één sleutel**: De eindbaas.
+14. **★ De nachtelijke inlog**: Op zondagochtend staat er een vreemde regel op de homepage van een hockeyclub.
+15. **★★ Het nieuwe rekeningnummer**: Een vaste leverancier belt: twee facturen zijn niet betaald.
+16. **★★★ De wolk van de vertrekker**: Een ingenieursbureau ziet veel uploads vanaf één werkplek, kort nadat een projectleider zijn ontslag indiende.
+17. **★★★ Het nachtelijke setpoint**: In een drinkwaterzuivering gaat midden in de nacht het chlooralarm af.
+18. **★★★★ Stemmen uit het veen**: Voor een referendum over een windpark duiken tientallen boze inwoners op die nooit eerder iets zeiden.
 
 ### 🏁 Eindopdracht
 1. **Mini-CTF: Operatie KoffieKlap** — breng alles samen in een afsluitende Capture The Flag met zes vlaggen.

@@ -61,5 +61,5 @@ voorspellen voor wie de code leest; het doel is een reden om terug te komen, gee
   vraagt per room een lijst van voorkennis die er nog niet is.
 - **Geluid.** Zie punt 5.
 - **Een gedeeld scorebord of multiplayer.** Dat vraagt een server en is een aparte beslissing.
-- **Game rooms met een nagebootst doelwit om aan te vallen.** Niet gebouwd in deze ronde; zie
-  het verslag bij de oplevering.
+- **Game rooms met een nagebootst doelwit om aan te vallen.** Niet gebouwd. De game rooms die er wel
+  zijn, zijn verdedigend; zie [ADR-0003](0003-game-rooms-zijn-verdedigend.md).
