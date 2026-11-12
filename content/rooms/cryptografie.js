@@ -1,4 +1,58 @@
 /* Room: Cryptografie — coderen, versleutelen, hashen */
+
+// Taak 3: tien blokken AES-128 in ECB-mode (echt berekend). Vijf fictieve rekeningen, elk een
+// naamblok en een saldoblok van 16 bytes. Vier saldoblokken zijn gelijk; dat van rekening 3 wijkt af.
+const CRY_ECB_HEX =
+  'C9 72 B2 67 96 6C 6A 69 6A 29 CB 2B E4 D6 38 75 ' +
+  '9D 93 84 C1 CB FA 4C 0B 55 20 14 F1 F7 96 0A 79 ' +
+  'A2 3C E4 3D D2 44 39 C1 63 B6 1A BC 44 E5 C8 6E ' +
+  '9D 93 84 C1 CB FA 4C 0B 55 20 14 F1 F7 96 0A 79 ' +
+  'E1 09 B2 02 2B 17 97 63 A3 88 A5 E8 0F 4C C3 02 ' +
+  '9A F2 78 76 2D 16 60 4A EE A8 A8 4F 32 06 EF 84 ' +
+  'F1 28 A5 8C A0 D3 16 51 41 06 08 28 8C 53 0A F3 ' +
+  '9D 93 84 C1 CB FA 4C 0B 55 20 14 F1 F7 96 0A 79 ' +
+  'AE EE 7C 07 CC 7F 98 D2 7A 7D 59 13 1F 7E 76 B6 ' +
+  '9D 93 84 C1 CB FA 4C 0B 55 20 14 F1 F7 96 0A 79';
+
+// Taak 5: uitvoer van een fictieve certificaatcontrole. Het oordeel staat er niet bij: dat velt de leerling.
+const CRY_CERTLOG = `Certificaatcontrole, uitgevoerd op 2026-11-12 10:00 UTC
+Vertrouwde root in deze browser: NM Lab Root CA
+---
+[1] host=portaal.nm.lab poort=443
+    onderwerp  CN=portaal.nm.lab
+    namen      portaal.nm.lab, www.portaal.nm.lab
+    uitgever   CN=NM Lab Issuing CA 2
+    geldig     2026-09-01 t/m 2026-11-30
+    keten      portaal.nm.lab <- NM Lab Issuing CA 2 <- NM Lab Root CA
+---
+[2] host=shop.nm.lab poort=443
+    onderwerp  CN=shop.nm.lab
+    namen      shop.nm.lab
+    uitgever   CN=NM Lab Issuing CA 1
+    geldig     2026-07-10 t/m 2026-10-08
+    keten      shop.nm.lab <- NM Lab Issuing CA 1 <- NM Lab Root CA
+---
+[3] host=betalen.nm.lab poort=443
+    onderwerp  CN=betalen-nm.example
+    namen      betalen-nm.example
+    uitgever   CN=NM Lab Issuing CA 2
+    geldig     2026-10-20 t/m 2027-01-18
+    keten      betalen-nm.example <- NM Lab Issuing CA 2 <- NM Lab Root CA
+---
+[4] host=intern.nm.lab poort=443
+    onderwerp  CN=intern.nm.lab
+    namen      intern.nm.lab
+    uitgever   CN=intern.nm.lab
+    geldig     2026-01-05 t/m 2036-01-03
+    keten      intern.nm.lab
+---
+[5] host=mail.nm.lab poort=443
+    onderwerp  CN=mail.nm.lab
+    namen      mail.nm.lab, webmail.nm.lab
+    uitgever   CN=NM Lab Issuing CA 1
+    geldig     2026-10-01 t/m 2026-12-30
+    keten      mail.nm.lab <- NM Lab Issuing CA 1 <- NM Lab Root CA`;
+
 CS.registerRoom({
   id: 'cryptografie',
   path: 'security-kern',
@@ -6,7 +60,9 @@ CS.registerRoom({
   title: 'Cryptografie: coderen, versleutelen, hashen',
   icon: '🔐',
   difficulty: 'Gemiddeld',
-  minutes: 90,
+  minutes: 120,
+  level: 'Praktijk',
+  checked: '2026-11-12',
   summary: 'Leer het verschil tussen encoding, encryptie en hashing, en hoe AES, RSA, TLS en veilige wachtwoordopslag echt werken.',
   objectives: [
     'Encoding, encryptie en hashing uit elkaar houden en uitleggen waarom Base64 geen beveiliging is',
@@ -19,6 +75,8 @@ CS.registerRoom({
   tasks: [
     {
       title: 'Taak 1 — Encoding, encryptie en hashing: drie verschillende dingen',
+      tryFirst: true,
+      intro: `<p>In het lab staat een string die er geheim uitziet. Zoek uit welke bewerking hem leesbaar maakt (probeer <code>Van Base64</code> en <code>Van Hex</code>) en vind de vlag. Doe daarna hetzelfde met de hex-string uit de derde vraag. Heb je onderweg ergens een sleutel nodig gehad?</p>`,
       content: `
         <p>Drie begrippen worden voortdurend door elkaar gehaald. Toch doen ze iets totaal anders.
         Als je ze uit elkaar kunt houden, begrijp je meteen waarom veel "beveiliging" die je online ziet
@@ -56,22 +114,27 @@ CS.registerRoom({
           </tbody>
         </table>
 
-        <p>Open het CyberChef-lab hieronder. Links kies je bewerkingen zoals <code>Van Base64</code> of
-        <code>Van Hex</code>; je plakt een string in het invoervak en ziet direct het resultaat. De vlag in
-        het lab staat als Base64. Vind hem. Plak daarna de hex-string uit de vraag erin en kies
-        <code>Van Hex</code>.</p>
       `,
       lab: { type: 'cyberchef', input: 'Tk17YmFzZTY0X2lzX3NsZWNodHNfY29kZXJpbmd9' },
       questions: [
         { q: 'Is Base64 een vorm van versleuteling?', options: ['Ja, het maakt tekst geheim', 'Nee, het is codering zonder sleutel', 'Alleen met een wachtwoord'], answer: 1, explain: 'Base64 heeft geen sleutel. Iedereen kan het terugdraaien, dus het beschermt niets.' },
-        { q: 'Decodeer de Base64-string in het lab. Wat is de vlag?', answer: ['NM{base64_is_slechts_codering}'], encoded: true, hint: 'Kies in CyberChef de bewerking "Van Base64".', explain: 'Base64 is zo terug te draaien — precies waarom het geen beveiliging is.' },
-        { q: 'Plak 4e4d7b6865785f69735f6f6f6b5f6d6161725f636f646572696e677d in CyberChef en kies "Van Hex". Wat is de vlag?', answer: ['NM{hex_is_ook_maar_codering}'], encoded: true, hint: 'Hex gebruikt de tekens 0-9 en a-f; elke twee tekens zijn één byte.', explain: 'Hex is net als Base64 alleen een andere schrijfwijze van dezelfde bytes.' },
+        { q: 'Decodeer de string in het lab. Wat is de vlag?', answer: ['NM{base64_is_slechts_codering}'], encoded: true,
+          hints: ['Kijk naar de tekens: hoofdletters, kleine letters en cijfers door elkaar.', 'Voeg in het lab de bewerking "Van Base64" toe aan het recept.', 'De uitvoer begint met NM{base64_ en eindigt op _codering}.'],
+          wrong: { 'Tk17YmFzZTY0X2lzX3NsZWNodHNfY29kZXJpbmd9': 'Dat is de gecodeerde invoer. Voeg een bewerking toe en lees de uitvoer.', '/^[0-9a-f]{32,64}$/': 'Je hebt de string gehasht. Een hash kun je niet terugdraaien; hier moet je decoderen.' },
+          why: 'In de praktijk staan wachtwoorden en API-sleutels geregeld als Base64 in configuratiebestanden en logregels. Wie Base64 herkent, leest ze direct.',
+          explain: 'Base64 is zonder sleutel terug te draaien. Daarom is het geen beveiliging.' },
+        { q: 'Plak 4e4d7b6865785f69735f6f6f6b5f6d6161725f636f646572696e677d in het lab en decodeer. Wat is de vlag?', answer: ['NM{hex_is_ook_maar_codering}'], encoded: true,
+          hints: ['Alleen de tekens 0 tot 9 en a tot f: dat wijst op een andere schrijfwijze dan Base64.', 'Haal de vorige bewerking uit het recept en kies "Van Hex".', 'Elke twee tekens zijn één byte: 4e is N, 4d is M, 7b is {.'],
+          wrong: { '/^[\\x80-\\uffff]|\\ufffd/': 'Je hebt "Van Base64" laten staan. Deze string is hex; verwijder de oude bewerking uit het recept.' },
+          explain: 'Hex is net als Base64 alleen een andere schrijfwijze van dezelfde bytes.' },
         { q: 'Welke bewerking is NIET omkeerbaar?', options: ['Base64', 'AES-encryptie', 'Hashing (SHA-256)'], answer: 2, explain: 'Een hash is eenrichtingsverkeer; je krijgt de invoer er niet uit terug.' },
       ],
     },
 
     {
       title: 'Taak 2 — Klassieke cijfers: Caesar en ROT13',
+      tryFirst: true,
+      intro: `<p>Drie opdrachten in het lab. Eén: het woord <code>wpujvkl</code> is met een Caesarcijfer versleuteld, maar je weet de verschuiving niet. Probeer verschuivingen tot er een Nederlands woord staat. Twee: de string die al in het lab staat is met ROT13 bewerkt. Drie: de string uit de derde vraag heeft twee lagen. Hoe lang houdt elk van deze "geheimen" het vol?</p>`,
       content: `
         <p>Voordat computers bestonden, versleutelden mensen al berichten. Die klassieke cijfers zijn
         tegenwoordig waardeloos als beveiliging, maar perfect om het idee te snappen: je neemt plaintext,
@@ -104,22 +167,30 @@ CS.registerRoom({
         <p>De les: echte versleuteling leunt niet op een geheim algoritme, maar op een geheime sleutel die groot
         genoeg is (het <em>principe van Kerckhoffs</em>). Dat werken we in de volgende taken uit met AES en RSA.</p>
 
-        <p>In het lab staat een met ROT13 versleutelde vlag. Kies de bewerking <code>ROT13</code> om hem te lezen.
-        Daarna volgt een <strong>meerstaps</strong>-uitdaging: een vlag is eerst met ROT13 versleuteld en dáárna
-        als Base64 gecodeerd. Je draait dat terug door eerst <code>Van Base64</code> en dan <code>ROT13</code> toe
-        te passen.</p>
+        <p>Bij gestapelde lagen draai je de volgorde om: wat als laatste is toegepast, haal je er als eerste af.
+        Een vlag die eerst met ROT13 is bewerkt en daarna als Base64 is gecodeerd, lees je dus met eerst
+        <code>Van Base64</code> en dan <code>ROT13</code>.</p>
       `,
       lab: { type: 'cyberchef', input: 'AZ{xynffvrxr_pvwsref_mvwa_mjnx}' },
       questions: [
-        { q: 'Decodeer jhkhlp met een Caesarcijfer (verschuiving 3 terug). Welk Nederlands woord krijg je?', answer: ['geheim'], hint: 'Schuif elke letter drie plaatsen terug: j -> g, h -> e ...', explain: 'jhkhlp met drie terug is "geheim". Zo makkelijk is Caesar te kraken.' },
+        { q: 'Het woord wpujvkl is versleuteld met een Caesarcijfer met een onbekende verschuiving. Welk Nederlands woord staat er?', answer: ['pincode'],
+          hints: ['Er zijn maar 25 mogelijkheden. Proberen is sneller dan nadenken.', 'Zet wpujvkl in het invoervak, kies "Caesar (n)" en loop n af van 1 tot 25.', 'Het woord is iets wat je intoetst bij een betaalautomaat.'],
+          wrong: { 'wpujvkl': 'Dat is de ciphertext zelf. Voeg de Caesar-bewerking toe en verander het getal.', 'jchwixy': 'Je hebt ROT13 gebruikt. Dat is Caesar met precies 13; hier is een andere verschuiving gebruikt.' },
+          explain: 'Bij n = 19 in het lab (zeven terug) staat er "pincode". Je had hooguit 25 pogingen nodig: de sleutelruimte is veel te klein.' },
         { q: 'Pas ROT13 toe op de string in het lab. Wat is de vlag?', answer: ['NM{klassieke_cijfers_zijn_zwak}'], encoded: true, hint: 'ROT13 is zijn eigen omkering; één keer toepassen is genoeg.', explain: 'ROT13 verbergt niets; het is binnen één klik leesbaar.' },
         { q: 'Meerstaps: neem QVp7Z2pycl9tam54eHJfeW50cmF9, kies eerst "Van Base64" en daarna "ROT13". Wat is de vlag?', answer: ['NM{twee_zwakke_lagen}'], encoded: true, hint: 'Twee zwakke lagen stapelen maakt het niet sterk. Eerst Base64 eraf, dan ROT13.', explain: 'Twee omkeerbare bewerkingen stapelen levert nog steeds geen echte beveiliging op.' },
-        { q: 'Hoeveel zinvolle sleutels (verschuivingen) heeft een Caesarcijfer op het Latijnse alfabet?', answer: ['25'], hint: 'Een verschuiving van 0 verandert niets; alle andere letters van het alfabet min die ene.', explain: 'Met 25 mogelijkheden is brute-forcen een fluitje van een cent.' },
+        { q: 'Hoeveel plaatsen was elke letter van het woord uit de eerste vraag vooruit geschoven bij het versleutelen?', answer: ['7', 'zeven'],
+          hints: ['Vergelijk de eerste letter van de ciphertext met de eerste letter van je oplossing.', 'Tel in het alfabet van p naar w.', 'Het getal waarmee je in het lab terugdraait en het getal waarmee is versleuteld tellen samen op tot 26.'],
+          wrong: { '19': 'Dat is het getal waarmee je in het lab terugdraait. Versleutelen en ontsleutelen tellen samen op tot 26; gevraagd is de andere helft.', '13': 'Dat zou ROT13 zijn. Tel van p naar w.' },
+          explain: 'p wordt w: zeven plaatsen vooruit. Terugdraaien is zeven terug, of 19 vooruit, want 7 + 19 = 26.' },
       ],
     },
 
     {
       title: 'Taak 3 — Symmetrische encryptie: één sleutel (AES)',
+      tryFirst: true,
+      intro: `<p>Het bestand in het lab is echt versleuteld met AES-128. Je hebt de sleutel niet en die ga je ook niet vinden. Wat je wel weet: het origineel is een lijst van vijf rekeningen, in volgorde. Elke rekening beslaat twee regels van 16 bytes: eerst een regel met het rekeningnummer, dan een regel met het saldo. Bekijk de tien regels in de hex-dump. Wat kun je over de saldi zeggen zonder iets te ontsleutelen?</p>`,
+      lab: { type: 'hexviewer', filename: 'saldi.aes (AES-128, mode onbekend)', hex: CRY_ECB_HEX },
       content: `
         <p>Bij <strong>symmetrische encryptie</strong> gebruik je <em>dezelfde</em> sleutel om te versleutelen
         én te ontsleutelen. Analogie: een kluis met één sleutel. Wie de sleutel heeft, kan erin én eruit.</p>
@@ -153,14 +224,24 @@ CS.registerRoom({
       `,
       questions: [
         { q: 'Welke eigenschap is kenmerkend voor symmetrische encryptie?', options: ['Twee verschillende sleutels, een publieke en een private', 'Dezelfde sleutel versleutelt en ontsleutelt', 'Er is helemaal geen sleutel nodig'], answer: 1, explain: 'Symmetrisch = één gedeelde sleutel voor beide richtingen.' },
-        { q: 'Welke moderne, breed vertrouwde symmetrische standaard wordt vandaag het meest gebruikt?', answer: ['AES'], hint: 'Advanced Encryption Standard.', explain: 'AES is snel en veilig en zit overal: schijfversleuteling, wifi, TLS.' },
+        { q: 'Hoeveel van de vijf saldoregels in het versleutelde bestand zijn byte voor byte aan elkaar gelijk?', answer: ['4', 'vier'],
+          hints: ['Elke regel in de hex-dump is precies één blok van 16 bytes.', 'De saldoregels zijn de tweede, vierde, zesde, achtste en tiende regel. Vergelijk hun eerste bytes.', 'Vier regels beginnen met 9D 93 84 C1. Eén begint anders.'],
+          wrong: { '5': 'Bijna: één saldoregel begint met 9A F2 in plaats van 9D 93.', '0': 'Kijk naar de regels op offset 10, 30, 70 en 90: die zijn identiek.', '10': 'Er zijn tien blokken, maar gevraagd is hoeveel saldoblokken aan elkaar gelijk zijn.' },
+          why: 'Gelijke blokken in ciphertext verraden gelijke blokken in het origineel. Zo lekt een bestand informatie terwijl het algoritme zelf niet gebroken is.',
+          explain: 'Vier saldoblokken zijn identiek. Dat kan alleen als elk blok los en met dezelfde sleutel is versleuteld: de mode ECB.' },
         { q: 'Hoe heet het kernprobleem dat symmetrische encryptie alleen niet oplost?', options: ['Het sleutelbeheer-/sleuteldistributieprobleem', 'Dat AES te langzaam is', 'Dat de ciphertext te lang wordt'], answer: 0, explain: 'Je moet de gedeelde sleutel veilig bij de ander krijgen zonder dat die onderschept wordt.' },
-        { q: 'Welke blokmode kun je beter vermijden omdat hij patronen in de data zichtbaar laat?', answer: ['ECB'], hint: 'De beruchte mode uit het "ECB-pinguïn"-plaatje.', explain: 'ECB versleutelt elk blok los en lekt zo patronen; gebruik GCM met een unieke nonce.' },
+        { q: 'Welke rekening (1 tot en met 5) heeft een ander saldo dan de rest?', answer: ['3', 'rekening 3', '0003'],
+          hints: ['Zoek de saldoregel die afwijkt en tel bij welke rekening hij hoort.', 'Elke rekening is twee regels: regel 1 en 2 zijn rekening 1, regel 3 en 4 rekening 2, enzovoort.', 'De afwijkende regel staat op offset 50, de zesde regel.'],
+          wrong: { '6': 'De zesde regel wijkt af, maar elke rekening beslaat twee regels. Deel door twee.', '50': 'Dat is de offset van het afwijkende blok. Gevraagd is het nummer van de rekening.' },
+          explain: 'Het zesde blok is het saldo van rekening 3. Je weet nu wie een afwijkend saldo heeft, zonder sleutel. Met GCM en een unieke nonce per bericht zouden alle blokken er verschillend uitzien.' },
       ],
     },
 
     {
       title: 'Taak 4 — Asymmetrische encryptie: twee sleutels',
+      tryFirst: true,
+      intro: `<p>In het lab staat een publieke RSA-sleutel (n en e) en een onderschept bericht c. De sleutel is expres veel te klein. Laat het lab n ontbinden in twee priemgetallen, bereken daarmee de private exponent en ontsleutel het bericht. Bedenk daarna: wat verandert er als n niet 34 bits telt maar 2048?</p>`,
+      lab: { type: 'rsa', title: 'een veel te kleine sleutel', n: '10967535067', e: '65537', c: '2831459048' },
       content: `
         <p><strong>Asymmetrische encryptie</strong> (ook wel <em>public-key cryptografie</em>) lost het
         sleutelprobleem op met een geniale truc: iedereen krijgt een <strong>sleutelpaar</strong> — een
@@ -212,15 +293,25 @@ CS.registerRoom({
       `,
       questions: [
         { q: 'Je wilt een vertrouwelijk bericht aan Fatima sturen. Met welke sleutel versleutel je het?', options: ['Fatima\'s publieke sleutel', 'Fatima\'s private sleutel', 'Je eigen private sleutel'], answer: 0, explain: 'Alleen Fatima kan het dan openen, want alleen zij heeft de bijbehorende private sleutel.' },
-        { q: 'Welk algoritme bereikt vergelijkbare sterkte als RSA met veel kleinere sleutels?', answer: ['ECC'], hint: 'Elliptic Curve Cryptography.', explain: 'ECC-256 is ruwweg zo sterk als RSA-3072, maar sneller en zuiniger.' },
+        { q: 'Laat het lab de modulus n ontbinden. Wat is de kleinste van de twee priemfactoren?', answer: ['104723'],
+          hints: ['De veiligheid van RSA hangt af van hoe moeilijk n te ontbinden is.', 'Klik op een van de aanvallen op n, bijvoorbeeld proefdeling of Fermat.', 'De twee factoren liggen vlak bij elkaar, net boven de 104.700.'],
+          wrong: { '104729': 'Dat is de grootste van de twee. Gevraagd is de kleinste.', '10967535067': 'Dat is n zelf. Je zoekt de priemgetallen waarvan n het product is.', '65537': 'Dat is de publieke exponent e. Die is geen factor van n.' },
+          why: 'Wie n kan ontbinden, heeft de private sleutel. Bij 2048 bits lukt dat met de bekende methoden niet binnen een bruikbare tijd; bij 34 bits kost het een fractie van een seconde.',
+          explain: 'n = 104723 × 104729. Met de factoren is de rest gewoon rekenwerk.' },
         { q: 'Waarvoor wordt Diffie-Hellman gebruikt?', options: ['Het veilig afspreken van een gedeelde sleutel over een open kanaal', 'Het permanent opslaan van wachtwoorden', 'Het comprimeren van bestanden'], answer: 0, explain: 'DH laat twee partijen een gedeelde geheime sleutel afleiden zonder die ooit te versturen.' },
         { q: 'Met welke sleutel plaatst een afzender een digitale handtekening?', options: ['Zijn eigen private sleutel', 'De publieke sleutel van de ontvanger', 'Een gedeelde AES-sleutel'], answer: 0, explain: 'Hij tekent met zijn private sleutel; iedereen verifieert met zijn publieke sleutel.' },
-        { q: 'Hoe heet de eigenschap dat oude gesprekken onleesbaar blijven, zelfs als later een private sleutel uitlekt?', answer: ['forward secrecy', 'perfect forward secrecy'], hint: 'Het ontstaat door per sessie verse, tijdelijke (ephemeral) sleutels te gebruiken.', explain: 'Forward secrecy bereik je met ephemeral Diffie-Hellman (DHE/ECDHE).' },
+        { q: 'Bereken met de gevonden factoren de private exponent en ontsleutel c. Welke tekst van vier letters komt eruit?', answer: ['SLOT'],
+          hints: ['Met p en q kun je φ(n) uitrekenen, en daarmee de private exponent d.', 'Klik op "Bereken φ, d en ontsleutel" zodra p en q zijn ingevuld.', 'Lees de regel "m (tekst)" in de uitvoer. Het is iets wat je op een deur vindt.'],
+          wrong: { '1397509972': 'Dat is het bericht als getal. Het lab toont het ook als tekst.', '10195862609': 'Dat is de private exponent d. Gebruik die om c te ontsleutelen en lees de tekst.', '/^0x/': 'Dat is de hex-weergave. Eén regel lager staat het bericht als tekst.' },
+          explain: 'd = 10195862609 en c tot de macht d modulo n geeft de bytes van "SLOT". De publieke sleutel was genoeg om het bericht te lezen, omdat n te klein was.' },
       ],
     },
 
     {
       title: 'Taak 5 — Certificaten, PKI en hoe TLS alles combineert',
+      tryFirst: true,
+      intro: `<p>Een browser controleert bij elke HTTPS-verbinding drie dingen: klopt de naam, is het certificaat nog geldig, en eindigt de keten bij een root die hij vertrouwt? In het lab staat de ruwe uitvoer van zo'n controle voor vijf fictieve sites, zonder oordeel. Speel zelf voor browser: welke sites keur je af, en waarom?</p>`,
+      lab: { type: 'logs', title: 'certificaatcontrole.txt (vijf fictieve sites)', lines: CRY_CERTLOG },
       content: `
         <p>Asymmetrische encryptie heeft één zwakke plek: hoe weet je zeker dat een publieke sleutel écht van
         wie je denkt is? Als een aanvaller je zijn eigen publieke sleutel aansmeert als die van je bank, versleutel
@@ -274,9 +365,21 @@ CS.registerRoom({
       `,
       questions: [
         { q: 'Wat koppelt een digitaal certificaat aan elkaar?', options: ['Een identiteit (zoals een domein) en een publieke sleutel', 'Twee symmetrische sleutels', 'Een wachtwoord en een gebruikersnaam'], answer: 0, explain: 'Een certificaat zegt: "deze publieke sleutel hoort bij deze naam", ondertekend door een CA.' },
-        { q: 'Wie ondertekent een certificaat zodat je het kunt vertrouwen?', answer: ['Certificate Authority', 'CA', 'certificaatautoriteit'], hint: 'De afkorting is CA.', explain: 'Een CA controleert de identiteit en tekent het certificaat met haar private sleutel.' },
+        { q: 'Welke host biedt een certificaat aan dat op de dag van de controle al verlopen is?', answer: ['shop.nm.lab'],
+          hints: ['Vergelijk bij elke site de regel "geldig" met de datum bovenaan de uitvoer.', 'Filter op "geldig" om de vijf geldigheidsperiodes onder elkaar te zien.', 'De einddatum ligt in oktober 2026.'],
+          wrong: { 'intern.nm.lab': 'Dat certificaat is nog tot 2036 geldig. Er is daar iets anders mis: kijk naar de uitgever en de keten.', 'portaal.nm.lab': 'Dat certificaat verloopt binnenkort (30 november), maar is op 12 november nog geldig.', 'betalen.nm.lab': 'De datums kloppen hier. Kijk bij deze site naar de naam in het certificaat.' },
+          explain: 'Het certificaat van shop.nm.lab liep tot en met 8 oktober 2026; de controle is van 12 november. De keten en de naam kloppen wel.' },
         { q: 'Waarom gebruikt TLS zowel asymmetrische als symmetrische encryptie?', options: ['Asymmetrisch om veilig een symmetrische sleutel af te spreken, symmetrisch (AES) voor de snelle data erna', 'Puur toeval, het had ook met alleen RSA gekund', 'Om de verbinding langzamer en dus veiliger te maken'], answer: 0, explain: 'Hybride: asymmetrisch lost de sleuteluitwisseling op, symmetrisch doet het snelle werk.' },
         { q: 'Betekent een geldig hangslotje dat een website te vertrouwen is?', options: ['Nee, het zegt alleen dat de verbinding versleuteld is', 'Ja, dan is de site gegarandeerd echt', 'Alleen bij banken'], answer: 0, explain: 'Ook phishingsites hebben een certificaat; controleer altijd het domein zelf.' },
+        { q: 'De site betalen.nm.lab stuurt een geldig, netjes ondertekend certificaat, en toch keurt de browser het af. Voor welke naam is dat certificaat uitgegeven?', answer: ['betalen-nm.example'],
+          hints: ['Een certificaat koppelt een sleutel aan een naam. Welke naam staat erin?', 'Lees bij site 3 de regels "onderwerp" en "namen" en vergelijk ze met de host.', 'De naam eindigt op .example.'],
+          wrong: { 'betalen.nm.lab': 'Dat is de host waarmee je verbinding maakt. In het certificaat staat een andere naam.', 'NM Lab Issuing CA 2': 'Dat is de uitgever. Gevraagd is de naam waarvoor het certificaat is uitgegeven.' },
+          why: 'Zonder naamcontrole kan iedereen met een geldig certificaat voor zijn eigen domein zich voordoen als een ander. Dit is de controle die een man-in-the-middle tegenhoudt.',
+          explain: 'Datum en keten zijn in orde, maar het certificaat is van betalen-nm.example. De naam hoort bij een andere partij, dus de browser weigert.' },
+        { q: 'Welke host gebruikt een certificaat dat door zichzelf is ondertekend (self-signed)?', answer: ['intern.nm.lab'],
+          hints: ['Bij een self-signed certificaat zijn onderwerp en uitgever dezelfde.', 'Filter op "keten": één keten is maar één schakel lang.', 'Het is de site met een geldigheid van tien jaar.'],
+          wrong: { 'shop.nm.lab': 'Dat certificaat is uitgegeven door NM Lab Issuing CA 1. Het probleem daar is de datum.', 'mail.nm.lab': 'Bij mail.nm.lab klopt alles: naam, datum en keten.' },
+          explain: 'Bij intern.nm.lab is de uitgever gelijk aan het onderwerp en eindigt de keten niet bij NM Lab Root CA. De verbinding is wel versleuteld, maar niemand staat in voor de identiteit.' },
       ],
     },
 
@@ -323,7 +426,10 @@ CS.registerRoom({
       lab: { type: 'cyberchef', input: 'integriteit' },
       questions: [
         { q: 'Bereken de SHA-256 van het woord "integriteit" in het lab. Wat zijn de eerste 8 tekens van de hash?', answer: ['cb168abe'], hint: 'Kies SHA2 256 en lees de eerste acht tekens van links af.', explain: 'De volledige hash begint met cb168abe...; dezelfde invoer geeft altijd dezelfde hash (deterministisch).' },
-        { q: 'Hoe heet de eigenschap dat één veranderd bitje in de invoer de hele hash verandert?', answer: ['lawine-effect', 'lawine', 'avalanche'], hint: 'In het Engels: avalanche effect.', explain: 'Het lawine-effect zorgt dat de hash onvoorspelbaar verandert bij de kleinste wijziging.' },
+        { q: 'Verander in het lab alleen de eerste letter in een hoofdletter: Integriteit. Wat zijn nu de eerste 8 tekens van de SHA-256?', answer: ['a67fba74'],
+          hints: ['Verander niets anders dan die ene letter en laat de bewerking SHA2 256 staan.', 'Vergelijk de nieuwe hash met de vorige: hoeveel tekens zijn gelijk gebleven?', 'De hash begint nu met a67f.'],
+          wrong: { 'cb168abe': 'Dat is de hash van het woord met een kleine letter i. Typ een hoofdletter I.', '/^[0-9a-f]{32}$/': 'Dat lijkt een MD5 (32 tekens). Kies SHA2 256.' },
+          explain: 'Eén letter anders en de hele hash is anders: van cb168abe naar a67fba74. Dat is het lawine-effect, en daarom zie je aan een hash meteen of een bestand is gewijzigd.' },
         { q: 'Waarom gelden MD5 en SHA-1 als onveilig voor beveiliging?', options: ['Er zijn praktische botsingen gevonden', 'Ze zijn te langzaam geworden', 'Ze geven een te lange hash'], answer: 0, explain: 'Gevonden botsingen breken de botsingsbestendigheid, de kern van een veilige hash.' },
         { q: 'Je downloadt een bestand en de SHA-256 komt niet overeen met de gepubliceerde waarde. Wat doe je?', options: ['Niet installeren; het bestand is beschadigd of gemanipuleerd', 'Toch installeren, een paar tekens verschil mag', 'De hash negeren, die is onbelangrijk'], answer: 0, explain: 'Elke afwijking betekent gewijzigde bytes; vertrouw het bestand niet.' },
       ],
@@ -331,6 +437,15 @@ CS.registerRoom({
 
     {
       title: 'Taak 7 — Wachtwoorden veilig opslaan',
+      tryFirst: true,
+      intro: `<p>Uit een fictieve webwinkel is de gebruikerstabel gelekt. Zes gebruikers, zes manieren van opslaan. Plak elke waarde in het lab en zoek uit wat het is. Wie is het best beschermd, wie het slechtst, en welke rij is helemaal geen hash?</p>
+<pre><code>anna    b0d96558e9ce2176c09a69a4685c676f
+bram    $2b$12$LaBN9dY6pc/WEtC6bLzSjTOSqy69ov6iEMzeT7Fpv7g1Vx1Pk.NOP
+chris   {SHA}Gfb5oDae7pz0pduNOPe6ysIaM+0=
+dewi    $argon2id$v=19$m=19456,t=2,p=1$mIXHvUBy+B6Zm1B/Rdkj1l$spWqKsDEo8t4Y4QRMteercQltpGLDXdbEQ+htFKExfT
+emre    fe09724f917fccf987e1d5c71d422d23fc7b08e603ffb49ca737ca9a8f89c8dd
+femke   QVp7cGJxcmVyYV92Zl90cnJhX3VuZnVyYX0=</code></pre>`,
+      lab: { type: 'hashid', value: '' },
       content: `
         <p>Een dienst mag jouw wachtwoord nooit als leesbare tekst opslaan. Lekt de database, dan liggen meteen
         alle wachtwoorden op straat — en omdat mensen wachtwoorden hergebruiken, ook hun accounts elders. De
@@ -378,9 +493,119 @@ CS.registerRoom({
       questions: [
         { q: 'Wat is de belangrijkste reden om een salt toe te voegen aan een wachtwoord-hash?', options: ['Zodat gelijke wachtwoorden verschillende hashes krijgen en rainbow tables nutteloos worden', 'Om het wachtwoord korter te maken', 'Om het wachtwoord later weer te kunnen uitlezen'], answer: 0, explain: 'De salt is uniek per wachtwoord, dus voorberekende tabellen werken niet meer.' },
         { q: 'Moet een salt geheim worden gehouden?', options: ['Nee, de salt mag gewoon naast de hash worden opgeslagen', 'Ja, net zo geheim als het wachtwoord', 'Ja, anders werkt de encryptie niet'], answer: 0, explain: 'Een salt hoeft niet geheim te zijn; zijn kracht zit in uniciteit, niet in geheimhouding.' },
-        { q: 'Noem een moderne, aanbevolen wachtwoordhashfunctie die de Password Hashing Competition won.', answer: ['Argon2', 'argon2'], hint: 'De naam begint met Argon.', explain: 'Argon2 is de huidige aanrader; bcrypt en scrypt zijn ook prima keuzes.' },
+        { q: 'Welke gebruiker in de gelekte tabel heeft een hash van het type dat de Password Hashing Competition won?', answer: ['dewi'],
+          hints: ['Plak de waarden een voor een in het lab en lees wat het lab herkent.', 'Twee rijen markeert het lab als traag of gesalt. Eén daarvan noemt het lab geheugenhard.', 'De waarde begint met een dollarteken en de naam van de functie.'],
+          wrong: { 'bram': 'Dat is bcrypt: ook een goede, trage wachtwoordhash, maar niet de winnaar van de competitie.', 'emre': 'Dat is een kale SHA-256 zonder salt. Lang, maar snel te proberen.' },
+          explain: 'De waarde van dewi begint met $argon2id$. In de string staan ook de instellingen voor geheugen (m), tijd (t) en parallelle draden (p), en de salt.' },
         { q: 'Waarom wil je bij wachtwoordopslag een LANGZAME hash in plaats van een snelle zoals SHA-256?', options: ['Een trage, geheugenintensieve hash beperkt hoeveel gokken een aanvaller per seconde kan doen', 'Omdat trage hashes veiliger versleutelen', 'Omdat SHA-256 niet bestaat voor wachtwoorden'], answer: 0, explain: 'De traagheid raakt de aanvaller met miljarden pogingen veel harder dan jou met één login.' },
         { q: 'Ik begrijp waarom je wachtwoorden nooit als platte tekst of als kale MD5 opslaat.', noAnswer: true },
+        { q: 'Plak de waarde van anna in het lab. Hoeveel mogelijke hashtypen noemt het lab bij deze ene waarde?', answer: ['3', 'drie'],
+          hints: ['Een hash draagt geen etiket. Het lab kijkt alleen naar lengte en tekens.', 'Tel de blokken die het lab onder het invoerveld toont.', 'Het lab noemt MD5 en nog twee typen met dezelfde lengte.'],
+          wrong: { '1': 'Het lab toont meer dan één kandidaat. 32 hextekens passen bij meerdere functies.', '32': 'Dat is het aantal tekens van de waarde. Gevraagd is het aantal typen dat het lab noemt.' },
+          why: 'Wie het verkeerde type kiest, kraakt niets, ook niet met het juiste wachtwoord in de woordenlijst. De context (een webwinkel of een Windows-domein) beslist.',
+          explain: 'MD5, NTLM en MD4 zijn alle drie 32 hextekens. In een webwinkel is MD5 de waarschijnlijke; in een Windows-omgeving zou je eerst aan NTLM denken.' },
+        { q: 'Van welke gebruiker is het wachtwoord niet gehasht, maar alleen gecodeerd?', answer: ['femke'],
+          hints: ['Een van de zes waarden is omkeerbaar zonder sleutel.', 'Plak de waarden in het lab; bij één waarde zegt het lab dat het geen hash is.', 'De waarde eindigt op een is-teken.'],
+          wrong: { 'chris': 'Die waarde bevat wel Base64, maar het is de Base64 van een SHA-1-hash ({SHA}). Terugdraaien levert de hash op, niet het wachtwoord.', 'anna': 'Dat is een echte hash, al is het een zwakke.' },
+          explain: 'De waarde van femke is gewone Base64. Wie de tabel heeft, heeft haar wachtwoord.' },
+        { q: 'Haal het wachtwoord van die gebruiker uit de tabel. Wat is de vlag?', boss: true, encoded: true, answer: ['NM{coderen_is_geen_hashen}'],
+          hints: ['Wat je na de eerste stap ziet, lijkt op een vlag maar is het nog niet. Je hebt zoiets eerder in deze room gezien.', 'Gebruik het CyberChef-lab van taak 1 of 2 en stapel twee bewerkingen.', 'Eerst de laag eraf die het hashid-lab herkende; daarna de bewerking die alleen letters verschuift en zijn eigen omkering is.'],
+          wrong: { 'AZ{pbqrera_vf_trra_unfura}': 'Je bent halverwege. Accolades en underscores staan goed, de letters nog niet: er zit nog een laag omheen.', '/^[0-9a-f]{32,64}$/': 'Je hebt de waarde gehasht. Hier moet je twee omkeerbare lagen terugdraaien.' },
+          why: 'Twee omkeerbare lagen blijven omkeerbaar. Alleen een trage hash met salt beschermt een wachtwoord als de database lekt.',
+          explain: 'Base64 eraf geeft AZ{pbqrera_vf_trra_unfura}; ROT13 daarop geeft de vlag. Herkennen wat iets is, is de helft van het werk.' },
+      ],
+    },
+
+    {
+      title: 'Taak 8 — Verdieping: wat er onder de motorkap gebeurt',
+      kind: 'verdieping', optional: true,
+      content: `
+        <h3>Base64 is rekenwerk, geen geheim</h3>
+        <p>Base64 (RFC 4648, 2006) neemt telkens drie bytes, dus 24 bits, en schrijft die als vier tekens van elk
+        6 bits. De uitvoer is daardoor een derde langer dan de invoer. Blijft er aan het eind één byte over, dan
+        komen er twee is-tekens als opvulling; blijven er twee over, dan één. Daaraan herken je Base64 vaak, maar
+        niet altijd: de variant voor URL's en tokens (base64url) gebruikt <code>-</code> en <code>_</code> en laat
+        de opvulling meestal weg.</p>
+
+        <h3>AES: de mode maakt of breekt het</h3>
+        <p>AES zelf (FIPS 197, 2001) is een blokcijfer met blokken van 128 bits. In taak 3 zag je wat er gebeurt
+        als je elk blok los versleutelt. Moderne modes koppelen een teller of het vorige blok eraan. GCM
+        (NIST SP 800-38D, 2007) levert daarnaast een controlegetal waarmee je merkt of iemand aan de ciphertext heeft
+        gezeten. De valkuil is de nonce: gebruik je bij GCM twee keer dezelfde nonce met dezelfde sleutel, dan lekt
+        het verschil tussen de twee berichten en kan een aanvaller geldige controlegetallen vervalsen. De meeste
+        fouten met cryptografie zitten in zulk gebruik en zelden in het algoritme.</p>
+
+        <h3>Ondertekenen is geen "versleutelen met de private sleutel"</h3>
+        <p>Die zin uit taak 4 is een bruikbaar beeld bij RSA uit het leerboek, maar het klopt niet letterlijk. Echte
+        RSA-handtekeningen gebruiken een opvulschema, en algoritmen als ECDSA en Ed25519 versleutelen helemaal
+        niets. Onthoud liever: alleen de houder van de private sleutel kan de handtekening maken, iedereen met de
+        publieke sleutel kan hem controleren.</p>
+
+        <h3>TLS in de praktijk</h3>
+        <p>In TLS 1.3 (RFC 8446, 2018) is de sleuteluitwisseling altijd tijdelijk (ephemeral Diffie-Hellman), zo nodig
+        gecombineerd met een eerder gedeelde sleutel. De oude variant waarbij de browser de sessiesleutel versleutelde
+        met de RSA-sleutel van de server is geschrapt; daarmee is forward secrecy de norm geworden. Wat TLS niet
+        doet: je vertellen of de partij achter het domein betrouwbaar is.</p>
+
+        <h3>Hashes en wachtwoorden</h3>
+        <ul>
+          <li>Voor SHA-1 volgde na de eerste botsing in 2017 in 2020 een aanval waarbij de aanvaller het begin van
+          beide bestanden zelf kiest. Daarmee is SHA-1 ook voor handtekeningen onbruikbaar.</li>
+          <li>Argon2 is vastgelegd in RFC 9106 (2021); de variant Argon2id is de gangbare keuze. bcrypt blijft prima,
+          maar kijkt alleen naar de eerste 72 bytes van het wachtwoord.</li>
+          <li>Een hash is deterministisch. Voor een kleine invoerruimte (een pincode, een telefoonnummer) kun je
+          alle mogelijkheden hashen en vergelijken. Een gehasht telefoonnummer is dus niet anoniem.</li>
+        </ul>
+
+        <h3>Wat eraan komt</h3>
+        <p>Een voldoende grote quantumcomputer zou RSA en ECC breken. NIST publiceerde daarom in augustus 2024 de
+        eerste standaarden die daartegen bestand moeten zijn: FIPS 203 (ML-KEM, voor sleuteluitwisseling) en FIPS 204
+        en 205 (handtekeningen). AES-256 en SHA-2 gelden vooralsnog als voldoende sterk. De zorg van nu is verkeer
+        dat vandaag wordt opgeslagen om het later te ontsleutelen.</p>
+      `,
+      questions: [
+        { q: 'Hoeveel tekens telt de Base64-codering van 10 bytes, inclusief opvulling?', answer: ['16'],
+          hints: ['Base64 werkt in groepjes van drie bytes.', 'Tien bytes zijn drie volle groepjes en één byte rest; ook de rest wordt een groepje van vier tekens.', 'Vier groepjes van vier tekens.'],
+          wrong: { '14': 'Zonder opvulling kom je op 14 tekens. Met de is-tekens erbij wordt het een veelvoud van vier.', '13': '10 × 4 / 3 is 13,3, maar Base64 schrijft altijd hele groepjes van vier tekens.', '40': 'Vier tekens per byte is te veel: het zijn vier tekens per drie bytes.' },
+          explain: 'Drie groepjes van drie bytes geven twaalf tekens; de losse byte geeft twee tekens plus twee is-tekens. Samen 16.' },
+        { q: 'Hoeveel is-tekens staan er aan het eind van die Base64-string van 10 bytes?', answer: ['2', 'twee'],
+          hints: ['De opvulling hangt af van hoeveel bytes er overblijven na de volle groepjes van drie.', 'Tien gedeeld door drie laat één byte over.', 'Eén byte over betekent de meeste opvulling die Base64 kent.'],
+          wrong: { '1': 'Eén is-teken hoort bij twee bytes rest. Hier blijft er één byte over.', '0': 'Geen opvulling is er alleen als het aantal bytes deelbaar is door drie.' },
+          explain: 'Eén byte rest: twee tekens data en twee is-tekens.' },
+        { q: 'Een pincode van vier cijfers is opgeslagen als SHA-256 zonder salt. Hoeveel hashes moet een aanvaller hooguit berekenen om hem terug te vinden?', answer: ['10000', '10.000', '10^4'],
+          hints: ['De hash is niet om te keren, maar de invoerruimte is bekend.', 'Tel hoeveel verschillende pincodes van vier cijfers er bestaan.', 'Van 0000 tot en met 9999.'],
+          wrong: { '9999': 'Tel 0000 ook mee.', '/^2\\^256$|^1[.,]?1/': 'Zo groot is de uitvoerruimte van SHA-256. De aanvaller hoeft alleen alle mogelijke invoeren te proberen.' },
+          explain: 'Tienduizend pogingen. De sterkte van een hash helpt niet als de invoer te raden is.' },
+      ],
+    },
+
+    {
+      title: 'Taak 9 — Zo komt dit voor op een examen',
+      kind: 'examen', optional: true,
+      content: `
+        <p>Examenvragen over cryptografie draaien bijna altijd om één ding: het juiste middel bij het juiste doel.
+        Vertrouwelijkheid, integriteit, herkomst en veilige opslag van wachtwoorden vragen elk iets anders. De
+        afleiders zijn middelen die wel bestaan en goed klinken, maar een ander doel dienen. Bepaal eerst welk doel
+        de situatie vraagt, kies dan pas.</p>
+        <p>De vier vragen hieronder zijn voor deze room geschreven, in de stijl van zulke examens.</p>
+      `,
+      questions: [
+        { q: 'Een ontwikkelaar zet API-sleutels als Base64 in een configuratiebestand "zodat ze versleuteld zijn". Het bestand komt in een openbare repository terecht. Wat is de juiste beoordeling?',
+          options: ['De sleutels zijn veilig zolang niemand weet dat het Base64 is', 'De sleutels zijn leesbaar voor iedereen; ze moeten worden ingetrokken en voortaan in een sleutelkluis staan', 'De sleutels hadden daarnaast met ROT13 bewerkt moeten worden', 'De sleutels hadden met SHA-256 gehasht in het bestand moeten staan'], answer: 1,
+          wrong: { 0: 'Beveiliging die leunt op het geheimhouden van de methode houdt geen stand. Base64 is aan de vorm te herkennen en zonder sleutel om te keren.', 2: 'Twee omkeerbare lagen zonder sleutel blijven omkeerbaar.', 3: 'Hashen klinkt veilig, maar de toepassing heeft de sleutel zelf nodig om zich aan te melden. Uit een hash is die niet terug te halen, dus dit lost het probleem niet op.' },
+          explain: 'Base64 is codering. Een gelekt geheim is gelekt: intrekken, vervangen en daarna opslaan op een plek waar toegang wordt geregeld.' },
+        { q: 'Je moet een bestand van 2 GB vertrouwelijk naar een partner sturen. Je hebt alleen diens publieke RSA-sleutel. Welke aanpak is gangbaar en veilig?',
+          options: ['Het hele bestand in stukken versleutelen met de publieke RSA-sleutel', 'Een willekeurige AES-sleutel maken, het bestand daarmee versleutelen en de AES-sleutel versleutelen met de publieke RSA-sleutel', 'Het bestand ondertekenen met de publieke sleutel van de partner', 'De SHA-256 van het bestand meesturen, zodat alleen de partner het kan lezen'], answer: 1,
+          wrong: { 0: 'Asymmetrische encryptie is traag en bedoeld voor kleine hoeveelheden data, zoals een sleutel. Zo wordt het in de praktijk niet gedaan.', 2: 'Ondertekenen doe je met je eigen private sleutel en het geeft herkomst en integriteit. Het maakt niets onleesbaar.', 3: 'Een hash bewijst dat het bestand ongewijzigd is. Het bestand zelf gaat dan nog steeds leesbaar over de lijn.' },
+          explain: 'Hybride: asymmetrisch voor de sleutel, symmetrisch voor de data. Dat is ook wat TLS doet.' },
+        { q: 'Uit een gelekte database blijkt dat twee gebruikers exact dezelfde wachtwoordhash hebben. De hashes zijn 64 hextekens lang. Wat is de beste conclusie en verbetering?',
+          options: ['Er is een botsing in SHA-256 gevonden; stap over op SHA-512', 'De twee gebruikers hebben hetzelfde wachtwoord; gebruik per gebruiker een salt en een trage functie zoals Argon2id', 'De database was niet versleuteld; versleutel de hashes met AES en bewaar de sleutel in dezelfde database', 'De hashes zijn te kort; voeg een tweede ronde SHA-256 toe'], answer: 1,
+          wrong: { 0: 'Voor SHA-256 zijn geen botsingen bekend. Gelijke invoer geeft gelijke uitvoer; dat is de verklaring. SHA-512 is even snel te proberen en lost niets op.', 2: 'Een sleutel naast de data die hij beschermt, lekt mee. En het echte probleem, een snelle hash zonder salt, blijft bestaan.', 3: 'Twee snelle rondes zijn nog steeds snel, en gelijke wachtwoorden houden gelijke hashes.' },
+          explain: 'Gelijke hashes zonder salt betekenen gelijke wachtwoorden. Een salt per gebruiker en een trage, geheugenharde functie pakken beide problemen aan.' },
+        { q: 'Een aanvaller heeft een jaar lang versleuteld TLS-verkeer naar een webserver opgeslagen. Daarna steelt hij de private sleutel van die server. Wat bepaalt of hij het oude verkeer alsnog kan lezen?',
+          options: ['Of het certificaat van de server inmiddels is ingetrokken', 'Of de sessies een tijdelijke (ephemeral) Diffie-Hellman-uitwisseling gebruikten', 'Of de sessies AES-256 gebruikten in plaats van AES-128', 'Of de site HSTS had ingeschakeld'], answer: 1,
+          wrong: { 0: 'Intrekken voorkomt dat de gestolen sleutel in de toekomst wordt vertrouwd. Aan opgeslagen verkeer uit het verleden verandert het niets.', 2: 'De sleutellengte van AES doet er niet toe als de aanvaller de sessiesleutel zelf kan achterhalen.', 3: 'HSTS dwingt de browser om HTTPS te gebruiken. Het zegt niets over hoe de sessiesleutel tot stand kwam.' },
+          explain: 'Met tijdelijke sleutels per sessie (forward secrecy) helpt de private sleutel van de server niet om oude sessiesleutels terug te rekenen.' },
       ],
     },
   ],

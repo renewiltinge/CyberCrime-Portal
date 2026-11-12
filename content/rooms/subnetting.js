@@ -6,6 +6,8 @@ CS.registerRoom({
   title: 'IP-adressen en subnetting',
   icon: '🧮',
   difficulty: 'Gemiddeld',
+  level: 'Instap',
+  checked: '2026-11-12',
   minutes: 65,
   summary: 'Reken met IP-adressen: binair en decimaal, subnetmaskers en CIDR, netwerk- en broadcastadres, het aantal hosts, de speciale adresblokken en het verkorten van IPv6.',
   objectives: [
@@ -19,6 +21,8 @@ CS.registerRoom({
   tasks: [
     {
       title: 'Taak 1 — Binair en decimaal',
+      tryFirst: true,
+      intro: '<p>Reken eerst zelf: welk decimaal getal is het octet <code>10101100</code>, en hoe schrijf je 202 in acht bits? Controleer daarna in de omzetter (binair typ je als <code>0b10101100</code>). Loop je vast, klap dan de uitleg open.</p>',
       content: `
         <p>Computers kennen maar twee toestanden: aan (1) en uit (0). Dat is het <strong>binaire</strong> talstelsel.
         Een enkele 0 of 1 heet een <strong>bit</strong>. Acht bits samen heten een <strong>byte</strong> of, als het om
@@ -60,24 +64,44 @@ CS.registerRoom({
           enkele seconden om, en de rest van subnetting wordt veel makkelijker.</p>
         </div>
       `,
+      lab: { type: 'numconv', value: '0b11000000' },
       questions: [
         {
-          q: 'Hoeveel bits zitten er in één octet?',
-          answer: ['8', '8 bits'],
-          hint: 'Een IPv4-adres heeft vier octetten en is in totaal 32 bits.',
-          explain: 'Eén octet is 8 bits; vier octetten vormen samen de 32 bits van een IPv4-adres.',
+          q: 'Zet het octet 10101100 om naar decimaal.',
+          answer: ['172'],
+          hints: ['Tel de plaatswaarden op waar een 1 staat.', 'De rij is 128-64-32-16-8-4-2-1; er staan enen op plaats 1, 3, 5 en 6.', '128 + 32 + 8 + 4.'],
+          wrong: {
+            '53': 'Je leest het octet van rechts naar links. De meest linkse bit is 128 waard, niet 1.',
+            '176': 'Bijna. Je telt 16 mee in plaats van 4: de enen staan op 128, 32, 8 en 4.',
+            '86': 'Je bent één plaats opgeschoven. De eerste bit is 128 waard, niet 64.',
+          },
+          explain: '128 + 32 + 8 + 4 = 172. Dit is het eerste octet van de private range 172.16.0.0/12.',
         },
         {
-          q: 'Welke decimale waarde hoort bij het binaire getal 11000000?',
-          options: ['160', '192', '224'],
-          answer: 1,
-          explain: '128 (plaats 1) + 64 (plaats 2) = 192.',
+          q: 'Schrijf het decimale getal 202 als acht bits.',
+          answer: ['11001010', '0b11001010'],
+          hints: ['Werk van links naar rechts: past 128 erin, dan 64, enzovoort.', '202 - 128 = 74, 74 - 64 = 10. Welke plaatswaarden maken samen 10?', '128 + 64 + 8 + 2.'],
+          wrong: {
+            '11001000': 'Dat is 200. Er blijft nog 2 over: zet ook de bit van plaatswaarde 2 aan.',
+            '01010011': 'Je hebt het octet omgedraaid. De hoogste plaatswaarde staat links.',
+            '/^[01]{1,7}$/': 'Een octet schrijf je altijd met acht bits; vul links aan met nullen.',
+          },
+          explain: '202 = 128 + 64 + 8 + 2, dus 11001010.',
+        },
+        {
+          q: 'Een netwerkbeheerder noteert een adres binair: 00001010.00010100.00011110.00101000. Schrijf het in gewone decimale notatie.',
+          answer: ['10.20.30.40'],
+          hints: ['Reken elk octet apart om; de punten blijven staan.', 'Het eerste octet is 8 + 2. Doe hetzelfde voor de andere drie.', 'De octetten zijn 10, 20, 30 en ...'],
+          why: 'In packet captures en ACL-fouten zie je adressen soms binair of in hex. Wie een octet vlot omrekent, ziet meteen in welk subnet een adres valt.',
+          explain: '00001010 = 10, 00010100 = 20, 00011110 = 30 en 00101000 = 40.',
         },
       ],
     },
 
     {
       title: 'Taak 2 — Het subnetmasker en de CIDR-notatie',
+      tryFirst: true,
+      intro: '<p>Een collega geeft je alleen een masker: <code>255.255.254.0</code>. Zoek uit welke CIDR-prefix daarbij hoort, en welk masker bij /22 past. De calculator rekent een adres met prefix uit, bijvoorbeeld <code>10.0.0.0/22</code>; probeer een paar prefixen en kijk wat er met het masker gebeurt.</p>',
       content: `
         <p>Een IP-adres heeft twee delen: een <strong>netwerkdeel</strong> (welk netwerk) en een <strong>hostdeel</strong>
         (welk apparaat binnen dat netwerk). Het <strong>subnetmasker</strong> vertelt waar de grens ligt. Op de plekken
@@ -115,24 +139,44 @@ CS.registerRoom({
           <code>11111111.11111111.11111111.11000000</code>. Tel de enen: 8 + 8 + 8 + 2 = 26. Dus dit masker is /26.</p>
         </div>
       `,
+      lab: { type: 'subnet' },
       questions: [
         {
-          q: 'Welke CIDR-notatie hoort bij het subnetmasker 255.255.255.0?',
-          answer: ['/24', '24'],
-          hint: 'Tel het aantal enen: 8 + 8 + 8 + 0.',
-          explain: '255.255.255.0 heeft 24 netwerkbits, dus /24.',
+          q: 'Welk subnetmasker hoort bij de prefix /22?',
+          answer: ['255.255.252.0'],
+          hints: ['22 netwerkbits: twee volle octetten en nog 6 bits in het derde.', 'Zes enen in een octet: 128 + 64 + 32 + 16 + 8 + 4.', 'Het derde octet is 252, het vierde 0.'],
+          wrong: {
+            '255.255.255.252': 'Dat is /30. Bij /22 valt de grens in het derde octet, niet in het vierde.',
+            '255.255.248.0': 'Dat is /21: vijf enen in het derde octet. Bij /22 zijn het er zes.',
+            '255.255.254.0': 'Dat is /23: zeven enen in het derde octet.',
+          },
+          explain: '/22 = 8 + 8 + 6 bits. Zes enen in het derde octet is 252, dus 255.255.252.0.',
         },
         {
-          q: 'Hoeveel bits staan "aan" (op 1) in het subnetmasker 255.255.255.192?',
-          options: ['24', '25', '26'],
-          answer: 2,
-          explain: '255 = acht enen (3x), en 192 = 11000000 = twee enen. 8+8+8+2 = 26, dus /26.',
+          q: 'Welke CIDR-prefix hoort bij het masker 255.255.254.0?',
+          answer: ['/23', '23'],
+          hints: ['Tel de enen in het hele masker.', '254 is binair 11111110: zeven enen.', '8 + 8 + 7.'],
+          wrong: {
+            '/24': '/24 is 255.255.255.0. Hier is het derde octet 254, dus één bit minder.',
+            '24': '/24 is 255.255.255.0. Hier is het derde octet 254, dus één bit minder.',
+            '/22': '/22 is 255.255.252.0. 254 heeft zeven enen, 252 heeft er zes.',
+            '22': '/22 is 255.255.252.0. 254 heeft zeven enen, 252 heeft er zes.',
+          },
+          explain: '255 en 255 leveren 16 enen, 254 levert er 7: samen /23.',
+        },
+        {
+          q: 'Hoeveel hostbits blijven er over bij het masker 255.255.255.248?',
+          answer: ['3', 'drie'],
+          hints: ['Hostbits zijn de nullen in het masker.', '248 is binair 11111000.', '32 min 29.'],
+          explain: '248 = 11111000: vijf enen en drie nullen. Het masker is /29 en laat 3 hostbits over.',
         },
       ],
     },
 
     {
       title: 'Taak 3 — Netwerkadres, broadcast en bruikbare hosts',
+      tryFirst: true,
+      intro: '<p>De printer op de afdeling Planning heeft adres <code>10.14.77.200/27</code>. Zoek uit in welk subnet hij zit: netwerkadres, broadcastadres en hoeveel apparaten er nog bij passen. Reken eerst op papier, controleer daarna met de calculator.</p>',
       content: `
         <p>Binnen elk subnet zijn twee adressen gereserveerd en mag je de rest aan apparaten geven:</p>
         <ul>
@@ -175,28 +219,59 @@ CS.registerRoom({
       lab: { type: 'subnet' },
       questions: [
         {
-          q: 'Wat is het broadcastadres van 192.168.10.64/26?',
-          answer: ['192.168.10.127'],
-          hint: 'Blokgrootte is 64; het blok .64 loopt tot aan het volgende blok op .128.',
-          explain: 'Het blok loopt van .64 tot en met .127, dus het broadcastadres is 192.168.10.127.',
+          q: 'Wat is het broadcastadres van het subnet waarin 10.14.77.200/27 zit?',
+          answer: ['10.14.77.223'],
+          hints: ['Bepaal eerst de blokgrootte in het laatste octet.', '/27 is masker 224, dus blokken van 32: 0, 32, 64, ... In welk blok valt 200?', 'Het blok begint bij .192; het volgende begint bij .224.'],
+          wrong: {
+            '10.14.77.192': 'Dat is het netwerkadres (alle hostbits 0). Het broadcastadres is het laatste adres van het blok.',
+            '10.14.77.224': 'Off-by-one: .224 is het netwerkadres van het volgende subnet. Het broadcastadres ligt er één onder.',
+            '10.14.77.222': 'Dat is de laatste bruikbare host. Het broadcastadres is één hoger.',
+            '10.14.77.255': 'Dat zou kloppen bij /24. Bij /27 is het blok maar 32 adressen groot.',
+          },
+          why: 'Wie het broadcastadres aan een apparaat geeft, krijgt een host die niet bereikbaar is. Dit is een van de meest gemaakte fouten bij het handmatig uitdelen van adressen.',
+          explain: 'Blokgrootte 256 - 224 = 32. 200 valt in het blok 192 t/m 223, dus het broadcastadres is 10.14.77.223.',
         },
         {
-          q: 'Hoeveel bruikbare hosts heeft een /26-netwerk?',
-          answer: ['62'],
-          hint: 'Gebruik 2^(hostbits) min 2, met 6 hostbits.',
-          explain: '/26 heeft 6 hostbits: 2^6 min 2 = 64 min 2 = 62 bruikbare hosts.',
+          q: 'Hoeveel bruikbare hosts heeft een /23-netwerk?',
+          answer: ['510'],
+          hints: ['Gebruik de formule met het aantal hostbits.', '32 - 23 = 9 hostbits.', '2^9 = 512; trek er twee af.'],
+          wrong: {
+            '512': 'Dat is het totaal aantal adressen. Netwerkadres en broadcastadres gaan er nog af.',
+            '254': 'Dat is /24. Een /23 heeft één hostbit meer en is dus twee keer zo groot.',
+            '511': 'Je trekt er één af; je bent er twee kwijt: het netwerkadres en het broadcastadres.',
+          },
+          explain: '9 hostbits: 2^9 - 2 = 510 bruikbare hosts.',
         },
         {
-          q: 'Wat is het netwerkadres van 172.16.34.200/20?',
-          answer: ['172.16.32.0'],
-          hint: 'Blokgrootte in het derde octet is 256 min 240 = 16; tussen welke veelvouden van 16 valt 34?',
-          explain: '34 valt tussen 32 en 48, dus het netwerkadres is 172.16.32.0 (broadcast 172.16.47.255).',
+          q: 'Wat is het netwerkadres van 172.20.93.140/21?',
+          answer: ['172.20.88.0'],
+          hints: ['Bij /21 ligt de grens in het derde octet.', 'Masker 255.255.248.0: blokken van 8 in het derde octet.', 'Welk veelvoud van 8 ligt net onder 93?'],
+          wrong: {
+            '172.20.93.0': 'Je behandelt het als /24. Bij /21 horen ook de laatste drie bits van het derde octet bij het hostdeel.',
+            '172.20.95.255': 'Dat is het broadcastadres van dit subnet. Gevraagd is het netwerkadres.',
+            '172.20.96.0': 'Dat is het volgende subnet. 93 valt in het blok 88 t/m 95.',
+            '172.20.88.1': 'Dat is de eerste bruikbare host. Het netwerkadres eindigt hier op .0.',
+          },
+          explain: 'Blokgrootte 256 - 248 = 8. 93 valt tussen 88 en 96, dus het netwerkadres is 172.20.88.0 (broadcast 172.20.95.255).',
+        },
+        {
+          q: 'Een nieuwe server krijgt het laatste bruikbare adres in het subnet van 192.168.44.75/28. Welk adres is dat?',
+          answer: ['192.168.44.78'],
+          hints: ['Zoek eerst het broadcastadres van dit subnet.', '/28 geeft blokken van 16: 64, 80, ... Het blok van .75 loopt tot en met .79.', 'Het is één lager dan het broadcastadres.'],
+          wrong: {
+            '192.168.44.79': 'Dat is het broadcastadres. Dat mag je niet aan een apparaat geven.',
+            '192.168.44.80': 'Dat is het netwerkadres van het volgende subnet.',
+            '192.168.44.65': 'Dat is de eerste bruikbare host. Gevraagd is de laatste.',
+          },
+          explain: 'Het subnet is 192.168.44.64/28, broadcast .79. De laatste bruikbare host is 192.168.44.78.',
         },
       ],
     },
 
     {
       title: 'Taak 4 — Speciale adresblokken en waarom je subnet',
+      tryFirst: true,
+      intro: '<p>In het lab staan zestien adressen uit een firewalllog door elkaar. Sorteer ze in vier groepen van vier. Welke soorten adressen het zijn, moet je zelf ontdekken; de uitleg helpt als je vastloopt.</p>',
       content: `
         <p>Niet elk IP-adres mag zomaar op het internet. Een aantal blokken is voor speciaal gebruik gereserveerd. Deze
         moet je kunnen herkennen.</p>
@@ -222,6 +297,10 @@ CS.registerRoom({
         geeft het zichzelf automatisch een adres in dit bereik. Zie je een 169.254-adres, dan weet je bijna zeker: de
         DHCP-server is onbereikbaar.</p>
 
+        <p><strong>Documentatie: <code>192.0.2.0/24</code>, <code>198.51.100.0/24</code> en <code>203.0.113.0/24</code>.</strong>
+        Deze drie blokken zijn in RFC 5737 (2010) gereserveerd voor voorbeelden in handleidingen en lesmateriaal. Je
+        komt ze in dit portaal vaak tegen. Ze horen niet in een echt netwerk thuis.</p>
+
         <h3>Waarom zou je een netwerk opdelen?</h3>
         <p>Subnetten (segmenteren) doe je om drie redenen:</p>
         <ul>
@@ -239,28 +318,53 @@ CS.registerRoom({
           patiënten vastzit. Segmentatie redt hier in het ergste geval levens.</p>
         </div>
       `,
+      lab: {
+        type: 'connections',
+        title: 'welk adresblok?',
+        prompt: 'Zestien adressen uit een firewalllog. Vier groepen van vier: privé (RFC 1918), loopback, APIPA en documentatie (RFC 5737).',
+        flag: 'NM{vier_blokken_herkend}',
+        groups: [
+          { name: 'Privé (RFC 1918)', items: ['10.200.3.4', '172.20.5.9', '172.31.255.254', '192.168.77.1'] },
+          { name: 'Loopback (127.0.0.0/8)', items: ['127.0.0.1', '127.0.1.1', '127.45.0.9', '127.255.255.254'] },
+          { name: 'APIPA (169.254.0.0/16)', items: ['169.254.1.1', '169.254.77.20', '169.254.200.3', '169.254.0.99'] },
+          { name: 'Documentatie (RFC 5737)', items: ['192.0.2.10', '198.51.100.7', '203.0.113.99', '192.0.2.200'] },
+        ],
+      },
       questions: [
         {
-          q: 'Welk van deze adressen valt binnen een private range (RFC 1918)?',
-          options: ['8.8.8.8', '10.5.3.1', '172.32.0.1'],
-          answer: 1,
-          explain: '10.5.3.1 valt in 10.0.0.0/8. 8.8.8.8 is publiek en 172.32.0.1 valt net buiten de 172.16-172.31-range.',
+          q: 'Welke vlag krijg je als je alle vier de groepen in het lab hebt gevonden?',
+          answer: ['NM{vier_blokken_herkend}'],
+          hints: ['Begin met de groep die je het makkelijkst herkent: alles wat met 127 begint.', 'Let bij de 172-adressen op het tweede octet: alleen 16 t/m 31 is privé.', 'De vlag verschijnt onder het bord zodra de vierde groep klopt.'],
+          explain: 'Privé: 10/8, 172.16/12 en 192.168/16. Loopback: 127/8. APIPA: 169.254/16. Documentatie: 192.0.2.0/24, 198.51.100.0/24 en 203.0.113.0/24.',
         },
         {
-          q: 'Welk bereik gebruikt een apparaat zelf (APIPA) als het geen DHCP-adres krijgt? Geef de eerste twee octetten.',
-          answer: ['169.254'],
-          hint: 'Het APIPA-blok is 169.254.0.0/16.',
-          explain: 'Zonder DHCP geeft een apparaat zichzelf een adres in 169.254.0.0/16.',
+          q: 'In een log staan vijf bronadressen: 172.15.9.1, 172.16.9.1, 172.31.9.1, 172.32.9.1 en 192.169.0.5. Hoeveel daarvan zijn privé (RFC 1918)?',
+          answer: ['2', 'twee'],
+          hints: ['Leg elk adres naast de drie private blokken.', '172.16.0.0/12 loopt van 172.16 tot en met 172.31. En 192.168 is niet 192.169.', 'Alleen de adressen met tweede octet 16 en 31 vallen erin.'],
+          wrong: {
+            '4': 'Niet alles wat met 172 begint is privé. Het blok is een /12: alleen 172.16 t/m 172.31.',
+            '5': 'Geen van de 172-adressen buiten 16 t/m 31 is privé, en 192.169 valt net buiten 192.168.0.0/16.',
+            '3': 'Kijk nog eens naar 192.169.0.5: het private blok is 192.168.0.0/16, één lager.',
+          },
+          explain: 'Alleen 172.16.9.1 en 172.31.9.1 vallen binnen 172.16.0.0/12. De andere drie zijn publieke adressen.',
         },
         {
           q: 'Ik begrijp waarom netwerksegmentatie (subnetten met een firewall ertussen) ook een beveiligingsmaatregel is.',
           noAnswer: true,
+        },
+        {
+          q: 'Hoeveel adressen telt het blok 172.16.0.0/12 in totaal? (alle adressen, dus zonder er twee af te trekken)',
+          answer: ['1048576', '1.048.576', '2^20'],
+          hints: ['Het aantal adressen is 2 tot de macht van het aantal hostbits.', '32 - 12 = 20 hostbits.', '2^20 is iets meer dan een miljoen.'],
+          explain: '20 hostbits geven 2^20 = 1.048.576 adressen, van 172.16.0.0 tot en met 172.31.255.255.',
         },
       ],
     },
 
     {
       title: 'Taak 5 — IPv6-notatie verkorten',
+      tryFirst: true,
+      intro: '<p>Een netwerkkaart toont het adres <code>fe80:0000:0000:0000:0204:61ff:fe9d:f156</code>. Schrijf het zo kort mogelijk op. Er zijn maar twee regels; probeer ze zelf te bedenken voordat je de uitleg opent.</p>',
       content: `
         <p>Een IPv6-adres is 128 bits lang en wordt geschreven als acht groepen van vier hexadecimale tekens, gescheiden
         door dubbele punten. Voluit ziet dat er lang en onhandig uit, bijvoorbeeld:</p>
@@ -294,14 +398,171 @@ CS.registerRoom({
       `,
       questions: [
         {
-          q: 'Verkort het IPv6-adres 2001:0db8:0000:0000:0000:ff00:0042:8329 zo kort mogelijk.',
-          answer: ['2001:db8::ff00:42:8329'],
-          hint: 'Schrap eerst de voorloopnullen, vervang daarna de reeks nulgroepen door ::',
-          explain: 'Na voorloopnullen schrappen en de middelste nulgroepen vervangen door :: krijg je 2001:db8::ff00:42:8329.',
+          q: 'Verkort het IPv6-adres fe80:0000:0000:0000:0204:61ff:fe9d:f156 zo kort mogelijk.',
+          answer: ['fe80::204:61ff:fe9d:f156'],
+          hints: ['Er zijn twee stappen: nullen aan het begin van een groep, en een reeks groepen die helemaal nul zijn.', 'Schrap eerst de voorloopnul in 0204. Vervang daarna de drie nulgroepen door ::', 'Het resultaat begint met fe80:: en heeft daarna nog vier groepen.'],
+          wrong: {
+            'fe80::0204:61ff:fe9d:f156': 'De reeks nulgroepen is goed, maar in 0204 mag de voorloopnul ook weg.',
+            'fe80:0:0:0:204:61ff:fe9d:f156': 'De voorloopnullen zijn weg, maar de drie nulgroepen kun je nog samen vervangen door ::',
+            'fe8::204:61ff:fe9d:f156': 'Je mag alleen nullen aan het begin van een groep schrappen. De nul aan het eind van fe80 hoort bij de waarde.',
+            'fe80::24:61ff:fe9d:f156': 'In 0204 mag alleen de eerste nul weg. De nul in het midden hoort bij de waarde.',
+          },
+          explain: '0204 wordt 204 en de drie nulgroepen worden samen ::, dus fe80::204:61ff:fe9d:f156. De fe80 verraadt een link-local adres.',
         },
         {
           q: 'Ik kan een IPv6-adres verkorten met de twee regels (voorloopnullen weg, één reeks nulgroepen als ::).',
           noAnswer: true,
+        },
+        {
+          q: 'Hoeveel nulgroepen vervangt de :: in 2001:db8:85a3::8a2e:370:7334?',
+          answer: ['2'],
+          hints: ['Een volledig IPv6-adres heeft altijd acht groepen.', 'Tel hoeveel groepen er nu staan.', 'Acht min zes.'],
+          explain: 'Er staan zes groepen; :: staat dus voor twee groepen 0000. Voluit: 2001:0db8:85a3:0000:0000:8a2e:0370:7334.',
+        },
+        {
+          q: 'Een router toont zijn interface binair: adres 10101100.00010011.11001010.01100101 met masker 255.255.252.0. Wat is het broadcastadres van het subnet waarin deze interface zit?',
+          boss: true,
+          answer: ['172.19.203.255'],
+          hints: ['Dit zijn drie stappen achter elkaar: omrekenen, de prefix bepalen, het blok zoeken.', 'Het adres is 172.19.202.101. Het masker heeft zes enen in het derde octet.', 'Blokken van 4 in het derde octet: 202 valt in het blok 200 t/m 203.'],
+          wrong: {
+            '172.19.202.255': 'Je rekent alsof het een /24 is. Bij 255.255.252.0 horen ook de laatste twee bits van het derde octet bij het hostdeel.',
+            '172.19.200.0': 'Dat is het netwerkadres. Het broadcastadres heeft alle hostbits op 1.',
+            '172.19.204.0': 'Off-by-one: dat is het netwerkadres van het volgende subnet.',
+            '172.19.203.254': 'Dat is de laatste bruikbare host. Het broadcastadres is één hoger.',
+          },
+          explain: 'Het adres is 172.19.202.101, het masker is /22. Blokgrootte 256 - 252 = 4 in het derde octet: het subnet is 172.19.200.0/22 en eindigt op 172.19.203.255.',
+        },
+      ],
+    },
+
+    {
+      title: 'Taak 6 — Verdieping: randgevallen en subnetten in de praktijk',
+      kind: 'verdieping',
+      optional: true,
+      content: `
+        <p>De regels uit deze room kloppen voor bijna elk subnet. Hier staan de uitzonderingen en de manier waarop
+        beheerders er echt mee werken.</p>
+
+        <h3>Waar komt "min twee" vandaan, en wanneer geldt het niet?</h3>
+        <p>Het netwerkadres en het broadcastadres zijn afspraken, geen natuurwet. Op een verbinding tussen precies twee
+        routers heb je geen broadcast nodig. RFC 3021 (2000) staat daarom toe dat je op zo'n punt-tot-puntverbinding
+        een <strong>/31</strong> gebruikt: twee adressen, allebei bruikbaar. Een <strong>/32</strong> is één enkel
+        adres; je ziet het in routetabellen (een hostroute) en in firewallregels die precies één apparaat bedoelen. De
+        calculator in deze room toont bij /31 en /32 nul bruikbare hosts, omdat hij de klassieke formule volgt.</p>
+
+        <h3>Van klassen naar CIDR</h3>
+        <p>Vroeger bepaalde het eerste octet hoe groot een netwerk was: klasse A (/8), B (/16) of C (/24). Dat gaf
+        veel verspilling. Sinds 1993 geldt CIDR (nu beschreven in RFC 4632 uit 2006): de prefix mag overal liggen.
+        Termen als "een klasse C-netwerk" hoor je nog steeds, maar ze betekenen alleen nog "een /24".</p>
+
+        <h3>VLSM en samenvatten</h3>
+        <p>Met <strong>VLSM</strong> (Variable Length Subnet Mask) geef je elk deel van het netwerk een subnet op maat.
+        Je begint met het grootste subnet en werkt naar het kleinste, zodat de blokken netjes op een grens beginnen en
+        niet overlappen. Het omgekeerde heet <strong>samenvatten</strong> (supernetting): aansluitende subnetten die
+        samen precies één groter blok vormen, schrijf je als één route. Vier aansluitende /24's die op een veelvoud
+        van vier beginnen, worden één /22.</p>
+
+        <h3>Hoe het in de praktijk gaat</h3>
+        <ul>
+          <li>Niemand rekent grote adresplannen uit het hoofd. Beheerders gebruiken een rekenhulp of een
+            IPAM-systeem (IP Address Management). Het hoofdrekenen heb je nodig om een fout te <em>herkennen</em>.</li>
+          <li>Cloudplatformen reserveren soms meer dan twee adressen per subnet. AWS houdt er in elk VPC-subnet vijf
+            achter: de eerste vier en het laatste.</li>
+          <li>Een subnet is pas een beveiligingsgrens als er een firewall of ACL tussen staat. Twee subnetten op
+            dezelfde router zonder regels ertussen houden niemand tegen.</li>
+        </ul>
+
+        <h3>Veelgemaakte fouten</h3>
+        <ul>
+          <li>Het broadcastadres of het netwerkadres aan een apparaat geven.</li>
+          <li>Het verkeerde octet nemen: bij /17 tot en met /23 ligt de grens in het derde octet.</li>
+          <li>Twee apparaten in hetzelfde VLAN een verschillend masker geven. Ze bereiken elkaar dan soms wel en soms
+            niet, afhankelijk van de richting.</li>
+          <li>Overlappende subnetten uitdelen, bijvoorbeeld 10.0.0.0/23 en 10.0.1.0/24.</li>
+        </ul>
+      `,
+      questions: [
+        {
+          q: 'Je hebt 192.168.50.0/24. Met VLSM maak je eerst een subnet voor 100 hosts en direct daarna een subnet voor 50 hosts. Welk netwerkadres met prefix krijgt het tweede subnet?',
+          answer: ['192.168.50.128/26'],
+          hints: ['Bepaal eerst hoe groot het eerste subnet moet zijn en waar het eindigt.', '100 hosts passen in een /25 (126 hosts): 192.168.50.0 t/m .127.', 'Het tweede begint op .128 en moet 50 hosts kunnen bevatten.'],
+          wrong: {
+            '192.168.50.128/25': 'Een /25 past, maar is twee keer zo groot als nodig. Voor 50 hosts volstaat een kleiner blok.',
+            '192.168.50.100/26': 'Een subnet begint altijd op een blokgrens. Het eerste subnet is een /25 en loopt tot en met .127.',
+            '192.168.50.64/26': 'Dat blok ligt binnen het eerste subnet (192.168.50.0/25) en overlapt dus.',
+          },
+          explain: 'Het eerste subnet is 192.168.50.0/25. Het tweede begint op .128; 50 hosts passen in een /26 (62 hosts).',
+        },
+        {
+          q: 'Vat de vier netwerken 10.8.4.0/24, 10.8.5.0/24, 10.8.6.0/24 en 10.8.7.0/24 samen in één route.',
+          answer: ['10.8.4.0/22'],
+          hints: ['Vier aansluitende /24-netwerken vormen samen een blok van 4 in het derde octet.', 'Welk masker geeft blokken van 4 in het derde octet?', 'Het blok begint bij het laagste netwerk.'],
+          explain: 'Vier /24\'s die op een veelvoud van vier beginnen, vormen samen een /22: 10.8.4.0 t/m 10.8.7.255.',
+        },
+        {
+          q: 'Hoeveel adressen kun je in een AWS-subnet van /28 aan je eigen servers geven?',
+          answer: ['11'],
+          hints: ['Reken eerst het totaal aantal adressen van een /28 uit.', 'Een /28 heeft 16 adressen.', 'Trek er het aantal af dat AWS zelf reserveert.'],
+          explain: 'Een /28 telt 16 adressen. AWS reserveert er vijf, dus er blijven 11 over.',
+        },
+      ],
+    },
+
+    {
+      title: 'Taak 7 — Zo komt dit voor op een examen',
+      kind: 'examen',
+      optional: true,
+      content: `
+        <p>Examens over netwerken vragen zelden naar een definitie. Je krijgt een korte situatie en vier antwoorden
+        die allemaal plausibel lijken. De afleiders zijn bijna altijd dezelfde fouten: het netwerkadres of
+        broadcastadres in plaats van een host, één blok te ver, of een prefix die net te groot of te klein is.</p>
+        <p>Werkwijze: schrijf de blokgrootte op, zoek het blok, en streep dan pas antwoorden weg. Deze vier vragen
+        zijn zelf geschreven in examenstijl.</p>
+      `,
+      questions: [
+        {
+          q: 'Een bedrijf heeft 192.168.8.0/24 en wil vier afdelingen elk een eigen subnet geven. De grootste afdeling heeft 50 apparaten. Welke prefix past het best voor alle vier de subnetten?',
+          options: ['/25', '/26', '/27', '/28'],
+          answer: 1,
+          wrong: {
+            0: 'Een /25 biedt 126 hosts, maar in een /24 passen maar twee /25-subnetten. Je hebt er vier nodig.',
+            2: 'Een /27 geeft acht subnetten, maar elk met 30 hosts. Dat is te weinig voor 50 apparaten.',
+            3: 'Een /28 biedt 14 hosts per subnet: veel te klein.',
+          },
+          explain: 'Een /26 verdeelt de /24 in precies vier subnetten van elk 62 bruikbare hosts.',
+        },
+        {
+          q: 'Een router heeft op een punt-tot-puntverbinding het adres 10.1.2.77/30. Welk adres heeft de router aan de andere kant?',
+          options: ['10.1.2.76', '10.1.2.78', '10.1.2.79', '10.1.2.80'],
+          answer: 1,
+          wrong: {
+            0: '10.1.2.76 is het netwerkadres van dit /30-subnet.',
+            2: '10.1.2.79 is het broadcastadres van dit subnet.',
+            3: '10.1.2.80 is het netwerkadres van het volgende /30-subnet.',
+          },
+          explain: 'Een /30 heeft blokken van 4: 76 t/m 79. Bruikbaar zijn alleen .77 en .78.',
+        },
+        {
+          q: 'Een medewerker meldt dat haar laptop geen netwerk heeft. Je ziet dat de laptop het adres 169.254.33.7 heeft. Wat is de meest waarschijnlijke oorzaak?',
+          options: ['De DNS-server geeft verkeerde antwoorden', 'De laptop kan de DHCP-server niet bereiken', 'Een ander apparaat gebruikt hetzelfde IP-adres', 'De firewall blokkeert uitgaand webverkeer'],
+          answer: 1,
+          wrong: {
+            0: 'Bij een DNS-probleem heeft de laptop wel een normaal adres, maar lukt het omzetten van namen niet.',
+            2: 'Een adresconflict geeft een melding, maar geen 169.254-adres.',
+            3: 'Een firewall blokkeert verkeer, maar verandert het adres van de laptop niet.',
+          },
+          explain: '169.254.0.0/16 is APIPA: de laptop gaf zichzelf een adres omdat er geen antwoord van een DHCP-server kwam.',
+        },
+        {
+          q: 'Een firewallregel moet precies de adressen 172.16.5.0 tot en met 172.16.5.31 toelaten. Welke notatie gebruik je?',
+          options: ['172.16.5.0/26', '172.16.5.0/27', '172.16.5.0/28', '172.16.5.31/32'],
+          answer: 1,
+          wrong: {
+            0: 'Een /26 loopt van .0 tot en met .63 en laat dus twee keer zoveel adressen toe.',
+            2: 'Een /28 loopt van .0 tot en met .15: de helft ontbreekt.',
+            3: 'Een /32 is precies één adres, hier alleen .31.',
+          },
+          explain: 'Een /27 is een blok van 32 adressen: 172.16.5.0 t/m 172.16.5.31.',
         },
       ],
     },
