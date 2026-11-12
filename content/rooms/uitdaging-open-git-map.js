@@ -27,7 +27,7 @@ CS.registerRoom({
   ],
   resources: [
     { title: 'Pro Git: Git Internals, Git Objects', url: 'https://git-scm.com/book/en/v2/Git-Internals-Git-Objects' },
-    { title: 'OWASP: Review Webserver Metafiles for Information Leakage', url: 'https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/01-Information_Gathering/03-Review_Webserver_Metafiles_for_Information_Leakage' },
+    { title: 'Git: documentatie van git-reflog', url: 'https://git-scm.com/docs/git-reflog' },
   ],
   tasks: [
     {
