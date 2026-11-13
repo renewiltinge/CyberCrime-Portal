@@ -39,6 +39,14 @@ Hoofdsecties sluiten af met een harde lijn van 2px in inkt, zoals de werkkaart v
 | Leerpaden | `renderHome`, `renderPath` | Een genummerde lijst met een getekend teken per pad; een pad opent zijn rooms op een lijn met een knooppunt per room (leeg, half, violet = af) |
 | Room | `renderRoom` | Kop met stempel, doelen met vinkjes, links de taken als lijn (op een telefoon genummerde vakjes die meelopen), rechts de tekst op leesbreedte |
 | Vraag | `renderQuestion` | Een open plek: gestippeld op een verzonken ondergrond, rand doorgetrokken bij focus, een bewezen blok als het goed is |
+| Hints | `renderQuestion` | Lagen die open blijven staan, genummerd in Martian Mono; de prijs in XP staat op de knop, in inkt |
+| Boss-vraag | `renderQuestion` | Dezelfde open plek met een doorgetrokken rand van 2px in inkt; violet pas als hij bewezen is |
+| Triomfregel | `triumph` | Eén regel op het donkere scherm die een machine typt (`> VLAG GEACCEPTEERD`) met de XP die optelt; violet, want bewezen |
+| Rang | `rankBlock` | Een regel met het woord van de rang en wat de volgende vraagt; inkt, geen kleur per rang |
+| Zwakke plekken | `weakTable` | Een tabel met haarlijnen; het aandeel fouten is een getal in Martian Mono, niet vermiljoen (het is een overzicht, geen oordeel) |
+| Dagpuzzel | `renderPuzzle` | De opgave op het donkere scherm, het antwoord als open plek |
+| Resultaatkaart | `renderCard` | Een kaart met een rand van 2px in inkt en het teken in violet; drukt af zonder balk en voet |
+| Incidentconsole | `game.js` | Een HUD met klok, schade en doelen in drie vakken, daaronder het donkere scherm. Een melding is vet, een gevolg vermiljoen met het woord "Gevolg", een gehaald doel en de gewonnen nabespreking violet |
 | Lab | `labs.js` | Een raam met een kopregel `LAB`; machine-uitvoer is een donker scherm in beide thema's |
 | Room af | `renderRoomDone` | Het bewezen blok met het NineMinds-teken in violet |
 | Voet | `renderFooter` | *Een product van* met het woordmerk, en de regel over ethiek |
@@ -46,7 +54,7 @@ Hoofdsecties sluiten af met een harde lijn van 2px in inkt, zoals de werkkaart v
 ## Beweging
 
 Alleen wat iets zegt: het teken bij een goed antwoord, een fout antwoord dat even schudt, een
-melding die binnenschuift. Alles staat stil bij `prefers-reduced-motion`.
+melding die binnenschuift, en de triomfregel die zichzelf typt bij een vlag of een boss-vraag. Alles staat stil bij `prefers-reduced-motion`.
 
 ## Telefoon
 

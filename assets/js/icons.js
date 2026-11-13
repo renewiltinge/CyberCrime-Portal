@@ -53,6 +53,7 @@
     'path-datastromen': '<path d="M3 8c3-3 6 3 9 0s6 3 9 0M3 16c3-3 6 3 9 0s6 3 9 0"/><path d="m17 11 2-3M7 13l-2 3"/>',
     'path-puzzels': '<path d="M4 4h7v3a2 2 0 1 0 4 0V4h5v7h-3a2 2 0 1 0 0 4h3v5h-7v-3a2 2 0 1 0-4 0v3H4v-7h3a2 2 0 1 0 0-4H4V4Z"/>',
     'path-meesterproeven': '<path d="m3 20 6.5-11 3.5 6 2.5-4L21 20H3Z"/><path d="M9.5 9V4l3.5 1.5L9.5 7"/>',
+    'path-gamerooms': '<path d="M12 3 19 6v6c0 4.4-2.9 7.6-7 9-4.1-1.4-7-4.6-7-9V6z"/><path d="M8 12h2l1.5-3 2 6 1.5-3h1"/>',
     'path-uitdagingen': '<path d="M12 3v3M12 18v3M3 12h3M18 12h3"/><circle cx="12" cy="12" r="6"/><path d="m10 10 4 4M14 10l-4 4"/>',
     'path-eindopdracht': '<path d="M6 21V4m0 0h12v8H6"/><path d="M10 4v8M14 4v8M6 8h12"/>',
   };

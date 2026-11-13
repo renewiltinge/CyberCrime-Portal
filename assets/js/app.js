@@ -23,6 +23,7 @@
     { id: 'datastromen',   title: 'Datastromen volgen',        desc: 'Word expert in geld- en datastromen: volg witwasconstructies en structurering, betrap beaconing en exfiltratie in netwerkverkeer, en traceer de herkomst van een e-mail. De rode draad van cybercrime: het geld en de data.' },
     { id: 'puzzels',       title: 'Puzzels & uitdagingen',  desc: 'Leren door te doen: volg geld- en datastromen, ontmasker operators met OSINT, groepeer en reconstrueer, en los een grote cybercrime-CTF op. Alle oefening, veel plezier.' },
     { id: 'meesterproeven', title: 'Meesterproeven (gevorderd)', desc: 'Voor wie de puzzels te makkelijk vond: zwaardere opgaven met meer achtergrond. Cryptanalyse zonder sleutel, forensie met tegenstrijdige sporen, fraude ontdekken met de wet van Benford, redeneren met kansen (Bayes en kalibratie) en digitaal bewijs eerlijk wegen in de rechtszaal.' },
+    { id: 'gamerooms', title: 'Game rooms: verdedigen onder druk', desc: 'Je staat in de incidentconsole terwijl de aanval doorgaat. De klok loopt mee met wat je doet, een verkeerde ingreep legt het bedrijf stil, en te laat ingrijpen kost schade. Elke leerling krijgt een eigen variant. Na afloop een nabespreking: wat deed de aanvaller, wat had je kunnen zien, wat had het gestopt.' },
     { id: 'uitdagingen', title: 'Uitdagingen (zonder handleiding)', desc: 'Geen uitleg, geen stappenplan: alleen een opdracht en het bewijs. Je kiest zelf je gereedschap (de Gereedschapskist staat bovenin). De antwoorden staan nergens in de tekst; hints zijn bewust vaag. Oplopend van één tot drie sterren.' },
     { id: 'eindopdracht',  title: 'Eindopdracht',           desc: 'Breng alles samen in een afsluitende mini-CTF. Bewijs aan jezelf wat je kunt.' },
   ];
@@ -59,19 +60,38 @@
     try { localStorage.setItem(LS_KEY, JSON.stringify(STATE)); } catch (e) { /* privémodus e.d. */ }
   }
   // STATE vorm: { answered: { "roomId::t::q": true }, xp: 0, badges: {id:true}, seenIntro: true, name: "" }
-  STATE.answered = STATE.answered || {};
-  STATE.xp = STATE.xp || 0;
-  STATE.badges = STATE.badges || {};
+  // Sinds v2 (alleen uitbreidend, zie migrate): hintsUsed {key: n}, miss {key: n},
+  // srs {key: {due, step}}, firstTry, noHint, checks {roomId: score}, game {...}, daily, puzzle.
+  function migrate(st) {
+    st.answered = st.answered || {};
+    st.xp = st.xp || 0;
+    st.badges = st.badges || {};
+    st.hintsUsed = st.hintsUsed || {};
+    st.miss = st.miss || {};
+    st.srs = st.srs || {};
+    st.checks = st.checks || {};
+    st.game = st.game || {};
+    st.count = st.count || {};
+    st.v = 2;
+    return st;
+  }
+  migrate(STATE);
+  // De game rooms (assets/js/game.js) bewaren hun pogingen en hun variant in STATE.game.
+  CS.store = () => STATE;
+  CS.saveStore = () => saveState();
+  const dayKey = (offset) => { const d = new Date(); d.setDate(d.getDate() + (offset || 0)); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
+  const bump = (name, n) => { STATE.count[name] = (STATE.count[name] || 0) + (n == null ? 1 : n); };
 
   const qKey = (roomId, ti, qi) => `${roomId}::${ti}::${qi}`;
   const isAnswered = (roomId, ti, qi) => !!STATE.answered[qKey(roomId, ti, qi)];
 
+  // Een taak met optional: true (Verdieping, examenvragen) telt niet mee voor "room af".
   function roomQuestionCount(room) {
-    return (room.tasks || []).reduce((n, t) => n + (t.questions ? t.questions.length : 0), 0);
+    return (room.tasks || []).reduce((n, t) => n + (t.questions && !t.optional ? t.questions.length : 0), 0);
   }
   function roomAnsweredCount(room) {
     let n = 0;
-    (room.tasks || []).forEach((t, ti) => (t.questions || []).forEach((q, qi) => { if (isAnswered(room.id, ti, qi)) n++; }));
+    (room.tasks || []).forEach((t, ti) => { if (!t.optional) (t.questions || []).forEach((q, qi) => { if (isAnswered(room.id, ti, qi)) n++; }); });
     return n;
   }
   function roomDone(room) {
@@ -111,6 +131,7 @@
     { id: 'tracer',      icon: 'path-datastromen', name: 'Stromenvolger', desc: 'Alle Datastromen-rooms af', test: () => pathDone('datastromen') },
     { id: 'puzzler',     icon: 'path-puzzels', name: 'Puzzelmeester', desc: 'Alle Puzzels & uitdagingen af', test: () => pathDone('puzzels') },
     { id: 'meester',     icon: 'path-meesterproeven', name: 'Meester', desc: 'Alle Meesterproeven af', test: () => pathDone('meesterproeven') },
+    { id: 'wachtploeg', icon: 'path-gamerooms', name: 'Wachtploeg', desc: 'Alle game rooms af', test: () => pathDone('gamerooms') },
     { id: 'zelfstandig', icon: 'path-uitdagingen', name: 'Zelfstandig onderzoeker', desc: 'Alle uitdagingen zonder handleiding af', test: () => pathDone('uitdagingen') },
     { id: 'arena10',     icon: 'practice', name: 'Scherpschutter', desc: 'Reeks van 10 in de Oefenarena', test: () => (STATE.bestStreak || 0) >= 10 },
     { id: 'hacker10',    icon: 'seal', name: 'Doorzetter', desc: '10 rooms afgerond', test: () => ROOMS.filter(roomDone).length >= 10 },
@@ -144,6 +165,7 @@
     setTimeout(() => { t.style.transition = 'opacity .4s, transform .4s'; t.style.opacity = '0'; t.style.transform = 'translateY(8px)'; setTimeout(() => t.remove(), 400); }, 3400);
   }
   CS.toast = toast;
+  CS.checkBadges = () => checkBadges();
 
   // ---- Het NineMinds-teken -----------------------------------------------
   // Komt uit de huislaag (assets/js/house.js, gegenereerd uit nineminds/). Het
@@ -206,8 +228,8 @@
   //  RENDER: topbalk
   // =======================================================================
   const NAV = [
-    { hash: '#/', label: 'Leerpaden', icon: 'paths', match: (h) => h === '#/' || h === '' || /^#\/(pad|room)\//.test(h) },
-    { hash: '#/oefenen', label: 'Oefenen', icon: 'practice', match: (h) => /^#\/(oefenen|arena|flashcards|examen|daily|scorebord)/.test(h) },
+    { hash: '#/', label: 'Leerpaden', icon: 'paths', match: (h) => h === '#/' || h === '' || /^#\/(pad|room|route|routes|proefexamen)/.test(h) },
+    { hash: '#/oefenen', label: 'Oefenen', icon: 'practice', match: (h) => /^#\/(oefenen|arena|flashcards|examen|daily|herhalen|puzzel|kaart|scorebord)/.test(h) },
     { hash: '#/tools', label: 'Gereedschap', icon: 'tools', match: (h) => h === '#/tools' },
   ];
   function renderTopbar() {
@@ -314,7 +336,10 @@
     { hash: '#/arena', icon: 'practice', title: 'Oefenarena', desc: 'Willekeurige vragen uit alle lessen. Hoe lang wordt je reeks?' },
     { hash: '#/flashcards', icon: 'cards', title: 'Begrippentrainer', desc: 'Alle vakbegrippen als kaarten. Wat je nog niet kent, komt vaker terug.' },
     { hash: '#/examen', icon: 'exam', title: 'Examen', desc: 'Een getimede toets met vragen uit alle lessen. Vanaf 70% ben je geslaagd.' },
+    { hash: '#/proefexamen', icon: 'exam', title: 'Proefexamen', desc: '40 tot 90 vragen zonder terugkoppeling onderweg, met markeren voor later en een analyse per domein.' },
     { hash: '#/daily', icon: 'calendar', title: 'Dagchallenge', desc: 'Elke dag vijf vragen, voor iedereen dezelfde. Bouw een reeks op.' },
+    { hash: '#/puzzel', icon: 'path-puzzels', title: 'Dagpuzzel', desc: 'Elke dag één kleine opgave om te kraken, en elke week een zwaardere.' },
+    { hash: '#/herhalen', icon: 'reset', title: 'Herhalen', desc: 'Wat je eerder fout had, komt na 1, 3 en 7 dagen terug.' },
     { hash: '#/tools', icon: 'tools', title: 'Gereedschapskist', desc: 'Alle labs los, voor je eigen ethische oefeningen.' },
     { hash: '#/scorebord', icon: 'chart', title: 'Scorebord', desc: 'Je voortgang, badges en records op één plek.' },
   ];
@@ -364,6 +389,12 @@
         meterLine(roomProgress(next)),
         el('button', { class: 'btn primary', onclick: () => go('#/room/' + next.id) }, [el('span', { text: inRoom ? 'Verder met deze room' : 'Start deze room' }), CS.icon('arrowRight', 18)]),
       ]));
+      // Wie nog niets deed, kan ook meteen iets kraken in plaats van eerst te lezen.
+      const quick = ROOMS.find((r) => r.id === 'uitdaging-nachtelijke-inlog');
+      if (!started && quick) cont.append(el('div', { class: 'body quickstart' }, [
+        el('p', { class: 'where', text: 'Liever meteen iets doen? Een inbraak bij een hockeyclub, tien minuten, geen voorkennis nodig.' }),
+        el('a', { class: 'btn', href: '#/room/' + quick.id }, [CS.icon('flag', 16), el('span', { text: 'Kraak meteen iets' })]),
+      ]));
     } else {
       cont.append(el('div', { class: 'head' }, [
         el('span', { class: 'label', text: 'Alles voltooid' }),
@@ -379,6 +410,8 @@
       cell(STATE.flags || 0, null, 'vlaggen'),
       cell('LV ' + L.lvl, null, STATE.xp + ' XP'),
     ]));
+    const dueN = srsDue().length;
+    if (dueN) cont.append(el('div', { class: 'review-note' }, [el('span', { text: dueN + (dueN === 1 ? ' vraag staat' : ' vragen staan') + ' klaar om te herhalen.' }), el('a', { class: 'btn small', href: '#/herhalen', text: 'Herhaal nu' })]));
     home.append(el('div', { class: 'home-top' }, [intro, cont]));
 
     // De leerpaden: een lijst, niet 78 kaarten. Een pad openen toont zijn rooms.
@@ -400,6 +433,8 @@
       ])));
     });
     home.append(homeSection('Leerpaden', 'Volg ze van boven naar beneden; elke room bouwt voort op de vorige.', list));
+    home.append(homeSection('Leerroutes naar een doel', 'Dezelfde rooms, in de volgorde van één rol, met een proefexamen als eindtoets.',
+      el('div', { class: 'practice-grid' }, ROUTES.map((rt) => el('button', { class: 'tile', onclick: () => go('#/route/' + rt.id) }, [CS.icon('target', 20), el('div', {}, [el('h3', { text: rt.title }), el('p', { text: rt.desc })])]))), 'routes'));
     home.append(homeSection('Oefenen', 'Herhalen, jezelf toetsen en losse gereedschappen.', practiceGrid(), 'oefenen'));
 
     root.append(home);
@@ -466,7 +501,7 @@
     const done = roomDone(room);
     // Zachte volgorde: een room is "op slot" tot de vorige in dit pad af is. Het is
     // een advies, geen muur; de melding zegt welke eerst.
-    const locked = idx > 0 && !roomDone(siblings[idx - 1]) && prog === 0;
+    const locked = idx > 0 && !!siblings[idx - 1] && !roomDone(siblings[idx - 1]) && prog === 0;
     const open = () => {
       if (!locked) go('#/room/' + room.id);
       else toast('Eerst de vorige room', 'Rond eerst "' + siblings[idx - 1].title + '" af.');
@@ -481,7 +516,7 @@
       el('span', { class: 'stamp', text: 'Room ' + (idx + 1) }),
       el('h3', { text: room.title }),
       el('p', { class: 'sum', text: room.summary }),
-      el('div', { class: 'meta-row' }, [diffNode(room.difficulty), metaItem('clock', room.minutes + ' min'), metaItem('question', String(roomQuestionCount(room)), true)]),
+      el('div', { class: 'meta-row' }, [diffNode(room.difficulty), el('span', { class: 'num', text: roomLevel(room).toUpperCase() }), metaItem('clock', room.minutes + ' min'), metaItem('question', String(roomQuestionCount(room)), true)]),
     ]));
     const state = el('div', { class: 'state' });
     if (done) state.append(el('span', { class: 'ok' }, [CS.icon('check', 16), el('span', { text: 'Voltooid' })]));
@@ -534,9 +569,11 @@
       el('p', { class: 'sum', text: room.summary }),
       el('div', { class: 'meta-row' }, [
         diffNode(room.difficulty),
+        el('span', { class: 'num', title: 'Niveau', text: roomLevel(room).toUpperCase() }),
         metaItem('clock', room.minutes + ' min'),
         metaItem('question', roomQuestionCount(room) + ' vragen', true),
         el('span', { class: 'num', text: '+' + roomMaxXP(room) + ' XP' }),
+        room.checked ? el('span', { class: 'num', text: 'Laatst gecontroleerd: ' + room.checked }) : null,
       ]),
     ]));
 
@@ -581,6 +618,7 @@
       ]));
     }
 
+    if ((room.terms || []).length >= 4 || (room.check || []).length >= 3) content.append(checkBlock(room));
     content.append(el('div', { id: 'roomDone' }));
     const all = orderedRooms();
     const at = all.findIndex((r) => r.id === room.id);
@@ -626,7 +664,7 @@
     const seal = markNode('seal', true);
     box.append(el('div', { class: 'room-done', role: 'status' }, [
       seal,
-      el('div', {}, [el('h3', { text: 'Room voltooid' }), el('p', { text: 'Alle ' + roomQuestionCount(room) + ' vragen goed. ' + roomMaxXP(room) + ' XP verdiend.' })]),
+      el('div', {}, [el('h3', { text: 'Room voltooid' }), el('p', { text: 'Alle ' + roomQuestionCount(room) + ' vragen goed. ' + roomEarnedXP(room) + ' van ' + roomMaxXP(room) + ' XP verdiend.' })]),
     ]));
     const svg = seal.querySelector('svg');
     if (svg) svg.setAttribute('data-state', fresh ? 'verified' : 'static');
@@ -634,10 +672,57 @@
 
   function roomMaxXP(room) {
     let xp = 0;
-    (room.tasks || []).forEach((t) => (t.questions || []).forEach((q) => { xp += qXP(q); }));
+    (room.tasks || []).forEach((t) => { if (!t.optional) (t.questions || []).forEach((q) => { xp += qXP(q); }); });
     return xp;
   }
-  function qXP(q) { return q.xp != null ? q.xp : (q.noAnswer ? 2 : (Array.isArray(q.options) ? 5 : 10)); }
+  function roomEarnedXP(room) {
+    let xp = 0;
+    (room.tasks || []).forEach((t, ti) => { if (!t.optional) (t.questions || []).forEach((q, qi) => { if (isAnswered(room.id, ti, qi)) xp += earnedXP(room.id, ti, qi, q); }); });
+    return xp;
+  }
+  function qXP(q) { return q.xp != null ? q.xp : (q.noAnswer ? 2 : q.boss ? 25 : (Array.isArray(q.options) ? 5 : 10)); }
+  // Gelaagde hints: hint 1 een richting, 2 het gereedschap of de plek, 3 bijna het antwoord.
+  // Elke geopende hint kost 15% van de XP van die vraag (minstens 1 XP blijft over).
+  const HINT_COST = 0.15;
+  const hintsOf = (q) => (Array.isArray(q.hints) ? q.hints : (q.hint ? [q.hint] : []));
+  function hintCost(q, n) { return n ? Math.min(qXP(q) - 1, Math.max(n, Math.round(qXP(q) * HINT_COST * n))) : 0; }
+  function earnedXP(roomId, ti, qi, q) { return qXP(q) - hintCost(q, STATE.hintsUsed[qKey(roomId, ti, qi)] || 0); }
+  // Specifieke terugkoppeling bij een typisch fout antwoord: wrong: { 'antwoord': 'uitleg' }.
+  // Een sleutel als '/patroon/i' is een regex; bij meerkeuze is de sleutel de index van de optie.
+  function wrongNote(q, val) {
+    const w = q.wrong; if (!w) return null;
+    for (const k of Object.keys(w)) {
+      const cut = k.lastIndexOf('/');
+      if (k.length > 2 && k[0] === '/' && cut > 0) {
+        try { if (new RegExp(k.slice(1, cut), k.slice(cut + 1) || 'i').test(val)) return w[k]; } catch (e) { /* kapot patroon: overslaan */ }
+      } else if (norm(k).toLowerCase() === String(val)) return w[k];
+    }
+    return null;
+  }
+  // Een fout antwoord telt mee voor het zwakke-plekken-overzicht en komt na 1, 3 en 7 dagen terug.
+  const SRS_DAYS = [1, 3, 7];
+  function recordMiss(roomId, ti, qi) {
+    const k = qKey(roomId, ti, qi);
+    STATE.miss[k] = (STATE.miss[k] || 0) + 1;
+    STATE.srs[k] = { due: dayKey(SRS_DAYS[0]), step: 0 };
+    saveState();
+  }
+  function srsDue() {
+    const today = dayKey(0);
+    return Object.keys(STATE.srs).filter((k) => STATE.srs[k].due <= today).map((k) => {
+      const [rid, ti, qi] = k.split('::');
+      const room = ROOMS.find((r) => r.id === rid);
+      const q = room && room.tasks[+ti] && (room.tasks[+ti].questions || [])[+qi];
+      return q && !q.noAnswer ? { room, ti: +ti, qi: +qi, q, key: k } : null;
+    }).filter(Boolean);
+  }
+  function srsResult(key, ok) {
+    const c = STATE.srs[key]; if (!c) return;
+    if (!ok) { c.step = 0; c.due = dayKey(SRS_DAYS[0]); }
+    else if (c.step + 1 >= SRS_DAYS.length) { delete STATE.srs[key]; bump('srsKlaar'); }
+    else { c.step++; c.due = dayKey(SRS_DAYS[c.step]); }
+    saveState();
+  }
   function taskComplete(room, ti) {
     const t = room.tasks[ti];
     if (!t.questions || !t.questions.length) return true;
@@ -646,9 +731,19 @@
 
   function renderTask(room, task, ti) {
     const node = el('section', { class: 'task', id: 'task-' + ti });
-    node.append(el('span', { class: 'stamp', text: 'Taak ' + (ti + 1) + ' van ' + room.tasks.length }));
+    const kindLabel = { verdieping: 'Verdieping · voor wie meer wil', examen: 'Zo komt dit voor op een examen' }[task.kind];
+    node.append(el('span', { class: 'stamp', text: 'Taak ' + (ti + 1) + ' van ' + room.tasks.length + (kindLabel ? ' · ' + kindLabel : '') + (task.optional ? ' · telt niet mee voor "room af"' : '') }));
     node.append(el('h2', { text: taskTitle(task.title) }));
-    node.append(el('div', { class: 'body', html: task.content || '' }));
+    if (task.tryFirst) {
+      // Eerst proberen, dan lezen: de opdracht staat open, de uitleg is ingeklapt.
+      node.classList.add('tryfirst');
+      node.append(el('div', { class: 'body', html: task.intro || '' }));
+      const det = el('details', { class: 'uitleg' }, [el('summary', {}, [CS.icon('hint', 16), el('span', { text: 'Uitleg: lees dit als je vastzit, of achteraf' })]), el('div', { class: 'body', html: task.content || '' })]);
+      det.addEventListener('toggle', () => { if (det.open) { STATE.count.uitlegOpen = (STATE.count.uitlegOpen || 0) + 1; saveState(); } });
+      node.append(det);
+    } else {
+      node.append(el('div', { class: 'body', html: task.content || '' }));
+    }
 
     if (task.lab) {
       const labBox = el('div', {});
@@ -674,8 +769,14 @@
     // vlaggen tellen
     const ansFirst = Array.isArray(q.answer) ? q.answer[0] : q.answer;
     if (typeof ansFirst === 'string' && /^NM\{/.test(ansFirst)) { STATE.flags = (STATE.flags || 0) + 1; }
+    if (!q.noAnswer) {
+      if (!STATE.miss[key]) bump('firstTry');
+      if (!STATE.hintsUsed[key] && hintsOf(q).length) bump('noHint');
+      if (q.boss) bump('boss' + (STATE.hintsUsed[key] ? '' : 'Clean'));
+      if (room.tasks[ti].lab) { STATE.labTypes = STATE.labTypes || {}; STATE.labTypes[room.tasks[ti].lab.type] = true; }
+    }
     saveState();
-    addXP(qXP(q), 'vraag');
+    addXP(earnedXP(room.id, ti, qi, q), 'vraag');
     updateTaskNav(room);
     proveMark();
     if (roomDone(room)) {
@@ -704,13 +805,31 @@
   }
 
   function renderQuestion(room, task, ti, q, qi) {
+    const key = qKey(room.id, ti, qi);
     const already = isAnswered(room.id, ti, qi);
-    const node = el('div', { class: 'q' + (already ? ' correct' : '') });
-    node.append(el('div', { class: 'qtext' }, [el('span', { html: esc(q.q) }), el('span', { class: 'badge-xp', text: '+' + qXP(q) + ' XP' })]));
+    const node = el('div', { class: 'q' + (already ? ' correct' : '') + (q.boss ? ' boss' : '') });
+    if (q.boss) node.append(el('span', { class: 'stamp bossmark', text: 'Boss-vraag · combineer wat je in deze room deed' }));
+    const xpBadge = el('span', { class: 'badge-xp' });
+    const paintXP = () => { const n = STATE.hintsUsed[key] || 0; xpBadge.textContent = '+' + earnedXP(room.id, ti, qi, q) + ' XP'; xpBadge.title = n ? n + ' hint' + (n === 1 ? '' : 's') + ' gebruikt (van ' + qXP(q) + ' XP)' : ''; };
+    paintXP();
+    node.append(el('div', { class: 'qtext' }, [el('span', { html: esc(q.q) }), xpBadge]));
 
     const feedback = el('div', { class: 'feedback', 'aria-live': 'polite' });
     const explainBox = q.explain ? el('div', { class: 'explain' + (already ? ' show' : ''), html: esc(q.explain) }) : null;
-    const solved = () => { node.classList.add('correct'); if (explainBox) explainBox.classList.add('show'); markAnswered(room, ti, qi, q); };
+    const whyBox = q.why ? el('div', { class: 'explain why' + (already ? ' show' : '') }, [el('strong', { text: 'Waarom dit ertoe doet. ' }), el('span', { html: esc(q.why) })]) : null;
+    const isFlag = !q.noAnswer && !Array.isArray(q.options) && /^NM\{/i.test(String(Array.isArray(q.answer) ? q.answer[0] : q.answer));
+    const solved = () => {
+      node.classList.add('correct');
+      if (explainBox) explainBox.classList.add('show');
+      if (whyBox) whyBox.classList.add('show');
+      const gain = earnedXP(room.id, ti, qi, q);
+      markAnswered(room, ti, qi, q);
+      if (isFlag || q.boss) triumph(node, isFlag ? 'VLAG GEACCEPTEERD' : 'BOSS VERSLAGEN', gain);
+    };
+    const miss = (val) => {
+      recordMiss(room.id, ti, qi);
+      return wrongNote(q, val);
+    };
 
     if (q.noAnswer) {
       // Geen antwoord nodig: lezen en bevestigen.
@@ -734,7 +853,7 @@
             setFeedback(feedback, true, 'Goed.');
             solved();
           } else {
-            setFeedback(feedback, false, 'Niet helemaal. Kies opnieuw.');
+            setFeedback(feedback, false, miss(oi) || 'Niet helemaal. Kies opnieuw.');
             setTimeout(() => { b.classList.remove('chosen', 'no'); }, 1100);
           }
         });
@@ -757,33 +876,66 @@
         const ok = answers.some((a) => norm(a).toLowerCase() === val);
         if (ok) {
           input.classList.add('ok'); input.classList.remove('no'); input.disabled = true; submit.disabled = true; submit.classList.remove('primary'); paint(true);
-          setFeedback(feedback, true, /^NM\{/i.test(answers[0]) ? 'Vlag gevonden.' : 'Correct.');
+          setFeedback(feedback, true, isFlag ? 'Vlag gevonden.' : 'Correct.');
           solved();
         } else {
           input.classList.remove('no'); void input.offsetWidth; input.classList.add('no');
-          setFeedback(feedback, false, q.hint ? 'Nog niet goed. Lees de uitleg nog eens, of open de hint.' : 'Nog niet goed. Lees de uitleg nog eens.');
+          const left = hintsOf(q).length - (STATE.hintsUsed[key] || 0);
+          setFeedback(feedback, false, miss(val) || (left > 0 ? 'Nog niet goed. Probeer het anders, of open een hint.' : 'Nog niet goed. Kijk nog eens naar wat het lab of de tekst je laat zien.'));
         }
       };
       submit.addEventListener('click', check);
       input.addEventListener('keydown', (e) => { if (e.key === 'Enter') check(); });
       node.append(el('div', { class: 'ans-row' }, [input, submit]));
+    }
 
-      if (q.hint) {
-        const hintLine = el('div', { class: 'hintline' }, [CS.icon('hint', 16), el('span', { text: q.hint })]);
-        const hintBtn = el('button', { class: 'lnk', text: 'Toon een hint', 'aria-expanded': 'false' });
-        hintBtn.addEventListener('click', () => {
-          const open = hintLine.classList.toggle('show');
-          hintBtn.textContent = open ? 'Verberg de hint' : 'Toon een hint';
-          hintBtn.setAttribute('aria-expanded', String(open));
-        });
-        node.append(el('div', { class: 'hintrow' }, hintBtn));
-        node.append(hintLine);
-      }
+    // Hints, in lagen. Een geopende hint blijft open en kost XP; na een goed antwoord zijn ze gratis.
+    const hints = q.noAnswer ? [] : hintsOf(q);
+    if (hints.length) {
+      const list = el('div', { class: 'hintlist' });
+      const btn = el('button', { class: 'lnk' });
+      const paintHints = () => {
+        const used = STATE.hintsUsed[key] || 0;
+        const shown = isAnswered(room.id, ti, qi) ? Math.max(used, list.children.length) : used;
+        list.innerHTML = '';
+        hints.slice(0, shown).forEach((h, i) => list.append(el('div', { class: 'hintline show' }, [CS.icon('hint', 16), el('span', {}, [hints.length > 1 ? el('span', { class: 'num', text: 'Hint ' + (i + 1) + ' · ' }) : null, el('span', { text: h })])])));
+        if (shown >= hints.length) { btn.style.display = 'none'; return; }
+        const free = isAnswered(room.id, ti, qi);
+        const cost = hintCost(q, shown + 1) - hintCost(q, shown);
+        btn.textContent = (hints.length > 1 ? 'Toon hint ' + (shown + 1) + ' van ' + hints.length : 'Toon een hint') + (free || !cost ? '' : ' (kost ' + cost + ' XP)');
+      };
+      btn.addEventListener('click', () => {
+        if (isAnswered(room.id, ti, qi)) { list.append(el('span')); paintHints(); return; }
+        STATE.hintsUsed[key] = Math.min(hints.length, (STATE.hintsUsed[key] || 0) + 1);
+        saveState(); paintXP(); paintHints();
+      });
+      paintHints();
+      node.append(el('div', { class: 'hintrow' }, btn));
+      node.append(list);
     }
     node.append(feedback);
     if (explainBox) node.append(explainBox);
+    if (whyBox) node.append(whyBox);
     return node;
   }
+
+  // Triomf: één regel die een machine typt, in het bewezen blok. Staat stil bij "minder beweging".
+  function triumph(node, word, gain) {
+    const line = el('div', { class: 'triumph', role: 'status' }, [el('span', { class: 'tw' }), el('span', { class: 'tx' })]);
+    node.append(line);
+    const text = '> ' + word, tw = line.firstChild, tx = line.lastChild;
+    const still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (still) { tw.textContent = text; tx.textContent = '+' + gain + ' XP'; return; }
+    let i = 0;
+    const type = setInterval(() => {
+      tw.textContent = text.slice(0, ++i);
+      if (i < text.length) return;
+      clearInterval(type);
+      let n = 0; const step = Math.max(1, Math.ceil(gain / 12));
+      const tick = setInterval(() => { n = Math.min(gain, n + step); tx.textContent = '+' + n + ' XP'; if (n >= gain) clearInterval(tick); }, 40);
+    }, 28);
+  }
+  CS.triumph = triumph;
 
   // =======================================================================
   //  Zoeken
@@ -896,6 +1048,7 @@
       stat(doneRooms + '/' + ROOMS.length, 'rooms af'),
       stat(String(STATE.flags || 0), 'vlaggen'),
     ]));
+    body.append(rankBlock());
     body.append(el('div', { class: 'meter-line' }, el('i', { style: 'width:' + Math.round((L.into / L.need) * 100) + '%' })));
     body.append(el('p', { class: 'found-note', text: L.into + ' / ' + L.need + ' XP tot level ' + (L.lvl + 1) }));
     body.append(el('h3', { class: 'label', style: 'margin:22px 0 0', text: 'Badges · ' + Object.keys(STATE.badges).length + ' van ' + BADGES.length }));
@@ -917,7 +1070,7 @@
     body.append(el('p', { class: 'found-note', style: 'margin-top:16px', text: 'Wissen kan niet ongedaan worden gemaakt.' }));
     body.append(el('button', { class: 'btn small', onclick: () => {
       if (confirm('Weet je het zeker? Al je voortgang, XP en badges worden gewist.')) {
-        STATE = { answered: {}, xp: 0, badges: {}, flags: 0 }; saveState(); renderXP();
+        STATE = migrate({ flags: 0 }); saveState(); renderXP();
         dlg.close(); route();
       }
     } }, [CS.icon('reset', 16), el('span', { text: 'Voortgang wissen' })]));
@@ -946,10 +1099,7 @@
       }
       const n = Object.keys(st.answered || {}).length;
       if (!confirm('Je huidige voortgang wordt vervangen door de back-up (' + n + ' vragen, ' + (st.xp || 0) + ' XP). Doorgaan?')) return;
-      STATE = st;
-      STATE.answered = STATE.answered || {};
-      STATE.xp = STATE.xp || 0;
-      STATE.badges = STATE.badges || {};
+      STATE = migrate(st);
       saveState(); renderXP();
       toast('Back-up teruggezet', n + ' vragen, ' + STATE.xp + ' XP.', 'proof');
       done();
@@ -973,23 +1123,42 @@
   }
   function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));[a[i], a[j]] = [a[j], a[i]]; } return a; }
 
-  function renderArena() {
+  function renderArena(opts) {
     const root = $('#app'); root.innerHTML = '';
     const wrap = el('section', { class: 'roomview wrap' });
     wrap.append(crumbs([['Overzicht', '#/'], ['Oefenen', '#/oefenen'], ['Oefenarena']]), pageHead('practice', 'Oefenarena', 'Willekeurige vragen uit alle lessen, door elkaar. Puur om te herhalen — dit verandert je lesvoortgang niet. Hoe lang wordt je reeks?'));
 
     // filter op leerpad
     const filterRow = el('div', { class: 'chip-row', style: 'margin:14px 0' });
-    let curFilter = 'alles';
+    let curFilter = (opts && opts.path) || 'alles';
+    const weak = !!(opts && opts.weak);
+    let mode = 'vrij', timer = null, endAt = 0;
     const paths = [{ id: 'alles', title: 'Alles' }].concat(PATHS.filter((p) => ROOMS.some((r) => r.path === p.id)).map((p) => ({ id: p.id, title: p.title })));
     const scoreBox = el('div', { class: 'stat-row', style: 'margin:0 0 16px' });
     const qbox = el('div', {});
     let pool = [], idx = 0, score = 0, streak = 0, answered = 0;
 
     function start() {
-      pool = shuffle(allQuestions(curFilter)); idx = 0; score = 0; streak = 0; answered = 0;
+      pool = shuffle(allQuestions(curFilter));
+      if (weak) { const w = pool.filter((x) => STATE.miss[qKey(x.room.id, x.ti, x.qi)]); if (w.length) pool = w.sort((a, b) => STATE.miss[qKey(b.room.id, b.ti, b.qi)] - STATE.miss[qKey(a.room.id, a.ti, a.qi)]); }
+      idx = 0; score = 0; streak = 0; answered = 0;
+      clearInterval(timer); timer = null;
+      if (mode === 'tijd') {
+        endAt = Date.now() + 90000;
+        timer = setInterval(() => { if (!document.body.contains(qbox)) { clearInterval(timer); return; } renderScore(); if (Date.now() >= endAt) over('De tijd is om.'); }, 500);
+      }
       next();
       renderScore();
+    }
+    // Survival stopt bij de eerste fout; de tijdsaanval na 90 seconden.
+    function over(why) {
+      clearInterval(timer); timer = null;
+      if (mode === 'survival' && score > (STATE.survivalBest || 0)) STATE.survivalBest = score;
+      if (mode === 'tijd' && score > (STATE.timeBest || 0)) STATE.timeBest = score;
+      saveState(); checkBadges();
+      qbox.innerHTML = '';
+      qbox.append(el('div', { class: 'callout info', text: why + ' ' + score + ' goed' + (mode === 'survival' ? ' op rij. Je record: ' + (STATE.survivalBest || 0) + '.' : ' in 90 seconden. Je record: ' + (STATE.timeBest || 0) + '.') }));
+      qbox.append(el('button', { class: 'btn primary', text: 'Opnieuw', onclick: start }));
     }
     function renderScore() {
       scoreBox.innerHTML = '';
@@ -998,6 +1167,7 @@
         stat(streak + '', 'huidige reeks'),
         stat((STATE.bestStreak || 0) + '', 'langste reeks ooit'),
       );
+      if (mode === 'tijd' && timer) scoreBox.append(stat(Math.max(0, Math.ceil((endAt - Date.now()) / 1000)) + ' s', 'tijd over'));
     }
     paths.forEach((p) => {
       const chip = el('span', { class: 'chip' + (p.id === curFilter ? ' on' : ''), text: p.title, onclick: () => { curFilter = p.id; $$('.chip', filterRow).forEach((c) => c.classList.remove('on')); chip.classList.add('on'); start(); } });
@@ -1015,10 +1185,12 @@
       const nextBtn = el('button', { class: 'btn primary', text: 'Volgende', onclick: () => { idx++; next(); } });
       nextBtn.style.display = 'none';
       const afterAnswer = (correct) => {
+        quizOutcome(item, correct);
         answered++;
         if (correct) { score++; streak++; if (streak > (STATE.bestStreak || 0)) { STATE.bestStreak = streak; saveState(); checkBadges(); } }
         else { streak = 0; }
         renderScore();
+        if (mode === 'survival' && !correct) { setTimeout(() => over('Eén fout en het is voorbij.'), 1400); return; }
         nextBtn.style.display = '';
         if (item.q.explain) { const ex = el('div', { class: 'explain show', html: esc(item.q.explain) }); card.append(ex); }
       };
@@ -1057,7 +1229,13 @@
       qbox.append(card);
     }
 
-    wrap.append(filterRow, scoreBox, qbox);
+    const modeRow = el('div', { class: 'chip-row' });
+    [['vrij', 'Vrij oefenen'], ['survival', 'Survival: tot je eerste fout'], ['tijd', 'Tijdsaanval: 90 seconden']].forEach((m) => {
+      const c = el('span', { class: 'chip' + (m[0] === mode ? ' on' : ''), text: m[1], onclick: () => { mode = m[0]; $$('.chip', modeRow).forEach((x) => x.classList.remove('on')); c.classList.add('on'); start(); } });
+      modeRow.append(c);
+    });
+    if (weak) wrap.append(el('div', { class: 'callout info', text: 'Je oefent nu de vragen die je eerder fout had, de vaakst gemiste eerst.' }));
+    wrap.append(modeRow, filterRow, scoreBox, qbox);
     root.append(wrap);
     renderFooter(root);
     start();
@@ -1215,6 +1393,13 @@
   // =======================================================================
   //  Gedeelde quizkaart (voor examen & dagchallenge)
   // =======================================================================
+  // Een fout in een toets komt in de herhaling; een goed antwoord op een herhaalkaart schuift hem op.
+  function quizOutcome(item, ok) {
+    if (item.ti == null) return; // vraag uit een losse vragenbank
+    const k = qKey(item.room.id, item.ti, item.qi);
+    if (STATE.srs[k]) srsResult(k, ok);
+    else if (!ok) recordMiss(item.room.id, item.ti, item.qi);
+  }
   function quizCard(item, onDone) {
     const card = el('div', { class: 'q quizcard' });
     card.append(el('div', { class: 'stamp', style: 'display:block;margin-bottom:8px', text: item.room.title }));
@@ -1229,8 +1414,9 @@
           const ok = oi === item.q.answer;
           bt.classList.add('chosen', ok ? 'ok' : 'no');
           $$('button', mc).forEach((x, xi) => { x.disabled = true; if (xi === item.q.answer) x.classList.add('reveal-ok'); });
-          setFeedback(fb, ok, ok ? 'Goed.' : 'Mis.');
+          setFeedback(fb, ok, ok ? 'Goed.' : (wrongNote(item.q, oi) || 'Mis.'));
           if (item.q.explain) card.append(el('div', { class: 'explain show', html: esc(item.q.explain) }));
+          quizOutcome(item, ok);
           onDone(ok);
         } });
         mc.append(bt);
@@ -1245,8 +1431,10 @@
         const ok = answers.some((a) => norm(a).toLowerCase() === val);
         done = true; input.disabled = true; submit.disabled = true;
         input.classList.add(ok ? 'ok' : 'no');
-        setFeedback(fb, ok, ok ? 'Correct.' : 'Het juiste antwoord: ' + answers[0]);
+        const note = ok ? null : wrongNote(item.q, val);
+        setFeedback(fb, ok, ok ? 'Correct.' : (note ? note + ' ' : '') + 'Het juiste antwoord: ' + answers[0]);
         if (item.q.explain) card.append(el('div', { class: 'explain show', html: esc(item.q.explain) }));
+        quizOutcome(item, ok);
         onDone(ok);
       };
       submit.addEventListener('click', check);
@@ -1384,6 +1572,36 @@
   }
 
   // =======================================================================
+  //  HERHALEN — wat je eerder fout had, na 1, 3 en 7 dagen opnieuw
+  // =======================================================================
+  function renderReview() {
+    const root = $('#app'); root.innerHTML = '';
+    const wrap = el('section', { class: 'roomview wrap' });
+    wrap.append(crumbs([['Overzicht', '#/'], ['Oefenen', '#/oefenen'], ['Herhalen']]), pageHead('reset', 'Herhalen', 'Een vraag die je fout had, komt hier na 1, 3 en 7 dagen terug. Drie keer goed en hij is weg; fout en hij begint opnieuw. Alles blijft in je browser en zit in je back-up.'));
+    const due = srsDue();
+    const waiting = Object.keys(STATE.srs).length - due.length;
+    wrap.append(el('div', { class: 'stat-row', style: 'margin:10px 0 16px' }, [stat(String(due.length), 'nu te herhalen'), stat(String(waiting), 'staan klaar voor later'), stat(String(STATE.count.srsKlaar || 0), 'afgeleerd')]));
+    const qbox = el('div', {}), nav = el('div', { class: 'room-foot' });
+    wrap.append(qbox, nav);
+    root.append(wrap); renderFooter(root); window.scrollTo(0, 0);
+    let idx = 0, good = 0;
+    function next() {
+      qbox.innerHTML = ''; nav.innerHTML = '';
+      if (idx >= due.length) {
+        qbox.append(el('div', { class: 'callout tip', text: due.length ? 'Klaar voor vandaag: ' + good + ' van ' + due.length + ' goed.' : 'Niets te herhalen. Fouten die je maakt in een room, de arena of een toets komen hier vanzelf terecht.' }));
+        nav.append(el('span', {}), el('button', { class: 'btn primary next', text: 'Naar het overzicht', onclick: () => go('#/') }));
+        return;
+      }
+      const item = due[idx];
+      const nextBtn = el('button', { class: 'btn primary next', text: idx === due.length - 1 ? 'Afronden' : 'Volgende', disabled: true, onclick: () => { idx++; next(); } });
+      qbox.append(el('div', { class: 'found-note', text: 'Kaart ' + (idx + 1) + ' / ' + due.length }));
+      qbox.append(quizCard(item, (ok) => { if (ok) good++; nextBtn.disabled = false; }));
+      nav.append(el('a', { class: 'btn', href: '#/room/' + item.room.id, text: 'Open de room' }), nextBtn);
+    }
+    next();
+  }
+
+  // =======================================================================
   //  SCOREBORD — persoonlijk voortgangsoverzicht (lokaal)
   // =======================================================================
   function renderScorebord() {
@@ -1404,6 +1622,8 @@
       stat((STATE.examBest || 0) + '%', 'beste examen'),
       stat(String((STATE.daily && STATE.daily.best) || 0), 'langste dagreeks'),
     ]));
+    wrap.append(rankBlock());
+    wrap.append(el('h2', { style: 'margin-top:40px', text: 'Zwakke plekken' }), weakTable());
     wrap.append(el('h2', { style: 'margin-top:40px', text: 'Voortgang per leerpad' }));
     const list = el('ol', { class: 'pathlist' });
     PATHS.forEach((p, i) => {
@@ -1421,9 +1641,488 @@
     wrap.append(el('h2', { style: 'margin-top:40px', text: 'Badges' }), badgeGrid());
     wrap.append(el('div', { class: 'room-foot', style: 'margin-top:18px' }, [
       el('button', { class: 'btn', text: 'Doe een examen', onclick: () => go('#/examen') }),
-      el('button', { class: 'btn next', text: 'Dagchallenge', onclick: () => go('#/daily') }),
+      el('button', { class: 'btn', text: 'Resultaatkaart', onclick: () => go('#/kaart') }),
+      el('button', { class: 'btn next', text: 'Dagpuzzel', onclick: () => go('#/puzzel') }),
     ]));
     root.append(wrap); renderFooter(root); window.scrollTo(0, 0);
+  }
+
+  // =======================================================================
+  //  Rangen, niveau en extra badges
+  // =======================================================================
+  // Een rang hangt aan wat je kunt laten zien, niet aan XP alleen. Ze volgen op elkaar:
+  // je krijgt een rang pas als je ook alle vorige hebt.
+  const doneCount = () => ROOMS.filter(roomDone).length;
+  const RANKS = [
+    { name: 'Nieuwkomer', need: 'Je begint hier.', test: () => true },
+    { name: 'Leerling', need: 'Drie rooms af.', test: () => doneCount() >= 3 },
+    { name: 'Analist', need: 'Het pad Fundamenten af en tien rooms in totaal.', test: () => pathDone('fundamenten') && doneCount() >= 10 },
+    { name: 'Onderzoeker', need: '25 rooms af, waaronder het hele pad Defensief of Forensie.', test: () => doneCount() >= 25 && (pathDone('defensief') || pathDone('forensie')) },
+    { name: 'Rechercheur', need: '45 rooms af, een uitdaging zonder handleiding opgelost en een examen van 70% of hoger.', test: () => doneCount() >= 45 && ROOMS.some((r) => r.path === 'uitdagingen' && roomDone(r)) && (STATE.examBest || 0) >= 70 },
+    { name: 'Meester', need: 'Alle Meesterproeven en de Eindopdracht af.', test: () => pathDone('meesterproeven') && pathDone('eindopdracht') },
+  ];
+  function rankNow() { let i = 0; while (i + 1 < RANKS.length && RANKS[i + 1].test()) i++; return i; }
+  function rankBlock() {
+    const i = rankNow(), nxt = RANKS[i + 1];
+    return el('div', { class: 'rankline' }, [
+      el('div', {}, [el('span', { class: 'label', text: 'Rang ' + (i + 1) + ' van ' + RANKS.length }), el('strong', { text: RANKS[i].name })]),
+      el('p', { class: 'found-note', text: nxt ? 'Volgende rang: ' + nxt.name + '. ' + nxt.need : 'Je hebt de hoogste rang.' }),
+    ]);
+  }
+  // Niveau van een room: wat de schrijver opgaf, anders afgeleid uit pad en moeilijkheid.
+  function roomLevel(room) {
+    if (room.level) return room.level;
+    if (room.path === 'meesterproeven') return 'Expert';
+    return { Makkelijk: 'Instap', Gemiddeld: 'Praktijk', Moeilijk: 'Gevorderd' }[room.difficulty] || 'Praktijk';
+  }
+  const cnt = (k) => STATE.count[k] || 0;
+  const labKinds = () => Object.keys(STATE.labTypes || {}).length;
+  const dailyBest = () => Math.max((STATE.daily && STATE.daily.best) || 0, (STATE.puzzle && STATE.puzzle.best) || 0);
+  const cleanChallenge = () => ROOMS.some((r) => r.path === 'uitdagingen' && roomDone(r) && !r.tasks.some((t, ti) => (t.questions || []).some((q, qi) => STATE.hintsUsed[qKey(r.id, ti, qi)])));
+  BADGES.push(
+    { id: 'eerste-keer-10', icon: 'target', name: 'In één keer', desc: '10 vragen bij de eerste poging goed', test: () => cnt('firstTry') >= 10 },
+    { id: 'eerste-keer-50', icon: 'target', name: 'Vaste hand', desc: '50 vragen bij de eerste poging goed', test: () => cnt('firstTry') >= 50 },
+    { id: 'eerste-keer-200', icon: 'target', name: 'Trefzeker', desc: '200 vragen bij de eerste poging goed', test: () => cnt('firstTry') >= 200 },
+    { id: 'zonder-hint-10', icon: 'hint', name: 'Op eigen kracht', desc: '10 vragen opgelost zonder de hint te openen', test: () => cnt('noHint') >= 10 },
+    { id: 'zonder-hint-50', icon: 'hint', name: 'Hint? Welke hint?', desc: '50 vragen opgelost zonder hint', test: () => cnt('noHint') >= 50 },
+    { id: 'boss-1', icon: 'seal', name: 'Eerste boss', desc: 'Een boss-vraag opgelost', test: () => cnt('boss') + cnt('bossClean') >= 1 },
+    { id: 'boss-10', icon: 'seal', name: 'Boss-jager', desc: 'Tien boss-vragen opgelost', test: () => cnt('boss') + cnt('bossClean') >= 10 },
+    { id: 'boss-schoon', icon: 'seal', name: 'Zonder hulp verslagen', desc: 'Vijf boss-vragen opgelost zonder hint', test: () => cnt('bossClean') >= 5 },
+    { id: 'game-1', icon: 'path-gamerooms', name: 'Eerste dienst', desc: 'Een game room gewonnen', test: () => Object.keys(STATE.game).some((k) => (STATE.game[k].wins || 0) > 0) },
+    { id: 'game-schoon', icon: 'path-gamerooms', name: 'Zonder kleerscheuren', desc: 'Een game room gewonnen zonder schade en zonder misgreep', test: () => Object.keys(STATE.game).some((k) => STATE.game[k].clean) },
+    { id: 'game-varianten', icon: 'path-gamerooms', name: 'Elke nacht anders', desc: 'Dezelfde game room in drie varianten gewonnen', test: () => Object.keys(STATE.game).some((k) => (STATE.game[k].wins || 0) >= 3) },
+    { id: 'uitdaging-schoon', icon: 'path-uitdagingen', name: 'Blanco aanpak', desc: 'Een uitdaging afgerond zonder één hint', test: cleanChallenge },
+    { id: 'labs-10', icon: 'tools', name: 'Gereedschapskenner', desc: 'Tien verschillende soorten labs gebruikt', test: () => labKinds() >= 10 },
+    { id: 'labs-25', icon: 'tools', name: 'Volle kist', desc: '25 verschillende soorten labs gebruikt', test: () => labKinds() >= 25 },
+    { id: 'labs-40', icon: 'tools', name: 'Alles in de hand gehad', desc: '40 verschillende soorten labs gebruikt', test: () => labKinds() >= 40 },
+    { id: 'herhaald-5', icon: 'reset', name: 'Afgeleerd', desc: 'Vijf eerder gemaakte fouten drie keer goed herhaald', test: () => cnt('srsKlaar') >= 5 },
+    { id: 'herhaald-20', icon: 'reset', name: 'Geen tweede keer', desc: 'Twintig eerder gemaakte fouten afgeleerd', test: () => cnt('srsKlaar') >= 20 },
+    { id: 'reeks-3', icon: 'calendar', name: 'Drie dagen', desc: 'Drie dagen op rij de dagpuzzel of dagchallenge', test: () => dailyBest() >= 3 },
+    { id: 'reeks-7', icon: 'calendar', name: 'Een week lang', desc: 'Zeven dagen op rij', test: () => dailyBest() >= 7 },
+    { id: 'reeks-30', icon: 'calendar', name: 'Een maand lang', desc: 'Dertig dagen op rij', test: () => dailyBest() >= 30 },
+    { id: 'puzzel-10', icon: 'path-puzzels', name: 'Puzzelaar', desc: 'Tien dagpuzzels opgelost', test: () => ((STATE.puzzle && STATE.puzzle.total) || 0) >= 10 },
+    { id: 'week-1', icon: 'flag', name: 'Weekopdracht', desc: 'Een weekopdracht opgelost', test: () => ((STATE.puzzle && STATE.puzzle.weeks) || 0) >= 1 },
+    { id: 'week-4', icon: 'flag', name: 'Vier weken', desc: 'Vier weekopdrachten opgelost', test: () => ((STATE.puzzle && STATE.puzzle.weeks) || 0) >= 4 },
+    { id: 'examen-70', icon: 'exam', name: 'Geslaagd', desc: 'Een examen gehaald (70% of hoger)', test: () => (STATE.examBest || 0) >= 70 },
+    { id: 'examen-90', icon: 'exam', name: 'Cum laude', desc: 'Een examen met 90% of hoger', test: () => (STATE.examBest || 0) >= 90 },
+    { id: 'check-1', icon: 'check', name: 'Gecheckt', desc: 'Een "Check jezelf" foutloos', test: () => Object.keys(STATE.checks).filter((k) => STATE.checks[k] >= 5).length >= 1 },
+    { id: 'check-10', icon: 'check', name: 'Tien keer foutloos', desc: 'Tien keer een "Check jezelf" foutloos', test: () => Object.keys(STATE.checks).filter((k) => STATE.checks[k] >= 5).length >= 10 },
+    { id: 'survival-20', icon: 'practice', name: 'Overlever', desc: 'Twintig goed op rij in de survival-modus', test: () => (STATE.survivalBest || 0) >= 20 },
+    { id: 'tijd-10', icon: 'clock', name: 'Tegen de klok', desc: 'Tien goed in één tijdsaanval van 90 seconden', test: () => (STATE.timeBest || 0) >= 10 },
+    { id: 'rooms-25', icon: 'paths', name: 'Vijfentwintig', desc: '25 rooms afgerond', test: () => doneCount() >= 25 },
+    { id: 'rooms-50', icon: 'paths', name: 'Vijftig', desc: '50 rooms afgerond', test: () => doneCount() >= 50 },
+    { id: 'vlaggen-50', icon: 'flag', name: 'Vlaggenverzamelaar', desc: '50 vlaggen gevonden', test: () => (STATE.flags || 0) >= 50 },
+  );
+
+  // =======================================================================
+  //  Zwakke plekken: waar ging het vaak mis?
+  // =======================================================================
+  function weakByPath() {
+    const by = {};
+    Object.keys(STATE.miss).forEach((k) => {
+      const room = ROOMS.find((r) => r.id === k.split('::')[0]); if (!room) return;
+      const b = by[room.path] = by[room.path] || { miss: 0, qs: 0, rooms: {} };
+      b.miss += STATE.miss[k]; b.qs++; b.rooms[room.id] = (b.rooms[room.id] || 0) + STATE.miss[k];
+    });
+    return PATHS.filter((p) => by[p.id]).map((p) => {
+      const b = by[p.id];
+      const good = pathRooms(p.id).reduce((n, r) => n + roomAnsweredCount(r), 0);
+      const worst = Object.keys(b.rooms).sort((x, y) => b.rooms[y] - b.rooms[x])[0];
+      return { path: p, miss: b.miss, qs: b.qs, rate: b.miss / (b.miss + good), worst: ROOMS.find((r) => r.id === worst) };
+    }).sort((a, b) => b.rate - a.rate);
+  }
+  function weakTable() {
+    const rows = weakByPath();
+    if (!rows.length) return el('p', { class: 'found-note', text: 'Nog geen fouten geregistreerd. Zodra je in een room, de arena of een toets iets fout hebt, zie je hier per onderwerp waar het misging.' });
+    const t = el('table', { class: 'weak' });
+    t.append(el('thead', {}, el('tr', {}, ['Onderwerp', 'Fout', 'Aandeel', 'Meeste fouten in', ''].map((h) => el('th', { text: h })))));
+    const body = el('tbody');
+    rows.forEach((r) => body.append(el('tr', {}, [
+      el('td', { text: r.path.title }),
+      el('td', { class: 'num', text: r.miss + '× bij ' + r.qs + (r.qs === 1 ? ' vraag' : ' vragen') }),
+      el('td', { class: 'num', text: Math.round(r.rate * 100) + '%' }),
+      el('td', {}, r.worst ? el('a', { href: '#/room/' + r.worst.id, text: r.worst.title }) : null),
+      el('td', {}, el('a', { class: 'btn small', href: '#/arena/zwak/' + r.path.id, text: 'Oefen dit' })),
+    ])));
+    t.append(body);
+    return el('div', { class: 'tablewrap' }, t);
+  }
+
+  // =======================================================================
+  //  DAGPUZZEL en WEEKOPDRACHT — deterministisch uit de datum
+  // =======================================================================
+  function seedRng(seed) {
+    let t = seed >>> 0;
+    return () => { t += 0x6D2B79F5; let r = Math.imul(t ^ (t >>> 15), 1 | t); r ^= r + Math.imul(r ^ (r >>> 7), 61 | r); return ((r ^ (r >>> 14)) >>> 0) / 4294967296; };
+  }
+  const PUZZLE_WORDS = ['firewall', 'forensie', 'tijdlijn', 'logboek', 'netwerk', 'bewijs', 'toegang', 'sleutel', 'handtekening', 'herstelplan', 'tweestaps', 'geheugen', 'schijfkopie', 'meldplicht', 'dreiging', 'indicator', 'verkeer', 'certificaat', 'hashwaarde', 'inbraakspoor', 'witwassen', 'geldezel', 'tunnel', 'baken'];
+  const PUZZLE_PORTS = [['SSH', '22'], ['DNS', '53'], ['HTTP', '80'], ['HTTPS', '443'], ['SMTP', '25'], ['RDP', '3389'], ['SMB', '445'], ['LDAP', '389'], ['IMAPS', '993'], ['NTP', '123'], ['Kerberos', '88'], ['MySQL', '3306']];
+  const toHex = (s) => Array.from(s).map((c) => c.charCodeAt(0).toString(16).padStart(2, '0')).join(' ');
+  const rot = (s, n) => s.replace(/[a-z]/g, (c) => String.fromCharCode((c.charCodeAt(0) - 97 + n) % 26 + 97)).replace(/[A-Z]/g, (c) => String.fromCharCode((c.charCodeAt(0) - 65 + n) % 26 + 65));
+  function makePuzzle(seed) {
+    const r = seedRng(seed), pick = (a) => a[Math.floor(r() * a.length)], int = (lo, hi) => lo + Math.floor(r() * (hi - lo + 1));
+    const w = pick(PUZZLE_WORDS);
+    switch (int(0, 7)) {
+      case 0: { const n = int(3, 23); return { kind: 'Caesar', q: 'Deze tekst is met een Caesar-verschuiving versleuteld. Wat staat er?', data: rot(w, n), answer: [w], explain: 'Verschuiving ' + n + '. De Cijfer-kraker in de Gereedschapskist probeert ze alle 26.' }; }
+      case 1: return { kind: 'Base64', q: 'Decodeer deze Base64-tekst.', data: btoa(w), answer: [w], explain: 'Base64 is coderen, geen versleutelen: iedereen kan het terugdraaien.' };
+      case 2: return { kind: 'Hex', q: 'Welke tekst staat hier in hexadecimaal?', data: toHex(w), answer: [w], explain: 'Elk paar is één byte; 61 tot 7a zijn de kleine letters a tot z.' };
+      case 3: { const n = int(33, 250); return { kind: 'Binair', q: 'Welk decimaal getal is dit?', data: n.toString(2).padStart(8, '0'), answer: [String(n)], explain: 'Tel de plaatswaarden op: 128, 64, 32, 16, 8, 4, 2, 1.' }; }
+      case 4: { const p = int(20, 30); return { kind: 'Subnet', q: 'Hoeveel bruikbare hostadressen heeft een /' + p + '-netwerk?', data: '10.' + int(0, 250) + '.' + int(0, 250) + '.0/' + p, answer: [String(Math.pow(2, 32 - p) - 2)], wrong: { [String(Math.pow(2, 32 - p))]: 'Dat is het totaal aantal adressen. Het netwerkadres en het broadcastadres vallen af.' }, explain: '2^(32 − ' + p + ') − 2: het netwerkadres en het broadcastadres kun je niet aan een host geven.' }; }
+      case 5: {
+        const ips = [1, 2, 3].map(() => '203.0.113.' + int(2, 250)); const counts = [int(5, 9), int(2, 4), 1];
+        const users = ['root', 'admin', 'beheer', 'j.devries', 'backup'];
+        const lines = []; counts.forEach((c, i) => { for (let k = 0; k < c; k++) lines.push('sshd: Failed password for ' + pick(users) + ' from ' + ips[i]); });
+        lines.push('sshd: Accepted password for j.devries from ' + ips[2]);
+        for (let i = lines.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); const tmp = lines[i]; lines[i] = lines[j]; lines[j] = tmp; }
+        return { kind: 'Logregels', q: 'Vanaf welk IP-adres komen de meeste mislukte aanmeldingen?', data: lines.map((l, i) => '02:' + String(10 + i).padStart(2, '0') + ' ' + l).join('\n'), answer: [ips[0]], wrong: { [ips[2]]: 'Dit adres logt juist met succes in. Gevraagd is het adres met de meeste mislukte pogingen.' }, explain: counts[0] + ' mislukte pogingen vanaf ' + ips[0] + ': het patroon van een brute-force.' };
+      }
+      case 6: { const y = int(2015, 2026), t = Date.UTC(y, int(1, 10), int(2, 27), int(0, 23)) / 1000; return { kind: 'Tijdstempel', q: 'In welk jaar (UTC) valt deze Unix-tijd?', data: String(t), answer: [String(y)], explain: 'Unix-tijd telt seconden sinds 1 januari 1970 UTC. De Tijdstempel-omrekenaar in de Gereedschapskist rekent het om.' }; }
+      default: { const p = pick(PUZZLE_PORTS); return { kind: 'Poorten', q: 'Welke standaardpoort hoort bij ' + p[0] + '?', data: null, answer: [p[1]], explain: p[0] + ' luistert standaard op poort ' + p[1] + '.' }; }
+    }
+  }
+  function isoWeek(d) {
+    const x = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+    x.setUTCDate(x.getUTCDate() + 4 - (x.getUTCDay() || 7));
+    const y0 = new Date(Date.UTC(x.getUTCFullYear(), 0, 1));
+    return x.getUTCFullYear() + '-W' + String(Math.ceil(((x - y0) / 86400000 + 1) / 7)).padStart(2, '0');
+  }
+  function makeWeekly(weekKey) {
+    const seed = parseInt(weekKey.replace(/\D/g, ''), 10);
+    const r = seedRng(seed * 7919);
+    const w = PUZZLE_WORDS[Math.floor(r() * PUZZLE_WORDS.length)];
+    const flag = 'NM{week_' + weekKey.slice(-2) + '_' + w + '}';
+    return { kind: 'Drie lagen', q: 'Deze vlag is in drie lagen verpakt. Pel ze af en geef de vlag.', data: toHex(btoa(rot(flag, 13))), answer: [flag], explain: 'Hex, daarna Base64, daarna ROT13. De Multi-decoder herkent de lagen; CyberChef laat je ze zelf stapelen.' };
+  }
+  function puzzleCard(pz, done, onSolve) {
+    const card = el('div', { class: 'q quizcard' + (done ? ' correct' : '') });
+    card.append(el('div', { class: 'stamp', style: 'display:block;margin-bottom:8px', text: pz.kind }));
+    card.append(el('div', { class: 'qtext', style: 'font-weight:600;margin-bottom:12px', text: pz.q }));
+    if (pz.data) card.append(el('pre', { class: 'puzzledata', text: pz.data }));
+    const fb = el('div', { class: 'feedback' });
+    const input = el('input', { type: 'text', placeholder: 'antwoord…', autocomplete: 'off', spellcheck: 'false', value: done ? pz.answer[0] : '', disabled: done, 'aria-label': 'Jouw antwoord' });
+    const submit = el('button', { class: 'btn small primary', text: 'Controleer', disabled: done });
+    const check = () => {
+      const val = norm(input.value).toLowerCase(); if (!val || input.disabled) return;
+      if (pz.answer.some((a) => a.toLowerCase() === val)) {
+        input.disabled = true; submit.disabled = true; input.classList.add('ok'); card.classList.add('correct');
+        setFeedback(fb, true, 'Correct.');
+        card.append(el('div', { class: 'explain show', text: pz.explain }));
+        onSolve(card);
+      } else { input.classList.remove('no'); void input.offsetWidth; input.classList.add('no'); setFeedback(fb, false, wrongNote(pz, val) || 'Nog niet. Probeer het opnieuw; de Gereedschapskist mag.'); }
+    };
+    submit.addEventListener('click', check);
+    input.addEventListener('keydown', (e) => { if (e.key === 'Enter') check(); });
+    card.append(el('div', { class: 'ans-row' }, [input, submit]), fb);
+    if (done) card.append(el('div', { class: 'explain show', text: pz.explain }));
+    return card;
+  }
+  function renderPuzzle() {
+    const root = $('#app'); root.innerHTML = '';
+    const wrap = el('section', { class: 'roomview wrap' });
+    wrap.append(crumbs([['Overzicht', '#/'], ['Oefenen', '#/oefenen'], ['Dagpuzzel']]), pageHead('path-puzzels', 'Dagpuzzel en weekopdracht', 'Elke dag één kleine opgave en elke week één zwaardere, voor iedereen dezelfde. Je mag elk gereedschap gebruiken. Kom je een dag niet, dan begint je reeks gewoon opnieuw.'));
+    const P = STATE.puzzle = STATE.puzzle || { last: '', streak: 0, best: 0, done: '', total: 0, week: '', weeks: 0 };
+    const today = dayKey(0), week = isoWeek(new Date());
+    const stats = el('div', { class: 'stat-row', style: 'margin:10px 0 16px' });
+    const paintStats = () => { stats.innerHTML = ''; stats.append(stat(String(P.last === today || P.last === dayKey(-1) ? P.streak : 0), 'dagen op rij'), stat(String(P.best), 'langste reeks'), stat(String(P.total), 'dagpuzzels opgelost'), stat(String(P.weeks), 'weekopdrachten')); };
+    paintStats();
+    wrap.append(stats);
+    wrap.append(el('h2', { text: 'Vandaag' }));
+    wrap.append(puzzleCard(makePuzzle(parseInt(today.replace(/-/g, ''), 10)), P.done === today, (card) => {
+      P.streak = P.last === dayKey(-1) ? P.streak + 1 : 1; P.last = today; P.done = today; P.total++;
+      if (P.streak > P.best) P.best = P.streak;
+      saveState(); addXP(15, 'dagpuzzel'); triumph(card, 'DAGPUZZEL OPGELOST', 15); proveMark(); paintStats(); checkBadges();
+    }));
+    wrap.append(el('h2', { style: 'margin-top:40px', text: 'Deze week (' + week + ')' }));
+    wrap.append(puzzleCard(makeWeekly(week), P.week === week, (card) => {
+      P.week = week; P.weeks++; STATE.flags = (STATE.flags || 0) + 1;
+      saveState(); addXP(40, 'weekopdracht'); triumph(card, 'VLAG GEACCEPTEERD', 40); proveMark(); paintStats(); checkBadges();
+    }));
+    wrap.append(el('p', { class: 'found-note', style: 'margin-top:18px' }, [el('a', { href: '#/tools', text: 'Open de Gereedschapskist' })]));
+    root.append(wrap); renderFooter(root); window.scrollTo(0, 0);
+  }
+  CS.puzzle = { makePuzzle, makeWeekly, isoWeek };
+
+  // =======================================================================
+  //  CHECK JEZELF — vijf vragen in een ander jasje, aan het eind van een room
+  // =======================================================================
+  // Eigen vragen van de schrijver (room.check) gaan voor; verder draait het de begrippen om:
+  // je krijgt de omschrijving en kiest het begrip.
+  function checkItems(room) {
+    const own = (room.check || []).map((q) => ({ room, q }));
+    const terms = room.terms || [];
+    const gen = terms.length >= 4 ? shuffle(terms.slice()).map((t) => {
+      const opts = shuffle([t.term].concat(shuffle(terms.filter((x) => x !== t)).slice(0, 3).map((x) => x.term)));
+      return { room, q: { q: 'Welk begrip hoort hierbij? "' + t.def + '"', options: opts, answer: opts.indexOf(t.term) } };
+    }) : [];
+    return shuffle(own).concat(gen).slice(0, 5);
+  }
+  function checkBlock(room) {
+    const box = el('section', { class: 'task checkself' });
+    box.append(el('span', { class: 'stamp', text: 'Toets' }), el('h2', { text: 'Check jezelf' }));
+    const area = el('div', {});
+    const best = STATE.checks[room.id];
+    const startView = () => {
+      area.innerHTML = '';
+      area.append(el('p', { text: 'Vijf vragen over deze room, in een ander jasje, in drie minuten. Telt niet mee voor je voortgang; een foutloze ronde wel voor een badge.' + (best != null ? ' Je beste score: ' + STATE.checks[room.id] + '/5.' : '') }));
+      area.append(el('button', { class: 'btn', onclick: run }, [CS.icon('play', 16), el('span', { text: 'Start de check' })]));
+    };
+    function run() {
+      const items = checkItems(room);
+      if (items.length < 3) { area.innerHTML = ''; area.append(el('p', { class: 'found-note', text: 'Deze room heeft te weinig begrippen voor een check.' })); return; }
+      let idx = 0, good = 0; const end = Date.now() + 180000;
+      const clock = el('span', { class: 'num' });
+      const timer = setInterval(() => {
+        if (!document.body.contains(area)) { clearInterval(timer); return; }
+        const left = Math.max(0, Math.round((end - Date.now()) / 1000));
+        clock.textContent = Math.floor(left / 60) + ':' + String(left % 60).padStart(2, '0');
+        if (!left) finish(true);
+      }, 500);
+      function finish(timeUp) {
+        clearInterval(timer);
+        STATE.checks[room.id] = Math.max(STATE.checks[room.id] || 0, items.length === 5 ? good : Math.min(good, 4));
+        saveState(); checkBadges();
+        area.innerHTML = '';
+        area.append(el('div', { class: 'callout ' + (good === items.length ? 'tip' : 'info'), text: (timeUp ? 'De tijd is om. ' : '') + good + ' van ' + items.length + ' goed.' + (good === items.length ? ' Foutloos.' : ' Wat fout ging, staat in de begrippenlijst hierboven.') }));
+        area.append(el('button', { class: 'btn small', text: 'Nog een keer', onclick: run }));
+      }
+      function next() {
+        area.innerHTML = '';
+        if (idx >= items.length) return finish(false);
+        area.append(el('div', { class: 'found-note' }, [el('span', { text: 'Vraag ' + (idx + 1) + ' / ' + items.length + ' · ' }), clock]));
+        const nb = el('button', { class: 'btn small primary', text: idx === items.length - 1 ? 'Afronden' : 'Volgende', disabled: true, onclick: () => { idx++; next(); } });
+        area.append(quizCard(items[idx], (ok) => { if (ok) good++; nb.disabled = false; }), el('div', { style: 'margin-top:12px' }, nb));
+      }
+      next();
+    }
+    startView();
+    box.append(area);
+    return box;
+  }
+
+  // =======================================================================
+  //  RESULTAATKAART — af te drukken, niets verlaat de browser
+  // =======================================================================
+  function renderCard(pathId) {
+    const root = $('#app'); root.innerHTML = '';
+    const wrap = el('section', { class: 'roomview wrap' });
+    wrap.append(crumbs([['Overzicht', '#/'], ['Oefenen', '#/oefenen'], ['Resultaatkaart']]), pageHead('seal', 'Resultaatkaart', 'Een kaart per voltooid leerpad, om af te drukken of als pdf te bewaren. Je naam blijft in deze browser; er wordt niets verstuurd.'));
+    const done = PATHS.filter((p) => pathDone(p.id));
+    if (!done.length) {
+      wrap.append(el('div', { class: 'callout info', text: 'Je hebt nog geen leerpad helemaal af. Zodra je alle rooms van een pad hebt afgerond, kun je hier de kaart maken.' }));
+      root.append(wrap); renderFooter(root); return;
+    }
+    const cur = done.find((p) => p.id === pathId) || done[0];
+    const chips = el('div', { class: 'chip-row noprint' });
+    done.forEach((p) => chips.append(el('a', { class: 'chip' + (p === cur ? ' on' : ''), href: '#/kaart/' + p.id, text: p.title })));
+    const rooms = pathRooms(cur.id);
+    const xp = rooms.reduce((n, r) => n + roomEarnedXP(r), 0), max = rooms.reduce((n, r) => n + roomMaxXP(r), 0);
+    const nameOut = el('div', { class: 'cname', text: STATE.name || 'Naam' });
+    const nameIn = el('input', { type: 'text', value: STATE.name || '', placeholder: 'Je naam op de kaart', 'aria-label': 'Je naam op de kaart', maxlength: '60', oninput: () => { STATE.name = nameIn.value.trim(); saveState(); nameOut.textContent = STATE.name || 'Naam'; } });
+    const card = el('div', { class: 'resultcard' }, [
+      el('div', { class: 'chead' }, [markNode('seal', false), el('div', {}, [el('span', { class: 'label', text: 'NineMinds Cyber Dojo · resultaatkaart' }), el('h2', { text: cur.title })])]),
+      nameOut,
+      el('p', { text: 'heeft alle ' + rooms.length + ' rooms van dit leerpad afgerond, met ' + xp + ' van ' + max + ' XP.' }),
+      el('ul', {}, rooms.map((r) => el('li', { text: r.title }))),
+      el('p', { class: 'cfoot num', text: new Date().toLocaleDateString('nl-NL', { day: 'numeric', month: 'long', year: 'numeric' }) + ' · rang: ' + RANKS[rankNow()].name }),
+      el('p', { class: 'cfoot', text: 'Dit is een bewijs van afgeronde oefeningen in de Cyber Dojo. Het is geen erkend certificaat en vervangt geen examen.' }),
+    ]);
+    wrap.append(chips, el('div', { class: 'noprint', style: 'max-width:360px;margin:10px 0 18px' }, [el('label', { text: 'Naam (blijft lokaal)' }), nameIn]), card,
+      el('div', { class: 'noprint', style: 'margin-top:18px' }, el('button', { class: 'btn primary', onclick: () => window.print() }, [CS.icon('download', 16), el('span', { text: 'Afdrukken of bewaren als pdf' })])));
+    root.append(wrap); renderFooter(root); window.scrollTo(0, 0);
+  }
+
+  // =======================================================================
+  //  LEERROUTES naar een doel, met een proefexamen als eindtoets
+  // =======================================================================
+  // Een route zet bestaande rooms in een verstandige volgorde voor één rol. Het is geen
+  // opleiding en geen certificaat: het zegt wat je in de dojo kunt oefenen voor dat werk.
+  const ROUTES = [
+    { id: 'soc-analist', title: 'SOC-analist', desc: 'Aanvallen zien in logs en verkeer, er een regel voor schrijven en er goed op reageren.',
+      rooms: ['intro-cybersecurity', 'netwerken-basis', 'hoe-het-web-werkt', 'linux-basis', 'windows-basis', 'logs-detectie', 'threat-intel-attack', 'detectie-engineering', 'detectie-bouwen', 'netwerkstromen-analyse', 'dns-datastromen', 'email-forensics', 'incident-response', 'ransomware-respons', 'insider-threat', 'phishing-kit-infrastructuur', 'game-ochtendspits', 'game-nachtdienst', 'game-ransomware-zes-uur', 'siem-threat-hunting', 'active-directory-verdedigen', 'cloudbeveiliging', 'bedrijfscontinuiteit-herstel'] },
+    { id: 'digitaal-rechercheur', title: 'Digitaal rechercheur', desc: 'Sporen veiligstellen, onderzoeken en zo opschrijven dat het standhoudt.',
+      rooms: ['intro-forensie', 'bewijs-veiligstellen', 'schijf-bestandssysteem-forensie', 'memory-forensie', 'netwerk-forensie', 'windows-artefacten', 'mobiel-cloud-forensie', 'tijdlijnanalyse', 'malware-analyse-basis', 'osint-opsporing', 'email-forensics', 'forensie-misleiding', 'bewijs-in-de-rechtszaal', 'game-ochtend-erna', 'forensie-ctf', 'opsporing-bevoegdheden', 'privacy-wetgeving-praktijk'] },
+    { id: 'intelligence-analist', title: 'Intelligence-analist', desc: 'Van fenomeen naar oordeel: bronnen wegen, hypothesen toetsen en een product schrijven waar iemand op kan handelen.',
+      rooms: ['cybercrime-ecosysteem', 'crime-scripting', 'intelligencecyclus', 'ti-modellen', 'threat-intel-attack', 'osint-pivoting', 'osint-infrastructuur', 'darkweb-vendor-osint', 'redeneren-met-kansen', 'intelligenceproducten', 'praktijkcase-intel'] },
+    { id: 'financieel-rechercheur', title: 'Financieel rechercheur', desc: 'Het geld volgen: fraudevormen, witwassen, crypto en de cijfers die niet kloppen.',
+      rooms: ['fraudevormen', 'money-mule-ronseling', 'carding-economie', 'witwassen-structurering', 'follow-the-money', 'crypto-witwassen', 'cryptomixer-onderzoek', 'financiele-recherche', 'fraude-in-de-cijfers', 'privacy-wetgeving-praktijk'] },
+    { id: 'security-tester', title: 'Security-tester (basis)', desc: 'Begrijpen hoe een aanval werkt, zodat je kwetsbaarheden kunt vinden, wegen en melden. Altijd in een lab of met schriftelijke toestemming.',
+      rooms: ['intro-cybersecurity', 'netwerken-basis', 'hoe-het-web-werkt', 'linux-basis', 'cryptografie', 'kwetsbaarheden-cvss', 'owasp-top-10', 'verkenning-scannen', 'webhacking-sqli', 'wachtwoorden-kraken', 'reverse-engineering', 'veilig-ontwikkelen-codereview', 'tls-pki', 'linux-container-hardening', 'game-vergeten-server', 'range-eerste-inbraak', 'range-rechten-verhogen', 'range-pivoteren', 'range-active-directory', 'range-rood-vs-blauw', 'pentest-methodiek-rapportage'] },
+  ];
+  const routeRooms = (rt) => rt.rooms.map((id) => ROOMS.find((r) => r.id === id)).filter(Boolean);
+  function renderRoutes() {
+    const root = $('#app'); root.innerHTML = '';
+    const wrap = el('section', { class: 'roomview wrap' });
+    wrap.append(crumbs([['Overzicht', '#/'], ['Leerroutes']]), pageHead('target', 'Leerroutes naar een doel', 'Een route zet rooms uit verschillende leerpaden in een volgorde die past bij één rol, en sluit af met een proefexamen. De dojo vervangt geen opleiding of erkend examen; de dekkingsmatrix in docs/ laat zien wat er wel en niet in zit.'));
+    const list = el('ol', { class: 'pathlist' });
+    ROUTES.forEach((rt, i) => {
+      const rs = routeRooms(rt), done = rs.filter(roomDone).length;
+      const best = (STATE.exams || {})[rt.id];
+      list.append(el('li', {}, el('a', { class: 'pathrow' + (done === rs.length ? ' done' : ''), href: '#/route/' + rt.id }, [
+        el('span', { class: 'no', text: String(i + 1).padStart(2, '0') }),
+        el('span', { class: 'glyph' }, CS.icon('target', 20)),
+        el('div', {}, [el('h3', { text: rt.title }), el('p', { text: rt.desc })]),
+        el('div', { class: 'prog' }, [el('span', { class: 'num', text: done + '/' + rs.length + ' rooms' + (best != null ? ' · eindtoets ' + best + '%' : '') }), meterLine(done / rs.length, done === rs.length)]),
+        el('span', { class: 'go' }, CS.icon('chevron', 18)),
+      ])));
+    });
+    wrap.append(list);
+    root.append(wrap); renderFooter(root); window.scrollTo(0, 0);
+  }
+  function renderRoute(id) {
+    const rt = ROUTES.find((x) => x.id === id);
+    if (!rt) { renderRoutes(); return; }
+    const root = $('#app'); root.innerHTML = '';
+    const rs = routeRooms(rt), done = rs.filter(roomDone).length;
+    const view = el('section', { class: 'pathview wrap' });
+    view.append(crumbs([['Overzicht', '#/'], ['Leerroutes', '#/routes'], [rt.title]]));
+    view.append(el('header', { class: 'path-hero' }, [
+      el('span', { class: 'glyph' }, CS.icon('target', 28)),
+      el('div', {}, [
+        el('span', { class: 'label', text: 'Leerroute' }),
+        el('h1', { text: rt.title }),
+        el('p', { text: rt.desc }),
+        el('div', { class: 'meta-row' }, [el('span', { class: 'num', text: done + '/' + rs.length + ' rooms af' }), metaItem('clock', fmtMinutes(rs.reduce((n, r) => n + r.minutes, 0)))]),
+        meterLine(done / rs.length, done === rs.length),
+      ]),
+    ]));
+    const spine = el('ol', { class: 'spine' });
+    // In een route is niets op slot: de rooms komen uit verschillende paden.
+    rs.forEach((r, i) => spine.append(el('li', {}, roomRow(r, [], i))));
+    view.append(spine);
+    const best = (STATE.exams || {})[rt.id];
+    view.append(el('section', { class: 'task' }, [
+      el('span', { class: 'stamp', text: 'Eindtoets' }),
+      el('h2', { text: 'Proefexamen ' + rt.title }),
+      el('p', { text: 'Een gemengde set uit de rooms van deze route, met een tijdslimiet. Je ziet pas aan het eind wat goed was, met een analyse per domein.' + (best != null ? ' Je beste score: ' + best + '%.' : '') }),
+      el('a', { class: 'btn primary', href: '#/proefexamen/' + rt.id }, [el('span', { text: 'Naar het proefexamen' }), CS.icon('arrowRight', 18)]),
+    ]));
+    root.append(view); renderFooter(root); window.scrollTo(0, 0);
+  }
+
+  // Proefexamen: geen feedback tot het eind, markeren voor later, tijdslimiet, analyse per domein.
+  function renderMock(routeId) {
+    const rt = ROUTES.find((x) => x.id === routeId);
+    const root = $('#app'); root.innerHTML = '';
+    const wrap = el('section', { class: 'roomview wrap' });
+    wrap.append(crumbs([['Overzicht', '#/'], ['Leerroutes', '#/routes'], rt ? [rt.title, '#/route/' + rt.id] : ['Alles'], ['Proefexamen']]),
+      pageHead('exam', 'Proefexamen' + (rt ? ' ' + rt.title : ''), 'Zoals een echt examen: een vaste tijd, geen terugkoppeling onderweg, en vragen die je kunt markeren om later op terug te komen. Na afloop zie je per domein waar je zwak zit. Dit is oefening; het levert geen certificaat op.'));
+    const ids = rt ? new Set(routeRooms(rt).map((r) => r.id)) : null;
+    // Examenstijlvragen en boss-vragen eerst, dan de rest.
+    const weight = (x) => (x.room.tasks[x.ti].kind === 'examen' ? 0 : x.q.boss ? 1 : 2);
+    const pool = shuffle(allQuestions('alles').filter((x) => !ids || ids.has(x.room.id))).sort((a, b) => weight(a) - weight(b));
+    let len = Math.min(40, pool.length);
+    const lenRow = el('div', { class: 'chip-row' });
+    [40, 60, 90].filter((n, i) => i === 0 || n <= pool.length).forEach((n) => {
+      const real = Math.min(n, pool.length);
+      const c = el('span', { class: 'chip' + (real === len ? ' on' : ''), text: real + ' vragen · ' + real + ' min', onclick: () => { len = real; $$('.chip', lenRow).forEach((x) => x.classList.remove('on')); c.classList.add('on'); } });
+      lenRow.append(c);
+    });
+    const area = el('div', {});
+    const startBtn = el('button', { class: 'btn primary', text: 'Start het proefexamen', style: 'margin-top:14px' });
+    wrap.append(el('label', { text: 'Lengte' }), lenRow, startBtn, area);
+    root.append(wrap); renderFooter(root); window.scrollTo(0, 0);
+
+    startBtn.addEventListener('click', () => {
+      // De helft examenstijl (voor zover aanwezig), de rest gemengd, daarna door elkaar.
+      const top = pool.filter((x) => weight(x) < 2).slice(0, Math.ceil(len / 2));
+      const rest = shuffle(pool.filter((x) => !top.includes(x))).slice(0, len - top.length);
+      const qs = shuffle(top.concat(rest));
+      if (!qs.length) { area.append(el('div', { class: 'callout warn', text: 'Geen vragen beschikbaar.' })); return; }
+      lenRow.style.display = 'none'; startBtn.style.display = 'none';
+      const given = qs.map(() => null), marked = qs.map(() => false);
+      let cur = 0; const end = Date.now() + qs.length * 60000;
+      const clock = el('span', { class: 'num' });
+      const head = el('div', { class: 'mockhead' });
+      const grid = el('div', { class: 'mockgrid', role: 'navigation', 'aria-label': 'Vragen' });
+      const qbox = el('div', {}), nav = el('div', { class: 'room-foot' });
+      area.append(head, grid, qbox, nav);
+      const timer = setInterval(() => {
+        if (!document.body.contains(area)) { clearInterval(timer); return; }
+        const left = Math.max(0, Math.round((end - Date.now()) / 1000));
+        clock.textContent = Math.floor(left / 60) + ':' + String(left % 60).padStart(2, '0');
+        if (!left) finish(true);
+      }, 500);
+      const paintGrid = () => {
+        grid.innerHTML = '';
+        qs.forEach((_, i) => grid.append(el('button', { class: 'mockcell' + (i === cur ? ' on' : '') + (given[i] != null ? ' filled' : '') + (marked[i] ? ' marked' : ''), 'aria-label': 'Vraag ' + (i + 1) + (given[i] != null ? ', beantwoord' : ', open') + (marked[i] ? ', gemarkeerd' : ''), onclick: () => { cur = i; show(); } }, [document.createTextNode(String(i + 1)), marked[i] ? el('i', { text: '?' }) : null])));
+      };
+      function show() {
+        const item = qs[cur];
+        head.innerHTML = ''; qbox.innerHTML = ''; nav.innerHTML = '';
+        head.append(el('span', { class: 'num', text: 'Vraag ' + (cur + 1) + ' / ' + qs.length + ' · ' + given.filter((g) => g != null).length + ' beantwoord · tijd ' }), clock);
+        const card = el('div', { class: 'q quizcard' });
+        card.append(el('div', { class: 'qtext', style: 'font-weight:600;margin-bottom:12px', html: esc(item.q.q) }));
+        if (Array.isArray(item.q.options)) {
+          const mc = el('div', { class: 'mc' });
+          item.q.options.forEach((opt, oi) => mc.append(el('button', { class: given[cur] === oi ? 'picked' : '', html: esc(opt), 'aria-pressed': String(given[cur] === oi), onclick: () => { given[cur] = oi; show(); } })));
+          card.append(mc);
+        } else {
+          const input = el('input', { type: 'text', placeholder: 'antwoord…', autocomplete: 'off', spellcheck: 'false', value: given[cur] || '', 'aria-label': 'Jouw antwoord', oninput: () => { given[cur] = input.value.trim() ? input.value : null; } });
+          input.addEventListener('change', paintGrid);
+          card.append(el('div', { class: 'ans-row' }, input));
+        }
+        qbox.append(card);
+        nav.append(
+          el('button', { class: 'btn', text: 'Vorige', disabled: cur === 0, onclick: () => { cur--; show(); } }),
+          el('button', { class: 'btn', text: marked[cur] ? 'Markering weg' : 'Markeer voor later', onclick: () => { marked[cur] = !marked[cur]; show(); } }),
+          cur < qs.length - 1 ? el('button', { class: 'btn primary next', text: 'Volgende', onclick: () => { cur++; show(); } })
+            : el('button', { class: 'btn primary next', text: 'Inleveren', onclick: () => { const open = given.filter((g) => g == null).length; if (!open || confirm(open + ' vragen zijn nog open. Toch inleveren?')) finish(false); } }),
+        );
+        paintGrid();
+      }
+      function finish(timeUp) {
+        clearInterval(timer);
+        const res = qs.map((item, i) => {
+          const g = given[i];
+          const ok = g != null && (Array.isArray(item.q.options) ? g === item.q.answer : (Array.isArray(item.q.answer) ? item.q.answer : [item.q.answer]).some((a) => norm(a).toLowerCase() === norm(g).toLowerCase()));
+          if (!ok) recordMiss(item.room.id, item.ti, item.qi);
+          return ok;
+        });
+        const score = res.filter(Boolean).length, pct = Math.round((score / qs.length) * 100), pass = pct >= 70;
+        STATE.exams = STATE.exams || {};
+        const k = rt ? rt.id : 'alles';
+        if (STATE.exams[k] == null || pct > STATE.exams[k]) STATE.exams[k] = pct;
+        if (!STATE.examBest || pct > STATE.examBest) STATE.examBest = pct;
+        bump('mock'); saveState(); checkBadges();
+        area.innerHTML = '';
+        area.append(el('div', { class: 'callout ' + (pass ? 'tip' : 'warn'), html: '<strong>' + (pass ? 'Gehaald.' : 'Nog niet gehaald.') + '</strong> ' + (timeUp ? 'De tijd was om. ' : '') + score + ' van ' + qs.length + ' goed (' + pct + '%). De grens is 70%.' }));
+        if (pass) { const sealBox = el('div', { class: 'room-done' }, [markNode('seal', false), el('div', {}, [el('h3', { text: 'Proefexamen gehaald' }), el('p', { text: (rt ? rt.title : 'Alle onderwerpen') + ' · ' + pct + '% · ' + qs.length + ' vragen. Oefening, geen erkend examen.' })])]); area.append(sealBox); proveMark(); }
+        // Analyse per domein (leerpad), zwakste eerst.
+        const dom = {};
+        qs.forEach((item, i) => { const d = dom[item.room.path] = dom[item.room.path] || { n: 0, ok: 0, rooms: {} }; d.n++; if (res[i]) d.ok++; else d.rooms[item.room.id] = (d.rooms[item.room.id] || 0) + 1; });
+        const t = el('table', { class: 'weak' });
+        t.append(el('thead', {}, el('tr', {}, ['Domein', 'Goed', 'Score', 'Herhaal deze room'].map((h) => el('th', { text: h })))));
+        const tb = el('tbody');
+        Object.keys(dom).sort((a, b) => dom[a].ok / dom[a].n - dom[b].ok / dom[b].n).forEach((pid) => {
+          const d = dom[pid], worst = Object.keys(d.rooms).sort((x, y) => d.rooms[y] - d.rooms[x])[0];
+          const wr = worst && ROOMS.find((r) => r.id === worst);
+          tb.append(el('tr', {}, [el('td', { text: (PATHS.find((p) => p.id === pid) || { title: pid }).title }), el('td', { class: 'num', text: d.ok + '/' + d.n }), el('td', { class: 'num', text: Math.round((d.ok / d.n) * 100) + '%' }), el('td', {}, wr ? el('a', { href: '#/room/' + wr.id, text: wr.title }) : el('span', { class: 'found-note', text: 'alles goed' }))]));
+        });
+        t.append(tb);
+        area.append(el('h2', { style: 'margin-top:32px', text: 'Analyse per domein' }), el('div', { class: 'tablewrap' }, t));
+        // Nabespreking: alleen wat fout ging, met het goede antwoord en de uitleg.
+        const wrongs = qs.map((item, i) => ({ item, i })).filter((x) => !res[x.i]);
+        if (wrongs.length) {
+          area.append(el('h2', { style: 'margin-top:32px', text: 'Nabespreking: ' + wrongs.length + ' fout' }));
+          area.append(el('p', { class: 'found-note', text: 'Deze vragen komen ook terug onder Herhalen.' }));
+          wrongs.forEach(({ item, i }) => {
+            const good = Array.isArray(item.q.options) ? item.q.options[item.q.answer] : (Array.isArray(item.q.answer) ? item.q.answer[0] : item.q.answer);
+            const mine = given[i] == null ? 'niet beantwoord' : (Array.isArray(item.q.options) ? item.q.options[given[i]] : given[i]);
+            const note = given[i] == null ? null : wrongNote(item.q, Array.isArray(item.q.options) ? given[i] : norm(given[i]).toLowerCase());
+            area.append(el('div', { class: 'q quizcard' }, [
+              el('div', { class: 'stamp', style: 'display:block;margin-bottom:8px', text: 'Vraag ' + (i + 1) + ' · ' + item.room.title }),
+              el('div', { class: 'qtext', style: 'font-weight:600;margin-bottom:8px', html: esc(item.q.q) }),
+              el('div', { class: 'feedback show no' }, [CS.icon('cross', 16), el('span', { html: 'Jouw antwoord: ' + esc(mine) + (note ? '. ' + esc(note) : '') })]),
+              el('div', { class: 'feedback show ok' }, [CS.icon('check', 16), el('span', { html: 'Goed: ' + esc(good) })]),
+              item.q.explain ? el('div', { class: 'explain show', html: esc(item.q.explain) }) : null,
+            ]));
+          });
+        }
+        area.append(el('div', { class: 'room-foot', style: 'margin-top:18px' }, [el('button', { class: 'btn', text: 'Opnieuw', onclick: () => renderMock(routeId) }), el('a', { class: 'btn primary next', href: rt ? '#/route/' + rt.id : '#/routes', text: 'Terug naar de route' })]));
+        window.scrollTo(0, 0);
+      }
+      show();
+    });
   }
 
   // =======================================================================
@@ -1440,6 +2139,7 @@
 
   function go(hash) { if (location.hash === hash) route(); else location.hash = hash; }
   CS.go = go;
+  CS.routes = ROUTES;
   function route() {
     const h = location.hash || '#/';
     closeSearch();
@@ -1454,6 +2154,13 @@
     else if (h === '#/tools') renderTools();
     else if (h === '#/examen') renderExam();
     else if (h === '#/daily') renderDaily();
+    else if (h === '#/herhalen') renderReview();
+    else if (h === '#/puzzel') renderPuzzle();
+    else if (h === '#/routes') renderRoutes();
+    else if (/^#\/route\//.test(h)) renderRoute(decodeURIComponent(h.slice(8)));
+    else if (/^#\/proefexamen/.test(h)) renderMock(decodeURIComponent(h.slice(14)));
+    else if (/^#\/kaart/.test(h)) renderCard(decodeURIComponent(h.slice(8)));
+    else if (/^#\/arena\/zwak/.test(h)) renderArena({ weak: true, path: decodeURIComponent(h.slice(13)) || 'alles' });
     else if (h === '#/scorebord') renderScorebord();
     else renderHome();
     markNav();

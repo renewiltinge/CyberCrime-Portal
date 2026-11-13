@@ -1,0 +1,140 @@
+/* Uitdaging ★★★: Het nachtelijke setpoint (zonder handleiding) */
+
+// Alles FICTIEF: Waterbedrijf Veenoord, zuivering De Kreek, de leverancier, de accounts, hosts en adressen zijn verzonnen.
+// Deze uitdaging is alleen analyse van logboeken. Er staan geen besturingsinstructies of werkende aanvalsstappen in.
+CS.registerRoom({
+  id: 'uitdaging-nachtelijk-setpoint',
+  path: 'uitdagingen',
+  order: 17,
+  title: '★★★ Het nachtelijke setpoint',
+  icon: '💧',
+  difficulty: 'Moeilijk',
+  level: 'Gevorderd',
+  checked: '2026-11-12',
+  minutes: 45,
+  summary: 'In een drinkwaterzuivering gaat midden in de nacht het chlooralarm af. De operator grijpt in en er komt geen water met te veel chloor het net op. Maar wie veranderde de dosering? Een historianlog en een tijdlijn, in twee verschillende tijdzones.',
+  objectives: [
+    'In een historianlog een schrijfactie buiten de procesgrenzen onderscheiden van een meetfout en van normale bediening',
+    'Tijdstempels uit lokale tijd en UTC naast elkaar leggen zonder een uur te verschuiven',
+    'Een schrijfactie via de asset-inventaris en aanmeldgegevens herleiden tot een host en een account',
+  ],
+  terms: [
+    { term: 'Historian', def: 'Een database in een OT-omgeving die meetwaarden, setpoints en schrijfacties van het proces met een tijdstempel bewaart.' },
+    { term: 'Setpoint (SP)', def: 'De gewenste waarde die een regelaar probeert te bereiken, bijvoorbeeld de chloordosering in mg/l.' },
+    { term: 'Proceswaarde (PV)', def: 'De gemeten waarde van het proces, zoals de werkelijke chloorconcentratie bij de uitgang.' },
+    { term: 'Engineering-werkstation (EWS)', def: 'Een computer waarmee technici de besturing programmeren en instellen. Het heeft meer rechten dan een bedienscherm (HMI).' },
+    { term: 'Jump host', def: 'Een tussenstation tussen het kantoornetwerk (IT) en het procesnetwerk (OT). Wie in OT wil werken, moet eerst daar aanmelden.' },
+  ],
+  resources: [
+    { title: 'MITRE ATT&CK for ICS: T0836 Modify Parameter', url: 'https://attack.mitre.org/techniques/T0836/' },
+    { title: 'CISA: Water and Wastewater Systems Sector', url: 'https://www.cisa.gov/topics/critical-infrastructure-security-and-resilience/critical-infrastructure-sectors/water-and-wastewater-sector' },
+  ],
+  tasks: [
+    {
+      title: 'Bron 1: de historian',
+      content: `
+        <p>Waterbedrijf Veenoord (fictief) zuivert in installatie De Kreek grondwater tot drinkwater. In de nacht van
+        maandag 9 op dinsdag 10 november 2026 gaat het alarm voor te veel chloor af. De nachtoperator zet de dosering terug
+        en houdt het water vast in de reinwaterkelder. Er is niemand in gevaar gekomen.</p>
+        <p>Je krijgt de export van de historian. Zoek uit welke waarde er is ingesteld en wanneer. Er is geen stappenplan.</p>
+      `,
+      lab: {
+        type: 'logs',
+        title: 'HIST-01 · export De Kreek · tijden in lokale tijd (Europe/Amsterdam) · grenzen KRK.CL2_DOS.SP: 0.50 tot 2.00 mg/l',
+        lines: [
+          '2026-11-09 14:00:00.000 KRK.CL2_RES.PV   0.31 mg/l   kwaliteit=GOOD',
+          '2026-11-09 14:00:00.000 KRK.PH.PV        7.82        kwaliteit=GOOD',
+          '2026-11-09 14:00:00.000 KRK.FLOW.PV      418 m3/h    kwaliteit=GOOD',
+          '2026-11-09 14:20:12.410 KRK.CL2_DOS.SP   WRITE 1.20 -> 1.40 mg/l   src=10.40.5.11 via=OPC-UA',
+          '2026-11-09 16:45:03.112 KRK.CL2_DOS.SP   WRITE 1.40 -> 1.40 mg/l   src=10.40.5.22 via=OPC-UA (parametercontrole na onderhoud)',
+          '2026-11-09 18:00:00.000 KRK.CL2_RES.PV   0.34 mg/l   kwaliteit=GOOD',
+          '2026-11-09 22:00:00.000 KRK.CL2_RES.PV   0.33 mg/l   kwaliteit=GOOD',
+          '2026-11-09 23:00:00.205 KRK.FLOW.SP      WRITE 420 -> 380 m3/h   src=10.40.5.11 via=OPC-UA (nachtregime)',
+          '2026-11-10 00:00:00.000 KRK.CL2_RES.PV   0.32 mg/l   kwaliteit=GOOD',
+          '2026-11-10 00:00:00.000 KRK.FLOW.PV      381 m3/h    kwaliteit=GOOD',
+          '2026-11-10 01:00:00.000 KRK.CL2_RES.PV   0.33 mg/l   kwaliteit=GOOD',
+          '2026-11-10 02:00:00.000 KRK.CL2_RES.PV   3.80 mg/l   kwaliteit=SUBSTITUTED (sensorkalibratie, alarm onderdrukt)',
+          '2026-11-10 02:05:00.000 KRK.CL2_RES.PV   0.33 mg/l   kwaliteit=GOOD',
+          '2026-11-10 03:00:00.000 KRK.CL2_RES.PV   0.32 mg/l   kwaliteit=GOOD',
+          '2026-11-10 03:00:00.000 KRK.PH.PV        7.80        kwaliteit=GOOD',
+          '2026-11-10 03:12:47.318 KRK.CL2_DOS.SP   WRITE 1.40 -> 8.50 mg/l   src=10.40.5.21 via=OPC-UA',
+          '2026-11-10 03:15:00.000 KRK.CL2_RES.PV   0.61 mg/l   kwaliteit=GOOD',
+          '2026-11-10 03:18:00.000 KRK.CL2_RES.PV   1.48 mg/l   kwaliteit=GOOD',
+          '2026-11-10 03:21:00.000 KRK.CL2_RES.PV   2.37 mg/l   kwaliteit=GOOD',
+          '2026-11-10 03:21:30.004 ALARM            KRK.CL2_RES.PV HI (grens 1.00 mg/l)',
+          '2026-11-10 03:24:00.000 KRK.CL2_RES.PV   2.95 mg/l   kwaliteit=GOOD',
+          '2026-11-10 03:26:40.771 KRK.OUT_VALVE.SP WRITE OPEN -> DICHT   src=10.40.5.11 via=OPC-UA (reinwater vastgehouden)',
+          '2026-11-10 03:27:10.902 KRK.CL2_DOS.SP   WRITE 8.50 -> 1.40 mg/l   src=10.40.5.11 via=OPC-UA',
+          '2026-11-10 03:30:00.000 KRK.CL2_RES.PV   2.61 mg/l   kwaliteit=GOOD',
+          '2026-11-10 04:00:00.000 KRK.CL2_RES.PV   1.12 mg/l   kwaliteit=GOOD',
+          '2026-11-10 05:00:00.000 KRK.CL2_RES.PV   0.41 mg/l   kwaliteit=GOOD',
+          '2026-11-10 05:00:00.000 KRK.PH.PV        7.81        kwaliteit=GOOD',
+        ].join('\n'),
+      },
+      questions: [
+        { q: 'Welke setpointwaarde (mg/l) werd buiten de grenzen ingesteld?', answer: ['8.50', '8.5', '8,5', '8,50', '8.50 mg/l', '8,5 mg/l', '8.5 mg/l'],
+          hints: ['Een gemeten waarde is iets anders dan een ingestelde waarde.', 'Filter op WRITE en vergelijk elke nieuwe waarde met de grenzen in de kop van de export.', 'Er is maar één schrijfactie op de chloordosering die boven 2.00 uitkomt.'],
+          wrong: { '3.80': 'Dat is een gemeten waarde (PV), geen setpoint, en de kwaliteit is SUBSTITUTED: de sensor werd gekalibreerd. Vijf minuten later meet hij weer normaal.', '3.8': 'Dat is een gemeten waarde (PV), geen setpoint, en de kwaliteit is SUBSTITUTED: de sensor werd gekalibreerd.', '2.95': 'Dat is de hoogste gemeten concentratie, het gevolg van de wijziging. Gevraagd is de ingestelde waarde.', '1.40': 'Dat is de normale dosering, binnen de grenzen.' },
+          why: 'Een historian bewaart meetwaarden en schrijfacties door elkaar. Wie op het eerste rare getal reageert, kan een kalibratie aanzien voor een aanval, of andersom.',
+          explain: 'Om 03:12:47 lokale tijd wordt KRK.CL2_DOS.SP van 1.40 naar 8.50 mg/l gezet, ruim boven de grens van 2.00. De concentratie bij de uitgang loopt daarna op tot 2.95 mg/l, het alarm gaat om 03:21:30 af en de operator zet de dosering om 03:27 terug. De 3.80 van 02:00 is een gemarkeerde meting tijdens kalibratie.' },
+        { q: 'Hoe laat werd die waarde ingesteld, in UTC? (UU:MM:SS)', answer: ['02:12:47', '2:12:47'],
+          hints: ['Kijk goed in welke tijd de historian schrijft.', 'De kop van de export noemt de tijdzone. Welke afwijking van UTC hoort daarbij in november?', 'In de winter loopt Nederland één uur voor op UTC.'],
+          wrong: { '03:12:47': 'Dat is de lokale tijd uit de historian. In november geldt wintertijd (CET, UTC+1): trek er een uur af.', '3:12:47': 'Dat is de lokale tijd uit de historian. In november geldt wintertijd (CET, UTC+1): trek er een uur af.', '01:12:47': 'Dan heb je twee uur afgetrokken, alsof het zomertijd is. Op 10 november geldt wintertijd: UTC+1.' },
+          why: 'OT-systemen draaien vaak op lokale tijd, IT-logs bijna altijd op UTC. Een uur verschil is genoeg om de verkeerde persoon te verdenken.',
+          explain: '03:12:47 in Europe/Amsterdam op 10 november is wintertijd (CET, UTC+1), dus 02:12:47 UTC. Dat tijdstip heb je nodig om de tijdlijn van het IT-netwerk te lezen.' },
+      ],
+    },
+    {
+      title: 'Bron 2: de tijdlijn van het procesnetwerk',
+      content: `
+        <p>Het securityteam heeft de aanmeldgegevens van de jump host en de werkstations in het procesnetwerk, het
+        firewalllog tussen kantoor en proces en de asset-inventaris samengevoegd tot één tijdlijn. Alle tijden in deze
+        tijdlijn zijn UTC. Vanaf welke host werd de dosering veranderd, en wie was daar aangemeld?</p>
+      `,
+      lab: {
+        type: 'timeline',
+        title: 'Zaak VNO-2026-07 · procesnetwerk De Kreek (UTC)',
+        events: [
+          { t: '2026-11-01 00:00:00', src: 'Asset-inventaris', desc: 'Vaste adressen OT: 10.40.5.11 = HMI-01 (bedienscherm controlekamer), 10.40.5.21 = EWS-02, 10.40.5.22 = EWS-01, 10.40.5.30 = HIST-01, 10.20.9.15 = JUMP-01' },
+          { t: '2026-11-09 06:58:10', src: 'Security', host: 'HMI-01', user: 'op.jansen', desc: '4624 aanmelding type 2 (lokaal), dagdienst' },
+          { t: '2026-11-09 13:05:00', src: 'Ticket', desc: 'Onderhoud doseerpomp P-12 door leverancier Hydrotech, 14:00 tot 16:00 UTC, account ext.onderhoud, werkplek EWS-01' },
+          { t: '2026-11-09 13:58:41', src: 'VPN-leverancier', user: 'ext.onderhoud', desc: 'Aangemeld vanaf 198.51.100.30 (kantoor Hydrotech)' },
+          { t: '2026-11-09 14:01:12', src: 'Security', host: 'JUMP-01', user: 'ext.onderhoud', desc: '4624 aanmelding type 10 (RDP) vanaf 198.51.100.30' },
+          { t: '2026-11-09 14:02:30', src: 'Firewall', desc: 'ALLOW 10.20.9.15 -> 10.40.5.22:3389 (JUMP-01 -> EWS-01)' },
+          { t: '2026-11-09 14:02:33', src: 'Security', host: 'EWS-01', user: 'ext.onderhoud', desc: '4624 aanmelding type 10 (RDP) vanaf 10.20.9.15' },
+          { t: '2026-11-09 15:51:20', src: 'Security', host: 'EWS-01', user: 'ext.onderhoud', desc: '4634 afmelding' },
+          { t: '2026-11-09 15:52:02', src: 'VPN-leverancier', user: 'ext.onderhoud', desc: 'Afgemeld' },
+          { t: '2026-11-09 21:57:15', src: 'Security', host: 'HMI-01', user: 'op.dekker', desc: '4624 aanmelding type 2 (lokaal), nachtdienst' },
+          { t: '2026-11-10 00:55:00', src: 'Ticket', desc: 'Kalibratie chloorsensor uitgang, 01:00 tot 01:10 UTC, monteur ter plaatse' },
+          { t: '2026-11-10 01:44:52', src: 'VPN-leverancier', user: 'ext.onderhoud', desc: 'Aangemeld vanaf 203.0.113.140' },
+          { t: '2026-11-10 01:47:18', src: 'Security', host: 'JUMP-01', user: 'ext.onderhoud', desc: '4624 aanmelding type 10 (RDP) vanaf 203.0.113.140' },
+          { t: '2026-11-10 01:58:12', src: 'Firewall', desc: 'ALLOW 10.20.9.15 -> 10.40.5.21:3389 (JUMP-01 -> EWS-02)' },
+          { t: '2026-11-10 01:58:20', src: 'Security', host: 'EWS-02', user: 'ext.onderhoud', desc: '4624 aanmelding type 10 (RDP) vanaf 10.20.9.15' },
+          { t: '2026-11-10 02:03:41', src: 'EDR', host: 'EWS-02', user: 'ext.onderhoud', desc: 'Proces gestart: PlantStudio.exe (engineeringsoftware)' },
+          { t: '2026-11-10 02:11:58', src: 'EDR', host: 'EWS-02', user: 'ext.onderhoud', desc: 'PlantStudio.exe: OPC-UA-sessie geopend naar PLC-KRK-02' },
+          { t: '2026-11-10 02:21:30', src: 'SCADA-alarm', host: 'HMI-01', desc: 'Alarm HI chloor uitgang, bevestigd door op.dekker' },
+          { t: '2026-11-10 02:31:05', src: 'Security', host: 'EWS-02', user: 'ext.onderhoud', desc: '4634 afmelding' },
+          { t: '2026-11-10 02:32:40', src: 'VPN-leverancier', user: 'ext.onderhoud', desc: 'Afgemeld' },
+          { t: '2026-11-10 03:05:00', src: 'Security', host: 'EWS-02', user: 'svc-backup', desc: '4624 aanmelding type 5 (service): geplande back-up van projectbestanden' },
+          { t: '2026-11-10 03:12:30', src: 'Back-up', host: 'EWS-02', user: 'svc-backup', desc: 'Back-up projectbestanden: 1.204 bestanden gelezen' },
+          { t: '2026-11-10 03:20:14', src: 'Security', host: 'EWS-02', user: 'svc-backup', desc: '4634 afmelding' },
+          { t: '2026-11-10 06:58:03', src: 'Security', host: 'HMI-01', user: 'op.jansen', desc: '4624 aanmelding type 2 (lokaal), dagdienst' },
+          { t: '2026-11-10 07:40:00', src: 'Melding', desc: 'Hydrotech: er was vannacht geen onderhoud gepland; de monteur met dit account was niet aan het werk' },
+          { t: '2026-11-10 07:55:00', src: 'Security', desc: 'Account ext.onderhoud geblokkeerd; VPN-toegang leverancier uitgeschakeld' },
+        ],
+      },
+      questions: [
+        { q: 'Vanaf welke host werd de dosering buiten de grenzen gezet? (hostnaam)', answer: ['EWS-02', 'ews-02', 'ews02', 'EWS02'],
+          hints: ['De historian noemt geen naam, alleen een adres.', 'Neem het bronadres van die schrijfactie en zoek het op in de asset-inventaris bovenaan de tijdlijn.', 'Het is het engineering-werkstation dat niet gebruikt werd tijdens het geplande onderhoud.'],
+          wrong: { 'HMI-01': 'HMI-01 (10.40.5.11) is het bedienscherm van de nachtoperator. Vanaf daar werd de dosering juist teruggezet.', 'JUMP-01': 'De jump host is de route, niet de bron van de schrijfactie. De historian ziet 10.40.5.21.', 'EWS-01': 'EWS-01 (10.40.5.22) werd gebruikt bij het geplande onderhoud overdag en schreef toen 1.40 -> 1.40. De schrijfactie van de nacht komt van een ander adres.', '10.40.5.21': 'Dat is het adres. Gevraagd is de hostnaam: zoek het op in de asset-inventaris.' },
+          why: 'In een OT-netwerk hoort een setpoint vanaf het bedienscherm te komen. Een schrijfactie vanaf een engineering-werkstation, midden in de nacht, is een rode vlag op zich.',
+          explain: 'De schrijfactie komt van src=10.40.5.21. Volgens de asset-inventaris is dat EWS-02. De terugzetting kwam van 10.40.5.11, HMI-01.' },
+        { q: 'Welk account was op die host aangemeld op het moment van de schrijfactie?', boss: true, answer: ['ext.onderhoud'],
+          hints: ['Je hebt het tijdstip uit bron 1 nodig, in de tijd van deze tijdlijn.', 'Kijk welke aanmeldingen op die host openstonden rond 02:12 UTC, en welke er pas later kwamen.', 'Het is het account van de leverancier, aangemeld via de jump host vanaf een onbekend adres.'],
+          wrong: { 'svc-backup': 'svc-backup was aangemeld van 03:05 tot 03:20 UTC. Dat past bij 03:12 lokale tijd alleen als je vergeet om te rekenen: de schrijfactie was om 02:12 UTC.', 'op.dekker': 'op.dekker werkte op HMI-01 en bevestigde het alarm. Op EWS-02 was hij niet aangemeld.', 'op.jansen': 'op.jansen had dagdienst en was die nacht niet aangemeld.' },
+          why: 'Leveranciersaccounts met permanente toegang tot het procesnetwerk zijn een bekend zwak punt. Toegang alleen openzetten tijdens een gepland venster, met MFA, had dit gestopt.',
+          explain: 'ext.onderhoud meldt zich om 01:44 UTC aan via de leveranciers-VPN vanaf 203.0.113.140 (overdag was het 198.51.100.30), gaat via JUMP-01 naar EWS-02, start PlantStudio, opent om 02:11:58 een OPC-UA-sessie, en om 02:12:47 UTC volgt de schrijfactie. Hydrotech zegt dat er niemand werkte: het account is vermoedelijk misbruikt. Wie de lokale tijd niet omrekent, komt bij svc-backup uit.' },
+      ],
+    },
+  ],
+});

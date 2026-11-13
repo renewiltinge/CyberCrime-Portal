@@ -7,6 +7,8 @@ CS.registerRoom({
   icon: '🗂️',
   difficulty: 'Gemiddeld',
   minutes: 50,
+  level: 'Praktijk',
+  checked: '2026-11-12',
   summary: 'Het sluitstuk van het intelligence-pad: alle technieken uit de vorige lessen samengebracht in één werkproces, met een checklist die je bij elke zaak kunt aflopen, de valkuilen die je wilt vermijden, en een eindoefening waarin je een casus naar een BLUF-product herschrijft.',
   objectives: [
     'Het volledige intelligence-werkproces in stappen benoemen: van richten tot product',
@@ -18,12 +20,14 @@ CS.registerRoom({
   tasks: [
     {
       title: 'Taak 1 — Het werkproces in stappen',
+      tryFirst: true,
+      intro: `<p>In het lab staan zeven handelingen uit één fictieve zaak door elkaar. Zet ze in de volgorde waarin een
+        analist ze uitvoert en beantwoord daarna de vragen. Loop je vast, klap dan de uitleg open.</p>`,
       content: `
         <p>In de vorige lessen leerde je losse technieken: de intelligencecyclus, CSAE, de Admiralty Code,
         waarschijnlijkheidstaal, ACH, de modellen (Kill Chain, ATT&CK, Diamond, Pyramid of Pain), pivoten en het
-        BLUF-product. Losse gereedschappen maken je nog geen vakman — het gaat erom dat je ze <strong>in de juiste
-        volgorde</strong> inzet. Dit werkblad rijgt alles aan elkaar tot één werkproces dat je bij elke zaak kunt
-        herhalen. Zie het als het recept waar de losse ingrediënten uit de vorige lessen in samenkomen.</p>
+        BLUF-product. Het gaat erom dat je ze <strong>in de juiste volgorde</strong> inzet. Dit werkblad rijgt alles
+        aan elkaar tot één werkproces dat je bij elke zaak kunt herhalen.</p>
 
         <h3>De zeven stappen</h3>
         <ol>
@@ -52,23 +56,50 @@ CS.registerRoom({
         </ol>
 
         <div class="callout tip"><strong>Onthoud de richting:</strong> het proces loopt van de vraag naar het advies, niet
-        andersom. Wie met de data begint in plaats van met de vraag, verdwaalt. Beloning voor wie het hele proces kan
-        navertellen: <strong>NM{van_richten_tot_product}</strong>.</div>
+        andersom. Wie met de data begint in plaats van met de vraag, verdwaalt.</div>
       `,
+      lab: {
+        type: 'ordering',
+        title: 'zaak 2026-031, Noordkade Logistiek',
+        prompt: 'Zaak 2026-031 (fictief): phishing bij Noordkade Logistiek. Zet de zeven handelingen in de volgorde van het werkproces.',
+        items: [
+          { id: 'ri', label: 'Analist en opdrachtgever leggen in één zin vast: "Hoort de phishing bij Noordkade Logistiek bij dezelfde campagne als die bij Veerdienst Westerdiep?"' },
+          { id: 've', label: 'De analist slaat het domein factuur-portaal[.]nm[.]lab op met bron (mailgateway) en tijdstip, en vraagt het SOC wat zij zien.' },
+          { id: 'mo', label: 'De waarnemingen krijgen een fase in de Kill Chain en een ATT&CK-code (T1566 voor de phishingmail).' },
+          { id: 'pi', label: 'Via passive DNS en certificate transparency zoekt de analist welke andere domeinen hetzelfde certificaat gebruiken.' },
+          { id: 'an', label: 'Elke bron krijgt een Admiralty-oordeel en twee hypothesen komen tegenover elkaar in een ACH-matrix.' },
+          { id: 'pr', label: 'De analist schrijft bovenaan: "Waarschijnlijk dezelfde campagne", met de onzekerheid in een aparte alinea.' },
+          { id: 'ad', label: 'Onder het product komt: het SOC blokkeert vandaag beide domeinen, IT-beheer reset binnen 24 uur de wachtwoorden.' },
+        ],
+        correct: ['ri', 've', 'mo', 'pi', 'an', 'pr', 'ad'],
+        flag: 'NM{eerst_de_vraag}',
+        explain: 'Richten, verzamelen, modelleren, pivoten, analyseren, product, interventieadvies.',
+      },
       questions: [
-        { q: 'Waarmee begin je het werkproces: met de data of met de vraag?', options: ['Met de data die je toevallig hebt', 'Met een scherpe intelligence-vraag van de opdrachtgever', 'Met het BLUF-product', 'Met het interventieadvies'], answer: 1, explain: 'Richten komt eerst: de vraag stuurt wat je verzamelt, modelleert en concludeert.' },
-        { q: 'Welke stap komt direct ná "modelleren" in dit werkproces?', options: ['Richten', 'Pivoten', 'Interventieadvies', 'Product maken'], answer: 1, explain: 'De volgorde is richten → verzamelen → modelleren → pivoten → analyseren → product → interventieadvies.' },
-        { q: 'Wat is de vlag die je als beloning krijgt voor het navertellen van het hele proces?', answer: ['NM{van_richten_tot_product}'], hint: 'Staat vetgedrukt in de tip onderaan de taak.', explain: 'NM{van_richten_tot_product} — van de vraag helemaal tot het advies.' },
+        { q: 'Waarmee begin je het werkproces: met de data of met de vraag?', options: ['Met de data die je toevallig hebt', 'Met een scherpe intelligence-vraag van de opdrachtgever', 'Met het BLUF-product', 'Met het interventieadvies'], answer: 1,
+          wrong: { 0: 'Dan bepaalt het toeval wat je onderzoekt. Zonder vraag weet je niet welke data ertoe doet.', 2: 'Het product is de uitkomst van het proces, niet het begin.', 3: 'Een advies zonder analyse eronder is een mening.' },
+          explain: 'Richten komt eerst: de vraag stuurt wat je verzamelt, modelleert en concludeert.' },
+        { q: 'Op welke plek (1 tot 7) staat in de juiste volgorde de handeling met passive DNS en certificate transparency?', answer: ['4', 'plek 4'],
+          hints: ['Bedenk welke stap van het werkproces dit is: de analist zoekt vanuit één kenmerk naar verwante infrastructuur.', 'Dat is pivoten. Tel in het lab welke handelingen ervoor moeten komen: de vraag, het vastleggen, het modelleren.', 'Het komt direct na de Kill Chain en ATT&CK, en vóór het Admiralty-oordeel.'],
+          wrong: { '2': 'Stap 2 is verzamelen: vastleggen wat je al hebt, met bron en tijd. Vanuit een kenmerk naar nieuwe infrastructuur zoeken is pivoten, en dat komt later.', '5': 'Stap 5 is analyseren: bronnen wegen en hypothesen toetsen. Dat kan pas als het pivoten de verbanden heeft opgeleverd.', '3': 'Stap 3 is modelleren. Eerst orden je wat je hebt, daarna ga je gericht verder zoeken.' },
+          why: 'Wie pivoteert voordat de vraag en het model er liggen, verzamelt eindeloos infrastructuur zonder te weten wat relevant is.',
+          explain: 'Pivoten is stap 4: na richten, verzamelen en modelleren, en vóór analyseren.' },
+        { q: 'Welke vlag toont het lab als alle zeven handelingen op de juiste plek staan?', answer: ['NM{eerst_de_vraag}'],
+          hints: ['De knop "Controleer volgorde" vertelt hoeveel handelingen goed staan.', 'Begin met de handeling waarin nog niets is verzameld, en eindig met de handeling waarin iemand een taak met een deadline krijgt.', 'Volgorde: vraag vastleggen, domein opslaan, Kill Chain en ATT&CK, passive DNS, Admiralty en ACH, de conclusie schrijven, het advies met eigenaren.'],
+          explain: 'De volgorde is richten, verzamelen, modelleren, pivoten, analyseren, product, interventieadvies.' },
       ],
     },
 
     {
       title: 'Taak 2 — De checklist die je bij elke zaak afloopt',
+      tryFirst: true,
+      intro: `<p>Een collega draagt zaak 2026-031 aan je over. In het lab staat het entiteitenregister. Controleer het
+        zoals je een overdracht hoort te controleren: wat ontbreekt er, en wat staat er onveilig in? De checklist zelf
+        staat in de uitleg.</p>`,
       content: `
         <p>Een werkproces dat alleen in je hoofd zit, sla je onder druk over. Daarom giet je het in een
         <strong>checklist</strong>: een lijst die je letterlijk afvinkt, net als een piloot vóór het opstijgen. Niet
-        omdat je dom bent, maar juist omdat ervaren mensen onder tijdsdruk stappen vergeten. Print deze checklist, of
-        plak hem boven je bureau, en loop hem bij elke nieuwe zaak af.</p>
+        omdat je de stof niet kent, maar omdat ook ervaren mensen onder tijdsdruk stappen vergeten.</p>
 
         <h3>Checklist intelligence-zaak</h3>
         <ol>
@@ -125,15 +156,50 @@ CS.registerRoom({
         cruciale stappen (herkomst vastleggen, bronnen wegen, onzekerheid benoemen) overslaat als het druk wordt. Het
         kost een paar minuten en redt je rapport in de rechtszaal.</div>
       `,
+      lab: {
+        type: 'logs',
+        title: 'zaak-2026-031/entiteiten.csv',
+        lines: `id;type;waarde;bron;waargenomen_utc;opmerking
+E01;domein;factuur-portaal[.]nm[.]lab;mailgateway;2026-03-02 08:14;link in phishingmail
+E02;ip;203.0.113[.]44;passive DNS;2026-03-02 09:01;A-record van E01
+E03;hash;9f2c7a1be04d55c3a8e6f0b1d2c3e4f5;interne sandbox;2026-03-02 10:20;bijlage factuur_maart.zip
+E04;e-mail;administratie[at]factuur-portaal[.]nm[.]lab;mailgateway;2026-03-02 08:14;afzender
+E05;domein;inlog-noordkade[.]nm[.]lab;;2026-03-03 11:40;gemeld door collega
+E06;cert;SHA1 3C:91:0A:7E:44;crt.sh;2026-03-03 12:05;staat op E01 en E05
+E07;url;http://inlog-noordkade.nm.lab/portaal/login;proxylog;2026-03-03 12:30;POST vanaf 1 werkstation
+E08;ip;198.51.100[.]23;passive DNS;2026-03-03 12:41;A-record van E05
+E09;alias;kade_wolf;;2026-03-04 09:15;forumnaam, van horen zeggen
+E10;wallet;bc1qfictief7noordkade;extern rapport;;genoemd in losgeldbrief
+E11;domein;cdn-statisch[.]example;proxylog;2026-03-04 10:02;legitiem CDN, geen indicator
+E12;hash;5b0e7d2a94c1f38e6a7b0c9d1e2f3a4b;EDR;2026-03-04 10:30;dropper
+E13;ip;203.0.113[.]91;;2026-03-04 13:12;uitgaand verkeer werkstation
+E14;e-mail;helpdesk[at]inlog-noordkade[.]nm[.]lab;mailgateway;2026-03-05 07:58;tweede golf
+E15;domein;betaal-noordkade[.]nm[.]lab;crt.sh;2026-03-05 08:20;zelfde certificaat als E06
+E16;asn;AS64511;WHOIS;2026-03-05 08:45;hoster van E02 en E08`,
+      },
       questions: [
-        { q: 'Waarom gebruiken juist ervaren onderzoekers een checklist?', options: ['Omdat ze de stof niet kennen', 'Omdat ook ervaren mensen onder tijdsdruk stappen vergeten', 'Omdat het verplicht is van de wet', 'Omdat het sneller is dan nadenken'], answer: 1, explain: 'Een checklist vangt menselijke fouten op, net als de checklist van een piloot — niet omdat je onkundig bent.' },
-        { q: 'Welke twee dingen leg je volgens de checklist bij élke entiteit vast?', options: ['Kleur en grootte', 'Herkomst en tijd', 'Prijs en eigenaar', 'Taal en land'], answer: 1, explain: 'Zonder herkomst weeg je betrouwbaarheid niet; zonder tijd weet je niet of de indicator nog klopt.' },
-        { q: 'Op welk kenmerk toets je het bruggende kenmerk tussen twee zaken?', answer: ['zeldzaamheid', 'de zeldzaamheid'], hint: 'Een gedeeld cert zegt meer dan een gedeelde populaire favicon.', explain: 'Zeldzaamheid: hoe unieker het gedeelde kenmerk, hoe sterker het de zaken verbindt.' },
+        { q: 'Waarom gebruiken juist ervaren onderzoekers een checklist?', options: ['Omdat ze de stof niet kennen', 'Omdat ook ervaren mensen onder tijdsdruk stappen vergeten', 'Omdat het verplicht is van de wet', 'Omdat het sneller is dan nadenken'], answer: 1, explain: 'Een checklist vangt menselijke fouten op, net als de checklist van een piloot.' },
+        { q: 'Hoeveel entiteiten in het register missen een herkomst (kolom bron)?', answer: ['3'],
+          hints: ['De kolommen zijn gescheiden door puntkomma\'s. Een leeg veld zie je als twee puntkomma\'s achter elkaar.', 'Filter op ;; en kijk per treffer wélk veld leeg is: het vierde (bron) of het vijfde (tijd).', 'Het zijn een domein, een alias en een IP-adres.'],
+          wrong: { '4': 'Je telt E10 mee. Daar staat wel een bron (extern rapport); het tijdstip ontbreekt.', '1': 'Er zijn er meer. Filter op ;; en loop alle treffers na.', '2': 'Je mist er één. Kijk ook naar het IP-adres van het uitgaande verkeer.' },
+          why: 'Zonder herkomst kun je een indicator niet wegen en kan niemand jouw conclusie natrekken. In een overdracht zijn dit de eerste dingen die je terugvraagt.',
+          explain: 'E05, E09 en E13 hebben een leeg bronveld. E10 heeft wel een bron, maar geen tijdstip.' },
+        { q: 'Welke entiteit (ID, bijvoorbeeld E01) is niet defanged opgeslagen?', answer: ['E07', 'e7', '07'],
+          hints: ['Defanged betekent: zo geschreven dat niemand er per ongeluk op kan klikken.', 'Zoek naar [.] en [at]. Welke regel met een domein of URL heeft ze niet?', 'Het is de enige regel van het type url.'],
+          wrong: { 'e10': 'Een wallet-adres is geen klikbare link. Defangen gaat om URL\'s, domeinen, IP-adressen en e-mailadressen.', 'e11': 'E11 is wel defanged (cdn-statisch[.]example). Dat het een legitiem CDN is, is een ander punt.', 'e06': 'Een certificaat-vingerafdruk kun je niet aanklikken; die hoeft niet defanged.' },
+          explain: 'E07 staat als werkende http-URL in het register. Eén klik in een ticket of mail en iemand bezoekt de phishingpagina.' },
+        { q: 'Welke entiteit (ID) mist het tijdstip van waarneming?', answer: ['E10', 'e 10'],
+          hints: ['Weer een leeg veld, maar nu het vijfde.', 'Filter op ;; en zoek de regel waar de bron wél is ingevuld.', 'Het is de wallet.'],
+          explain: 'E10: de wallet uit het externe rapport heeft geen tijdstip. Zonder tijd weet je niet of de indicator nog actueel is.' },
       ],
     },
 
     {
       title: 'Taak 3 — Veelgemaakte fouten & tegenmiddelen',
+      tryFirst: true,
+      intro: `<p>Twee bedrijven zijn getroffen door dezelfde ransomware. Een collega roept: "Zelfde dader!" Vul in het
+        lab de ACH-matrix in (C = consistent, I = inconsistent, N = neutraal), vergelijk daarna met de expert en
+        beantwoord de vragen.</p>`,
       content: `
         <p>De gevaarlijkste fouten in dit vak zitten niet in de techniek maar in het hoofd. Een goede analist kent zijn
         eigen valkuilen en zet er bewust een tegenmiddel tegenover. De vier die je het vaakst zult tegenkomen:</p>
@@ -180,19 +246,40 @@ CS.registerRoom({
         je bewijs toelaat. Het tegenmiddel is steeds hetzelfde: wees expliciet over wat je weet, wat je afleidt en wat
         je aanneemt — en handel opsec-bewust.</div>
       `,
+      lab: {
+        type: 'ach',
+        question: 'Drukkerij Veldhuis (zaak A) en Bouwgroep Terhorst (zaak B) zijn beide versleuteld. Wie zit erachter?',
+        hypotheses: ['Eén en dezelfde actor', 'Twee losse afnemers van dezelfde RaaS-dienst', 'Een insider bij Terhorst'],
+        evidence: [
+          { text: 'Beide zaken zijn versleuteld met dezelfde ransomware ("Kraaiennest"), die als dienst te huur is', expert: ['C', 'C', 'C'] },
+          { text: 'De eerste toegang verschilt: zaak A via een phishingmail, zaak B via een VPN-account dat op een forum te koop stond', expert: ['I', 'C', 'I'] },
+          { text: 'De losgeldbrieven verwijzen naar twee verschillende onderhandelportalen en wallets', expert: ['I', 'C', 'N'] },
+          { text: 'Werktijden van de aanvaller: zaak A 06:00 tot 14:00 UTC, zaak B 17:00 tot 01:00 UTC', expert: ['I', 'C', 'N'] },
+          { text: 'In zaak B begon de versleuteling op een server waar geen enkele eigen medewerker rechten op had', expert: ['C', 'C', 'I'] },
+        ],
+      },
       questions: [
-        { q: 'Twee zaken gebruiken dezelfde kant-en-klare ransomware. Wat mag je daaruit concluderen?', options: ['Zeker dezelfde dader', 'Nog niets over de dader: gereedschap wordt gedeeld en gehuurd', 'Dat de tool slecht is', 'Dat er geen verband is'], answer: 1, explain: 'Tool is geen actor. Attributie bouw je op zeldzame kenmerken hoog in de Pyramid of Pain, niet op gedeelde tools.' },
+        { q: 'Klik na je eigen poging op "Vergelijk met expert". Hoeveel inconsistenties (I) telt de hypothese "Eén en dezelfde actor"?', answer: ['3'],
+          hints: ['Het lab telt de I\'s per hypothese onder de matrix.', 'Kijk naar de eerste kolom: bij welke bewijsstukken past "dezelfde actor" slecht?', 'De toegangsweg, de portalen en wallets, en de werktijden spreken het alle drie tegen.'],
+          wrong: { '0': 'Nul is de score van de RaaS-hypothese. De vraag gaat over de eerste kolom.', '1': 'Je telt alleen de toegangsweg. Ook de verschillende portalen en de werktijden passen slecht bij één actor.', '2': 'Twee is de score van de insider-hypothese.' },
+          why: 'ACH kiest niet de hypothese met het meeste bewijs vóór, maar die met het minste bewijs tégen. Zo houd je je lievelingstheorie eerlijk.',
+          explain: 'Drie I\'s: andere toegangsweg, andere portalen en wallets, andere werktijden. "Twee losse afnemers" houdt nul inconsistenties over en is dus het meest houdbaar.' },
         { q: 'Wat is het beste tegenmiddel tegen confirmation bias?', options: ['Sneller werken', 'Meerdere hypothesen met ACH afwegen en bewust naar weerlegging zoeken', 'Alleen je eigen theorie onderbouwen', 'De zaak overdragen'], answer: 1, explain: 'ACH dwingt je hypothesen te weerleggen in plaats van je lievelingstheorie te bevestigen.' },
-        { q: 'Waarom kan het riskant zijn om een verdacht bestand meteen online te uploaden?', options: ['Het kost geld', 'De aanvaller kan het merken en weet dan dat hij ontdekt is', 'Het bestand wordt dan gewist', 'Dat is nooit riskant'], answer: 1, explain: 'Een opsec-lek: publieke uploads of probes kunnen de dader waarschuwen en je lopende onderzoek verraden.' },
+        { q: 'Welke rij wijst het lab aan als weinig onderscheidend bewijs? (rijnummer)', answer: ['1', 'rij 1'],
+          hints: ['Bewijs dat bij elke hypothese even goed past, helpt je niet kiezen.', 'Na "Vergelijk met expert" staat onder de matrix een regel over weinig onderscheidend bewijs.', 'Het is precies het bewijsstuk waarop je collega zijn conclusie bouwde.'],
+          wrong: { '5': 'Rij 5 onderscheidt wel: het spreekt de insider-hypothese tegen.', '2': 'Rij 2 is juist sterk diagnostisch: het past bij maar één van de drie hypothesen.' },
+          explain: 'Rij 1, de gedeelde ransomware. Die past bij alle drie de hypothesen en bewijst dus niets over de dader: tool is geen actor.' },
       ],
     },
 
     {
       title: 'Taak 4 — Kwaliteitsborging',
+      tryFirst: true,
+      intro: `<p>Jij bent de peer reviewer. In het lab staat een conceptrapport waarin de auteur elke zin een label gaf:
+        BEKEND, AFGELEID of AANNAME. Niet elk label klopt. Zoek de fouten en beantwoord de vragen.</p>`,
       content: `
         <p>Je product belandt misschien op het bureau van een officier van justitie of een directie die er beslissingen
-        op baseert. Dan moet het kloppen — en moet aantoonbaar zijn dát het klopt. Kwaliteitsborging is geen extra laagje;
-        het is wat je werk van een mening onderscheidt. Drie pijlers.</p>
+        op baseert. Dan moet het kloppen, en moet aantoonbaar zijn dát het klopt. Drie pijlers.</p>
 
         <h3>1. Peer review</h3>
         <p>Laat altijd een collega meelezen vóór je een product uitbrengt. Een frisse blik ziet de sprong in je logica
@@ -211,7 +298,7 @@ CS.registerRoom({
           een aanname, geen feit).</li>
         </ul>
         <p>Wie deze drie door elkaar haalt, presenteert een gok als een feit. Dat is precies waar rapporten in de
-        rechtszaal op sneuvelen. Beloning voor wie dit standaard toepast: <strong>NM{bekend_afgeleid_aanname}</strong>.</p>
+        rechtszaal op sneuvelen.</p>
 
         <h3>3. Herkomst en tijd vastleggen (provenance)</h3>
         <p>Bij élke entiteit en bewering leg je vast: wáár komt het vandaan en wannéér is het waargenomen. Zonder herkomst
@@ -223,10 +310,39 @@ CS.registerRoom({
         hebt afgewogen, beweringen hebt gelabeld en herkomst hebt vastgelegd, dan staat je méthode niet meer ter discussie —
         alleen nog je bevindingen. Dat is het verschil tussen een onderbouwd oordeel en een losse flodder.</div>
       `,
+      lab: {
+        type: 'logs',
+        title: 'concept-rapport zaak 2026-031, v0.3 (ter review)',
+        lines: `Auteur: analist 2. Label per zin: BEKEND, AFGELEID of AANNAME.
+Z01 [BEKEND]   Op 2026-03-02 08:14 UTC ontving Noordkade Logistiek een mail met een link naar factuur-portaal[.]nm[.]lab (bron: mailgateway).
+Z02 [BEKEND]   Eén werkstation stuurde een POST naar de inlogpagina op inlog-noordkade[.]nm[.]lab (bron: proxylog, 2026-03-03 12:30 UTC).
+Z03 [BEKEND]   De aanvaller is dezelfde groep als bij Veerdienst Westerdiep.
+Z04 [AFGELEID] factuur-portaal[.]nm[.]lab en inlog-noordkade[.]nm[.]lab delen één certificaat, dus ze zijn waarschijnlijk door dezelfde partij opgezet.
+Z05 [BEKEND]   Het certificaat met SHA1 3C:91:0A:7E:44 staat op beide domeinen (bron: crt.sh, 2026-03-03 12:05 UTC).
+Z06 [AANNAME]  De actor werkt vermoedelijk vanuit Oost-Europa; hiervoor is geen bewijs.
+Z07 [BEKEND]   De gestolen inloggegevens zijn al doorverkocht.
+Z08 [AFGELEID] Het werkstation maakte na de POST verbinding met 203.0.113[.]91 (bron: firewall-log, 2026-03-04 13:12 UTC).
+Z09 [BEKEND]   De bijlage factuur_maart.zip heeft MD5 9f2c7a1be04d55c3a8e6f0b1d2c3e4f5 (bron: interne sandbox, 2026-03-02 10:20 UTC).
+Z10 [AFGELEID] Beide domeinen staan bij dezelfde hoster (AS64511); dat is een zwakke aanwijzing voor een verband.
+Z11 [AANNAME]  De forumnaam kade_wolf hoort mogelijk bij de actor (van horen zeggen, niet getoetst).
+Z12 [BEKEND]   De kans dat dit dezelfde campagne is, bedraagt 87,3%.`,
+      },
       questions: [
-        { q: '"Beide zaken delen één zeldzaam TLS-certificaat, dus waarschijnlijk dezelfde actor." Welk label hoort hierbij?', options: ['bekend', 'afgeleid', 'aanname'], answer: 1, explain: 'Een analytische conclusie uit bewijs is afgeleid — niet een direct waargenomen feit (bekend) en niet onbewezen (aanname).' },
-        { q: 'Wat is het belangrijkste doel van peer review bij een intelligence-product?', options: ['Spelfouten verbeteren', 'Controleren of de conclusie echt uit het bewijs volgt en of een hypothese is gemist', 'Het product korter maken', 'De auteur beoordelen'], answer: 1, explain: 'Peer review toetst de redenering: een frisse blik ziet de logische sprongen die de auteur niet meer opmerkt.' },
-        { q: 'Welke vlag hoort bij het standaard labelen van je beweringen?', answer: ['NM{bekend_afgeleid_aanname}'], hint: 'Staat vetgedrukt onder het kopje over labelen.', explain: 'NM{bekend_afgeleid_aanname} — de drie labels die je gok van een feit onderscheiden.' },
+        { q: '"Beide zaken delen één zeldzaam TLS-certificaat, dus waarschijnlijk dezelfde actor." Welk label hoort hierbij?', options: ['bekend', 'afgeleid', 'aanname'], answer: 1,
+          wrong: { 0: 'Het gedeelde certificaat is bekend, maar de stap naar "dezelfde actor" is een conclusie van de analist.', 2: 'Een aanname heeft geen bewijs onder zich. Hier is er wel bewijs: het gedeelde certificaat.' },
+          explain: 'Een analytische conclusie uit bewijs is afgeleid: geen direct waargenomen feit (bekend) en ook niet onbewezen (aanname).' },
+        { q: 'Hoeveel zinnen met het label BEKEND zijn in werkelijkheid géén directe waarneming met een bron?', answer: ['3'],
+          hints: ['Een bekende bewering kun je natrekken: er staat bij waar ze vandaan komt en wanneer ze is waargenomen.', 'Filter op BEKEND en vraag bij elke zin: staat er een bron, en is dit iets wat je kunt zien of iets wat iemand concludeert of schat?', 'Twee zinnen zijn conclusies zonder bron, één zin is een schatting met een verdacht precies getal.'],
+          wrong: { '2': 'Je mist er één. Een percentage is een inschatting van de analist, geen waarneming.', '4': 'Eén te veel. Z02 en Z09 hebben allebei een bron en een tijdstip en beschrijven iets wat in een log of sandbox te zien is.', '7': 'Dat is het aantal zinnen mét het label BEKEND. Gevraagd is hoeveel daarvan het label niet verdienen.' },
+          why: 'Een aanname die als feit in een rapport staat, is het eerste waar een verdediging of een kritische directie op doorvraagt. Eén zo\'n zin trekt het hele rapport in twijfel.',
+          explain: 'Z03 (attributie zonder bron), Z07 (bewering zonder bron) en Z12 (een schatting, en nog met schijnprecisie ook). Z01, Z02, Z05 en Z09 zijn terecht bekend.' },
+        { q: 'Eén zin is te voorzichtig gelabeld: een directe waarneming met bron en tijd die als AFGELEID staat. Welke? (bijvoorbeeld Z01)', answer: ['Z08', 'z8', '08', '8'],
+          hints: ['Filter op AFGELEID. Een afleiding herken je aan een redenering: "dus", "waarschijnlijk", "aanwijzing".', 'Eén van de drie bevat geen redenering, alleen een feit uit een log.', 'De zin gaat over een verbinding die in de firewall-log staat.'],
+          wrong: { 'z04': 'Z04 trekt een conclusie ("dus waarschijnlijk dezelfde partij"). Dat is terecht afgeleid.', 'z10': 'Z10 weegt een aanwijzing. Dat is een oordeel van de analist, dus terecht afgeleid.' },
+          explain: 'Z08: de verbinding naar 203.0.113[.]91 staat met tijdstip in de firewall-log. Dat is gewoon bekend. Te voorzichtig labelen is ook een fout: de lezer weet dan niet meer waar hij op kan bouwen.' },
+        { q: 'Welke zin bevat schijnprecisie? (bijvoorbeeld Z01)', answer: ['Z12', '12'],
+          hints: ['Zoek een getal dat nauwkeuriger is dan het bewijs kan dragen.', 'Het is een percentage met een cijfer achter de komma.', 'De laatste zin van het concept.'],
+          explain: 'Z12 noemt 87,3%. Schrijf liever "zeer waarschijnlijk" met het betrouwbaarheidsniveau er los naast.' },
       ],
     },
 
@@ -262,7 +378,10 @@ CS.registerRoom({
         model: 'BLUF: Zaak Alpha (betaal-controle.nm.lab) en Zaak Bravo (inlog-verificatie.nm.lab) zijn waarschijnlijk (55-75%) opgezet door dezelfde actor; betrouwbaarheidsniveau: gemiddeld. De sterkste aanwijzing is een zeldzaam, herbruikt TLS-certificaat (A1B2C3D4) dat op beide domeinen voorkomt. Er is bevestigde phishing met credential-diefstal op ons eigen netwerk.\n\nADVIES:\n1. Blokkeer beide domeinen en het IP 203.0.113.10 op de proxy/DNS-filter (eigenaar: SOC, vandaag).\n2. Reset de wachtwoorden van de getroffen medewerker en schakel MFA af/opnieuw in (eigenaar: IT-beheer, binnen 24 uur).\n3. Deel certificaat A1B2C3D4 en de IOCs (defanged) met de ISAC en het NCSC (eigenaar: analist, deze week).\n\nONZEKERHEID: de identiteit van de actor is onbekend (aanname, geen bewijs). De melding van Zaak Bravo is nog onbevestigd (bron B). De losgeld-wallet komt uit een extern rapport van beperkte betrouwbaarheid (C).\n\nONDERBOUWING (kort): bevestigde klik + credential-invoer (eigen SIEM, A2) op 13-1; uitgaand verkeer naar 203.0.113.10 op 15-1; gedeeld certificaat A1B2C3D4 bij beide domeinen (crt.sh, herkomst vastgelegd). IP-adressen verschillen, het certificaat bruggt de zaken.',
       },
       questions: [
-        { q: 'Wat betekent BLUF?', answer: ['bottom line up front', 'bottom-line up front'], hint: 'Engelse term; de conclusie komt eerst.', explain: 'Bottom Line Up Front: zet de kernboodschap en het advies bovenaan, de onderbouwing daaronder.' },
+        { q: 'Eén indicator in de casus komt uit een bron met betrouwbaarheid C en is nergens bevestigd. Die hoort onder "onzekerheid", niet in je conclusie. Welke indicator is dat?', answer: ['bc1qfictief0alpha', 'de wallet', 'wallet', 'losgeld-wallet', 'de losgeld-wallet'],
+          hints: ['Lees de casus in het lab en let op waar een betrouwbaarheid tussen haakjes staat.', 'Zoek de zin over het externe rapport.', 'Het is geen domein en geen IP-adres, maar een adres waar geld naartoe moet.'],
+          wrong: { 'a1b2c3d4': 'Het certificaat is juist het sterkste bewijs: zelf vastgesteld via crt.sh, met herkomst.', '203.0.113.10': 'Dat IP komt uit de eigen SOC-waarneming. Dat is een bevestigde, eigen bron.', 'inlog-verificatie.nm.lab': 'Dat domein komt van bron B en is nog onbevestigd, maar de vraag gaat over de bron met betrouwbaarheid C.' },
+          explain: 'De losgeld-wallet bc1qfictief0alpha komt uit een extern rapport met betrouwbaarheid C. In het voorbeeld-BLUF staat hij daarom onder ONZEKERHEID.' },
         { q: 'In het BLUF-voorbeeld: welk kenmerk verbindt Zaak Alpha en Zaak Bravo?', options: ['Hetzelfde IP-adres', 'Hetzelfde herbruikte TLS-certificaat (A1B2C3D4)', 'Dezelfde losgeld-wallet', 'Dezelfde medewerker'], answer: 1, explain: 'De IP-adressen verschillen; het gedeelde, zeldzame certificaat A1B2C3D4 is de brug tussen de zaken.' },
         { q: 'Ik heb de casus naar een BLUF-product herschreven en tegen de rubric getoetst (vlag NM{conclusie_eerst}).', noAnswer: true },
       ],
@@ -270,10 +389,13 @@ CS.registerRoom({
 
     {
       title: 'Taak 6 — Afsluiting & hoe verder',
+      tryFirst: true,
+      intro: `<p>Eén laatste zaak, zonder stappenplan. In het lab staan zaak Charlie en zaak Delta als graaf. Pivoteer,
+        weeg wat je vindt en beantwoord de laatste vraag van deze taak.</p>`,
       content: `
         <p>Je hebt het hele intelligence-pad doorlopen en alles samengebracht in één werkproces. Je kunt nu van een
         scherpe vraag, via gericht verzamelen, modelleren, pivoten en analyseren, naar een BLUF-product met concreet
-        interventieadvies — en je borgt de kwaliteit met peer review, labeling en vastgelegde herkomst. Dat is precies
+        interventieadvies, en je borgt de kwaliteit met peer review, labeling en vastgelegde herkomst. Dat is
         wat een intelligence-analist bij de politie, een CERT of een SOC dag in dag uit doet.</p>
 
         <h3>De rooms in dit pad nog eens op een rij</h3>
@@ -304,10 +426,126 @@ CS.registerRoom({
         nooit méér dan je bewijs toelaat, label wat je weet, afleidt en aanneemt, en werk opsec-bewust. Succes op de weg
         naar de digitale opsporing. 🕵️</div>
       `,
+      lab: {
+        type: 'pivot',
+        title: 'zaak Charlie en zaak Delta',
+        scenario: 'Zaak Charlie draait om pakket-status.nm.lab, zaak Delta om track-zending.nm.lab. Klik de entiteiten aan en lees bij elke relatie de bron (met Admiralty-code) en de opmerking.',
+        entities: [
+          { id: 'c1', type: 'domain', label: 'pakket-status.nm.lab' },
+          { id: 'd1', type: 'domain', label: 'track-zending.nm.lab' },
+          { id: 'ip1', type: 'ip', label: '198.51.100.20' },
+          { id: 'ct1', type: 'cert', label: '5E:10:C4:9B:72' },
+          { id: 'w1', type: 'wallet', label: 'bc1qfictief3delta' },
+          { id: 'm1', type: 'email', label: 'registratie@postvak-noord.example' },
+          { id: 'm2', type: 'email', label: 'info@zending-hulp.example' },
+          { id: 'a1', type: 'alias', label: 'pakjesman' },
+        ],
+        edges: [
+          { from: 'c1', to: 'ip1', rel: 'resolvet naar', time: '2026-04', source: 'passive DNS (A1); gedeelde hosting, ruim 3.900 andere domeinen op dit adres' },
+          { from: 'd1', to: 'ip1', rel: 'resolvet naar', time: '2026-05', source: 'passive DNS (A1); gedeelde hosting, ruim 3.900 andere domeinen op dit adres' },
+          { from: 'c1', to: 'w1', rel: 'genoemd in losgeldbrief', time: '2026-04', source: 'eigen incidentdossier (A1)' },
+          { from: 'd1', to: 'w1', rel: 'zou zijn gebruikt bij', time: '2026-05', source: 'anoniem forumbericht (F6)' },
+          { from: 'c1', to: 'ct1', rel: 'presenteert certificaat', time: '2026-04', source: 'scandataset van een vaste partner (B1); zelfondertekend, in de hele dataset op 2 hosts gezien' },
+          { from: 'd1', to: 'ct1', rel: 'presenteert certificaat', time: '2026-05', source: 'scandataset van een vaste partner (B1); zelfondertekend, in de hele dataset op 2 hosts gezien' },
+          { from: 'c1', to: 'm1', rel: 'geregistreerd met', time: '2026-03', source: 'WHOIS-historie (B2)' },
+          { from: 'd1', to: 'm2', rel: 'geregistreerd met', time: '2026-05', source: 'WHOIS-historie (B2)' },
+          { from: 'a1', to: 'c1', rel: 'adverteert met', time: '2026-04', source: 'forumadvertentie (E4)' },
+        ],
+      },
       questions: [
         { q: 'Welk pad levert de harde sporen (schijf, geheugen, netwerk) waarop je intelligence voortbouwt?', options: ['Het forensie-pad', 'Het eindopdracht-pad', 'Het fundamenten-pad', 'Geen enkel pad'], answer: 0, explain: 'Forensie stelt het bewijs veilig en reconstrueert wat er gebeurde; intelligence bouwt daarop voort.' },
         { q: 'In welk pad worden jouw indicatoren omgezet in detectieregels en response-acties?', options: ['Het offensief-pad', 'Het defensief-pad', 'Het forensie-pad', 'Het intelligence-pad'], answer: 1, explain: 'Het defensief-pad (detectie-engineering, logs, incident response) gebruikt intelligence om aanvallen te detecteren en erop te reageren.' },
         { q: 'Ik kan het hele werkproces zelfstandig doorlopen, van richten tot interventieadvies, en ik borg de kwaliteit. 🚀', noAnswer: true },
+        { q: 'Zaak Charlie en zaak Delta hebben drie entiteiten gemeen. Op welke ene mag je in je BLUF het verband tussen de zaken bouwen? Geef het label.', boss: true,
+          answer: ['5E:10:C4:9B:72', '5e10c49b72', 'cert 5E:10:C4:9B:72', 'certificaat 5E:10:C4:9B:72', 'het certificaat', 'certificaat'],
+          hints: ['Zoek eerst welke entiteiten aan beide domeinen hangen. Dat zijn er drie.', 'Stel bij elk van de drie twee vragen: hoe zeldzaam is dit kenmerk, en hoe goed is de bron van béíde relaties?', 'Eén valt af omdat duizenden anderen het delen, één omdat de helft van het bewijs niet te beoordelen is.'],
+          wrong: { '198.51.100.20': 'Beide domeinen wijzen ernaar, maar het is gedeelde hosting met duizenden andere domeinen. Het zakt voor de zeldzaamheidstoets.', 'bc1qfictief3delta': 'De koppeling met zaak Delta komt uit een anoniem forumbericht (F6): bron en informatie zijn niet te beoordelen. Daar bouw je geen conclusie op.', 'pakjesman': 'De alias hangt alleen aan zaak Charlie, en de bron is E4.', '/postvak-noord/': 'Dit e-mailadres komt alleen in zaak Charlie voor; Delta is met een ander adres geregistreerd.' },
+          why: 'In echte zaken vind je bijna altijd meerdere overlappingen. Het vak zit in het wegstrepen: wat is zeldzaam genoeg én goed genoeg onderbouwd om in een rapport te zetten?',
+          explain: 'Het zelfondertekende certificaat 5E:10:C4:9B:72: op slechts twee hosts gezien (zeldzaam) en beide relaties komen uit een bron met B1. Het IP is gedeelde hosting (ruis), en de wallet hangt aan Delta via een F6-bron.' },
+      ],
+    },
+
+    {
+      title: 'Taak 7: Waarom deze technieken werken, en waar ze ophouden',
+      kind: 'verdieping', optional: true,
+      content: `
+        <p>Het werkproces uit deze room is een verzameling <em>gestructureerde analysetechnieken</em>. Ze maken je niet
+        slimmer; ze maken je redenering zichtbaar, zodat een ander haar kan aanvallen. Dat is het hele idee. Hier lees je
+        waar elk gereedschap vandaan komt en waar het in de praktijk tekortschiet.</p>
+
+        <h3>ACH: sterk tegen tunnelvisie, zwak bij slecht bewijs</h3>
+        <p>ACH is uitgewerkt door Richards Heuer in <em>Psychology of Intelligence Analysis</em> (1999). De kern is
+        weerleggen in plaats van bevestigen. Drie randgevallen:</p>
+        <ul>
+          <li><strong>Elke I telt even zwaar.</strong> Het lab telt inconsistenties, maar één hard feit kan een hypothese
+          in zijn eentje onderuit halen, terwijl drie zwakke signalen dat niet doen. Weeg dus mee hoe goed de bron van
+          elk bewijsstuk is.</li>
+          <li><strong>De matrix kent alleen de hypothesen die jij bedacht.</strong> Ontbreekt de juiste verklaring, dan
+          wint de minst slechte. Neem daarom altijd een "iets anders"-hypothese in gedachten mee.</li>
+          <li><strong>Misleiding.</strong> Een tegenstander die weet hoe je redeneert, kan bewijs planten. Bewijs dat
+          opvallend goed in één hypothese past, verdient extra wantrouwen.</li>
+        </ul>
+
+        <h3>Admiralty Code: twee assen die door elkaar gaan lopen</h3>
+        <p>De code scheidt de bron (A tot F) van de informatie (1 tot 6). In de praktijk beïnvloeden die twee elkaar:
+        informatie van een vertrouwde bron krijgt al snel ook een goed cijfer. Een bekende kritiek is dat beoordelingen
+        daardoor rond het midden klonteren. Twee dingen om te onthouden: de laagste categorie op beide assen betekent
+        <em>niet te beoordelen</em>, niet <em>slecht</em>. En een cijfer voor de informatie hoort te rusten op
+        <em>onafhankelijke</em> bevestiging: drie nieuwssites die hetzelfde persbericht overschrijven, zijn één bron.</p>
+
+        <h3>Waarschijnlijkheidstaal: woorden betekenen voor iedereen iets anders</h3>
+        <p>Sherman Kent beschreef in 1964 ("Words of Estimative Probability") hoe lezers van hetzelfde rapport bij de
+        woorden "serious possibility" kansen in gedachten hadden die uiteenliepen van ongeveer 20 tot 80 procent. Vaste
+        banden, zoals de Britse Probability Yardstick, zijn daar het antwoord op. Ze werken alleen als de lezer de banden
+        kent: zet de tabel dus in je product, of noem de band erbij.</p>
+        <p>Houd kans en betrouwbaarheid uit elkaar. "Waarschijnlijk, betrouwbaarheid laag" betekent: dit is onze beste
+        inschatting, maar ze rust op weinig. Dat is een heel andere boodschap dan "reële kans, betrouwbaarheid hoog".</p>
+
+        <h3>Checklists: tegen vergeten, niet tegen verkeerd denken</h3>
+        <p>De bekendste checklist buiten de luchtvaart is de Surgical Safety Checklist van de WHO (2008). Een checklist
+        vangt de stappen op die je kent maar overslaat. Hij helpt niet tegen een verkeerd oordeel, en hij wordt
+        waardeloos zodra mensen hem afvinken zonder te kijken. Houd hem daarom kort en laat een tweede persoon meelezen.</p>
+      `,
+      questions: [
+        { q: 'Een ACH-matrix heeft in de eerste kolom zes keer C en twee keer I, en in de tweede kolom twee keer C en één keer I. Welke kolom is volgens ACH het meest houdbaar? (1 of 2)', answer: ['2', 'kolom 2'],
+          hints: ['ACH telt niet wat vóór een hypothese pleit.', 'Vergelijk alleen het aantal I\'s.', 'Eén I is minder dan twee.'],
+          wrong: { '1': 'Zes keer consistent voelt overtuigend, maar bewijs dat past, past vaak bij meer hypothesen. ACH kijkt naar het aantal inconsistenties.' },
+          explain: 'Kolom 2 heeft de minste inconsistenties. Het aantal C\'s telt niet mee.' },
+        { q: 'Bron: een tipgever die je niet kent en niet kunt natrekken. Informatie: komt overeen met wat twee onafhankelijke andere bronnen melden. Welke Admiralty-code geef je? (letter en cijfer)', answer: ['F1', 'f-1', 'f 1'],
+          hints: ['Beoordeel de bron en de informatie los van elkaar.', 'Een bron die je niet kunt beoordelen krijgt de laatste letter. Informatie die door andere bronnen is bevestigd krijgt het eerste cijfer.', 'De letter is F.'],
+          wrong: { 'f6': 'De bron is niet te beoordelen, maar de informatie wel: die is bevestigd door onafhankelijke bronnen.', 'e1': 'E betekent dat je weet dat de bron onbetrouwbaar is. Hier weet je niets over de bron.', 'a1': 'De bevestiging zegt iets over de informatie, niet over de bron.' },
+          explain: 'F1: bron niet te beoordelen, informatie bevestigd. De twee assen staan los van elkaar.' },
+        { q: 'Drie nieuwssites melden hetzelfde, en alle drie citeren ze hetzelfde persbericht. Hoeveel onafhankelijke bronnen heb je?', answer: ['1'],
+          hints: ['Vraag je af waar elke site zijn informatie vandaan heeft.', 'Onafhankelijk betekent: de bron heeft het zelf waargenomen of uit een eigen kanaal.', 'Alle drie herhalen ze één document.'],
+          explain: 'Eén: het persbericht. Herhaling is geen bevestiging.' },
+      ],
+    },
+
+    {
+      title: 'Taak 8: Zo komt dit voor op een examen',
+      kind: 'examen', optional: true,
+      content: `
+        <p>Examens over threat intelligence en analyse vragen zelden naar definities. Je krijgt een korte situatie en
+        moet kiezen wat een analist dan doet. Let op de afleiders: ze zijn vaak half waar. Lees eerst de vraag, dan pas
+        de opties, en streep weg.</p>
+      `,
+      questions: [
+        { q: 'Een bron heeft je het afgelopen jaar tien keer informatie geleverd, waarvan negen keer juist. Vandaag meldt hij dat een bepaald domein bij een nieuwe phishingcampagne hoort. Je hebt nog geen tweede bron, maar de melding past bij wat je over de campagne weet. Welke Admiralty-beoordeling past het best?',
+          options: ['A1', 'B2', 'B1', 'F3'], answer: 1,
+          wrong: { 0: 'A is voor een bron zonder twijfel over betrouwbaarheid, en 1 vraagt om bevestiging door andere bronnen. Die is er niet.', 2: 'De bron klopt (meestal betrouwbaar), maar een 1 mag pas als onafhankelijke bronnen de informatie bevestigen.', 3: 'F is voor een bron die je niet kunt beoordelen. Deze bron heeft juist een bekende staat van dienst.' },
+          explain: 'B2: de bron is meestal betrouwbaar (B); de informatie is niet bevestigd maar wel logisch en consistent met wat bekend is (2, waarschijnlijk waar).' },
+        { q: 'Een analist heeft drie hypothesen in een ACH-matrix gezet. H1 scoort 7 keer consistent en 3 keer inconsistent. H2 scoort 3 keer consistent, 6 keer neutraal en 1 keer inconsistent. H3 scoort 5 keer consistent en 5 keer inconsistent. Welke conclusie past bij de methode?',
+          options: ['H1 is het meest houdbaar, want die heeft het meeste ondersteunende bewijs', 'H2 is voorlopig het meest houdbaar, want die heeft de minste inconsistenties', 'H3 valt af en H1 en H2 zijn even sterk', 'Geen conclusie mogelijk zolang H2 zoveel neutrale scores heeft'], answer: 1,
+          wrong: { 0: 'Dit is de klassieke valkuil. Ondersteunend bewijs past vaak bij meerdere hypothesen; ACH rangschikt op inconsistenties.', 2: 'H3 is inderdaad het zwakst, maar H1 (3 keer I) en H2 (1 keer I) zijn niet gelijk.', 3: 'Neutraal bewijs is niet-diagnostisch voor die hypothese, maar het blokkeert geen voorlopige conclusie.' },
+          explain: 'ACH weerlegt. De hypothese met de minste inconsistenties blijft voorlopig staan: H2. "Voorlopig", omdat nieuw bewijs de matrix kan veranderen.' },
+        { q: 'In een conceptrapport voor de directie staat: "Het is 82% zeker dat de inbraak het werk is van een bekende ransomwaregroep." De conclusie rust op twee bronnen, waarvan één onbevestigd. Welke herschrijving is het best?',
+          options: ['De zin laten staan: een getal is duidelijker dan een woord', '"Het is zeer waarschijnlijk dat een bekende ransomwaregroep achter de inbraak zit. Betrouwbaarheid van dit oordeel: gemiddeld, omdat één van de twee bronnen onbevestigd is."', '"Mogelijk is er een verband met een ransomwaregroep."', '"Vaststaat dat een bekende ransomwaregroep achter de inbraak zit."'], answer: 1,
+          wrong: { 0: 'Twee bronnen kunnen geen 82% dragen. Het getal suggereert een nauwkeurigheid die er niet is: schijnprecisie.', 2: 'Te vaag: "mogelijk" dekt alles tussen 1 en 99 procent en laat de lezer zelf raden wat de analist denkt.', 3: 'Dit maakt van een afleiding een feit. Met één onbevestigde bron is dat niet te verdedigen.' },
+          explain: 'Een vaste term uit de waarschijnlijkheidsbanden, met het betrouwbaarheidsniveau er los naast en de reden erbij.' },
+        { q: 'Tijdens een lopend onderzoek naar een gerichte inbraak vindt een analist een onbekend uitvoerbaar bestand op een server. De aanvaller is vermoedelijk nog actief. Wat is de beste eerste stap?',
+          options: ['Het bestand uploaden naar een publieke online scanner, want dat geeft het snelst een oordeel', 'De hash van het bestand opzoeken in bestaande bronnen en het bestand zelf in een eigen, afgesloten sandbox onderzoeken', 'Verbinding maken met het adres waar het bestand naartoe belt, om te zien of de server nog leeft', 'Het bestand verwijderen zodat het geen schade meer kan doen'], answer: 1,
+          wrong: { 0: 'Bij gerichte malware kan de maker zien dat zijn bestand is geüpload. Dan weet hij dat hij ontdekt is.', 2: 'Actief contact met de infrastructuur van de aanvaller verraadt je en kan het onderzoek schaden.', 3: 'Dan vernietig je bewijs, en de aanvaller heeft waarschijnlijk meer dan één ingang.' },
+          explain: 'Een hash opzoeken verraadt niets over het bestand zelf, en een eigen sandbox houdt het monster binnen. Zo krijg je informatie zonder de aanvaller te waarschuwen.' },
       ],
     },
   ],

@@ -39,6 +39,8 @@ CS.registerRoom({
   icon: '📡',
   difficulty: 'Moeilijk',
   minutes: 75,
+  level: 'Gevorderd',
+  checked: '2026-11-12',
   summary: 'Van één aanwijzing naar een heel netwerk: je leert IP\'s, domeinen, certificaten, hashes en wallets als een graaf van entiteiten te zien, met open bronnen stap voor stap te pivoten, de zeldzaamheidstoets toe te passen en binnen de juridische en opsec-grenzen te blijven.',
   objectives: [
     'Het entiteitenmodel van infrastructuur-OSINT benoemen (IP, ASN, domein, certificaat, hash, wallet, alias, e-mail) en als graaf tekenen',
@@ -51,6 +53,9 @@ CS.registerRoom({
   tasks: [
     {
       title: 'Taak 1 — Het entiteitenmodel: alles is een knoop',
+      tryFirst: true,
+      intro: `<p>Er is een phishingmelding binnengekomen. In het lab liggen zes fragmenten uit verschillende bronnen. Leg ze
+        naast elkaar en spring van het ene gegeven naar het volgende om de vragen te beantwoorden. Let op de datums.</p>`,
       content: `
         <p>In de OSINT-room uit het forensie-pad leerde je mensen opsporen: foto's, metadata, gebruikersnamen. Hier draait het om de <strong>infrastructuur</strong> achter een aanval: de servers, domeinen en certificaten die een crimineel gebruikt. De centrale gedachte is simpel maar krachtig: je ziet alles als een <strong>graaf</strong> van <em>entiteiten</em> (knopen) en <em>relaties</em> (lijnen ertussen).</p>
 
@@ -82,15 +87,41 @@ CS.registerRoom({
         </ul>
         <div class="callout tip"><strong>Tip:</strong> schrijf achter elke regel in je dossier welk label hij heeft. Een rechter, een collega of jijzelf over een maand moet kunnen zien wat feit is en wat gok.</div>
       `,
+      lab: {
+        type: 'osintpuzzle',
+        title: 'melding 12 juni 2026',
+        scenario: 'Op 12 juni 2026 meldt een klant van het fictieve PakketPost een sms met een betaallink. Dit is wat de open bronnen opleveren.',
+        records: [
+          { title: 'Melding (12-06-2026)', lines: ['sms: "Uw pakket wacht, betaal de toeslag"', 'link: hxxps://mijn-pakket-volgen[.]nm[.]lab/betaal'] },
+          { title: 'Passive DNS', lines: ['mijn-pakket-volgen.nm.lab A 198.51.100.140', 'gezien: 2026-05-20 t/m 2026-06-02', 'mijn-pakket-volgen.nm.lab A 192.0.2.61', 'gezien: 2026-06-03 t/m 2026-06-19'] },
+          { title: 'RIPEstat', lines: ['198.51.100.0/24: AS64499 NOORDWOLK', '192.0.2.0/24: AS64507 KELDERHOST'] },
+          { title: 'WHOIS', lines: ['domein: mijn-pakket-volgen.nm.lab', 'geregistreerd: 2026-05-19', 'contact: domeinen@kwikmail.example'] },
+          { title: 'crt.sh', lines: ['certificaat 4C:7E:02:D1, uitgegeven 2026-05-20', 'SAN: mijn-pakket-volgen.nm.lab', 'SAN: pakket-herbezorgen.nm.lab'] },
+          { title: 'Forumpost (2026-05-11)', lines: ['gebruiker: vrachtbrief', '"pakket-kit v3 te koop, inclusief hosting"', 'contact: domeinen@kwikmail.example'] },
+        ],
+      },
       questions: [
         { q: 'Hoe modelleer je infrastructuur-OSINT, in één woord?', options: ['Als een lijstje', 'Als een graaf van entiteiten en relaties', 'Als een tijdlijn', 'Als een foto'], answer: 1, explain: 'Entiteiten zijn knopen, relaties zijn de lijnen ertussen; vind je één knoop, dan pivoteer je langs de relaties naar de buren.' },
-        { q: 'Onder welk netwerkbegrip valt een IP-adres bij een provider (het netwerkblok)?', answer: ['ASN', 'asn', 'autonomous system number'], hint: 'Drie letters; "Autonomous System ...".', explain: 'Een ASN (Autonomous System Number) is het netwerkblok van een provider; meerdere IP\'s vallen onder één ASN.' },
-        { q: '"Beide domeinen gebruiken hetzelfde certificaat, dus het is waarschijnlijk dezelfde opzet." Welk label hoort bij deze uitspraak?', options: ['Bekend', 'Afgeleid', 'Aanname', 'Bewezen feit'], answer: 1, explain: 'Het is een afgeleide: een conclusie die je trekt uit bekende feiten (het gedeelde certificaat). "Dezelfde dadergroep" zou daarentegen nog een aanname zijn.' },
+        { q: 'Onder welk ASN viel het domein uit de melding op de dag van de melding (12 juni 2026)?', answer: ['AS64507', '64507', 'AS 64507'],
+          hints: ['Een domein valt niet onder een ASN; het IP-adres waar het naar wijst wel. Je hebt dus twee sprongen nodig.', 'Passive DNS geeft twee IP-adressen, elk met een periode. Kies het adres dat op 12 juni gold en zoek dat netwerk op in RIPEstat.', 'Op 12 juni wees het domein naar 192.0.2.61.'],
+          wrong: { 'as64499': 'Dat was het ASN tot en met 2 juni. Op 3 juni verhuisde het domein naar een ander IP-adres. Daarom hoort er bij elke relatie een tijd.', '64499': 'Dat was het ASN tot en met 2 juni. Op 3 juni verhuisde het domein naar een ander IP-adres. Daarom hoort er bij elke relatie een tijd.', '192.0.2.61': 'Dat is het IP-adres. Zoek in RIPEstat onder welk ASN dat netwerk valt.' },
+          why: 'Een verzoek aan de verkeerde hoster kost dagen. Infrastructuur verhuist, dus je kijkt altijd naar de relatie die gold op het moment van het feit.',
+          explain: 'Domein naar IP (passive DNS, periode 3 t/m 19 juni: 192.0.2.61), IP naar ASN (RIPEstat: AS64507).' },
+        { q: 'Welke alias hangt via één gedeelde entiteit aan het domein uit de melding?', answer: ['vrachtbrief'],
+          hints: ['Zoek een gegeven dat in twee fragmenten letterlijk hetzelfde is.', 'Vergelijk het WHOIS-contact met de forumpost.', 'Het e-mailadres domeinen@kwikmail.example staat in beide.'],
+          wrong: { 'domeinen@kwikmail.example': 'Dat is de gedeelde entiteit zelf (een e-mailadres). Gevraagd is de alias die eraan hangt.', 'kelderhost': 'Dat is de naam van de hoster, geen alias van een persoon.' },
+          explain: 'Het WHOIS-contact en het contactadres in de forumpost zijn hetzelfde e-mailadres. Dat is een afgeleide link, nog geen bewijs dat "vrachtbrief" de dader is.' },
+        { q: 'Welk tweede domein staat in hetzelfde certificaat als het domein uit de melding?', answer: ['pakket-herbezorgen.nm.lab', 'pakket-herbezorgen[.]nm[.]lab'],
+          hints: ['Eén bron laat zien welke hostnamen samen in een certificaat staan.', 'Kijk naar de SAN-regels in het fragment van crt.sh.', 'Het begint met pakket-.'],
+          explain: 'crt.sh toont twee SAN-namen in certificaat 4C:7E:02:D1. Het tweede domein is een nieuwe knoop om vanaf verder te zoeken.' },
       ],
     },
 
     {
       title: 'Taak 2 — De bronnen: wat levert elke put op?',
+      tryFirst: true,
+      intro: `<p>In het lab staan zestien onderzoeksvragen. Elke vraag beantwoord je met één van vier bronnen. Groepeer ze
+        per bron. Weet je bij een vraag niet waar je moet zijn, dan staat de tabel met bronnen in de uitleg.</p>`,
       content: `
         <p>Een rechercheur die niet weet wélke la hij moet opentrekken, graaft eindeloos. Infrastructuur-OSINT heeft een vaste set open bronnen, en elke bron levert een ander soort entiteit of relatie. Ken ze, dan weet je bij elke vraag meteen waar je moet zijn.</p>
 
@@ -113,9 +144,23 @@ CS.registerRoom({
 
         <div class="callout info"><strong>Passief &ne; gratis van consequenties:</strong> de meeste van deze bronnen zijn <em>passief</em> — je bevraagt een archief, niet de server van de dader. Maar één bron is dat níét zonder meer: een bestand uploaden naar VirusTotal is een actieve handeling die sporen achterlaat. Onthoud dat alvast.</div>
       `,
+      lab: {
+        type: 'connections',
+        title: 'welke bron bij welke vraag',
+        prompt: 'Vier bronnen: passive DNS, Certificate Transparency (crt.sh), Shodan of Censys, en RIPEstat of WHOIS. Zoek steeds de vier vragen die je met dezelfde bron beantwoordt.',
+        flag: 'NM{elke_vraag_zijn_bron}',
+        groups: [
+          { name: 'Passive DNS', items: ['Waar wees dit domein in maart naar?', 'Welke domeinen stonden ooit op dit IP?', 'Sinds wanneer bestaat dit A-record?', 'Wisselt dit domein vaak van IP?'] },
+          { name: 'Certificate Transparency (crt.sh)', items: ['Welke hostnamen staan in de SAN?', 'Wanneer is dit certificaat uitgegeven?', 'Welke CA gaf dit certificaat uit?', 'Welke subdomeinen kregen een certificaat?'] },
+          { name: 'Shodan of Censys', items: ['Welke poorten staan open?', 'Welke banner geeft de SSH-dienst?', 'Wat is de JARM van deze server?', 'Welke hosts delen deze favicon-hash?'] },
+          { name: 'RIPEstat of WHOIS', items: ['Onder welk ASN valt dit IP?', 'Wie beheert dit netblok?', 'Wanneer is dit domein geregistreerd?', 'Welk abuse-adres hoort bij dit netwerk?'] },
+        ],
+      },
       questions: [
         { q: 'Welke bron gebruik je om te vinden welke andere domeinen hetzelfde TLS-certificaat presenteren?', options: ['RIPEstat', 'crt.sh (Certificate Transparency)', 'VirusTotal', 'Passive DNS'], answer: 1, explain: 'crt.sh bevraagt de openbare Certificate Transparency-logs; daarmee vind je gedeelde certificaten tussen domeinen.' },
-        { q: 'Waarvoor gebruik je passive DNS?', answer: ['historische domein-ip-koppelingen', 'historische koppelingen tussen domein en ip', 'welk domein wanneer naar welk ip wees'], hint: 'Het gaat om de koppeling domein &harr; IP, mét tijd.', explain: 'Passive DNS bewaart historisch welk domein wanneer naar welk IP resolvete — handig als een domein inmiddels is verhuisd.' },
+        { q: 'Welke vlag geeft het lab als alle zestien vragen bij de juiste bron staan?', answer: ['NM{elke_vraag_zijn_bron}'],
+          hints: ['Begin met de groep waar je zeker van bent. Het lab meldt het als drie van de vier kloppen.', 'Alles met "ooit", "sinds" en "in maart" gaat over geschiedenis van domein en IP. Alles over wat er op een server draait, komt uit een scanner.', 'SAN, CA en uitgiftedatum horen bij crt.sh; ASN, netblok, registratiedatum en abuse-adres bij RIPEstat of WHOIS.'],
+          explain: 'Passive DNS geeft geschiedenis van domein en IP, crt.sh alles over certificaten, Shodan en Censys wat er op een server draait, RIPEstat en WHOIS wie iets beheert.' },
         { q: 'Welke dienst laat je zien welke poorten en banners op een IP draaien, inclusief een JARM-fingerprint?', options: ['crt.sh', 'Shodan of Censys', 'WHOIS', 'urlscan.io'], answer: 1, explain: 'Shodan en Censys scannen het internet en tonen open diensten, banners en server-fingerprints zoals JARM.' },
         { q: 'Welke bron geeft specifiek bekende malware- en C2-indicatoren (o.a. URLhaus, ThreatFox, SSL Blacklist)?', answer: ['abuse.ch', 'abuse ch'], hint: 'Een non-profit met projecten als URLhaus en Feodo Tracker.', explain: 'abuse.ch bundelt threat-intel-feeds zoals URLhaus (malware-URL\'s), ThreatFox (IOC\'s) en SSLBL (kwaadaardige certificaten).' },
       ],
@@ -123,6 +168,9 @@ CS.registerRoom({
 
     {
       title: 'Taak 3 — Fingerprinting: infrastructuur herkennen aan zijn handtekening',
+      tryFirst: true,
+      intro: `<p>Een scan leverde acht hosts op met elk vier kenmerken. Een deel hoort bij dezelfde phishing-kit. Klik in het
+        lab kenmerken aan om te zien hoeveel hosts ze delen, en bepaal welke hosts bij elkaar horen.</p>`,
       content: `
         <p>Criminelen hergebruiken graag dezelfde opzet. Dezelfde phishing-kit, hetzelfde C2-framework, dezelfde serverconfiguratie — want nieuw bouwen kost tijd. Een <strong>fingerprint</strong> is een korte handtekening die zo'n opzet samenvat. Vind je dezelfde fingerprint op twee plekken, dan heb je een kandidaat-link.</p>
 
@@ -139,15 +187,50 @@ CS.registerRoom({
         <h3>Fingerprints zijn niet gelijk sterk</h3>
         <p>Een fingerprint is pas bewijs als hij <em>zeldzaam genoeg</em> is. De <code>Server</code>-header <code>nginx</code> staat op miljoenen servers — die zegt niets. Een JARM die hoort bij een populaire standaardconfiguratie is ook zwak. Maar een ongebruikelijke favicon van een zelfgebouwd phishing-panel, of een JARM van een nichetool, kan juist sterk zijn. Die afweging — hoe bijzonder is dit kenmerk? — is de kern van de volgende taak.</p>
       `,
+      lab: {
+        type: 'fingerprint',
+        title: 'acht hosts, vier kenmerken',
+        scenario: 'Vertrekpunt is pakket-volgen.nm.lab, een bevestigde phishingsite. Welke andere hosts draaien dezelfde kit?',
+        attrs: [
+          { key: 'server', label: 'Server-header' },
+          { key: 'jarm', label: 'JARM (ingekort)' },
+          { key: 'favicon', label: 'Favicon-hash' },
+          { key: 'title', label: 'Paginatitel' },
+        ],
+        hosts: [
+          { host: 'pakket-volgen.nm.lab', server: 'nginx', jarm: '29d29d00', favicon: '771204551', title: 'Volg uw pakket' },
+          { host: 'pakket-herbezorgen.nm.lab', server: 'nginx', jarm: '29d29d00', favicon: '771204551', title: 'Volg uw pakket' },
+          { host: 'zending-status.nm.lab', server: 'nginx', jarm: '29d29d00', favicon: '771204551', title: 'Zending: status' },
+          { host: 'webshop-vandijk.example', server: 'nginx', jarm: '29d29d00', favicon: '-305179312', title: 'Van Dijk Fietsen' },
+          { host: 'blog.tuinclub.example', server: 'nginx', jarm: '29d29d00', favicon: '116323821', title: 'Tuinclub Oost' },
+          { host: 'intranet.kade.example', server: 'Apache', jarm: '07d14d16', favicon: '-98110044', title: 'Welkom' },
+          { host: 'forum.schaakbond.example', server: 'nginx', jarm: '29d29d00', favicon: '904417726', title: 'Forum' },
+          { host: 'mijn-zending.nm.lab', server: 'cloudflare', jarm: '3fd3fd15', favicon: '771204551', title: 'Volg uw pakket' },
+        ],
+      },
       questions: [
-        { q: 'Welke fingerprint beschrijft de TLS-server (en is dus actief: je raakt de server zelf)?', answer: ['JARM', 'jarm'], hint: 'Denk aan de M van Machine aan de serverkant.', explain: 'JARM stuurt actief TLS-hello\'s en vat de antwoorden van de server samen; gelijke JARM wijst op gelijke serverconfig.' },
+        { q: 'Hoeveel van de acht hosts delen de favicon-hash van pakket-volgen.nm.lab?', answer: ['4'],
+          hints: ['Klik in de tabel op de favicon-hash van de eerste host.', 'Het lab markeert alle rijen met dezelfde waarde en telt ze.', 'Tel de eerste host zelf ook mee.'],
+          wrong: { '3': 'Je mist er één. Eén host heeft een andere Server-header en JARM, maar wel dezelfde favicon.', '6': 'Zes is het aantal hosts met dezelfde JARM. De vraag gaat over de favicon-hash.' },
+          explain: 'Vier hosts delen favicon-hash 771204551. Het lab noemt dat een onderscheidend kenmerk: gedeeld door een deel van de hosts, niet door bijna allemaal.' },
         { q: 'Wat is JA4 ten opzichte van JA3?', options: ['Een server-fingerprint', 'De nieuwere, robuustere opvolger van de JA3-clientfingerprint', 'Een hashalgoritme voor favicons', 'Een DNS-recordtype'], answer: 1, explain: 'JA3 en JA4 zijn beide client-fingerprints; JA4 is de modernere, robuustere versie.' },
-        { q: 'Waarom is de response-header "Server: nginx" een zwakke fingerprint?', options: ['Omdat nginx niet bestaat', 'Omdat hij op miljoenen servers voorkomt en dus niet onderscheidend is', 'Omdat hij versleuteld is', 'Omdat hij alleen bij phishing voorkomt'], answer: 1, explain: 'Een kenmerk dat overal voorkomt onderscheidt niets. Een fingerprint telt pas mee als hij zeldzaam genoeg is.' },
+        { q: 'Eén host draait dezelfde kit, maar staat achter een CDN, waardoor zijn Server-header en JARM afwijken. Welke host?', answer: ['mijn-zending.nm.lab', 'mijn-zending[.]nm[.]lab', 'mijn-zending'],
+          hints: ['Zoek een host die op de zwakke kenmerken afwijkt maar op de sterke overeenkomt.', 'Klik op de favicon-hash en op de paginatitel van pakket-volgen.nm.lab. Welke gemarkeerde host heeft een andere JARM?', 'Zijn Server-header is cloudflare.'],
+          wrong: { 'intranet.kade.example': 'Deze host wijkt overal af: andere header, andere JARM, andere favicon, andere titel. Hij hoort er gewoon niet bij.', 'zending-status.nm.lab': 'Deze host hoort bij het cluster, maar staat niet achter een CDN: Server-header en JARM zijn gelijk aan de rest.' },
+          why: 'Achter een CDN zie je de TLS-stack van het CDN, niet die van de server erachter. Wie alleen op JARM clustert, mist precies de hosts die zich het best verstoppen.',
+          explain: 'mijn-zending.nm.lab: Server-header cloudflare en een andere JARM, maar dezelfde favicon-hash en paginatitel als de kit.' },
+        { q: 'Hoeveel van de acht hosts delen de JARM van pakket-volgen.nm.lab?', answer: ['6'],
+          hints: ['Klik op de JARM-waarde van de eerste host.', 'Lees het oordeel dat het lab erbij zet.', 'Het zijn alle hosts met Server-header nginx.'],
+          wrong: { '4': 'Vier is het aantal hosts met dezelfde favicon-hash. Klik op de JARM-waarde.', '3': 'Dat is het aantal kit-hosts met deze JARM, maar ook een webshop, een blog en een forum hebben hem.' },
+          explain: 'Zes van de acht, waaronder een fietsenwinkel, een tuinclub en een schaakforum. Deze JARM hoort bij een standaardinstallatie van nginx en is dus ruis. Een fingerprint telt pas als hij zeldzaam is.' },
       ],
     },
 
     {
       title: 'Taak 4 — Pivoten als lus, en de zeldzaamheidstoets',
+      tryFirst: true,
+      intro: `<p>Je seed is één bestandshash uit een sandboxrapport. Klik in het lab van entiteit naar entiteit en kijk hoe ver
+        je komt. Onderweg kom je een zwakke en een sterke link tegen: bepaal zelf welke je vertrouwt.</p>`,
       content: `
         <p>Pivoten is geen rechte lijn maar een <strong>lus</strong>. Je begint met één aanwijzing (een <em>seed</em>: een domein, IP of hash), haalt er een kenmerk bij uit een bron, krijgt nieuwe entiteiten, en springt dáár weer vanaf verder. Elke ronde groeit je graaf — en bij elke nieuwe link stel je dezelfde kritische vraag.</p>
 
@@ -183,17 +266,53 @@ CS.registerRoom({
 
         <div class="callout tip"><strong>Vuistregel:</strong> hoe meer willekeurige dingen een kenmerk zou kunnen delen met toeval, hoe zwakker het is. Twee huizen in dezelfde stad zegt weinig; twee huizen met exact hetzelfde (zelfgemaakte) slot zegt veel.</div>
 
-        <p>Leg deze toets in je geheugen. Je beloning voor wie dit onthoudt: <strong>NM{pivot_toets_de_zeldzaamheid}</strong>.</p>
       `,
+      lab: {
+        type: 'pivot',
+        title: 'van één hash naar een derde domein',
+        scenario: 'Seed: de hash van factuur_juli.zip uit een sandboxrapport. Het slachtoffer kent alleen cdn-update.nm.lab en portaal-inlog.nm.lab uit de eigen logs.',
+        entities: [
+          { id: 'h', type: 'hash', label: '9c1e44af (factuur_juli.zip)' },
+          { id: 'd1', type: 'domain', label: 'cdn-update.nm.lab' },
+          { id: 'd2', type: 'domain', label: 'portaal-inlog.nm.lab' },
+          { id: 'd3', type: 'domain', label: 'factuur-inzien.nm.lab' },
+          { id: 'i1', type: 'ip', label: '203.0.113.77' },
+          { id: 'i2', type: 'ip', label: '203.0.113.78' },
+          { id: 'as', type: 'asn', label: 'AS64502' },
+          { id: 'ct', type: 'cert', label: 'B7:44:1C:0E' },
+          { id: 'm', type: 'email', label: 'r.verhage@snelpost.example' },
+        ],
+        edges: [
+          { from: 'h', to: 'd1', rel: 'maakt verbinding met', time: '2026-07', source: 'sandboxrapport' },
+          { from: 'd1', to: 'i1', rel: 'resolvet naar', time: '2026-07', source: 'passive DNS' },
+          { from: 'd1', to: 'ct', rel: 'staat in cert (SAN)', time: '2026-07', source: 'crt.sh' },
+          { from: 'd2', to: 'i1', rel: 'resolvet naar', time: '2026-07', source: 'passive DNS; in totaal 2 domeinen op dit adres' },
+          { from: 'i1', to: 'as', rel: 'hoort bij ASN', time: '2026-07', source: 'RIPEstat; grote hoster, ruim 40.000 adressen' },
+          { from: 'i2', to: 'as', rel: 'hoort bij ASN', time: '2026-07', source: 'RIPEstat; grote hoster, ruim 40.000 adressen' },
+          { from: 'd3', to: 'i2', rel: 'resolvet naar', time: '2026-07', source: 'passive DNS' },
+          { from: 'd2', to: 'm', rel: 'WHOIS-contact', time: '2026-06', source: 'WHOIS' },
+          { from: 'd3', to: 'm', rel: 'WHOIS-contact', time: '2026-07', source: 'WHOIS' },
+        ],
+      },
       questions: [
         { q: 'Waarom is pivoten een "lus" en geen rechte lijn?', options: ['Omdat je altijd terugkeert naar de eerste bron', 'Omdat elke nieuwe entiteit weer een nieuw vertrekpunt is om verder te pivoten', 'Omdat het eindeloos duurt', 'Omdat de volgorde niet uitmaakt'], answer: 1, explain: 'Elke gevonden entiteit is een nieuwe seed; je haalt er weer een kenmerk bij en de graaf groeit ronde na ronde.' },
         { q: 'Twee verdachte sites delen hetzelfde kenmerk. Welk kenmerk is het STERKSTE bewijs voor een echte link?', options: ['Dezelfde provider (ASN)', 'Een "Server: nginx"-header', 'Een hergebruikt, specifiek TLS-certificaat', 'Een populaire standaard-favicon'], answer: 2, explain: 'Een specifiek certificaat is zeldzaam; provider, nginx-header en een populaire favicon komen massaal voor en zijn dus zwak.' },
-        { q: 'Welke vlag is de beloning voor de zeldzaamheidstoets?', answer: ['NM{pivot_toets_de_zeldzaamheid}'], hint: 'Hij staat onderaan de uitleg over zeldzaamheid.', explain: 'NM{pivot_toets_de_zeldzaamheid} — de kern van de taak: toets elk kenmerk op uniciteit voordat je het een link noemt.' },
+        { q: 'Pivoteer vanaf de hash. Welk derde domein, dat het slachtoffer nog niet kende, vind je?', answer: ['factuur-inzien.nm.lab', 'factuur-inzien[.]nm[.]lab', 'factuur-inzien'],
+          hints: ['Klik op de hash en volg telkens een relatie naar een buur die je nog niet hebt bekeken.', 'Van de hash naar het eerste domein, dan naar het IP-adres. Welk ander domein staat op dat adres, en wat hangt daar weer aan?', 'Het WHOIS-contact van portaal-inlog.nm.lab heeft nog een domein geregistreerd.'],
+          explain: 'Hash, cdn-update.nm.lab, 203.0.113.77, portaal-inlog.nm.lab, het WHOIS-contact, en dan factuur-inzien.nm.lab. Vijf sprongen vanaf één hash.' },
+        { q: 'Er lopen twee routes naar dat derde domein. Via welke entiteit is de link sterk genoeg om vast te leggen? (label)', answer: ['r.verhage@snelpost.example', 'r.verhage[at]snelpost.example', 'r.verhage'],
+          hints: ['Pas op elke tussenliggende entiteit de zeldzaamheidstoets toe: hoeveel anderen delen dit kenmerk?', 'Lees bij de relaties de opmerking achter de bron. Eén entiteit wordt gedeeld door tienduizenden adressen.', 'De sterke route loopt via het WHOIS-contact.'],
+          wrong: { 'as64502': 'Dit ASN is van een grote hoster met ruim 40.000 adressen. Dat twee IP-adressen eronder vallen, zegt niets.', '203.0.113.78': 'Dit adres hangt alleen via het ASN aan de rest, en dat ASN is een zwakke link.', '203.0.113.77': 'Dit adres verbindt de eerste twee domeinen (sterk: maar twee domeinen op het adres), niet het derde.' },
+          why: 'Een graaf laat elke verbinding even dik zien. Leg je een link via een grote hoster vast als bewijs, dan hangt straks half het internet aan je zaak.',
+          explain: 'Het e-mailadres r.verhage@snelpost.example registreerde beide domeinen: specifiek en zeldzaam. De route via AS64502 is ruis.' },
       ],
     },
 
     {
       title: 'Taak 5 — De pivot-sandbox: verbind Zaak Alpha en Zaak Bravo',
+      tryFirst: true,
+      intro: `<p>Twee fictieve phishingzaken: Zaak Alpha rond <code>betaal-controle.nm.lab</code> en Zaak Bravo rond
+        <code>inlog-verificatie.nm.lab</code>. Je teamleider vraagt: horen ze bij elkaar? Zoek het uit in de sandbox.</p>`,
       content: `
         <p>Tijd om het te doen. Je hebt twee fictieve phishingzaken op je bord. Alles hieronder is verzonnen: documentatie-IP's en <code>.nm.lab</code>-domeinen, nooit echte infrastructuur.</p>
         <ul>
@@ -224,8 +343,13 @@ CS.registerRoom({
         bridge: ['A1B2C3D4', 'cert', 'certificaat'],
       },
       questions: [
-        { q: 'Welk gedeeld kenmerk (het label) verbindt Zaak Alpha en Zaak Bravo?', answer: ['A1B2C3D4', 'cert', 'certificaat', 'het certificaat', 'certificaat a1b2c3d4'], hint: 'De IP\'s verschillen. Welke ENE entiteit hangt aan allebei de domeinen? Kijk naar de bron crt.sh.', explain: 'Beide domeinen presenteren hetzelfde TLS-certificaat A1B2C3D4 (bron: crt.sh). De IP\'s (203.0.113.10 vs 198.51.100.20) verschillen, maar het hergebruikte, zeldzame certificaat verbindt de zaken.' },
-        { q: 'Via welke bron zie je dat beide domeinen in hetzelfde certificaat staan?', answer: ['crt.sh', 'crt sh', 'certificate transparency'], hint: 'Staat als herkomst bij de "staat in cert (SAN)"-relatie.', explain: 'De relatie "staat in cert (SAN)" is afkomstig uit crt.sh (Certificate Transparency) — precies de bron die gedeelde certificaten zichtbaar maakt.' },
+        { q: 'Welk gedeeld kenmerk (het label) verbindt Zaak Alpha en Zaak Bravo?', answer: ['A1B2C3D4', 'certificaat a1b2c3d4', 'cert a1b2c3d4'],
+          hints: ['De IP-adressen verschillen. Zoek een entiteit die aan allebei de domeinen hangt.', 'Klik beide domeinen aan en vergelijk hun relaties. Let op de bron crt.sh.', 'Het is de entiteit van het type cert; typ het label van acht tekens.'],
+          wrong: { 'certificaat': 'Dat is het type. Gevraagd is het label: in een dossier wil je precies weten wélk certificaat.', 'cert': 'Dat is het type. Gevraagd is het label: in een dossier wil je precies weten wélk certificaat.', '/^as64500/': 'Het ASN hangt alleen aan het IP-adres van Zaak Alpha, en een provider is bovendien een zwak kenmerk.', '/^bc1q/': 'Elke zaak heeft een eigen wallet; ze overlappen niet.' },
+          explain: 'Beide domeinen staan in hetzelfde TLS-certificaat A1B2C3D4 (bron: crt.sh). De IP-adressen (203.0.113.10 en 198.51.100.20) verschillen, maar het hergebruikte, zeldzame certificaat verbindt de zaken.' },
+        { q: 'Onder welk ASN valt het IP-adres van Zaak Alpha?', answer: ['AS64500', '64500', 'AS64500 · FICTIEF-NET', 'AS64500 FICTIEF-NET'],
+          hints: ['Een ASN hangt aan een IP-adres, niet aan een domein.', 'Klik op 203.0.113.10 en lees de relatie met bron RIPEstat.', 'Het begint met AS645.'],
+          explain: 'betaal-controle.nm.lab resolvet naar 203.0.113.10, en dat adres hoort volgens RIPEstat bij AS64500. Voor Zaak Bravo is het ASN niet opgezocht: dat gat hoort in je dossier te staan.' },
         { q: 'De IP-adressen van Alpha en Bravo verschillen. Waarom is dat geen bewijs dat het losse zaken zijn?', options: ['IP-adressen zijn nooit betrouwbaar', 'Omdat een ander, zeldzamer kenmerk (het certificaat) juist wél overlapt en zwaarder weegt', 'Omdat IP-adressen niet bestaan in OSINT', 'Omdat het toeval is'], answer: 1, explain: 'Verschillende IP\'s sluiten een link niet uit. Het gedeelde, zeldzame certificaat is sterker bewijs dan het verschil in (makkelijk te wisselen) IP-adressen.' },
         { q: 'Welk label hoort bij de uitspraak "het is dezelfde dadergroep" in deze zaak?', options: ['Bekend', 'Afgeleid', 'Aanname', 'Bewezen'], answer: 2, explain: 'Het gedeelde certificaat is bekend; "dezelfde opzet" is afgeleid; "dezelfde dadergroep" blijft een aanname tot je het onderbouwt met meer bewijs.' },
       ],
@@ -233,6 +357,9 @@ CS.registerRoom({
 
     {
       title: 'Taak 6 — De graaf vastleggen en laten rekenen',
+      tryFirst: true,
+      intro: `<p>In het lab staat een relatietabel van twee phishingzaken, één uit augustus en één uit september 2026. Zoek uit
+        welke knoop de twee clusters verbindt, en controleer of elke regel als bewijs bruikbaar is.</p>`,
       content: `
         <p>Een onderzoek dat alleen in je hoofd zit, is niet navolgbaar. Leg je graaf daarom vast als een <strong>relatietabel</strong>: één regel per relatie, met altijd <strong>tijd</strong> en <strong>herkomst</strong> erbij. Precies zoals de sandbox het toonde.</p>
 
@@ -266,10 +393,35 @@ nx.betweenness_centrality(G)              # welke knoop is de spil?</code></pre>
 
         <div class="callout tip"><strong>Tip:</strong> de code is het gereedschap, niet de conclusie. Een gevonden "brug" is een <em>afgeleide</em> die je nog moet toetsen op zeldzaamheid: een brug via een gedeeld certificaat is sterk, een brug via een gedeelde Cloudflare-IP is zwak.</div>
       `,
+      lab: {
+        type: 'logs',
+        title: 'relaties.csv',
+        lines: `van;relatie;naar;tijd;herkomst
+toeslag-check.nm.lab;resolvet naar;203.0.113.150;2026-08;passive DNS
+toeslag-check.nm.lab;staat in cert (SAN);C9:02:AA:31;2026-08;crt.sh
+toeslag-check.nm.lab;WHOIS-contact;hostmaster@toeslag-check.nm.lab;2026-08;WHOIS
+203.0.113.150;hoort bij ASN;AS64503;2026-08;RIPEstat
+toeslag-check.nm.lab;laadt script van;stat-teller.nm.lab;2026-08;urlscan
+stat-teller.nm.lab;resolvet naar;203.0.113.151;2026-08;passive DNS
+stat-teller.nm.lab;stuurt formulierdata naar;inbox-7731@postduif.example;2026-08;urlscan
+energie-teruggave.nm.lab;resolvet naar;198.51.100.88;2026-09;passive DNS
+energie-teruggave.nm.lab;staat in cert (SAN);41:7B:D0:5E;2026-09;crt.sh
+198.51.100.88;hoort bij ASN;AS64509;2026-09;RIPEstat
+energie-teruggave.nm.lab;laadt script van;klik-meter.nm.lab;2026-09;urlscan
+klik-meter.nm.lab;resolvet naar;198.51.100.89;2026-09;
+klik-meter.nm.lab;stuurt formulierdata naar;inbox-7731@postduif.example;2026-09;urlscan`,
+      },
       questions: [
-        { q: 'Welke twee kolommen horen altijd bij elke regel in je relatietabel?', answer: ['tijd en herkomst', 'tijd en bron', 'herkomst en tijd', 'bron en tijd'], hint: 'De één omdat infra verandert, de ander zodat een collega het kan controleren.', explain: 'Tijd (infrastructuur verandert) en herkomst/bron (navolgbaarheid) maken van je tabel bewijs in plaats van een mening.' },
+        { q: 'Eén regel in relaties.csv is niet navolgbaar. Welk regelnummer in de viewer?', answer: ['13', 'regel 13'],
+          hints: ['Elke regel hoort vijf gevulde velden te hebben.', 'Zoek een regel die op een puntkomma eindigt: daar is het laatste veld leeg.', 'Het is een regel over klik-meter.nm.lab.'],
+          wrong: { '12': 'De kopregel is regel 1 in de viewer. Kijk naar het regelnummer dat links staat.' },
+          explain: 'Regel 13: klik-meter.nm.lab resolvet naar 198.51.100.89, zonder herkomst. Een collega kan niet nagaan waar dit vandaan komt.' },
         { q: 'Wat is een "brug" in een graaf?', options: ['De grootste knoop', 'Een lijn die, weggehaald, de graaf in twee losse delen laat vallen', 'Een dubbele relatie', 'Een knoop zonder relaties'], answer: 1, explain: 'Een brug is de enige verbinding tussen twee clusters; in onze zaak is dat de lijn naar het gedeelde certificaat.' },
-        { q: 'Welke networkx-maat gebruik je om de "spil" te vinden waar veel verbindingen doorheen lopen?', options: ['bridges', 'betweenness-centraliteit', 'read_csv', 'from_pandas_edgelist'], answer: 1, explain: 'Betweenness-centraliteit meet hoeveel kortste paden door een knoop lopen; een hoge waarde wijst op een spil in het netwerk.' },
+        { q: 'Welke knoop verbindt het cluster van augustus met dat van september? Haal je hem weg, dan valt de graaf in twee stukken.', answer: ['inbox-7731@postduif.example', 'inbox-7731', 'inbox-7731[at]postduif.example'],
+          hints: ['Zoek een waarde in de kolom "naar" die zowel bij 2026-08 als bij 2026-09 voorkomt.', 'Certificaten, IP-adressen en ASN\'s verschillen per zaak. Filter eens op urlscan.', 'Het is een e-mailadres waar de formulierdata naartoe gaat.'],
+          wrong: { '/^as645/': 'De twee zaken staan bij verschillende ASN\'s (AS64503 en AS64509).', '/nm\\.lab$/': 'Elk domein komt maar in één van de twee clusters voor. Zoek een knoop die in beide maanden opduikt.' },
+          why: 'Een scharnierpunt is ook het beste aangrijppunt: één vordering bij de mailprovider raakt hier beide zaken tegelijk.',
+          explain: 'Beide scripts sturen de ingevulde gegevens naar inbox-7731@postduif.example. In networkx zou nx.articulation_points(G) deze knoop teruggeven, naast de knopen binnen elk cluster.' },
       ],
     },
 
@@ -297,11 +449,129 @@ nx.betweenness_centrality(G)              # welke knoop is de spil?</code></pre>
 
         <div class="callout danger"><strong>Het uploadrisico — onthoud dit goed:</strong> gooi je een verdacht bestand naar VirusTotal, dan wordt die sample zichtbaar voor anderen (ook voor de dader, die zijn eigen hashes in de gaten houdt). Je tipt hem dat hij ontdekt is, en hij ruimt zijn infrastructuur op vóór je klaar bent. Hetzelfde geldt voor het actief bezoeken van zijn site. Daarom geldt de regel: <strong>NM{deel_geen_sample}</strong> — upload of bezoek niets zonder je af te vragen wie er meekijkt.</div>
       `,
+      lab: {
+        type: 'chaintrace',
+        title: 'losgeld van Alpha en Bravo',
+        unit: 'BTC',
+        scenario: 'De losgeld-adressen uit Zaak Alpha (1,2 BTC) en Zaak Bravo (0,8 BTC) zijn leeggehaald. Volg het geld. Alles is fictief.',
+        labels: { A: 'bc1qfictief0alpha', B: 'bc1qfictief0bravo', V: 'bc1qfictief5m2k', W: 'bc1qfictief9x4t', M: 'bc1qfictief3p7d', K: 'bc1qfictief8s1n', R: 'bc1qfictief2h6c', X: 'bc1qfictief4j9w', Y: 'bc1qfictief6q0z', EX1: 'Exchange Noordzee (stortadres)', EX2: 'Exchange Polder (stortadres)' },
+        exchanges: ['EX1', 'EX2'],
+        origins: [
+          { addr: 'A', amount: 1.2 },
+          { addr: 'B', amount: 0.8 },
+          { addr: 'K', amount: 2.0, dirty: false },
+          { addr: 'X', amount: 0.7, dirty: false },
+        ],
+        txs: [
+          { inputs: ['A', 'B'], outputs: [{ addr: 'V', amount: 1.5 }, { addr: 'W', amount: 0.5 }], time: '2026-02-10' },
+          { inputs: ['V'], outputs: [{ addr: 'EX1', amount: 1.0 }, { addr: 'M', amount: 0.5 }], time: '2026-02-11' },
+          { inputs: ['X'], outputs: [{ addr: 'Y', amount: 0.7 }], time: '2026-02-12' },
+          { inputs: ['M', 'K'], outputs: [{ addr: 'EX2', amount: 2.2 }, { addr: 'R', amount: 0.3 }], time: '2026-02-14' },
+        ],
+      },
       questions: [
-        { q: 'Welke heuristiek zegt dat adressen die samen in één transactie worden uitgegeven, waarschijnlijk van dezelfde eigenaar zijn?', answer: ['common-input-heuristiek', 'common input', 'common-input', 'common input heuristiek'], hint: 'Je moet alle sleutels hebben om die inputs samen uit te geven.', explain: 'De common-input-ownership-heuristiek clustert alle input-adressen van één transactie als één entiteit.' },
+        { q: 'Hoeveel vuil geld (in BTC) bereikt het stortadres bij Exchange Polder volgens het lab?', answer: ['0.44', '0,44', '0.44 BTC', '0,44 BTC'],
+          hints: ['Het saldo op een adres is niet hetzelfde als het vuile deel ervan.', 'Kijk in het adres-overzicht naar de kolom Taint bij Exchange Polder.', 'Het is 20% van 2,2 BTC.'],
+          wrong: { '2.2': 'Dat is het hele saldo. Het grootste deel komt van een adres met schoon geld; alleen het vuile deel telt.', '2,2': 'Dat is het hele saldo. Het grootste deel komt van een adres met schoon geld; alleen het vuile deel telt.', '0.5': 'Er ging 0,5 BTC vuil geld de transactie in, maar 0,3 BTC van de uitvoer bleef achter op een wisselgeldadres. De taint wordt naar rato verdeeld.', '0,5': 'Er ging 0,5 BTC vuil geld de transactie in, maar 0,3 BTC van de uitvoer bleef achter op een wisselgeldadres. De taint wordt naar rato verdeeld.' },
+          explain: 'In transactie 4 gaat 0,5 BTC vuil en 2,0 BTC schoon geld samen op: 20% vuil. Van de 2,2 BTC die bij Exchange Polder aankomt, is dus 0,44 BTC vuil. Dit is een rekenmodel (haircut), geen natuurwet.' },
         { q: 'Waarom is een exchange het "knelpunt" in een crypto-onderzoek?', options: ['Daar is het geld weg', 'Daar geldt vaak een identificatieplicht (KYC), dus daar kan het pseudonieme spoor aan een echte identiteit worden gekoppeld', 'Exchanges zijn illegaal', 'Daar stopt de blockchain'], answer: 1, explain: 'Bij een exchange met KYC kan via een justitieel verzoek de identiteit achter een adres bovenkomen; zelfgemaakte adressen blijven pseudoniem.' },
         { q: 'Wat is het risico van een verdacht bestand naar VirusTotal uploaden?', options: ['Het bestand wordt gewist', 'De sample wordt zichtbaar voor anderen, waaronder de dader, die dan gewaarschuwd is', 'VirusTotal is illegaal', 'Er gebeurt niets'], answer: 1, explain: 'Een upload wordt deelbaar/zichtbaar; een alerte dader ziet zijn eigen hash opduiken en ruimt zijn infra op. Dat is een actieve, verradende handeling.' },
-        { q: 'Welk verschil maakt "passief vs. actief" in infrastructuur-OSINT?', answer: ['passief raakt de dader niet, actief wel', 'bij passief merkt de dader niets, bij actief wel', 'passief is onzichtbaar, actief niet'], hint: 'Denk aan een archief bevragen versus de server van de dader zelf benaderen.', explain: 'Passief = een archief bevragen (crt.sh, passive DNS); actief = de verdachte server zelf benaderen of scannen, wat je kan verraden en soms strafbaar is.' },
+        { q: 'Bij welke exchange komt het meeste vuile geld binnen, zodat een vordering daar het meest oplevert? (naam)', answer: ['Exchange Noordzee', 'noordzee'],
+          hints: ['Vergelijk de twee stortadressen in het adres-overzicht.', 'Kijk niet naar het saldo maar naar het bedrag tussen haakjes in de kolom Taint.', 'Bij de ene exchange is 100% van het saldo vuil.'],
+          wrong: { 'exchange polder': 'Polder heeft het grootste saldo, maar daarvan is maar 20% vuil (0,44 BTC). Bij Noordzee komt 1 BTC vuil geld aan.', 'polder': 'Polder heeft het grootste saldo, maar daarvan is maar 20% vuil (0,44 BTC). Bij Noordzee komt 1 BTC vuil geld aan.' },
+          explain: 'Exchange Noordzee ontvangt 1,0 BTC, volledig afkomstig uit het losgeld. Het echte opvragen van klantgegevens loopt via justitie, niet via OSINT.' },
+        { q: 'Na transactie 4 staat er op drie adressen buiten de exchanges nog geld. Welk adres hoort bij de eigenaar van béíde losgeld-wallets? (label)', boss: true,
+          answer: ['bc1qfictief9x4t'],
+          hints: ['Stel eerst vast of de twee losgeld-wallets wel één eigenaar hebben. Welke transactie zegt daar iets over?', 'Adressen die samen input zijn van één transactie horen waarschijnlijk bij elkaar. Kijk daarna naar de uitvoer van diezelfde transactie: één deel wordt verder gestuurd, één deel blijft liggen.', 'Het gezochte adres is uitvoer van transactie 1 en heeft 100% taint.'],
+          wrong: { 'bc1qfictief2h6c': 'Dit is het wisselgeld van transactie 4. De invoer daarvan komt van een ander cluster (met schoon geld erbij), dus dit adres hoort bij die eigenaar, niet aantoonbaar bij de eigenaar van de losgeld-wallets.', 'bc1qfictief6q0z': 'Dit adres heeft 0% taint en hangt nergens aan het losgeld. Het is een toevallige transactie van iemand anders.', 'bc1qfictief5m2k': 'Dit adres is leeg: het is in transactie 2 volledig uitgegeven.', '/exchange/': 'Een stortadres is van de exchange. Gevraagd is een adres buiten de exchanges.' },
+          why: 'Geld dat nog op een eigen adres van de verdachte staat, kan in beslag worden genomen zodra de sleutel wordt gevonden. Het is ook het adres dat je in de gaten houdt voor de volgende beweging.',
+          explain: 'Transactie 1 geeft de wallets van Alpha en Bravo samen uit: volgens de common-input-heuristiek één eigenaar. Dat is naast het gedeelde certificaat een tweede, onafhankelijke aanwijzing dat de zaken bij elkaar horen. Van de uitvoer gaat 1,5 BTC verder en blijft 0,5 BTC liggen op bc1qfictief9x4t: het wisselgeld, dus van dezelfde eigenaar.' },
+      ],
+    },
+
+    {
+      title: 'Taak 8: Waar pivoten in de praktijk misgaat',
+      kind: 'verdieping', optional: true,
+      content: `
+        <p>In het lab is elke relatie netjes en volledig. Echte bronnen hebben gaten, vertragingen en valse vrienden. Wie
+        die kent, legt minder verkeerde verbanden.</p>
+
+        <h3>Certificate Transparency ziet niet alles</h3>
+        <ul>
+          <li>In de CT-logs staan certificaten van publieke certificaatautoriteiten. Een <strong>zelfondertekend</strong>
+          certificaat, zoals veel C2-servers gebruiken, staat er niet in. Dat vind je alleen in scandata (Shodan, Censys).</li>
+          <li>Een <strong>wildcardcertificaat</strong> (<code>*.voorbeeld.example</code>) verraadt geen losse subdomeinen.</li>
+          <li>Gedeelde certificaten zijn niet altijd verdacht. Hosters en CDN's zetten soms tientallen klanten, die niets met
+          elkaar te maken hebben, in één certificaat. Kijk dus wie de uitgever is en hoeveel namen erin staan voordat je een
+          gedeeld certificaat een link noemt.</li>
+        </ul>
+
+        <h3>Passive DNS is een steekproef</h3>
+        <p>Passive DNS bevat alleen wat de sensoren van die aanbieder hebben zien langskomen. Staat een koppeling er niet in,
+        dan is ze niet waargenomen; dat is iets anders dan dat ze niet bestond. "Eerst gezien" is de eerste waarneming, niet
+        de dag waarop het record werd aangemaakt.</p>
+
+        <h3>Tijd: overlap is verplicht</h3>
+        <p>Twee domeinen op hetzelfde IP-adres zijn alleen een link als ze er <em>in dezelfde periode</em> stonden. IP-adressen
+        bij hosters worden hergebruikt: de huurder van maart is niet de huurder van september.</p>
+
+        <h3>Valse clusters</h3>
+        <ul>
+          <li><strong>Sinkholes.</strong> Na een inbeslagname laten opsporingsdiensten of beveiligingsbedrijven
+          kwaadaardige domeinen naar één eigen adres wijzen. Tientallen ongerelateerde domeinen delen dan een IP zonder dat
+          ze één eigenaar hebben.</li>
+          <li><strong>Parkeerpagina's.</strong> Verlopen of ongebruikte domeinen wijzen massaal naar het adres van de registrar.</li>
+          <li><strong>WHOIS-afscherming.</strong> Sinds de AVG (2018) zijn contactgegevens in WHOIS meestal afgeschermd.
+          Duizenden domeinen delen dan hetzelfde afschermingsadres van de registrar. Dat is geen registrant.</li>
+          <li><strong>Standaardwaarden.</strong> Een JARM, favicon of header van een standaardinstallatie delen duizenden
+          servers. Zoek op hoe vaak een waarde in de hele dataset voorkomt, niet alleen binnen jouw zaak.</li>
+        </ul>
+
+        <h3>Hoe het echt gaat</h3>
+        <p>Een ervaren analist combineert altijd minstens twee onafhankelijke kenmerken voordat hij een link vastlegt,
+        noteert bij elke relatie een periode in plaats van één datum, en schrijft ook op wat hij heeft gezocht en
+        <em>niet</em> gevonden. Dat laatste voorkomt dat een collega hetzelfde werk opnieuw doet, en het maakt zichtbaar
+        waar het beeld gaten heeft.</p>
+      `,
+      questions: [
+        { q: 'Domein A stond van januari tot en met maart 2026 op een IP-adres. Domein B staat er sinds september 2026. Hoeveel maanden overlappen ze?', answer: ['0', 'nul'],
+          hints: ['Zet de twee perioden naast elkaar.', 'Maart eindigt ruim voor september.', 'Er is geen enkele gezamenlijke maand.'],
+          wrong: { '1': 'Er is geen maand waarin beide domeinen op het adres stonden.' },
+          explain: 'Nul. Zonder overlap is een gedeeld IP-adres geen link: het adres kan in de tussentijd aan een andere klant zijn verhuurd.' },
+        { q: 'Een C2-server gebruikt een zelfondertekend certificaat. In welk soort bron vind je dat certificaat wél?', options: ['In crt.sh', 'In scandata van Shodan of Censys', 'In passive DNS', 'In WHOIS'], answer: 1,
+          wrong: { 0: 'crt.sh doorzoekt de CT-logs, en daar staan alleen certificaten van publieke certificaatautoriteiten in.', 2: 'Passive DNS bevat koppelingen tussen namen en adressen, geen certificaten.', 3: 'WHOIS gaat over registratie van domeinen en netblokken.' },
+          explain: 'Scanners leggen vast welk certificaat een server daadwerkelijk aanbiedt, ook als geen enkele autoriteit het heeft uitgegeven.' },
+        { q: 'Je vindt 60 domeinen met hetzelfde WHOIS-contactadres. Het adres blijkt van de afschermingsdienst van een registrar. Hoeveel van die 60 domeinen mag je op grond hiervan aan één registrant koppelen?', answer: ['0', 'nul'],
+          hints: ['Vraag je af van wie het adres is.', 'Een afschermingsadres wordt gedeeld door alle klanten die afscherming gebruiken.', 'Het kenmerk zakt voor de zeldzaamheidstoets.'],
+          explain: 'Geen enkel. Het adres is van de registrar, niet van een registrant. Het is een standaardwaarde en dus ruis.' },
+      ],
+    },
+
+    {
+      title: 'Taak 9: Zo komt dit voor op een examen',
+      kind: 'examen', optional: true,
+      content: `
+        <p>Examenvragen over OSINT en infrastructuuranalyse geven je een situatie en vragen wat de beste bron, de sterkste
+        aanwijzing of de veiligste handeling is. De afleiders zijn meestal dingen die óók waar of óók nuttig zijn, maar net
+        niet het beste antwoord op deze vraag.</p>
+      `,
+      questions: [
+        { q: 'Een analist onderzoekt twee phishingsites. Ze hebben vier dingen gemeen. Welke overeenkomst is de sterkste aanwijzing dat ze door dezelfde partij zijn opgezet?',
+          options: ['Beide domeinen zijn bij dezelfde grote registrar geregistreerd', 'Beide gebruiken een gratis certificaat van dezelfde certificaatautoriteit', 'Beide pagina\'s bevatten hetzelfde, verder nergens gevonden, volg-ID van een statistiekendienst', 'Beide staan bij dezelfde cloudprovider'], answer: 2,
+          wrong: { 0: 'Een grote registrar heeft miljoenen klanten. Dit kenmerk is veel te algemeen.', 1: 'Een populaire gratis autoriteit geeft enorme aantallen certificaten uit. Dezelfde uitgever is iets anders dan hetzelfde certificaat.', 3: 'Een cloudprovider is gedeelde infrastructuur. Twee klanten van dezelfde provider hebben niets met elkaar te maken.' },
+          explain: 'Een volg-ID hoort bij één account. Komt het verder nergens voor, dan is het een zeldzaam en specifiek kenmerk: precies wat de zeldzaamheidstoets vraagt.' },
+        { q: 'Een domein dat in maart voor phishing is gebruikt, wijst vandaag naar een parkeerpagina. De analist wil weten op welk IP-adres de phishingpagina in maart stond. Welke bron geeft het antwoord?',
+          options: ['Een actuele DNS-opvraging', 'Passive DNS', 'Certificate Transparency', 'De WHOIS-gegevens van het domein'], answer: 1,
+          wrong: { 0: 'Die geeft het adres van vandaag: de parkeerpagina.', 2: 'CT laat zien welke certificaten voor het domein zijn uitgegeven, niet naar welk adres het domein wees.', 3: 'WHOIS zegt wie het domein registreerde en wanneer, niet waar het in maart naar resolvete.' },
+          explain: 'Passive DNS bewaart historische koppelingen tussen domein en IP-adres, met de periode erbij.' },
+        { q: 'Een opsporingsteam onderzoekt heimelijk een server die vermoedelijk van een verdachte is. Welke handeling brengt het grootste risico mee dat de verdachte merkt dat hij wordt onderzocht?',
+          options: ['Het domein opzoeken in crt.sh', 'Het IP-adres opzoeken in RIPEstat', 'Vanaf het eigen kantoornetwerk een TLS-fingerprint van de server nemen', 'De geschiedenis van het domein opvragen in passive DNS'], answer: 2,
+          wrong: { 0: 'crt.sh is een archief. De server van de verdachte merkt niets van die opvraging.', 1: 'RIPEstat bevraagt registratiegegevens, niet de server zelf.', 3: 'Passive DNS is een archief van eerdere waarnemingen. Er gaat geen verkeer naar de verdachte.' },
+          explain: 'Een fingerprint zoals JARM nemen is actief: er gaat verkeer van jouw adres naar de server, en dat staat in zijn log. De andere drie bevragen archieven.' },
+        { q: 'In een bitcointransactie worden drie adressen samen als invoer gebruikt, en er zijn twee uitvoeradressen. Welke conclusie volgt uit de common-input-heuristiek?',
+          options: ['De twee uitvoeradressen horen waarschijnlijk bij dezelfde eigenaar', 'De drie invoeradressen horen waarschijnlijk bij dezelfde eigenaar', 'Alle vijf adressen horen bij dezelfde eigenaar', 'Het grootste uitvoerbedrag is het wisselgeld'], answer: 1,
+          wrong: { 0: 'Meestal is één uitvoer de betaling en de andere het wisselgeld. De heuristiek zegt niets over de uitvoer als geheel.', 2: 'De ontvanger van de betaling is doorgaans iemand anders dan de verzender.', 3: 'Dat is geen regel. De change-heuristiek kijkt naar zaken als een vers adres en een niet-rond bedrag, en hoort niet bij common-input.' },
+          explain: 'Wie meerdere adressen samen uitgeeft, heeft de sleutels van al die adressen. Let op: bij CoinJoin-transacties gaat deze aanname bewust niet op.' },
       ],
     },
   ],

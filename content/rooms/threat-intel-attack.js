@@ -67,6 +67,8 @@ CS.registerRoom({
   title: 'Threat intelligence & MITRE ATT&CK',
   icon: '🧭',
   difficulty: 'Gemiddeld',
+  level: 'Praktijk',
+  checked: '2026-11-12',
   minutes: 65,
   summary: 'Leer denken als een threat-intelanalist: van IOC\'s en de Pyramid of Pain tot TLP, veilig delen en het koppelen van aanvalsgedrag aan MITRE ATT&CK, met een fictieve campagne als oefencasus.',
   objectives: [
@@ -80,6 +82,8 @@ CS.registerRoom({
   tasks: [
     {
       title: 'Taak 1 — Wat is threat intelligence?',
+      tryFirst: true,
+      intro: '<p>Het intelteam heeft zestien producten en berichten klaarliggen. Sorteer ze in het lab in vier groepen van vier. Let per kaartje op twee dingen: voor wie is het bedoeld, en hoe lang blijft het bruikbaar?</p>',
       content: `
         <p>Een SOC krijgt elke dag duizenden meldingen. Welke zijn belangrijk? Welke aanvallers hebben het op jouw
         sector gemunt, en hoe werken ze? Om die vragen te beantwoorden heb je <strong>threat intelligence</strong>
@@ -127,15 +131,36 @@ CS.registerRoom({
         "drie medewerkers kregen de mail, één opende de bijlage." Het SOC geeft terug dat de lijst ook domeinen moet
         bevatten, en de cyclus begint opnieuw.</p>
       `,
+      lab: {
+        type: 'connections',
+        title: 'welke soort intel is dit?',
+        prompt: 'Vier groepen van vier: strategisch, tactisch, operationeel en technisch.',
+        flag: 'NM{vier_soorten_intel}',
+        groups: [
+          { name: 'Strategisch', items: ['Jaarbeeld: ransomware in de logistiek neemt toe', 'Notitie voor de directie over budget voor herstel', 'Trendrapport over spanningen rond havens', 'Risico-overzicht voor de raad van commissarissen'] },
+          { name: 'Tactisch', items: ['Werkwijze van een groep: binnen via nepfactuur, verder via RDP', 'Overzicht van de ATT&CK-technieken van een groep', 'Advies aan SOC-lead: detecteer PowerShell met -enc', 'Beschrijving: groep leest eerst LSASS uit'] },
+          { name: 'Operationeel', items: ['Waarschuwing: campagne KOFFIEKAT loopt nu tegen logistiek', 'Bericht: deze week phishinggolf namens PakketPost', 'Melding: aanval verwacht rond de feestdagen', 'Tip uit de ISAC: groep zoekt nu naar ongepatchte gateways'] },
+          { name: 'Technisch', items: ['Lijst met C2-IP-adressen', 'SHA-256 van loader.dll', 'Het domein update-koffie.nm.lab', 'Blocklist met phishing-URL\'s'] },
+        ],
+      },
       questions: [
         { q: 'Welke soort threat intelligence is bedoeld voor de directie en gaat over trends en risico\'s op lange termijn?', options: ['Strategisch', 'Tactisch', 'Operationeel', 'Technisch'], answer: 0, explain: 'Strategische intel is weinig technisch en helpt bestuurders bij keuzes over budget en risico.' },
-        { q: 'Een lijst met kwaadaardige IP-adressen en hashes voor in de firewall en het SIEM: welke soort intel is dat?', options: ['Strategisch', 'Tactisch', 'Technisch', 'Juridisch'], answer: 2, explain: 'Concrete, direct bruikbare indicatoren zijn technische intelligence.' },
-        { q: 'Wat is de laatste stap van de intelligence-cyclus, die de volgende ronde stuurt?', answer: ['feedback', 'terugkoppeling'], hint: 'Was het product bruikbaar? Wat missen we?', explain: 'Via feedback hoort het intelteam wat werkte en wat er nog nodig is.' },
+        { q: 'Sorteer de zestien kaartjes in het lab. Welke vlag krijg je als alle vier de groepen kloppen?', answer: ['NM{vier_soorten_intel}'],
+          hints: ['Begin met de groep die je direct in een firewall of SIEM kunt zetten.', 'Strategisch is voor bestuurders en gaat over trends. Operationeel gaat over één campagne die nu loopt of eraan komt.', 'Alles wat een werkwijze of techniek beschrijft zonder tijdstip is tactisch.'],
+          wrong: { '/^nm\\{vier/': 'Bijna. Neem de vlag precies over zoals hij onder het bord staat.' },
+          why: 'Een goed rapport bij de verkeerde lezer doet niets. Een directeur kan niets met een hash, een SOC-analist niets met een jaarbeeld.',
+          explain: 'Strategisch: trends voor bestuurders. Tactisch: werkwijze en technieken. Operationeel: een concrete campagne, nu. Technisch: indicatoren die je kunt blokkeren of zoeken.' },
+        { q: 'Een analist krijgt drie rapporten met elk een eigen schrijfwijze en zet de indicatoren om naar één lijst zonder dubbelen. In welke stap van de intelligence-cyclus zit hij? Geef het nummer (1 t/m 6).', answer: ['3'],
+          hints: ['Hij duidt nog niets; hij maakt de ruwe gegevens bruikbaar.', 'Het is de stap tussen verzamelen en analyseren.', 'Verwerken (processing).'],
+          wrong: { '2': 'Verzamelen is het ophalen van de rapporten. Hier worden ze al geordend en ontdubbeld.', '4': 'Analyseren is duiden: wat betekent dit voor ons? Zover is hij nog niet.' },
+          explain: 'Ordenen, ontdubbelen en in één formaat zetten is stap 3: verwerken.' },
       ],
     },
 
     {
       title: 'Taak 2 — IOC\'s versus gedrag: de Pyramid of Pain',
+      tryFirst: true,
+      intro: '<p>Zes sporen van dezelfde aanvaller. Zet ze in het lab in volgorde: bovenaan het spoor dat hij het makkelijkst verandert, onderaan het spoor dat hem het meeste werk kost. Bedenk bij elk spoor: wat moet hij doen om jouw detectie te ontlopen?</p>',
       content: `
         <p>Een <strong>Indicator of Compromise</strong> (IOC) is een technisch spoor van een aanval: een IP-adres, een
         domeinnaam, de hash van een malwarebestand. IOC's zijn handig, want je kunt ze direct blokkeren of in je logs
@@ -193,9 +218,30 @@ CS.registerRoom({
           zijn. Combineer daarom snelle IOC-blokkades met detectieregels op gedrag.
         </div>
       `,
+      lab: {
+        type: 'ordering',
+        title: 'van weinig naar veel pijn',
+        prompt: 'Zet de sporen in volgorde: bovenaan wat de aanvaller het makkelijkst verandert, onderaan wat hem het meeste moeite kost.',
+        items: [
+          { id: 'h', label: 'De SHA-256-hash van loader.dll' },
+          { id: 'i', label: 'Het C2-adres 203.0.113.88' },
+          { id: 'd', label: 'Het domein update-koffie.nm.lab' },
+          { id: 'a', label: 'Een geplande taak met de vaste naam KoffieUpdate' },
+          { id: 't', label: 'De loader zelf: eigen gereedschap dat via rundll32 start' },
+          { id: 'p', label: 'De werkwijze: LSASS uitlezen en daarna verder via RDP' },
+        ],
+        correct: ['h', 'i', 'd', 'a', 't', 'p'],
+        flag: 'NM{pijn_loopt_op}',
+        explain: 'Hash, IP-adres, domein, artefact, tool, TTP: elke laag hoger kost de aanvaller meer werk om te veranderen.',
+      },
       questions: [
-        { q: 'Welke laag staat helemaal onderaan de Pyramid of Pain (het makkelijkst te omzeilen)?', options: ['Hashwaarden', 'Domeinnamen', 'Tools', 'TTP\'s'], answer: 0, explain: 'Eén bit aan een bestand wijzigen levert al een totaal andere hash op.' },
-        { q: 'Waar staat de afkorting TTP voor? (Engels)', answer: ['Tactics, Techniques and Procedures', 'tactics techniques and procedures', 'tactics, techniques, and procedures', 'tactics techniques procedures'], hint: 'Tactieken, technieken en ...', explain: 'TTP\'s beschrijven het gedrag van een aanvaller: doel, manier en precieze uitvoering.' },
+        { q: 'Zet de zes sporen in het lab in de juiste volgorde. Welke vlag krijg je?', answer: ['NM{pijn_loopt_op}'],
+          hints: ['Vraag je per spoor af hoeveel werk het de aanvaller kost om het te veranderen.', 'Een bestand opnieuw inpakken kost seconden; een server huren kost minuten; een domein registreren iets meer.', 'Volgorde: hash, IP-adres, domein, taaknaam, loader, werkwijze.'],
+          explain: 'De volgorde volgt de Pyramid of Pain van onder naar boven.' },
+        { q: 'Op welke plek in de juiste volgorde (1 = minste pijn, 6 = meeste pijn) staat de geplande taak met de vaste naam KoffieUpdate?', answer: ['4'],
+          hints: ['Een vaste taaknaam is geen hash, adres of domein, maar ook nog geen gereedschap.', 'Het is een hostartefact: een spoor dat de tooling achterlaat.', 'Het staat direct boven de domeinnaam.'],
+          wrong: { '3': 'Op plek 3 staat de domeinnaam. Een artefact aanpassen betekent de tooling wijzigen: dat is een laag hoger.', '5': 'Plek 5 is het gereedschap zelf. Een naam aanpassen is minder werk dan een nieuwe loader bouwen.' },
+          explain: 'Netwerk- en hostartefacten staan op de vierde laag: vervelend om te veranderen, maar nog geen nieuwe tool.' },
         { q: 'Waarom kost detectie op TTP\'s een aanvaller de meeste moeite?', options: ['Omdat hij dan zijn hele werkwijze moet veranderen in plaats van alleen een server of bestand', 'Omdat TTP\'s versleuteld zijn', 'Omdat TTP\'s alleen op Linux werken', 'Omdat TTP\'s geheim zijn'], answer: 0, explain: 'Een nieuw IP of domein is zo geregeld; een nieuwe werkwijze bedenken en oefenen niet.' },
       ],
     },
@@ -255,11 +301,17 @@ CS.registerRoom({
         { q: 'Hoeveel SHA-256-hashes staan er in het rapport?', answer: ['3', 'drie'], hint: 'SHA-256 is 64 hex-tekens lang.', explain: 'loader.dll, stage2 en de versleutelaar hebben elk een SHA-256-hash.' },
         { q: 'Welk CVE-nummer noemt het rapport?', answer: ['CVE-2023-4966'], hint: 'Zoek naar CVE- in de tekst of de CVE-telling in het lab.', explain: 'De aanvaller kwam bij twee slachtoffers binnen via een ongepatchte NetScaler-gateway. Patchen heeft dus hoge prioriteit.' },
         { q: 'Wat is de rapportcode (vlag) in de kop van het rapport?', answer: ['NM{koffiekat_iocs_verzameld}'], hint: 'Kijk in de eerste regels van de tekst in het lab.' },
+        { q: 'Welk IP-adres is volgens het rapport zowel C2-server als afzender van de phishingmails?', answer: ['203.0.113.88'],
+          hints: ['Dit staat niet in de tellingen; je moet de tekst lezen.', 'Kijk onder INFRASTRUCTUUR naar de regel die met "Let op" begint.', 'Het is het eerste van de twee C2-adressen.'],
+          wrong: { '203.0.113.91': 'Dat is het tweede C2-adres. De regel "Let op" noemt het andere.', '198.51.100.7': 'Vanaf dat adres komt scanverkeer, geen mail.', '192.0.2.14': 'Dat is het adres waar de gestolen data naartoe gaat.' },
+          explain: 'Een adres met twee rollen is extra waardevol: één zoekopdracht in je mail- en proxylogs dekt twee fasen van de aanval.' },
       ],
     },
 
     {
       title: 'Taak 4 — Veilig delen: defangen, TLP 2.0 en de Nederlandse aanpak',
+      tryFirst: true,
+      intro: '<p>Je hebt het KOFFIEKAT-rapport en verschillende mensen willen het hebben. Neem in het lab zes beslissingen: mag je delen, met wie en in welke vorm? Het label op het rapport bepaalt het antwoord. Kom je er niet uit, dan staat de tabel met labels in de uitleg.</p>',
       content: `
         <p>Intel wordt pas echt waardevol als je hem deelt. Wat de ene organisatie vandaag ziet, kan de andere morgen
         tegenhouden. Maar delen moet <em>veilig</em> en met duidelijke afspraken.</p>
@@ -321,16 +373,68 @@ CS.registerRoom({
           security-teams.
         </div>
       `,
+      lab: {
+        type: 'scenario',
+        title: 'mag ik dit delen?',
+        scenario: 'Je werkt in het SOC van een logistiek bedrijf dat ook IT beheert voor klanten. Je krijgt dreigingsinformatie met een TLP-label. Kies per situatie wat je doet.',
+        pass: 5,
+        flag: 'NM{het_label_bepaalt_de_ontvanger}',
+        steps: [
+          { situation: 'Het KOFFIEKAT-rapport is TLP:AMBER. Een collega van netwerkbeheer moet de C2-adressen blokkeren.', choices: [
+            { label: 'Niet delen: AMBER is alleen voor de ontvanger zelf', feedback: 'Dat is TLP:RED. AMBER mag binnen je organisatie, voor wie het nodig heeft.' },
+            { label: 'De indicatoren delen die hij nodig heeft', good: true, feedback: 'AMBER: binnen je organisatie op need-to-know-basis.' },
+            { label: 'Het hele rapport op het intranet zetten', feedback: 'Need-to-know betekent niet: iedereen. Deel met wie er iets mee moet doen.' },
+          ] },
+          { situation: 'Hetzelfde rapport, TLP:AMBER. Een klant van jullie beheerafdeling gebruikt dezelfde kwetsbare gateway.', choices: [
+            { label: 'Delen met de klant, voor zover die het nodig heeft', good: true, feedback: 'AMBER staat delen met je eigen klanten toe, op need-to-know-basis.' },
+            { label: 'Niet delen: naar klanten mag pas vanaf GREEN', feedback: 'AMBER omvat je organisatie en haar klanten. Alleen AMBER+STRICT sluit klanten uit.' },
+            { label: 'Delen en erbij zeggen dat de klant het vrij mag doorsturen', feedback: 'De klant is aan hetzelfde label gebonden.' },
+          ] },
+          { situation: 'Een bijgewerkte versie van het rapport is TLP:AMBER+STRICT. Een bevriende analist bij een ander bedrijf in de sector vraagt erom.', choices: [
+            { label: 'Doorsturen: hij zit in dezelfde sector', feedback: 'Delen binnen de sector hoort bij GREEN.' },
+            { label: 'Doorsturen, maar eerst defangen', feedback: 'Defangen maakt links onklikbaar. Het verandert niets aan wie het mag zien.' },
+            { label: 'Niet doorsturen; de bron vragen of er een versie is die je wel mag delen', good: true, feedback: 'AMBER+STRICT blijft binnen je eigen organisatie. De bron bepaalt of het ruimer mag.' },
+          ] },
+          { situation: 'In een crisisoverleg hoor je informatie onder TLP:RED. Je teamleider was er niet bij en vraagt wat er gezegd is.', choices: [
+            { label: 'Vertellen: hij is je leidinggevende', feedback: 'RED is alleen voor de aanwezigen, ook binnen je eigen organisatie.' },
+            { label: 'Niet vertellen; de bron vragen of het met hem gedeeld mag worden', good: true, feedback: 'Bij RED beslist de bron over elke extra ontvanger.' },
+            { label: 'Een samenvatting zonder namen sturen', feedback: 'Ook een samenvatting is doorgeven van RED-informatie.' },
+          ] },
+          { situation: 'Een rapport is TLP:GREEN. Je wilt de indicatoren in een openbare blogpost zetten.', choices: [
+            { label: 'Publiceren: GREEN betekent vrij te delen', feedback: 'GREEN is voor de community, niet voor het open internet. Openbaar mag pas bij CLEAR.' },
+            { label: 'Niet publiceren; wel delen in de besloten sectorgroep', good: true, feedback: 'GREEN: binnen je community, niet openbaar.' },
+            { label: 'Publiceren zonder de naam van de bron', feedback: 'De bron weglaten verandert het label niet.' },
+          ] },
+          { situation: 'Je deelt de beacon-URL https://update-koffie.nm.lab/api/beacon in de besloten chat van je sectorgroep.', choices: [
+            { label: 'Plakken zoals hij is', feedback: 'Een chatprogramma kan er een klikbare link van maken of zelf een voorbeeld ophalen bij de server van de aanvaller.' },
+            { label: 'Defangen: hxxps://update-koffie[.]nm[.]lab/api/beacon', good: true, feedback: 'Onklikbaar, maar nog leesbaar en te kopiëren.' },
+            { label: 'Alleen een schermafbeelding van de URL sturen', feedback: 'Veilig, maar niemand kan de indicator dan nog kopiëren of doorzoeken.' },
+          ] },
+        ],
+      },
       questions: [
         { q: 'Hoe schrijf je het IP-adres 192.0.2.14 gedefanged (laatste punt vervangen)?', answer: ['192.0.2[.]14', '192[.]0[.]2[.]14'], hint: 'Vervang de punt door [.]', explain: 'Met [.] is het adres onklikbaar, maar nog prima leesbaar voor een analist.' },
-        { q: 'Welk TLP-label betekent: alleen binnen je eigen organisatie, niet naar klanten?', options: ['TLP:CLEAR', 'TLP:GREEN', 'TLP:AMBER', 'TLP:AMBER+STRICT'], answer: 3, explain: 'AMBER+STRICT beperkt delen tot je eigen organisatie; gewone AMBER staat ook klanten toe.' },
-        { q: 'Welk TLP 2.0-label verving het oude TLP:WHITE?', answer: ['TLP:CLEAR', 'CLEAR', 'TLP CLEAR'], hint: 'Geen beperking, mag openbaar.', explain: 'In TLP 2.0 heet het openbare label CLEAR.' },
+        { q: 'Neem de zes beslissingen in het lab. Welke vlag krijg je bij minstens vijf goede keuzes?', answer: ['NM{het_label_bepaalt_de_ontvanger}'],
+          hints: ['Lees bij een foute keuze de feedback en speel het scenario opnieuw.', 'RED: alleen de aanwezigen. AMBER+STRICT: eigen organisatie. AMBER: ook klanten. GREEN: community. CLEAR: openbaar.', 'Defangen gaat over veiligheid van de link, niet over wie het mag zien.'],
+          wrong: { '/^nm\\{tlp/': 'Neem de vlag precies over zoals het lab hem na afloop toont.' },
+          why: 'Wie een label negeert, krijgt de volgende keer niets meer. Delen van dreigingsinformatie werkt alleen zolang iedereen zich aan de afspraak houdt.',
+          explain: 'Het label zegt wie de ontvanger mag zijn. Twijfel je, dan vraag je de bron; je beslist niet zelf dat het ruimer mag.' },
+        { q: 'Defang de URL https://cdn-koffiekat.nm.lab/drop/stage2 (hxxps, en elke punt als [.]).', answer: ['hxxps://cdn-koffiekat[.]nm[.]lab/drop/stage2', 'hxxps[://]cdn-koffiekat[.]nm[.]lab/drop/stage2'],
+          hints: ['Twee dingen veranderen: het schema en de punten in de hostnaam.', 'https wordt hxxps; elke punt in de host wordt [.]', 'Het pad /drop/stage2 blijft zoals het is.'],
+          wrong: {
+            'hxxps://cdn-koffiekat.nm.lab/drop/stage2': 'Het schema is goed, maar de punten in de hostnaam zijn nog klikbaar. Vervang ze door [.]',
+            'https://cdn-koffiekat[.]nm[.]lab/drop/stage2': 'De punten zijn goed. Vervang ook https door hxxps.',
+            'hxxps://cdn-koffiekat[.]nm.lab/drop/stage2': 'Je mist een punt: ook die tussen nm en lab wordt [.]',
+          },
+          explain: 'hxxps://cdn-koffiekat[.]nm[.]lab/drop/stage2 is niet meer klikbaar, maar een analist leest en refangt hem zonder moeite.' },
         { q: 'Hoe heet het open-source platform waarmee organisaties indicatoren en rapporten met elkaar delen?', answer: ['MISP'], hint: 'Vier letters.', explain: 'MISP-servers kunnen aan elkaar gekoppeld worden, zodat IOC\'s automatisch gedeeld worden.' },
       ],
     },
 
     {
       title: 'Taak 5 — Praktijk: phishing-URL\'s ontleden',
+      tryFirst: true,
+      intro: '<p>Vijf links uit de KOFFIEKAT-campagne. Zoek per link uit met welke host de browser echt verbinding maakt, en welke van de vijf je zou blokkeren. Het lab ontleedt ze voor je; jij trekt de conclusie.</p>',
       content: `
         <p>De KOFFIEKAT-campagne gebruikt ook phishinglinks. Uit de mailgateway en meldingen van medewerkers heb je
         vijf URL's verzameld. Jouw taak: bepalen welke kwaadaardig zijn en waar ze écht naartoe gaan, zodat je de
@@ -347,8 +451,8 @@ pad             /pad/pagina
 query           id=12</code></pre>
         <ul>
           <li>De <strong>host</strong> is waar je browser echt verbinding mee maakt. Alles vóór een <code>@</code> is
-          een gebruikersdeel en wordt genegeerd. Bij <code>https://www.nederbank.nl@203.0.113.45/</code> ga je dus
-          naar <code>203.0.113.45</code>, niet naar de bank. Dat heet de <strong>@-truc</strong>.</li>
+          een gebruikersdeel en wordt genegeerd. Bij <code>https://www.pakketpost.nl@198.51.100.99/</code> ga je dus
+          naar <code>198.51.100.99</code>, niet naar de pakketdienst. Dat heet de <strong>@-truc</strong>.</li>
           <li>Een hostnaam lees je <strong>van rechts naar links</strong>. Bij
           <code>pakketpost.nl.bezorging-status.nm.lab</code> bepaalt het laatste stuk wie de eigenaar is. Het begin
           (<code>pakketpost.nl</code>) is maar een subdomein dat de aanvaller zelf heeft verzonnen.</li>
@@ -357,7 +461,7 @@ query           id=12</code></pre>
           er hetzelfde uit als een Latijnse <code>e</code>. Dit heet een <em>homograafaanval</em>.</li>
           <li>Een kaal <strong>IP-adres</strong> als host, <code>http</code> zonder <code>s</code> of een vreemde
           <strong>poort</strong> zijn ook rode vlaggen. Legitieme bedrijven sturen je zelden naar een kaal IP-adres
-          op poort 8081.</li>
+          op een ongebruikelijke poort.</li>
         </ul>
 
         <h3>Opdracht</h3>
@@ -384,8 +488,14 @@ query           id=12</code></pre>
         ],
       },
       questions: [
-        { q: 'Met welke host maakt de browser echt verbinding bij https://www.nederbank.nl@203.0.113.45/inloggen?', answer: ['203.0.113.45'], hint: 'Alles vóór de @ is het gebruikersdeel.', explain: 'Door de @-truc lijkt het een link naar de bank, maar de echte host is het IP-adres 203.0.113.45.' },
-        { q: 'Welke poort gebruikt de URL met het IP-adres 198.51.100.23?', answer: ['8081'], hint: 'Kijk naar het getal na de dubbele punt.', explain: 'Een ongebruikelijke poort op een kaal IP-adres is een sterke rode vlag.' },
+        { q: 'Met welke host maakt de browser echt verbinding bij https://www.nederbank.nl@203.0.113.45/inloggen?', answer: ['203.0.113.45'],
+          hints: ['Niet alles voor de eerste schuine streep is de host.', 'Kijk in het lab naar de regel "Host" en naar de regel "Gebruikersinfo".', 'Alles voor de @ wordt genegeerd.'],
+          wrong: { 'www.nederbank.nl': 'Dat staat voor de @ en is alleen gebruikersinfo. De browser verbindt met wat erna komt.', 'nederbank.nl': 'Dat staat voor de @ en is alleen gebruikersinfo. De browser verbindt met wat erna komt.' },
+          explain: 'Door de @-truc lijkt het een link naar de bank, maar de echte host is het IP-adres 203.0.113.45.' },
+        { q: 'Welke poort gebruikt de URL met het IP-adres 198.51.100.23?', answer: ['8081'],
+          hints: ['De poort staat in de URL zelf.', 'Kijk naar het getal direct na de host, achter de dubbele punt.', 'Het lab toont het op de regel "Poort".'],
+          wrong: { '80': 'Poort 80 is de standaard voor http, maar deze URL noemt zelf een andere poort.', '443': 'Poort 443 hoort bij https. Deze URL gebruikt http en noemt zelf een poort.' },
+          explain: 'Een ongebruikelijke poort op een kaal IP-adres is een sterke rode vlag.' },
         { q: 'Welke URL gebruikt punycode om op een bekend domein te lijken?', options: ['https://xn--nderbank-c8g.nm.lab/verificatie', 'https://intranet.nm.lab/rooster', 'http://198.51.100.23:8081/pakket/volgen', 'https://www.nederbank.nl@203.0.113.45/inloggen'], answer: 0, explain: 'xn-- verraadt punycode: achter de schermen staat een Cyrillisch teken dat op een Latijnse letter lijkt.' },
         { q: 'Bij http://pakketpost.nl.bezorging-status.nm.lab/track: wat is het echte probleem?', options: ['pakketpost.nl is slechts een subdomein van het domein van de aanvaller', 'De URL heeft een queryparameter', 'Het pad heet /track', 'Er is niets aan de hand, het is pakketpost.nl'], answer: 0, explain: 'Lees van rechts naar links: de host valt onder bezorging-status.nm.lab. De merknaam vooraan is misleiding.' },
       ],
@@ -393,6 +503,8 @@ query           id=12</code></pre>
 
     {
       title: 'Taak 6 — MITRE ATT&CK en de Cyber Kill Chain',
+      tryFirst: true,
+      intro: '<p>Negen waarnemingen uit het KOFFIEKAT-incident. Koppel in het lab elke waarneming aan een ATT&amp;CK-techniek. Kies de techniek die de handeling beschrijft; het lab laat na elke keuze zien bij welke tactiek die hoort.</p>',
       content: `
         <p>Als iedereen gedrag op zijn eigen manier beschrijft, kun je intel moeilijk vergelijken. Daarom maakte de
         Amerikaanse non-profit MITRE <strong>ATT&amp;CK</strong> (Adversarial Tactics, Techniques and Common
@@ -401,7 +513,7 @@ query           id=12</code></pre>
 
         <h3>Tactieken: het "waarom"</h3>
         <p>Een <strong>tactiek</strong> is het doel van de aanvaller in een bepaalde stap. De Enterprise-matrix telt
-        <strong>14 tactieken</strong>:</p>
+        <strong>14 tactieken</strong> (stand: ATT&amp;CK v17, 2025; de indeling kan per versie veranderen):</p>
         <ol>
           <li><strong>Reconnaissance</strong> — informatie verzamelen over het doelwit</li>
           <li><strong>Resource Development</strong> — infrastructuur en middelen opbouwen (domeinen, servers, tools)</li>
@@ -461,16 +573,41 @@ query           id=12</code></pre>
           schriftelijke toestemming. Zonder toestemming is het computervredebreuk (art. 138ab Sr).
         </div>
       `,
+      lab: {
+        type: 'attackmap',
+        items: [
+          { desc: 'Een medewerker opent de bijlage factuur_sep.zip uit een mail die van PakketPost Zakelijk lijkt te komen.', code: 'T1566.001', explain: 'Een kwaadaardige bijlage in een gerichte mail is Spearphishing Attachment.' },
+          { desc: 'powershell.exe start met -w hidden -enc en een lange gecodeerde opdracht.', code: 'T1059.001', explain: 'De aanvaller gebruikt PowerShell om code uit te voeren.' },
+          { desc: 'PowerShell haalt stage2 op van cdn-koffiekat.nm.lab en schrijft loader.dll naar de schijf.', code: 'T1105', explain: 'Gereedschap van buiten naar het slachtoffer halen is Ingress Tool Transfer.' },
+          { desc: 'schtasks /create /tn KoffieUpdate ... /sc onlogon', code: 'T1053', explain: 'Een geplande taak die bij elke aanmelding de loader start.' },
+          { desc: 'rundll32.exe opent het geheugen van lsass.exe.', code: 'T1003.001', explain: 'LSASS bevat inloggegevens van aangemelde gebruikers.' },
+          { desc: 'Aanmelding via Remote Desktop op SRV-FS02 vanaf een werkplek, met een beheerdersaccount.', code: 'T1021.001', explain: 'Zijdelings bewegen via RDP.' },
+          { desc: '7z.exe pakt D:\\Shares\\Klanten in tot archief.7z met een wachtwoord.', code: 'T1560', explain: 'Verzamelde data inpakken voor het naar buiten gaat.' },
+          { desc: 'vssadmin.exe delete shadows /all /quiet', code: 'T1490', explain: 'Schaduwkopieën wissen maakt herstel zonder back-up onmogelijk.' },
+          { desc: 'Duizenden bestanden krijgen de extensie .koffie en er verschijnt een losgeldbrief.', code: 'T1486', explain: 'Versleutelen om de organisatie te raken en losgeld te eisen.' },
+        ],
+      },
       questions: [
-        { q: 'Hoeveel tactieken telt de MITRE ATT&CK Enterprise-matrix?', answer: ['14', 'veertien'], hint: 'Van Reconnaissance tot Impact.', explain: 'Er zijn 14 Enterprise-tactieken, van Reconnaissance tot en met Impact.' },
-        { q: 'Welk techniek-ID hoort bij Phishing?', answer: ['T1566'], hint: 'Kijk in de tabel met technieken.', explain: 'T1566 Phishing valt onder de tactiek Initial Access.' },
+        { q: 'Hoeveel van de negen waarnemingen in het lab vallen onder de tactiek Impact?', answer: ['2', 'twee'],
+          hints: ['Impact is de laatste tactiek: schade aanrichten.', 'Het lab toont na controle de tactiek achter elke techniek.', 'Het zijn de laatste twee waarnemingen in de lijst.'],
+          wrong: { '1': 'Versleutelen is Impact, maar het wissen van schaduwkopieën ook: het maakt herstel onmogelijk.', '3': 'Het inpakken met 7z is Collection: de data wordt verzameld, er gaat nog niets stuk.' },
+          explain: 'T1490 Inhibit System Recovery en T1486 Data Encrypted for Impact.' },
+        { q: 'Welk techniek-ID hoort bij het inpakken van de klantenmap met 7z.exe?', answer: ['T1560', 'T1560.001'],
+          hints: ['De aanvaller verzamelt hier; hij verstuurt nog niets.', 'Zoek in de lijst van het lab naar een techniek met "Archive" in de naam.', 'Archive Collected Data.'],
+          wrong: { 'T1041': 'T1041 is het versturen over het C2-kanaal. Het inpakken komt daarvoor en is een eigen techniek.', 'T1567': 'T1567 is exfiltratie via een webdienst. Hier wordt alleen nog ingepakt.', 'T1486': 'T1486 is versleutelen om schade aan te richten. Dit archief is bedoeld om mee te nemen.' },
+          explain: 'T1560 Archive Collected Data valt onder de tactiek Collection.' },
         { q: 'Wat is het verschil tussen een tactiek en een techniek in ATT&CK?', options: ['Een tactiek is het doel (waarom), een techniek de manier (hoe)', 'Een tactiek is altijd een stuk malware', 'Een techniek is het doel, een tactiek de tool', 'Er is geen verschil'], answer: 0, explain: 'Bijvoorbeeld: tactiek Credential Access (doel), techniek OS Credential Dumping (manier).' },
-        { q: 'Welk model met zeven stappen, van Reconnaissance tot Actions on Objectives, komt van Lockheed Martin?', answer: ['Cyber Kill Chain', 'kill chain', 'de cyber kill chain'], hint: 'Een militaire term voor de keten van een aanval.', explain: 'De Cyber Kill Chain is een eenvoudiger model; ATT&CK is gedetailleerder.' },
+        { q: 'Welk techniek-ID hoort bij het ophalen van stage2 en het wegschrijven van loader.dll?', answer: ['T1105'],
+          hints: ['Het gaat niet om het uitvoeren, maar om het binnenhalen van gereedschap.', 'Zoek in het lab naar een techniek met "Transfer" in de naam.', 'Ingress Tool Transfer.'],
+          wrong: { 'T1059.001': 'PowerShell is het middel waarmee het gebeurt. De handeling zelf, gereedschap binnenhalen, heeft een eigen techniek.', 'T1071': 'T1071 beschrijft het protocol van het C2-verkeer. Hier gaat het om het overbrengen van een bestand.' },
+          explain: 'T1105 Ingress Tool Transfer valt onder Command and Control.' },
       ],
     },
 
     {
       title: 'Taak 7 — Praktijk: een aanval koppelen aan ATT&CK',
+      tryFirst: true,
+      intro: '<p>De EDR slaat alarm. Hieronder staat de export van werkplek WS-LOG-12 en fileserver SRV-FS02. Reconstrueer de aanval: hoe kwam de aanvaller binnen, met welk account sprong hij naar de server, en hoeveel tijd had je om in te grijpen?</p>',
       content: `
         <p>Een dag na het KOFFIEKAT-rapport slaat de EDR alarm bij jouw bedrijf. Je haalt het logfragment op van
         werkplek <code>WS-LOG-12</code> en fileserver <code>SRV-FS02</code>. Jouw taak als analist: het verhaal
@@ -515,10 +652,129 @@ query           id=12</code></pre>
       `,
       lab: { type: 'logs', title: 'koffiekat-edr-export.log', lines: KOFFIEKAT_LOG },
       questions: [
-        { q: 'De regel met schtasks /create ... /sc onlogon: welke tactiek is dat vooral?', options: ['Persistence', 'Exfiltration', 'Reconnaissance', 'Impact'], answer: 0, explain: 'Een geplande taak bij het aanmelden zorgt dat de loader na elke herstart terugkomt (T1053 Scheduled Task/Job).' },
-        { q: 'rundll32.exe opent lsass.exe (Sysmon EventID 10). Welke tactiek hoort daarbij?', options: ['Discovery', 'Credential Access', 'Lateral Movement', 'Command and Control'], answer: 1, explain: 'LSASS bevat inloggegevens in het geheugen. Uitlezen is T1003 OS Credential Dumping, tactiek Credential Access.' },
+        { q: 'Met welk account meldt de aanvaller zich via RDP aan op SRV-FS02?', answer: ['adm.vermeer', 'NM\\adm.vermeer', 'nm/adm.vermeer'],
+          hints: ['Een RDP-aanmelding is een eigen soort gebeurtenis in het Security-log.', 'Filter op 4624 of op LogonType=10.', 'Kijk naar TargetUser.'],
+          wrong: { 's.bakker': 's.bakker is het eerste slachtoffer op de werkplek. Voor de sprong naar de server gebruikt de aanvaller een ander account.', '/^10\\./': 'Je geeft het bronadres. Gevraagd is het account.' },
+          why: 'Een geldig beheerdersaccount dat inlogt vanaf een gewone werkplek is technisch een correcte login. Je vindt hem alleen als je weet wat normaal is.',
+          explain: 'Na het uitlezen van LSASS volgt een aanmelding type 10 met NM\\adm.vermeer vanaf 10.20.1.12, de besmette werkplek.' },
+        { q: 'Hoeveel hele minuten zitten er tussen de eerste uitvoering van PowerShell en het eerste hernoemde bestand?', answer: ['74', '74 minuten'],
+          hints: ['Je hebt twee tijdstippen nodig: het begin en het eerste teken van versleuteling.', 'Filter op powershell.exe en daarna op FileRename.', '08:16:05 en 09:30:20.'],
+          wrong: { '75': 'Het verschil is 74 minuten en 15 seconden. Gevraagd zijn hele minuten.', '73': 'Het eerste hernoemde bestand staat op 09:30:20, niet op 09:30:01. Die regel is vssadmin.', '92': 'Je rekent vanaf de eerste regel in het log. De aanval begint bij de eerste PowerShell-regel.' },
+          explain: 'Van 08:16:05 tot 09:30:20 is 74 minuten. Zo lang had het SOC om de werkplek te isoleren.' },
         { q: 'Welke tactiek past bij vssadmin.exe delete shadows en het massaal hernoemen naar .koffie?', options: ['Impact', 'Initial Access', 'Execution', 'Collection'], answer: 0, explain: 'Schaduwkopieën wissen (T1490) en bestanden versleutelen (T1486) vallen onder Impact.' },
         { q: 'Wat is de analistennotitie (vlag) bij de EDR-alert in de log?', answer: ['NM{lsass_is_credential_access}'], hint: 'Filter in het lab op ALERT of op analyst-note.' },
+        { q: 'Leg de IPv4-indicatoren uit het rapport van taak 3 naast dit log. Eén adres uit het rapport komt in het log nergens voor. Welk adres is dat?', boss: true, answer: ['198.51.100.7', '198.51.100[.]7', '198.51.100(.)7'],
+          hints: ['Je hebt de uitkomst van twee labs nodig.', 'Haal de vier adressen uit het rapport en filter het log per adres.', 'Het ontbrekende adres heeft in het rapport de rol "scanverkeer".'],
+          wrong: {
+            '10.20.1.12': 'Dat adres staat wel in het log, maar niet in het rapport: het is de interne werkplek.',
+            '203.0.113.88': 'Dat adres staat in het log bij de verbinding van rundll32 naar de C2-server.',
+            '203.0.113.91': 'Dat adres staat in het log bij de download door PowerShell.',
+            '192.0.2.14': 'Dat adres staat in het log bij de grote uitgaande verbinding vanaf de fileserver.',
+          },
+          explain: 'Het log bevat 203.0.113.91 (download), 203.0.113.88 (C2) en 192.0.2.14 (exfiltratie). Het scanadres 198.51.100.7 ontbreekt. Dat past bij het verhaal: hier kwam de aanvaller binnen via de phishingmail, niet via de gateway. Of de gateway is gescand, zie je alleen in de firewalllogs.' },
+      ],
+    },
+
+    {
+      title: 'Taak 8 — Verdieping: wat een indicator waard is',
+      kind: 'verdieping',
+      optional: true,
+      content: `
+        <p>In deze room haalde je indicatoren uit een rapport en koppelde je gedrag aan ATT&amp;CK. In de praktijk
+        zit het werk in de vraag die daarna komt: hoeveel vertrouw ik dit, en hoe lang nog?</p>
+
+        <h3>Indicatoren verlopen</h3>
+        <p>Een IP-adres bij een hostingbedrijf heeft volgende maand een andere huurder. Een domein wordt opgezegd en
+        door iemand anders geregistreerd. Daarom geven platforms zoals MISP een indicator een datum "voor het laatst
+        gezien" en laten veel teams hem na een vaste termijn vervallen. Een hash verloopt niet, maar wordt
+        waardeloos zodra de aanvaller het bestand opnieuw bouwt.</p>
+
+        <h3>Vals-positieven</h3>
+        <p>Een adres van een CDN of gedeelde webhost bedient duizenden onschuldige sites. Staat zo'n adres op je
+        blocklist, dan blokkeer je die allemaal. Meet daarom wat een lijst oplevert: hoeveel treffers waren terecht,
+        en hoeveel legitiem verkeer raakte je? Een feed met veel ruis kost het SOC meer tijd dan hij oplevert.</p>
+
+        <h3>Bron en inhoud apart beoordelen</h3>
+        <p>Een betrouwbare bron kan zich vergissen en een onbekende bron kan gelijk hebben. Analisten beoordelen
+        daarom de betrouwbaarheid van de bron en de geloofwaardigheid van de informatie los van elkaar, bijvoorbeeld
+        met de Admiralty Code (letter voor de bron, cijfer voor de informatie).</p>
+
+        <h3>Valkuilen bij ATT&amp;CK</h3>
+        <ul>
+          <li><strong>De tactiek noemen in plaats van de techniek.</strong> "Persistence" zegt wat de aanvaller wil;
+            pas "Scheduled Task" zegt waar je moet kijken.</li>
+          <li><strong>Eén regel, één techniek.</strong> <code>powershell -enc</code> is uitvoering én verhulling.
+            Leg beide vast.</li>
+          <li><strong>De matrix als scorekaart gebruiken.</strong> Een gekleurd vakje betekent dat je één variant
+            van een techniek ziet, niet alle varianten.</li>
+          <li><strong>Alleen mappen wat je logt.</strong> Wat je niet logt, staat niet in je tijdlijn. Dat is een
+            blinde vlek, geen bewijs dat het niet gebeurde.</li>
+        </ul>
+
+        <h3>Andere modellen en standaarden</h3>
+        <p>Het <strong>Diamond Model</strong> (2013) beschrijft elke gebeurtenis met vier hoekpunten: tegenstander,
+        capaciteit, infrastructuur en slachtoffer. Het is handig om te zien wat je nog niet weet. Voor uitwisseling
+        tussen systemen gebruiken platforms STIX 2.1 en TAXII 2.1 (OASIS, 2021).</p>
+      `,
+      questions: [
+        { q: 'Een blocklist bevat 400 IP-adressen. In een maand blijken 12 daarvan legitiem verkeer te blokkeren. Hoeveel procent van de lijst gaf een vals-positief?', answer: ['3', '3%', '3 procent'],
+          hints: ['Deel het aantal foute adressen door het totaal.', '12 gedeeld door 400.', '0,03 als percentage.'],
+          wrong: { '12': 'Dat is het aantal adressen. Gevraagd is het percentage van de lijst.', '30': 'Reken na: 12 / 400 = 0,03.' },
+          explain: '12 / 400 = 0,03, dus 3 procent. Dat lijkt weinig, maar één CDN-adres kan duizenden sites raken.' },
+        { q: 'Je team laat een IP-indicator 30 dagen na de laatste waarneming vervallen. Het adres is voor het laatst gezien op 2026-09-28. Op welke datum vervalt het? (JJJJ-MM-DD)', answer: ['2026-10-28', '28-10-2026'],
+          hints: ['Tel 30 dagen bij de datum op.', 'September heeft 30 dagen.', 'Twee dagen in september, de rest in oktober.'],
+          wrong: { '2026-10-29': 'September heeft 30 dagen, geen 31.', '2026-10-27': 'Tel de dag van de waarneming zelf niet mee: 28 september plus 30 dagen.' },
+          explain: '28 september plus 30 dagen is 28 oktober 2026. De treffer in het log van 29 september valt daar ruim binnen.' },
+      ],
+    },
+
+    {
+      title: 'Taak 9 — Zo komt dit voor op een examen',
+      kind: 'examen',
+      optional: true,
+      content: `
+        <p>Examens voor SOC-analisten en threat-intelrollen toetsen dit onderwerp met korte praktijksituaties. De
+        afleiders zijn bijna altijd handelingen die zinnig klinken maar net de verkeerde laag raken: een indicator
+        blokkeren waar gedrag detecteren gevraagd is, of een label te ruim lezen.</p>
+        <p>Deze vier vragen zijn zelf geschreven in examenstijl.</p>
+      `,
+      questions: [
+        { q: 'Een leverancier meldt dat een groep elke week nieuwe C2-domeinen en opnieuw gebouwde malware gebruikt. De werkwijze is steeds gelijk: rundll32 laadt een DLL uit een gebruikersmap en een geplande taak start die bij elke aanmelding. Welke detectie blijft het langst bruikbaar?',
+          options: ['De nieuwe domeinen elke week op de blocklist zetten', 'De hashes van alle bekende varianten blokkeren', 'Een regel op rundll32 dat een DLL uit een gebruikersmap laadt, samen met de taak bij aanmelden', 'Het hele IP-bereik van de hostingpartij blokkeren'],
+          answer: 2,
+          wrong: {
+            0: 'Domeinen wisselt deze groep wekelijks; je loopt steeds een week achter.',
+            1: 'Elke nieuwe build heeft een nieuwe hash. Je blokkeert alleen wat al voorbij is.',
+            3: 'Een heel bereik blokkeren raakt ook legitieme klanten van die hostingpartij, en de groep huurt zo elders een server.',
+          },
+          explain: 'Gedrag staat bovenaan de Pyramid of Pain: de aanvaller moet zijn werkwijze omgooien om deze detectie te ontlopen.' },
+        { q: 'Je ontvangt een rapport met het label TLP:AMBER+STRICT. Een klant waarvoor jouw bedrijf de IT beheert, gebruikt het product waar het rapport over gaat. Wat mag je doen?',
+          options: ['Het rapport doorsturen: AMBER staat delen met klanten toe', 'Het rapport defangen en dan doorsturen', 'Het rapport delen in de sectorgroep waar de klant ook in zit', 'Het rapport binnen je eigen organisatie gebruiken en de bron vragen of de klant geïnformeerd mag worden'],
+          answer: 3,
+          wrong: {
+            0: 'Dat geldt voor gewone AMBER. De toevoeging +STRICT sluit klanten uit.',
+            1: 'Defangen maakt indicatoren onklikbaar; het verandert niets aan wie het rapport mag zien.',
+            2: 'Delen met de community hoort bij GREEN.',
+          },
+          explain: 'AMBER+STRICT (TLP 2.0, 2022) blijft binnen de eigen organisatie. Alleen de bron kan het ruimer maken.' },
+        { q: 'Kort na een besmetting zie je deze opdracht: schtasks /create /tn Updater /tr "rundll32.exe C:\\Users\\Public\\u.dll,Run" /sc onlogon. Welke tactiek beschrijft het doel van de aanvaller het best?',
+          options: ['Persistence', 'Privilege Escalation', 'Lateral Movement', 'Exfiltration'],
+          answer: 0,
+          wrong: {
+            1: 'De taak draait bij aanmelding van de gebruiker; er is geen aanwijzing dat hij hogere rechten oplevert.',
+            2: 'De taak wordt op hetzelfde systeem aangemaakt; er is geen sprong naar een ander systeem.',
+            3: 'Er gaat geen data naar buiten.',
+          },
+          explain: 'Een taak met /sc onlogon zorgt dat de DLL na elke aanmelding opnieuw start: de aanvaller wil blijven.' },
+        { q: 'Een IP-adres uit een rapport van zes maanden oud geeft treffers in je proxylog: 300 werkplekken verbinden er dagelijks mee. Wat doe je eerst?',
+          options: ['Alle 300 werkplekken isoleren van het netwerk', 'Het adres direct blokkeren op de firewall', 'Nagaan van wie het adres nu is en welk verkeer erheen gaat', 'De treffers negeren: indicatoren van zes maanden oud zijn nooit relevant'],
+          answer: 2,
+          wrong: {
+            0: 'Zonder aanwijzing voor besmetting leg je 300 mensen stil op basis van een verouderde indicator.',
+            1: 'Als het adres nu bij een CDN of clouddienst hoort, blokkeer je legitiem werk van 300 mensen.',
+            3: 'Oud is niet hetzelfde als waardeloos. Je moet de context controleren voordat je iets wegstreept.',
+          },
+          explain: 'IP-adressen wisselen van eigenaar. 300 werkplekken die er elke dag mee praten, wijst eerder op een gewone dienst dan op een campagne; dat controleer je eerst.' },
       ],
     },
   ],

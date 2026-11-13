@@ -8,6 +8,8 @@ CS.registerRoom({
   icon: '🎬',
   difficulty: 'Gemiddeld',
   minutes: 65,
+  level: 'Praktijk',
+  checked: '2026-11-12',
   summary: 'Hoe je een (cyber)misdaad als een filmdraaiboek ontleedt: het crime script van Cornish, het universele script in zes fasen van voorbereiding tot cash-out, abstractieniveaus, subscripts en displacement, en hoe je er met situationele criminaliteitspreventie en een interventiematrix op ingrijpt.',
   objectives: [
     'Uitleggen wat een crime script is en een scène beschrijven met handeling, actoren, middelen, locatie, randvoorwaarden en sporen',
@@ -20,6 +22,8 @@ CS.registerRoom({
   tasks: [
     {
       title: 'Taak 1 — Wat is crime scripting? Het draaiboek van een misdaad',
+      tryFirst: true,
+      intro: '<p>Uit een dossier over bankhelpdeskfraude zijn acht losse notities gehaald over één stap van de dader: het telefoongesprek met het slachtoffer. Sorteer de notities: wat is de handeling, wie doet mee, wat is er nodig, waar speelt het, wat moet vooraf kloppen en wat blijft er achter? Gebruik de codes F1 tot en met F8.</p>',
       content: `
         <p>Stel je voor dat je een film maakt. Voordat er ook maar één camera draait, ligt er een
         <strong>draaiboek</strong> (script): scène voor scène staat erin wie er in beeld is, wat ze doen, welke
@@ -64,19 +68,48 @@ CS.registerRoom({
         <strong>Randvoorwaarden:</strong> de mail passeert het spamfilter en het nepdomein is nog niet geblokkeerd.
         <strong>Sporen:</strong> de klik in de webserverlogs, het bezochte domein, het tijdstip.</p>
 
-        <p>Zie je het? Eén zinnetje wordt een rijke, onderzoekbare stap. Daarmee heb je de kern van crime scripting
-        te pakken: <strong>NM{script_is_het_draaiboek}</strong>.</p>
+        <p>Zie je het? Eén zinnetje wordt een rijke, onderzoekbare stap. Een crime script is het draaiboek van een
+        misdaad, scène voor scène.</p>
       `,
+      lab: {
+        type: 'osintpuzzle',
+        title: 'één scène, acht notities',
+        scenario: 'Scène: "de beller overtuigt het slachtoffer om geld over te maken" (bankhelpdeskfraude, fictief dossier). Elke notitie hoort bij één van de zes velden: handeling, actoren, middelen, locatie, randvoorwaarden of sporen.',
+        records: [
+          { title: 'F1', lines: ['De beller doet zich voor als medewerker van de fraudeafdeling van NederBank en vraagt het slachtoffer haar spaargeld naar een "veilige rekening" over te maken.'] },
+          { title: 'F2', lines: ['Dit lukt alleen zolang het slachtoffer het nummer op haar scherm vertrouwt: het getoonde nummer is vervalst en lijkt dat van de bank.'] },
+          { title: 'F3', lines: ['In de gespreksgegevens van de telecomaanbieder staat het werkelijke nummer waarvandaan is gebeld.'] },
+          { title: 'F4', lines: ['De beller werkt met een uitgeschreven belscript en een gelekte lijst met namen, telefoonnummers en rekeningnummers.'] },
+          { title: 'F5', lines: ['Een student heeft tegen betaling zijn bankrekening beschikbaar gesteld. Daar komt het geld binnen. Hij belt zelf niemand.'] },
+          { title: 'F6', lines: ['De overboeking staat met tijdstip en tegenrekening in het transactieoverzicht van het slachtoffer.'] },
+          { title: 'F7', lines: ['Het speelt zich af op de mobiele telefoon van het slachtoffer en in haar bankieren-app, thuis aan de keukentafel.'] },
+          { title: 'F8', lines: ['In de sms-geschiedenis van het slachtoffer staat nog het bericht met de link die de beller tijdens het gesprek stuurde.'] },
+        ],
+      },
       questions: [
-        { q: 'Welke criminoloog introduceerde crime scripting (in 1994)?', answer: ['Cornish', 'cornish', 'Derek Cornish'], hint: 'Zijn achternaam begint met een C.', explain: 'Derek Cornish beschreef in 1994 de misdaad als een proces van scènes: het crime script.' },
-        { q: 'Welk van de zes velden is het meest waardevol voor de opsporing, omdat het aanknopingspunten voor onderzoek oplevert?', options: ['Handeling', 'Locatie', 'Sporen', 'Randvoorwaarden'], answer: 2, explain: 'Sporen (logs, domeinen, transacties) zijn precies de aanknopingspunten waarmee een onderzoeker begint.' },
-        { q: 'Hoe heet in een crime script een handlanger of dienstverlener die de misdaad mogelijk maakt, zoals een bulletproof hoster of een geldezel?', answer: ['facilitator', 'facilitators'], hint: 'Engelse term; iemand die iets faciliteert/mogelijk maakt.', explain: 'Een facilitator is een actor die de misdaad faciliteert zonder per se de hoofddader te zijn.' },
-        { q: 'Wat is de vlag die de kern van crime scripting samenvat (zie het einde van de taak)?', answer: ['NM{script_is_het_draaiboek}'], hint: 'Staat vetgedrukt onderaan de uitleg.', explain: 'Een crime script is niets anders dan het draaiboek van een misdaad, scène voor scène.' },
+        { q: 'Welke criminoloog introduceerde crime scripting (in 1994)?', answer: ['Cornish', 'cornish', 'Derek Cornish'],
+          hints: ['Een Britse criminoloog die misdaad als proces beschreef.', 'Zijn naam staat in de eerste alinea\'s van de uitleg.', 'Zijn achternaam begint met een C en zijn voornaam is Derek.'],
+          explain: 'Derek Cornish beschreef in 1994 de misdaad als een proces van scènes: het crime script.' },
+        { q: 'Hoeveel van de acht notities beschrijven een spoor?', answer: ['3', 'drie'],
+          hints: ['Een spoor is iets wat na afloop nog ergens te vinden is.', 'Zoek notities die een registratie noemen: gegevens bij een aanbieder, een overzicht, een geschiedenis.', 'Het zijn F3, F6 en F8.'],
+          wrong: { '2': 'Kijk nog eens naar F8: het sms-bericht staat nog op de telefoon. Dat is ook een spoor.', '4': 'F2 beschrijft wat vooraf moet kloppen (het vervalste nummer wordt vertrouwd). Dat is een randvoorwaarde, geen spoor.' },
+          why: 'Sporen zijn de plekken waar een onderzoek kan beginnen. Een script zonder ingevuld sporenveld blijft een verhaal.',
+          explain: 'F3 (gespreksgegevens), F6 (transactieoverzicht) en F8 (sms-geschiedenis) zijn sporen: alle drie op te vragen of veilig te stellen.' },
+        { q: 'Welke notitie (code) beschrijft een facilitator: iemand die de misdaad mogelijk maakt zonder de hoofddader te zijn?', answer: ['F5'],
+          hints: ['Zoek een persoon die meewerkt maar de kernhandeling niet zelf uitvoert.', 'Het gaat om iemand die iets beschikbaar stelt.', 'De student met de bankrekening.'],
+          wrong: { 'F1': 'F1 beschrijft de beller zelf en wat hij doet. Dat is de dader en de handeling.', 'F4': 'F4 gaat over spullen (belscript, gelekte lijst). Dat zijn middelen, geen actoren.' },
+          explain: 'De student is een geldezel: een facilitator. Hij hoort in het veld actoren.' },
+        { q: 'Welke notitie (code) beschrijft een randvoorwaarde: iets wat al waar moet zijn voordat deze stap kan slagen?', answer: ['F2'],
+          hints: ['Zoek de notitie met een voorwaarde erin ("alleen zolang ...").', 'Wat moet het slachtoffer geloven voordat ze naar de beller luistert?', 'De notitie over het vervalste nummer.'],
+          wrong: { 'F7': 'F7 zegt waar het zich afspeelt. Dat is de locatie.', 'F4': 'Een belscript en een lijst zijn middelen. Een randvoorwaarde is een omstandigheid.' },
+          explain: 'F2: het slachtoffer moet het getoonde nummer vertrouwen. Haal je die voorwaarde weg (bijvoorbeeld doordat aanbieders vervalste nummers blokkeren), dan mislukt de scène.' },
       ],
     },
 
     {
       title: 'Taak 2 — Het universele script: zes fasen van voorbereiding tot cash-out',
+      tryFirst: true,
+      intro: '<p>Bij het fictieve Vliet Installatietechniek is een factuur onderschept en aangepast. Het dossier bevat zes gebeurtenissen, door elkaar. Zet ze in de volgorde waarin de dader ze uitvoerde en bedenk bij elke stap wat voor soort stap het is.</p>',
       content: `
         <p>Elke misdaad heeft zijn eigen scènes, maar Cornish merkte op dat vrijwel álle scripts dezelfde grove
         bewegingen volgen. Dat noemen we het <strong>universele script</strong>: een vaste reeks fasen die je als
@@ -145,15 +178,41 @@ CS.registerRoom({
         universele script is een <em>denkraam</em>, geen strak keurslijf — net als de kapstok die je uit andere rooms
         kent.</p>
       `,
+      lab: {
+        type: 'ordering',
+        title: 'factuurfraude bij Vliet',
+        prompt: 'Zes gebeurtenissen uit het dossier Vliet Installatietechniek (fictief). Zet ze in de volgorde van het script van de dader.',
+        items: [
+          { id: 'a', label: 'De dader registreert het domein vliet-installatie.nm.lab en zoekt uit wie bij Vliet de facturen verstuurt.' },
+          { id: 'b', label: 'Een medewerker van de administratie vult haar wachtwoord in op een nagemaakte inlogpagina.' },
+          { id: 'c', label: 'De dader leest mee in haar mailbox en past in een lopende mailwisseling het rekeningnummer op een factuur aan.' },
+          { id: 'd', label: 'De klant maakt € 48.000 over naar het rekeningnummer van de dader.' },
+          { id: 'e', label: 'De dader verwijdert de doorstuurregel uit de mailbox en wist de verzonden berichten.' },
+          { id: 'f', label: 'Een geldezel neemt het bedrag in delen contant op en draagt het af.' },
+        ],
+        correct: ['a', 'b', 'c', 'd', 'e', 'f'],
+        flag: 'NM{van_voorbereiding_tot_cash_out}',
+        explain: 'Voorbereiding, binnenkomen, uitvoeren, buit veiligstellen, vertrek en sporen wissen, cash-out.',
+      },
       questions: [
-        { q: 'Wat is de juiste volgorde van het universele script?', options: ['Binnenkomen, voorbereiding, uitvoeren, buit, vertrek, cash-out', 'Voorbereiding, binnenkomen, uitvoeren, buit veiligstellen, vertrek, cash-out', 'Voorbereiding, uitvoeren, binnenkomen, cash-out, buit, vertrek', 'Cash-out, voorbereiding, binnenkomen, uitvoeren, buit, vertrek'], answer: 1, explain: 'Het sjabloon loopt chronologisch van voorbereiding, via binnenkomen en uitvoeren, naar buit, vertrek en cash-out.' },
-        { q: 'Hoe heet de laatste fase, waarin de buit wordt omgezet in besteedbaar, "schoon" geld?', answer: ['cash-out', 'cash out', 'cashout'], hint: 'Engelse term, staat ook in de titel van de taak.', explain: 'De cash-out (en het witwassen) is de laatste fase en vaak de zwakste schakel in de keten.' },
-        { q: 'In welke fase zitten het uitbuiten van een kwetsbaarheid of een werkend gestolen wachtwoord — het voet aan de grond krijgen?', options: ['Voorbereiding', 'Binnenkomen', 'Vertrek', 'Cash-out'], answer: 1, explain: 'Binnenkomen (initiële toegang) is de fase waarin de dader voor het eerst voet binnen krijgt.' },
+        { q: 'Zet de zes gebeurtenissen in het lab in de juiste volgorde. Welke vlag verschijnt?', answer: ['NM{van_voorbereiding_tot_cash_out}'],
+          hints: ['Begin met wat de dader moest regelen voordat hij iemand benaderde.', 'Het geld komt pas binnen nadat de factuur is aangepast, en het opnemen is de allerlaatste stap.', 'Domein registreren, wachtwoord buitmaken, factuur aanpassen, overboeking, sporen wissen, contant opnemen.'],
+          wrong: { '/^nm\\{.*\\}$/i': 'Dat is niet de vlag uit dit lab. Hij verschijnt zodra alle zes op de juiste plek staan.' },
+          explain: 'De zes gebeurtenissen volgen precies de zes fasen van het universele script.' },
+        { q: 'Hoe heet de laatste fase, waarin de buit wordt omgezet in besteedbaar, "schoon" geld?', answer: ['cash-out', 'cash out', 'cashout'],
+          hints: ['Het is de fase van de geldezel in het lab.', 'Een Engelse term.', 'Hij staat in de titel van deze taak.'],
+          explain: 'De cash-out (en het witwassen) is de laatste fase en vaak de zwakste schakel in de keten.' },
+        { q: 'In welke fase (nummer 1 tot en met 6) valt de gebeurtenis waarbij de klant € 48.000 overmaakt?', answer: ['4', 'vier', 'fase 4'],
+          hints: ['Het is niet de kernhandeling van de dader zelf, maar het moment waarop de opbrengst binnenkomt.', 'De kernhandeling (fase 3) was het aanpassen van de factuur.', 'De fase heet "buit veiligstellen".'],
+          wrong: { '3': 'Fase 3 is de daad zelf: het aanpassen van het rekeningnummer. De betaling is het binnenhalen van de opbrengst.', '6': 'Cash-out is het omzetten naar besteedbaar geld. Dat doet de geldezel pas daarna.' },
+          explain: 'Fase 4, buit veiligstellen: de opbrengst komt binnen. Tussen fase 4 en 6 kan een bank het geld nog bevriezen.' },
       ],
     },
 
     {
       title: 'Taak 3 — Abstractieniveaus: metascript, protoscript, script en track',
+      tryFirst: true,
+      intro: '<p>In het lab staan zestien beschrijvingen van misdaad, van heel algemeen tot heel specifiek. Ze horen in vier groepen van vier, van grof naar fijn. Zoek de groepen.</p>',
       content: `
         <p>Een crime script kun je grof of juist heel gedetailleerd schrijven. Cornish onderscheidde daarom
         <strong>abstractieniveaus</strong>: van een zeer algemeen sjabloon tot een haarfijne beschrijving van één
@@ -187,15 +246,33 @@ CS.registerRoom({
         generaliseren. Goede analisten schuiven bewust heen en weer tussen de niveaus: inzoomen voor details,
         uitzoomen voor patronen.</p>
       `,
+      lab: {
+        type: 'connections',
+        title: 'van grof naar fijn',
+        prompt: 'Zestien beschrijvingen, vier abstractieniveaus. Groepeer ze: een hele familie van misdaden, één type misdaad, een concrete uitvoeringswijze, of een variant van zo\'n uitvoeringswijze.',
+        flag: 'NM{van_meta_tot_track}',
+        groups: [
+          { name: 'Metascript (familie van misdaden)', items: ['Online fraude', 'Digitale afpersing', 'Gegevensdiefstal', 'Digitale sabotage'] },
+          { name: 'Protoscript (één type misdaad)', items: ['Phishing-fraude', 'Ransomware-afpersing', 'Accountovername', 'DDoS-aanval'] },
+          { name: 'Script (concrete uitvoeringswijze)', items: ['Bankphishing via een nagemaakte inlogpagina', 'Ransomware via gekochte netwerktoegang', 'Accountovername met gelekte wachtwoorden', 'DDoS met een gehuurde booter-dienst'] },
+          { name: 'Track (variant van één script)', items: ['Die bankphishing, maar dan per sms', 'Die bankphishing, maar dan via een QR-code', 'Die ransomware-aanval, maar binnen via RDP', 'Die ransomware-aanval, maar binnen via een VPN-lek'] },
+        ],
+      },
       questions: [
-        { q: 'Welk van deze vier abstractieniveaus is het meest algemeen (over een hele familie van misdaden)?', options: ['Track', 'Script', 'Protoscript', 'Metascript'], answer: 3, explain: 'Het metascript is het meest abstracte niveau en omvat een hele familie van misdaadvormen.' },
-        { q: 'Smishing (phishing via sms) en phishing via e-mail zijn twee ... van hetzelfde script.', answer: ['tracks', 'track'], hint: 'Het meest concrete niveau: een specifieke variant.', explain: 'Een track is een specifieke uitvoeringsvariant binnen één script.' },
+        { q: 'Vind in het lab de vier groepen van vier. Welke vlag verschijnt?', answer: ['NM{van_meta_tot_track}'],
+          hints: ['Begin met de vier breedste begrippen: die passen op heel veel verschillende misdaden.', 'De vier specifiekste beschrijvingen verwijzen elk terug naar een andere beschrijving ("die ..., maar dan ...").', 'Het lab meldt het als je er drie van de vier goed hebt. Wissel er dan één.'],
+          explain: 'Van abstract naar concreet: metascript, protoscript, script, track.' },
+        { q: 'Smishing (phishing via sms) en phishing via e-mail zijn twee ... van hetzelfde script.', answer: ['tracks', 'track'],
+          hints: ['Het gaat om het meest concrete van de vier niveaus.', 'In het lab is dat de groep met "die ..., maar dan ...".', 'Het Engelse woord voor spoor of baan.'],
+          explain: 'Een track is een specifieke uitvoeringsvariant binnen één script.' },
         { q: 'Zet van abstract naar concreet: welke volgorde klopt?', options: ['Script, metascript, protoscript, track', 'Metascript, protoscript, script, track', 'Track, script, protoscript, metascript', 'Protoscript, metascript, track, script'], answer: 1, explain: 'Van abstract naar concreet: metascript, protoscript, script, track.' },
       ],
     },
 
     {
       title: 'Taak 4 — Subscripts en het herkennen van displacement',
+      tryFirst: true,
+      intro: '<p>Een bank en de politie hebben veertig phishingdomeinen van één bende offline gehaald. Zes weken later liggen er zes waarnemingen op je bureau (W1 tot en met W6). Bepaal per waarneming wat er met de misdaad is gebeurd: is die verdwenen, verschoven, of is er iets anders aan de hand?</p>',
       content: `
         <p>Sommige scènes uit een script zijn op zichzelf al een klein verhaal. Neem de scène "geldezels regelen" in de
         cash-outfase: dat is niet één handeling, maar een heel proces van werven, instrueren, rekeningen laten openen
@@ -236,16 +313,43 @@ CS.registerRoom({
         bij elke maatregel af: <em>waarheen zou deze misdaad kunnen verschuiven?</em> Juist door displacement te
         voorspellen, kun je je interventies slim combineren zodat er geen makkelijke uitwijkroute overblijft.</p>
       `,
+      lab: {
+        type: 'osintpuzzle',
+        title: 'zes weken na de takedown',
+        scenario: 'Interventie: veertig phishingdomeinen van één bende zijn bij één hoster offline gehaald (fictief). Dit zijn de waarnemingen zes weken later.',
+        records: [
+          { title: 'W1', lines: ['De bende zet dezelfde phishingpagina\'s binnen een week neer bij een hoster in een ander land.'] },
+          { title: 'W2', lines: ['De phishingberichten komen nu vooral in het weekend binnen, als het fraudeteam van de bank onderbezet is.'] },
+          { title: 'W3', lines: ['Een deel van de daders stuurt geen e-mail meer, maar sms-berichten die naar dezelfde nagemaakte inlogpagina leiden.'] },
+          { title: 'W4', lines: ['Bij een regionale bank die niet aan de actie meedeed, daalt het aantal phishingmeldingen ook.'] },
+          { title: 'W5', lines: ['Klanten van een kleine kredietunie worden voor het eerst doelwit van dezelfde bende.'] },
+          { title: 'W6', lines: ['Twee leden plegen zelf geen fraude meer en verkopen nu gestolen inloggegevens aan anderen.'] },
+        ],
+      },
       questions: [
-        { q: 'Hoe heet een scène die je als een compleet eigen, op zichzelf uit te werken deelproces beschrijft (zoals "geldezels regelen")?', answer: ['subscript', 'een subscript'], hint: 'Een script binnen een script.', explain: 'Een subscript werkt één scène uit tot een eigen script; het wordt vaak over meerdere zaken hergebruikt.' },
-        { q: 'Een dader stapt na goede e-mailfilters over van phishing per e-mail naar phishing per sms. Welke soort displacement is dit?', options: ['Geografische verplaatsing', 'Temporele verplaatsing', 'Tactische verplaatsing', 'Doelverplaatsing'], answer: 2, explain: 'Een andere methode of modus operandi is tactische verplaatsing (tactical displacement).' },
-        { q: 'Hoe heet het positieve tegenovergestelde van displacement, waarbij een maatregel ook buiten het doelgebied effect heeft?', answer: ['diffusion of benefits', 'diffusion', 'verspreiding van baten'], hint: 'Engelse term; de baten "lekken" naar buiten.', explain: 'Diffusion of benefits is de positieve uitstraling van een maatregel naar niet-aangepakte plekken of doelen.' },
-        { q: 'Een ransomwaregroep vindt versleutelen te risicovol en gaat over op pure gegevensdiefstal met afpersing. Welke soort displacement?', options: ['Misdaadverplaatsing (functional)', 'Geografische verplaatsing (spatial)', 'Temporele verplaatsing (temporal)', 'Daderverplaatsing (perpetrator)'], answer: 0, explain: 'Overstappen naar een ander type misdaad is misdaadverplaatsing (functional displacement).' },
+        { q: 'Hoe heet een scène die je als een compleet eigen, op zichzelf uit te werken deelproces beschrijft (zoals "geldezels regelen")?', answer: ['subscript', 'een subscript'],
+          hints: ['Je zoomt in op één scène en schrijft daar een eigen draaiboek voor.', 'Het woord staat in de titel van deze taak.', 'Een script binnen een script.'],
+          explain: 'Een subscript werkt één scène uit tot een eigen script; het wordt vaak over meerdere zaken hergebruikt.' },
+        { q: 'Welke waarneming (code) is tactische verplaatsing: zelfde misdaad, andere methode?', answer: ['W3'],
+          hints: ['Zoek de waarneming waarin het middel verandert, niet de plek, het tijdstip of het slachtoffer.', 'Let op het kanaal waarlangs het slachtoffer wordt benaderd.', 'De waarneming over sms-berichten.'],
+          wrong: { 'W1': 'Bij W1 verandert alleen de plek waar de pagina\'s staan. Dat is geografische verplaatsing.', 'W6': 'Bij W6 verandert het type misdaad zelf (van fraude plegen naar gegevens verkopen). Dat is misdaadverplaatsing.' },
+          explain: 'W3: van e-mail naar sms, met dezelfde nagemaakte pagina. De methode verandert, de misdaad blijft. In de taal van taak 3 is dat ook een nieuwe track.' },
+        { q: 'Welke waarneming (code) is geen displacement maar diffusion of benefits?', answer: ['W4'],
+          hints: ['Zoek de waarneming waarin het ergens beter wordt in plaats van slechter.', 'Het effect treedt op bij een partij die zelf niets deed.', 'De regionale bank.'],
+          wrong: { 'W5': 'Bij W5 krijgt een nieuwe groep slachtoffers er last van. Dat is doelverplaatsing.' },
+          why: 'Wie alleen naar displacement zoekt, onderschat het effect van zijn maatregel. Meet bij een evaluatie altijd ook de omgeving.',
+          explain: 'W4: de baten van de actie stralen uit naar een bank die niet meedeed.' },
+        { q: 'Hoeveel van de zes waarnemingen zijn een vorm van displacement? (cijfer)', answer: ['5'],
+          hints: ['Loop ze één voor één langs met de vraag: is de misdaad verschoven?', 'Er is precies één waarneming die geen verschuiving is.', 'Alles behalve W4.'],
+          wrong: { '6': 'W4 is een verbetering bij een partij die niet meedeed. Dat is het tegenovergestelde van displacement.', '4': 'W6 telt ook: overstappen op een ander type misdaad is misdaadverplaatsing.' },
+          explain: 'W1 geografisch, W2 temporeel, W3 tactisch, W5 doel, W6 misdaadtype. Alleen W4 is diffusion of benefits.' },
       ],
     },
 
     {
       title: 'Taak 5 — Situationele criminaliteitspreventie: de vijf strategieën',
+      tryFirst: true,
+      intro: '<p>In het lab staan zestien maatregelen. Elke maatregel maakt een misdaad op een andere manier minder aantrekkelijk: moeilijker, gevaarlijker voor de dader, minder lonend, of lastiger goed te praten. Sorteer ze in vier groepen van vier.</p>',
       content: `
         <p>Crime scripting is pas echt nuttig als je er iets mee doet. Hier komt <strong>situationele
         criminaliteitspreventie</strong> (SCP; Engels: <em>situational crime prevention</em>) om de hoek kijken. Het
@@ -285,13 +389,30 @@ CS.registerRoom({
         moet meewegen: duw je op één knop, dan kan de dader de druk elders zoeken.</p>
 
         <p>Onthoud deze vijf strategieën goed — ze vormen samen met de zes fasen straks de assen van je
-        interventiematrix. De vlag die je dit oplevert: <strong>NM{vijf_knoppen_van_scp}</strong>.</p>
+        interventiematrix.</p>
       `,
+      lab: {
+        type: 'connections',
+        title: 'welke knop is dit?',
+        prompt: 'Zestien maatregelen, vier strategieën. De vijfde strategie (provocaties verminderen) doet in dit lab niet mee. Vraag je bij elke maatregel af wat er voor de dader verandert.',
+        flag: 'NM{vijf_knoppen_van_scp}',
+        groups: [
+          { name: 'Inspanning verhogen', items: ['MFA op alle accounts', 'Macro\'s in Office-bestanden staan standaard uit', 'Beheerpoorten alleen bereikbaar via VPN', 'Lange, unieke wachtwoorden afgedwongen'] },
+          { name: 'Risico verhogen', items: ['Een SOC bewaakt de logs dag en nacht', 'Alarm bij inloggen vanuit een onbekend land', 'Beheerhandelingen worden onwisbaar gelogd', 'Meldknop voor verdachte mail in de mailclient'] },
+          { name: 'Opbrengst verlagen', items: ['Klantgegevens staan versleuteld in de database', 'Geteste offline back-ups', 'Gestolen betaalkaarten worden direct geblokkeerd', 'De bank bevriest verdachte overboekingen'] },
+          { name: 'Excuses wegnemen', items: ['Loginbanner: ongeautoriseerd gebruik is strafbaar', 'Gebruiksvoorwaarden die elke medewerker ondertekent', 'Jaarlijkse bewustwordingstraining', 'Heldere regels voor het delen van klantdata'] },
+        ],
+      },
       questions: [
         { q: 'Welke van deze hoort NIET bij de vijf SCP-strategieën van Cornish & Clarke?', options: ['Inspanning verhogen', 'Risico verhogen', 'Daders opsluiten zonder proces', 'Excuses wegnemen'], answer: 2, explain: 'De vijf strategieën zijn: inspanning verhogen, risico verhogen, opbrengst verlagen, provocaties verminderen en excuses wegnemen.' },
         { q: 'Goede offline back-ups maken het betalen van losgeld zinloos. Welke SCP-strategie is dit vooral?', options: ['Inspanning verhogen', 'Opbrengst verlagen', 'Excuses wegnemen', 'Provocaties verminderen'], answer: 1, explain: 'Door de buit (afgedwongen losgeld) waardeloos te maken, verlaag je de opbrengst van de misdaad.' },
-        { q: 'Multifactor-authenticatie (MFA) invoeren is vooral een voorbeeld van welke strategie?', answer: ['inspanning verhogen', 'de inspanning verhogen', 'increase the effort'], hint: 'Een gestolen wachtwoord is dan niet meer genoeg; de misdaad wordt moeilijker.', explain: 'MFA maakt de aanval moeilijker uit te voeren: dat is "inspanning verhogen".' },
-        { q: 'Wat is de vlag die de vijf strategieën samenvat (einde van de taak)?', answer: ['NM{vijf_knoppen_van_scp}'], hint: 'Staat vetgedrukt onderaan.', explain: 'De vijf strategieën zijn de vijf knoppen van situationele criminaliteitspreventie.' },
+        { q: 'Multifactor-authenticatie (MFA) invoeren is vooral een voorbeeld van welke strategie?', answer: ['inspanning verhogen', 'de inspanning verhogen', 'increase the effort'],
+          hints: ['Wat verandert er voor een dader die al een gestolen wachtwoord heeft?', 'In het lab staat MFA in dezelfde groep als lange wachtwoorden en afgeschermde beheerpoorten.', 'De misdaad wordt moeilijker: de dader moet meer moeite doen.'],
+          wrong: { '/risico/i': 'MFA vergroot de pakkans niet. Het maakt de aanval zelf lastiger.', '/opbrengst/i': 'De buit blijft even veel waard. De dader komt er alleen moeilijker bij.' },
+          explain: 'MFA maakt de aanval moeilijker uit te voeren: dat is "inspanning verhogen".' },
+        { q: 'Vind in het lab de vier groepen van vier. Welke vlag verschijnt?', answer: ['NM{vijf_knoppen_van_scp}'],
+          hints: ['Begin met de groep die je het makkelijkst herkent, bijvoorbeeld alles wat de dader vertelt dat het niet mag.', 'Twijfel je tussen moeilijker en gevaarlijker: wordt de dader tegengehouden, of wordt hij gezien?', 'Het lab meldt het als drie van de vier bij elkaar horen. Wissel er dan één.'],
+          explain: 'De vijf strategieën zijn de vijf knoppen van situationele criminaliteitspreventie. Vier ervan heb je hier gesorteerd.' },
       ],
     },
 
@@ -345,7 +466,7 @@ CS.registerRoom({
         </div>
 
         <p>Tijd om het zelf te doen. In het lab hieronder werk je een phishing-fraude met geldezels uit in de zes fasen,
-        met per fase een interventie. Label je velden netjes. De beloning: <strong>NM{fase_maal_strategie}</strong>.</p>
+        met per fase een interventie. Label je velden netjes en vergelijk daarna met de voorbeelduitwerking.</p>
       `,
       lab: {
         type: 'crimescript',
@@ -412,9 +533,16 @@ CS.registerRoom({
       },
       questions: [
         { q: 'Wat vormen de twee assen van de interventiematrix?', options: ['Dader × slachtoffer', 'Fase (universeel script) × strategie (SCP)', 'Metascript × track', 'Bekend × aanname'], answer: 1, explain: 'De interventiematrix zet de fasen van het universele script tegen de vijf SCP-strategieën af.' },
-        { q: 'Hoe label je een bewering die je (nog) niet hebt onderbouwd maar voorlopig voor waar aanneemt?', answer: ['aanname', 'een aanname'], hint: 'Niet bekend (feit) en niet afgeleid (conclusie), maar...', explain: 'Een aanname is onbewezen; label hem als zodanig zodat duidelijk is waar nog bewijs nodig is.' },
+        { q: 'Open de voorbeelduitwerking in het lab. Hoeveel velden zijn daar als (aanname) gelabeld? (cijfer)', answer: ['3'],
+          hints: ['Tel alleen de labels in de tabel, niet de regel erboven die de drie labels uitlegt.', 'Kijk in elke fase naar het veld randvoorwaarden.', 'De fasen 2, 5 en 6.'],
+          wrong: { '4': 'De regel boven de tabel noemt het label ook, maar dat is uitleg en geen veld.', '6': 'Niet elke randvoorwaarde is een aanname: in fase 1 en 3 is hij afgeleid, in fase 4 bekend.' },
+          why: 'Elke aanname in een script is een plek waar je interventie kan mislukken. Wie ze telt, weet waar hij nog bewijs moet halen.',
+          explain: 'Drie: het spamfilter laat de mail door (fase 2), de herkomst is te verbergen (fase 5) en de geldezel werkt mee (fase 6).' },
         { q: 'Waarom hoort bij elke maatregel in de matrix een eigenaar?', options: ['Een maatregel zonder eigenaar wordt zelden uitgevoerd, en cybercrime bestrijd je met meerdere partijen', 'Omdat de wet dat eist', 'Om de tabel langer te maken', 'Dat hoeft niet, het is optioneel'], answer: 0, explain: 'Zonder eigenaar blijft een maatregel een vrome wens; de matrix legt de verantwoordelijkheid bij de juiste partij.' },
-        { q: 'Wat is de vlag die je in deze taak verdient?', answer: ['NM{fase_maal_strategie}'], hint: 'Staat vetgedrukt vlak voor het lab.', explain: 'De interventiematrix is fase maal strategie: NM{fase_maal_strategie}.' },
+        { q: 'In welke fase (nummer) noemt de voorbeelduitwerking de politie als mede-eigenaar van de interventie?', answer: ['6', 'fase 6'],
+          hints: ['Lees in de voorbeelduitwerking de kolom met interventie, eigenaar en strategie.', 'Zoek de fase waarin de dader uit de digitale wereld terug moet naar de echte.', 'De fase waarin geldstromen worden bevroren.'],
+          wrong: { '1': 'In fase 1 zijn de registrar en het NCSC eigenaar.' },
+          explain: 'Fase 6, cash-out: bank en exchange bevriezen geldstromen, samen met de politie. De matrix laat zien dat je daar meerdere partijen nodig hebt.' },
       ],
     },
 
@@ -526,8 +654,108 @@ CS.registerRoom({
       },
       questions: [
         { q: 'Wat doet een affiliate in een RaaS-model?', options: ['Bouwt en onderhoudt de ransomware', 'Voert de daadwerkelijke aanvallen uit en deelt de buit met de kerngroep', 'Is een toezichthouder', 'Verzekert de slachtoffers'], answer: 1, explain: 'De affiliate (partner) voert de aanvallen uit; de kerngroep levert de ransomware en infrastructuur en krijgt een deel van de buit.' },
-        { q: 'Op welk abstractieniveau zit het verschil tussen binnenkomen via RDP en via een VPN-kwetsbaarheid?', answer: ['track', 'tracks', 'track-niveau'], hint: 'Het meest concrete niveau: een specifieke uitvoeringsvariant.', explain: 'Verschillende uitvoeringswijzen van hetzelfde script zijn verschillende tracks.' },
+        { q: 'In hoeveel van de zes fasen kiest de RaaS-voorbeelduitwerking in het lab voor de strategie "risico verhogen"?', answer: ['3', 'drie'],
+          hints: ['Open de voorbeelduitwerking en lees per fase het woord na "Strategie:".', 'De andere fasen gebruiken inspanning verhogen of opbrengst verlagen.', 'De fasen 1, 3 en 5.'],
+          wrong: { '2': 'Fase 5 (logs centraal en onwisbaar wegschrijven) is ook risico verhogen: de dader kan zijn sporen niet meer wissen.' },
+          explain: 'Fase 1 (toegangsmarkt verstoren), fase 3 (EDR en segmentatie) en fase 5 (onwisbare logging) verhogen het risico voor de dader.' },
         { q: 'Ik heb de RaaS-aanval in de zes fasen uitgewerkt, mijn beweringen gelabeld als bekend/afgeleid/aanname, en per fase een interventie met eigenaar en strategie bedacht.', noAnswer: true },
+        { q: 'Boss: na een takedown van phishingdomeinen ziet een bank drie dingen. (a) De bende zet dezelfde pagina\'s neer bij een hoster in een ander land. (b) Een deel van de daders stapt over van e-mail op sms, met dezelfde nagemaakte pagina. (c) Bij een buurbank die niet meedeed daalt de fraude ook. Hoeveel van de drie zijn displacement, en welke letter beschrijft een nieuwe variant binnen hetzelfde script? Antwoord als cijfer plus letter, bijvoorbeeld 3a.', boss: true, answer: ['2b', '2 b', '2-b', '2, b', '2 en b'],
+          hints: ['Beantwoord eerst per waarneming of de misdaad verschoven is, en zo ja, wat er veranderde.', 'Gebruik voor de letter de vier abstractieniveaus: wat is het laagste niveau, en wat verandert er dan aan de uitvoering?', 'Eén waarneming is een verbetering en telt dus niet mee. De variant is de waarneming waarin alleen het kanaal verandert.'],
+          wrong: { '/^3/': 'Niet alle drie zijn een verschuiving. Bij één waarneming wordt het ergens beter zonder dat daar is ingegrepen.', '/^2 ?a$/i': 'Het aantal klopt. Maar bij (a) verandert alleen de plek waar de pagina\'s staan; de uitvoering richting het slachtoffer blijft gelijk.', '/^1/': 'Een andere hoster in een ander land is ook een verschuiving: de misdaad gaat door op een andere plek.' },
+          explain: '(a) is geografische en (b) tactische verplaatsing; (c) is diffusion of benefits. Twee dus. Sms in plaats van e-mail met dezelfde pagina is een andere uitvoeringsvariant van hetzelfde script, het laagste abstractieniveau.' },
+      ],
+    },
+
+    {
+      title: 'Taak 8: Verdieping: waar het script vandaan komt en waar het knelt',
+      kind: 'verdieping',
+      optional: true,
+      content: `
+        <p>Crime scripting ziet er in een tabel strak uit. In de praktijk is het rommeliger, en dat heeft met de
+        herkomst van de methode te maken.</p>
+
+        <h3>De theorie erachter</h3>
+        <p>Het woord "script" komt uit de cognitieve psychologie. Schank en Abelson beschreven in 1977 hoe mensen
+        vaste reeksen handelingen onthouden als een draaiboek; hun bekende voorbeeld is het restaurantbezoek (binnenkomen,
+        bestellen, eten, betalen). Cornish paste dat idee in 1994 toe op misdaad. Het sluit aan op het
+        rationelekeuzeperspectief dat hij met Ronald Clarke uitwerkte: een dader maakt bij elke stap een afweging
+        van moeite, risico en opbrengst.</p>
+        <p>De zes fasen in deze room zijn een vereenvoudiging. Cornish zelf beschreef een fijnmaziger reeks scènes,
+        met onder meer aparte stappen voor het betreden van de plek, het afwachten van de juiste omstandigheden en de
+        toestand direct na de daad.</p>
+
+        <h3>Hoe de preventietabel groeide</h3>
+        <p>De indeling van situationele preventie is drie keer uitgebreid: 12 technieken (Clarke, 1992), 16 (Clarke en
+        Homel, 1997) en 25 (Cornish en Clarke, 2003). De laatste uitbreiding voegde "provocaties verminderen" toe, na
+        kritiek dat de eerdere indeling alleen naar de kosten-batenafweging keek en niet naar wat een dader aanzet.</p>
+
+        <h3>Wat we weten over displacement</h3>
+        <p>Verplaatsing is een reëel risico, maar geen natuurwet. Guerette en Bowers (2009) bekeken ruim honderd
+        evaluaties van situationele maatregelen. In ongeveer een kwart van de waarnemingen zagen zij verplaatsing, en
+        ongeveer even vaak een gunstige uitstraling. Waar verplaatsing optrad, was die doorgaans kleiner dan de winst
+        van de maatregel. Die cijfers komen grotendeels uit fysieke criminaliteit. Online is uitwijken goedkoper, dus
+        reken daar eerder op meer verplaatsing dan op minder.</p>
+
+        <h3>Hoe het in de praktijk gaat</h3>
+        <ul>
+          <li><strong>Je bronnen zijn scheef.</strong> Scripts worden gebouwd uit dossiers, verhoren, vonnissen en
+          forumberichten. Daarin zitten vooral daders die gepakt zijn of die opscheppen.</li>
+          <li><strong>Een script is een hypothese.</strong> Het veroudert zodra daders zich aanpassen. Zet er een
+          datum op en herzie het.</li>
+          <li><strong>Misdaad vertakt.</strong> Daders slaan fasen over, doen ze tegelijk of besteden ze uit. Teken
+          vertakkingen in plaats van alles in één rechte lijn te persen.</li>
+        </ul>
+
+        <h3>Veelgemaakte fouten</h3>
+        <ul>
+          <li>Eén dossier uitwerken en dat "het script" van een heel fenomeen noemen.</li>
+          <li>Het sporenveld leeg laten, waardoor het script niets oplevert voor de opsporing.</li>
+          <li>Per fase een maatregel bedenken zonder te vragen wie hem kan en mag uitvoeren.</li>
+          <li>Na de interventie niet meten, zodat verplaatsing en uitstraling allebei onzichtbaar blijven.</li>
+        </ul>
+      `,
+      questions: [
+        { q: 'De huidige indeling telt 25 technieken, gelijk verdeeld over de strategieën uit taak 5. Hoeveel technieken zijn dat per strategie?', answer: ['5', 'vijf'],
+          hints: ['Hoeveel strategieën kent situationele preventie sinds 2003?', 'Deel het aantal technieken door het aantal strategieën.', '25 gedeeld door 5.'],
+          explain: 'Vijf strategieën met elk vijf technieken.' },
+        { q: 'Je werkt één strafdossier over helpdeskfraude uit en presenteert dat als hét script van helpdeskfraude. Op welk van de vier abstractieniveaus uit taak 3 zit je beschrijving in werkelijkheid?', answer: ['track', 'een track', 'tracks'],
+          hints: ['Eén dossier beschrijft één manier waarop het die keer ging.', 'Kijk in taak 3 naar het meest concrete niveau.', 'Het niveau van de specifieke uitvoeringsvariant.'],
+          wrong: { 'script': 'Een script beschrijft de uitvoeringswijze over meerdere zaken heen. Eén dossier is daarvoor te smal.', 'protoscript': 'Een protoscript is juist algemener: het type misdaad los van de uitvoering.' },
+          explain: 'Eén dossier is één uitvoeringsvariant. Pas als je meerdere zaken naast elkaar legt, zie je wat vast is en wat varieert.' },
+        { q: 'Na een maatregel daalt het aantal incidenten bij jouw organisatie met dertig procent. Wat moet je nog weten voordat je de maatregel een succes noemt?', options: ['Of het aantal incidenten elders, op andere tijden of met andere methoden is gestegen', 'Of de daders zijn aangehouden', 'Of de maatregel in alle zes de fasen ingrijpt', 'Of de daling het jaar daarvoor ook al was ingezet bij dezelfde daders'], answer: 0,
+          wrong: { 1: 'Situationele preventie werkt via de situatie. Aanhoudingen zijn geen voorwaarde voor effect.', 2: 'Een maatregel hoeft maar in één fase te werken. De matrix hoeft niet vol.', 3: 'Een trend controleren is zinnig, maar je kent de daders meestal niet. De eerste controle is of het probleem is verschoven.' },
+          explain: 'Zonder meting van de omgeving weet je niet of de misdaad is verdwenen of verplaatst, en zie je ook een gunstige uitstraling niet.' },
+      ],
+    },
+
+    {
+      title: 'Taak 9: Zo komt dit voor op een examen',
+      kind: 'examen',
+      optional: true,
+      content: `
+        <p>Examenvragen over crime scripting geven je een korte casus en vragen om een indeling: welke fase, welke
+        strategie, welke soort verplaatsing, welk interventiepunt. De afleiders zijn bijna altijd echte begrippen uit
+        dezelfde theorie. Vraag je daarom steeds af wat er precies verandert: de plek, het tijdstip, het doelwit, de
+        methode of het type misdaad. En bij maatregelen: wat verandert er voor de dader?</p>
+        <p>De vier vragen hieronder zijn zelf geschreven in die stijl. Alle organisaties zijn fictief.</p>
+      `,
+      questions: [
+        { q: 'Een bank verplicht een app met MFA voor het inloggen. Binnen twee maanden bellen fraudeurs klanten op en praten hen ertoe om zelf geld over te maken naar een "veilige rekening". Welke soort displacement is dit?',
+          options: ['Doelverplaatsing', 'Tactische verplaatsing', 'Misdaadverplaatsing', 'Diffusion of benefits'], answer: 1,
+          wrong: { 0: 'Het doelwit is hetzelfde gebleven: klanten van dezelfde bank.', 2: 'Het blijft bankfraude. Alleen de manier waarop is veranderd.', 3: 'Dat is een gunstig neveneffect elders. Hier gaat de fraude door.' },
+          explain: 'Zelfde misdaad, zelfde doelwit, andere methode: tactische verplaatsing.' },
+        { q: 'Een webwinkel slaat geen kaartnummers meer op. De betaalprovider geeft een token terug dat alleen bij deze winkel bruikbaar is. Welke strategie van situationele preventie is dit vooral?',
+          options: ['Inspanning verhogen', 'Risico verhogen', 'Opbrengst verlagen', 'Excuses wegnemen'], answer: 2,
+          wrong: { 0: 'Inbreken in de database wordt er niet moeilijker door. Wat er te halen valt, is minder waard.', 1: 'De pakkans verandert niet.', 3: 'Dit richt zich niet op rechtvaardigingen van de dader.' },
+          explain: 'Een gestolen token is buiten deze winkel waardeloos. De buit verliest zijn waarde: opbrengst verlagen.' },
+        { q: 'Een analist levert een script van drie regels in: "dader bereidt voor, dader slaat toe, dader vertrekt". De teamleider kan er geen interventie uit halen. Wat is de beste verbetering?',
+          options: ['Het script uitwerken per scène, met actoren, middelen, randvoorwaarden en sporen', 'Het script uitbreiden van drie naar zes fasen', 'Elke regel labelen als bekend, afgeleid of aanname', 'Het script een niveau abstracter maken, zodat het op meer zaken past'], answer: 0,
+          wrong: { 1: 'Zes even lege regels helpen niet. Het probleem is het ontbreken van inhoud per stap.', 2: 'Labelen is nuttig, maar er staat nog niets om te labelen.', 3: 'Het script is al te abstract. Nog algemener maakt het nog minder bruikbaar.' },
+          explain: 'Een interventie grijpt aan op een middel, een randvoorwaarde of een spoor. Die velden moeten dus eerst gevuld zijn.' },
+        { q: 'In dertig phishingzaken blijken de daders dezelfde phishingkit te gebruiken, gekocht bij één verkoper op een forum. Je mag één interventie voorstellen. Welke heeft de grootste hefboom?',
+          options: ['Elk phishingdomein afzonderlijk laten neerhalen zodra het opduikt', 'De verkoop van de kit verstoren, omdat dit deelproces in alle dertig zaken terugkomt', 'Eén geldezel aanhouden die in meerdere zaken voorkomt', 'Een bewustwordingscampagne voor alle bankklanten'], answer: 1,
+          wrong: { 0: 'Nuttig, maar de daders registreren een nieuw domein. Dit lokt geografische verplaatsing uit en moet eindeloos herhaald worden.', 2: 'Een geldezel is snel vervangen: daderverplaatsing.', 3: 'Dit raakt slachtoffers, niet het script van de dader, en het effect is moeilijk te sturen.' },
+          explain: 'Het kopen van de kit is een gedeeld subscript. Verstoor je dat, dan raak je alle zaken die ervan afhangen in één keer.' },
       ],
     },
   ],

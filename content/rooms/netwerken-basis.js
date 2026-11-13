@@ -1,4 +1,77 @@
 /* Room: Netwerken — de basis */
+
+// Taak 4: een korte capture met een geslaagde handshake, een geweigerde poort en een poort die zwijgt.
+const NWB_PCAP_TCP = [
+  { no: 1, time: '0.000', src: '192.0.2.10', dst: '192.0.2.53', proto: 'DNS', len: 74, info: 'Standard query A www.nm.lab' },
+  { no: 2, time: '0.021', src: '192.0.2.53', dst: '192.0.2.10', proto: 'DNS', len: 90, info: 'Standard query response A 198.51.100.20' },
+  { no: 3, time: '0.024', src: '192.0.2.10', dst: '198.51.100.20', proto: 'TCP', len: 74, info: '51514 → 443 [SYN] Seq=0' },
+  { no: 4, time: '0.047', src: '198.51.100.20', dst: '192.0.2.10', proto: 'TCP', len: 74, info: '443 → 51514 [SYN, ACK] Seq=0 Ack=1' },
+  { no: 5, time: '0.048', src: '192.0.2.10', dst: '198.51.100.20', proto: 'TCP', len: 66, info: '51514 → 443 [ACK] Seq=1 Ack=1' },
+  { no: 6, time: '0.050', src: '192.0.2.10', dst: '198.51.100.20', proto: 'TLSv1.3', len: 583, info: 'Client Hello (SNI=www.nm.lab)' },
+  { no: 7, time: '0.074', src: '198.51.100.20', dst: '192.0.2.10', proto: 'TLSv1.3', len: 1514, info: 'Server Hello, Change Cipher Spec, Application Data' },
+  { no: 8, time: '0.079', src: '192.0.2.10', dst: '198.51.100.20', proto: 'TLSv1.3', len: 146, info: 'Change Cipher Spec, Application Data' },
+  { no: 9, time: '0.081', src: '192.0.2.10', dst: '198.51.100.20', proto: 'TLSv1.3', len: 215, info: 'Application Data' },
+  { no: 10, time: '0.110', src: '198.51.100.20', dst: '192.0.2.10', proto: 'TLSv1.3', len: 1203, info: 'Application Data' },
+  { no: 11, time: '1.502', src: '192.0.2.10', dst: '198.51.100.20', proto: 'TCP', len: 66, info: '51514 → 443 [FIN, ACK]' },
+  { no: 12, time: '1.524', src: '198.51.100.20', dst: '192.0.2.10', proto: 'TCP', len: 66, info: '443 → 51514 [FIN, ACK]' },
+  { no: 13, time: '1.525', src: '192.0.2.10', dst: '198.51.100.20', proto: 'TCP', len: 66, info: '51514 → 443 [ACK]' },
+  { no: 14, time: '2.300', src: '192.0.2.10', dst: '198.51.100.20', proto: 'TCP', len: 74, info: '51520 → 23 [SYN] Seq=0' },
+  { no: 15, time: '2.322', src: '198.51.100.20', dst: '192.0.2.10', proto: 'TCP', len: 60, info: '23 → 51520 [RST, ACK]' },
+  { no: 16, time: '3.100', src: '192.0.2.10', dst: '198.51.100.30', proto: 'TCP', len: 74, info: '51526 → 3389 [SYN] Seq=0' },
+  { no: 17, time: '4.101', src: '192.0.2.10', dst: '198.51.100.30', proto: 'TCP', len: 74, info: '[TCP Retransmission] 51526 → 3389 [SYN] Seq=0' },
+  { no: 18, time: '6.103', src: '192.0.2.10', dst: '198.51.100.30', proto: 'TCP', len: 74, info: '[TCP Retransmission] 51526 → 3389 [SYN] Seq=0' },
+  { no: 19, time: '6.900', src: '192.0.2.10', dst: '192.0.2.53', proto: 'DNS', len: 72, info: 'Standard query A tijd.nm.lab' },
+  { no: 20, time: '6.918', src: '192.0.2.53', dst: '192.0.2.10', proto: 'DNS', len: 88, info: 'Standard query response A 198.51.100.40' },
+  { no: 21, time: '6.920', src: '192.0.2.10', dst: '198.51.100.40', proto: 'NTP', len: 90, info: 'NTP Version 4, client' },
+  { no: 22, time: '6.944', src: '198.51.100.40', dst: '192.0.2.10', proto: 'NTP', len: 90, info: 'NTP Version 4, server' },
+];
+
+// Taak 5: firewalllog van een fictief kantoor. Normaal verkeer, plus één bron die poorten afloopt.
+const NWB_FWLOG = `2026-11-10 14:01:58 ALLOW TCP 198.51.100.7:50122 -> 192.0.2.20:443
+2026-11-10 14:02:03 ALLOW TCP 198.51.100.91:61804 -> 192.0.2.20:443
+2026-11-10 14:02:09 ALLOW TCP 203.0.113.12:44310 -> 192.0.2.21:25
+2026-11-10 14:02:15 ALLOW TCP 198.51.100.7:50130 -> 192.0.2.20:80
+2026-11-10 14:02:31 ALLOW UDP 198.51.100.44:39120 -> 192.0.2.53:53
+2026-11-10 14:03:02 DENY  TCP 203.0.113.50:40001 -> 192.0.2.25:21
+2026-11-10 14:03:02 DENY  TCP 203.0.113.50:40002 -> 192.0.2.25:22
+2026-11-10 14:03:02 DENY  TCP 203.0.113.50:40003 -> 192.0.2.25:23
+2026-11-10 14:03:03 DENY  TCP 203.0.113.50:40004 -> 192.0.2.25:25
+2026-11-10 14:03:03 DENY  TCP 203.0.113.50:40005 -> 192.0.2.25:80
+2026-11-10 14:03:03 ALLOW TCP 198.51.100.91:61811 -> 192.0.2.20:443
+2026-11-10 14:03:04 DENY  TCP 203.0.113.50:40006 -> 192.0.2.25:110
+2026-11-10 14:03:04 DENY  TCP 203.0.113.50:40007 -> 192.0.2.25:445
+2026-11-10 14:03:04 DENY  TCP 203.0.113.50:40008 -> 192.0.2.25:3306
+2026-11-10 14:03:05 ALLOW TCP 203.0.113.50:40009 -> 192.0.2.25:3389
+2026-11-10 14:03:40 ALLOW TCP 203.0.113.12:44318 -> 192.0.2.21:25
+2026-11-10 14:04:12 ALLOW UDP 198.51.100.44:39155 -> 192.0.2.53:53
+2026-11-10 14:05:27 ALLOW TCP 198.51.100.130:52270 -> 192.0.2.20:443
+2026-11-10 14:06:10 ALLOW TCP 203.0.113.50:40112 -> 192.0.2.25:3389
+2026-11-10 14:06:44 ALLOW TCP 203.0.113.50:40118 -> 192.0.2.25:3389
+2026-11-10 14:07:02 DENY  TCP 198.51.100.200:33900 -> 192.0.2.20:8080
+2026-11-10 14:07:19 ALLOW TCP 203.0.113.50:40131 -> 192.0.2.25:3389
+2026-11-10 14:08:05 ALLOW TCP 198.51.100.7:50177 -> 192.0.2.20:443
+2026-11-10 14:09:48 ALLOW TCP 203.0.113.12:44325 -> 192.0.2.21:25`;
+
+// Taak 6: een apparaat komt op het netwerk (DHCP), zoekt de gateway (ARP), en later meldt zich een tweede "gateway".
+const NWB_PCAP_LAN = [
+  { no: 1, time: '0.000', src: '0.0.0.0', dst: '255.255.255.255', proto: 'DHCP', len: 342, info: 'DHCP Discover - Transaction ID 0x3d1e' },
+  { no: 2, time: '0.310', src: '192.0.2.1', dst: '255.255.255.255', proto: 'DHCP', len: 342, info: 'DHCP Offer - 192.0.2.57 - Transaction ID 0x3d1e' },
+  { no: 3, time: '0.312', src: '0.0.0.0', dst: '255.255.255.255', proto: 'DHCP', len: 342, info: 'DHCP Request - 192.0.2.57 - Transaction ID 0x3d1e' },
+  { no: 4, time: '0.330', src: '192.0.2.1', dst: '255.255.255.255', proto: 'DHCP', len: 342, info: 'DHCP ACK - 192.0.2.57, lease 86400 s, router 192.0.2.1, DNS 192.0.2.53' },
+  { no: 5, time: '1.002', src: '52:54:00:a3:1f:6b', dst: 'ff:ff:ff:ff:ff:ff', proto: 'ARP', len: 42, info: 'Who has 192.0.2.1? Tell 192.0.2.57' },
+  { no: 6, time: '1.003', src: 'aa:bb:cc:11:22:33', dst: '52:54:00:a3:1f:6b', proto: 'ARP', len: 60, info: '192.0.2.1 is at aa:bb:cc:11:22:33' },
+  { no: 7, time: '1.010', src: '192.0.2.57', dst: '192.0.2.1', proto: 'ICMP', len: 98, info: 'Echo (ping) request' },
+  { no: 8, time: '1.011', src: '192.0.2.1', dst: '192.0.2.57', proto: 'ICMP', len: 98, info: 'Echo (ping) reply' },
+  { no: 9, time: '2.400', src: '192.0.2.57', dst: '192.0.2.53', proto: 'DNS', len: 74, info: 'Standard query A intranet.nm.lab' },
+  { no: 10, time: '2.419', src: '192.0.2.53', dst: '192.0.2.57', proto: 'DNS', len: 90, info: 'Standard query response A 192.0.2.80' },
+  { no: 11, time: '2.421', src: '52:54:00:a3:1f:6b', dst: 'ff:ff:ff:ff:ff:ff', proto: 'ARP', len: 42, info: 'Who has 192.0.2.80? Tell 192.0.2.57' },
+  { no: 12, time: '2.422', src: 'de:ad:be:ef:00:3c', dst: '52:54:00:a3:1f:6b', proto: 'ARP', len: 60, info: '192.0.2.80 is at de:ad:be:ef:00:3c' },
+  { no: 13, time: '31.500', src: 'de:ad:be:ef:00:99', dst: '52:54:00:a3:1f:6b', proto: 'ARP', len: 60, info: '192.0.2.1 is at de:ad:be:ef:00:99' },
+  { no: 14, time: '33.500', src: 'de:ad:be:ef:00:99', dst: '52:54:00:a3:1f:6b', proto: 'ARP', len: 60, info: '192.0.2.1 is at de:ad:be:ef:00:99' },
+  { no: 15, time: '35.500', src: 'de:ad:be:ef:00:99', dst: '52:54:00:a3:1f:6b', proto: 'ARP', len: 60, info: '192.0.2.1 is at de:ad:be:ef:00:99' },
+  { no: 16, time: '36.020', src: '192.0.2.57', dst: '192.0.2.53', proto: 'DNS', len: 74, info: 'Standard query A www.nm.lab' },
+];
+
 CS.registerRoom({
   id: 'netwerken-basis',
   path: 'fundamenten',
@@ -6,7 +79,9 @@ CS.registerRoom({
   title: 'Netwerken: de basis',
   icon: '🌐',
   difficulty: 'Makkelijk',
-  minutes: 70,
+  minutes: 100,
+  level: 'Instap',
+  checked: '2026-11-12',
   summary: 'Hoe apparaten met elkaar praten: LAN en WAN, MAC- en IP-adressen, het OSI- en TCP/IP-model, TCP vs UDP, poorten, en protocollen als DHCP, ARP en NAT.',
   objectives: [
     'Uitleggen wat een netwerk is en het verschil tussen LAN, WAN en internet',
@@ -71,6 +146,9 @@ CS.registerRoom({
 
     {
       title: 'Taak 2 — MAC- en IP-adressen (IPv4 en IPv6)',
+      tryFirst: true,
+      intro: `<p>In een rauw netwerkpakket staat het bronadres niet als nette punten-notatie, maar als vier bytes in hex: <code>C6 33 64 4D</code>. Zet in het lab elke byte om naar een decimaal getal (typ bijvoorbeeld <code>0xC6</code>) en schrijf het IPv4-adres op. Bekijk daarna hoe het laatste getal er binair uitziet.</p>`,
+      lab: { type: 'numconv', value: '0xC6' },
       content: `
         <p>Om een pakketje bij het juiste apparaat te krijgen, heb je adressen nodig. Er zijn er twee soorten, en ze
         doen iets anders.</p>
@@ -122,11 +200,35 @@ CS.registerRoom({
           answer: 1,
           explain: 'Het MAC-adres is het fysieke, vaste adres van de netwerkkaart.',
         },
+        {
+          q: 'Welk IPv4-adres hoort bij de vier hex-bytes C6 33 64 4D?',
+          answer: ['198.51.100.77'],
+          hints: ['Elke byte is één van de vier getallen van het adres.', 'Typ in het lab 0xC6, daarna 0x33, 0x64 en 0x4D, en lees telkens de regel "Decimaal".', 'Het adres begint met 198.51 en eindigt op 77.'],
+          wrong: { 'c6.33.64.4d': 'Je hebt de bytes alleen met punten gescheiden. Reken elke byte om naar decimaal.', '/^0x/': 'Gevraagd is de gewone notatie met vier decimale getallen en punten.', '3325256781': 'Dat zijn de vier bytes als één groot getal. Reken ze per byte om.' },
+          why: 'In hex-dumps, logregels en pakketten staan adressen vaak als losse bytes. Wie dit niet vlot omrekent, ziet een adres over het hoofd.',
+          explain: 'C6 = 198, 33 = 51, 64 = 100, 4D = 77. Vier bytes van 8 bits: samen de 32 bits van een IPv4-adres.',
+        },
+        {
+          q: 'Schrijf het laatste getal van dat adres (77) binair, als acht bits.',
+          answer: ['01001101', '0b01001101', '1001101', '0b1001101'],
+          hints: ['Een octet is altijd acht bits, ook als het getal klein is.', 'Typ 77 in het lab en lees de regel "Binair".', 'Het lab toont zeven cijfers; zet er vooraan een nul bij om op acht te komen.'],
+          wrong: { '4d': 'Dat is de hex-schrijfwijze. Gevraagd is binair: alleen enen en nullen.', '77': 'Dat is decimaal. Gevraagd is binair.' },
+          explain: '77 = 64 + 8 + 4 + 1, dus 01001101. Die voorloopnul doet ertoe zodra je met subnetmaskers gaat rekenen.',
+        },
       ],
     },
 
     {
       title: 'Taak 3 — Het OSI-model, het TCP/IP-model en encapsulatie',
+      tryFirst: true,
+      intro: `<p>Zestien kaartjes: protocollen, adressen, apparaten en namen voor een brok data. Ze horen bij vier lagen van het OSI-model. Maak vier groepen van vier. Lukt het niet meteen, kijk dan in het schema in de uitleg.</p>`,
+      lab: { type: 'connections', prompt: 'Vier lagen: applicatie (7), transport (4), netwerk (3) en datalink (2).', flag: 'NM{elke_laag_zijn_taak}',
+        groups: [
+          { name: 'Laag 7 · Applicatie', items: ['HTTP', 'DNS', 'SMTP', 'IMAP'] },
+          { name: 'Laag 4 · Transport', items: ['TCP', 'UDP', 'Poortnummer', 'Segment'] },
+          { name: 'Laag 3 · Netwerk', items: ['IP-adres', 'Router', 'ICMP', 'Pakket'] },
+          { name: 'Laag 2 · Datalink', items: ['MAC-adres', 'Switch', 'Ethernet', 'Frame'] },
+        ] },
       content: `
         <p>Netwerken zijn ingewikkeld, dus we delen ze op in lagen. Elke laag doet één ding en praat alleen met de laag
         erboven en eronder. Het bekendste model is het <strong>OSI-model</strong> met zeven lagen.</p>
@@ -199,16 +301,20 @@ CS.registerRoom({
           explain: 'Een router werkt op de netwerklaag (laag 3), waar met IP-adressen wordt gerouteerd.',
         },
         {
-          q: 'Welke OSI-laag gebruikt MAC-adressen?',
-          options: ['Fysieke laag (1)', 'Datalinklaag (2)', 'Netwerklaag (3)'],
-          answer: 1,
-          explain: 'De datalinklaag (laag 2) gebruikt MAC-adressen; daar werkt ook de switch.',
+          q: 'Welke vlag krijg je als de vier lagen kloppen?',
+          answer: ['NM{elke_laag_zijn_taak}'],
+          hints: ['Begin met de vier protocollen die een gebruiker direct merkt: web, namen en mail.', 'Elke laag heeft een eigen adres of nummer en een eigen naam voor de data: frame, pakket, segment.', 'Het MAC-adres, de switch, Ethernet en het frame horen bij elkaar op laag 2.'],
+          wrong: { '/^nm\\{.*\\}$/i': 'Dat is niet de vlag die het lab toont. Hij verschijnt pas als alle vier de groepen kloppen; neem hem letterlijk over.' },
+          explain: 'Laag 2 werkt met MAC-adressen en frames (de switch), laag 3 met IP-adressen en pakketten (de router), laag 4 met poorten en segmenten, laag 7 met de protocollen die toepassingen spreken.',
         },
       ],
     },
 
     {
       title: 'Taak 4 — TCP en UDP en de three-way handshake',
+      tryFirst: true,
+      intro: `<p>In het lab staat een capture van een paar seconden verkeer van één werkplek (192.0.2.10). Die werkplek doet drie pogingen om een TCP-verbinding op te zetten: één lukt, één wordt geweigerd en één krijgt nooit antwoord. Zoek uit welke welke is. Klik een pakket aan voor de details.</p>`,
+      lab: { type: 'pcap', title: 'werkplek-10.pcap', packets: NWB_PCAP_TCP },
       content: `
         <p>Op de transportlaag kies je hoe je data verstuurt. Er zijn twee hoofdrolspelers: TCP en UDP.</p>
 
@@ -272,16 +378,42 @@ CS.registerRoom({
           explain: 'UDP is verbindingsloos: het verstuurt zonder handshake en zonder garantie, maar wel snel.',
         },
         {
-          q: 'Welk bericht stuurt de client als allereerste in de three-way handshake?',
-          answer: ['SYN'],
-          hint: 'Het eerste van de drie stappen in het diagram.',
-          explain: 'De handshake begint met SYN (van de client), gevolgd door SYN-ACK (server) en ACK (client).',
+          q: 'Na welk pakket (nummer) staat de TCP-verbinding met de webserver op poort 443?',
+          answer: ['5'],
+          hints: ['Een verbinding staat pas als alle drie de stappen van de handshake zijn geweest.', 'Filter op 51514 en zoek de pakketten met SYN, dan SYN en ACK, dan ACK.', 'Het is het pakket vlak voor de Client Hello.'],
+          wrong: { '3': 'Pakket 3 is de SYN: de client vraagt een verbinding aan. De server heeft nog niet geantwoord.', '4': 'Pakket 4 is het antwoord van de server (SYN, ACK). De client moet dat nog bevestigen.', '6': 'Pakket 6 is al data (de Client Hello van TLS). De verbinding stond één pakket eerder.' },
+          why: 'Wie de drie stappen herkent, ziet in een capture meteen welke verbindingen echt tot stand kwamen en welke alleen zijn geprobeerd. Een poortscan bestaat vooral uit SYN-pakketten zonder vervolg.',
+          explain: 'Pakket 3 (SYN), 4 (SYN, ACK) en 5 (ACK). Daarna pas gaat er data over de lijn.',
+        },
+        {
+          q: 'Op welke poort weigert de server 198.51.100.20 de verbinding direct?',
+          answer: ['23', 'poort 23'],
+          hints: ['Een weigering is een antwoord. Zoek een antwoord dat geen SYN, ACK is.', 'Filter op RST.', 'Het is de poort van een verouderd, onversleuteld protocol om op afstand in te loggen.'],
+          wrong: { '3389': 'Op 3389 komt helemaal geen antwoord. Zwijgen is iets anders dan weigeren: daar gooit waarschijnlijk een firewall de pakketten weg.', '443': 'Op 443 slaagt de handshake juist.', '51520': 'Dat is de tijdelijke poort van de client. Gevraagd is de poort op de server.' },
+          explain: 'Op de SYN naar poort 23 volgt meteen RST, ACK: de machine is bereikbaar, maar er luistert niets op die poort.',
+        },
+        {
+          q: 'Hoeveel SYN-pakketten naar poort 3389 blijven onbeantwoord?',
+          answer: ['3'],
+          hints: ['Als er geen antwoord komt, probeert TCP het opnieuw.', 'Filter op 3389 en tel de regels.', 'Eén eerste poging en twee herhalingen.'],
+          wrong: { '1': 'Er is één eerste poging, maar de twee herhalingen (Retransmission) zijn ook SYN-pakketten zonder antwoord.', '2': 'Tel de eerste poging mee.' },
+          explain: 'Eén SYN en twee herhalingen, met steeds langere tussenpozen. Geen RST en geen SYN, ACK: de pakketten verdwijnen onderweg.',
+        },
+        {
+          q: 'Hoeveel pakketten in deze capture reizen over UDP in plaats van TCP?',
+          answer: ['6', 'zes'],
+          hints: ['De kolom Protocol noemt de toepassing. Je moet zelf weten welk transport eronder ligt.', 'DNS-vragen als deze en NTP gaan over UDP; TLS gaat over TCP.', 'Tel de regels met DNS en NTP.'],
+          wrong: { '4': 'Dat zijn de DNS-pakketten. De twee NTP-pakketten gaan ook over UDP.', '0': 'UDP staat niet als woord in de kolom, maar DNS en NTP gebruiken het wel.', '16': 'Dat zijn de pakketten die bij TCP horen. Gevraagd is de rest.' },
+          explain: 'Vier DNS-pakketten en twee NTP-pakketten. Geen handshake, geen afsluiting: vraag en antwoord, klaar.',
         },
       ],
     },
 
     {
       title: 'Taak 5 — Poorten en veelgebruikte poortnummers',
+      tryFirst: true,
+      intro: `<p>Dit is een stuk uit het firewalllog van een fictief kantoor. Elke regel: tijd, besluit (ALLOW of DENY), protocol, bron met poort, bestemming met poort. Tussen het gewone verkeer zit één bron die een hele reeks poorten afloopt op dezelfde server. Zoek die bron, en zoek uit wat de firewall daarbij doorlaat.</p>`,
+      lab: { type: 'logs', title: 'firewall.log (rand van het kantoornetwerk)', lines: NWB_FWLOG },
       content: `
         <p>Een IP-adres brengt je bij het juiste apparaat, maar op dat apparaat draaien vaak meerdere diensten tegelijk:
         een webserver, een mailserver, een database. Hoe weet een pakketje bij welke dienst het moet zijn? Via een
@@ -322,22 +454,35 @@ CS.registerRoom({
       `,
       questions: [
         {
-          q: 'Welke TCP-poort gebruikt HTTPS standaard?',
-          answer: ['443'],
-          hint: 'Kijk in de tabel; het is de versleutelde versie van HTTP.',
-          explain: 'HTTPS is HTTP over TLS en gebruikt standaard poort 443.',
+          q: 'Vanaf welk IP-adres komt de poortscan?',
+          answer: ['203.0.113.50'],
+          hints: ['Een scan herken je aan één bron die in korte tijd veel verschillende poorten op dezelfde bestemming probeert.', 'Filter op DENY en kijk welke bron steeds terugkomt.', 'Het adres begint met 203.0.113 en is niet de mailserver die poort 25 gebruikt.'],
+          wrong: { '192.0.2.25': 'Dat is de server die gescand wordt, de bestemming. Gevraagd is de bron.', '203.0.113.12': 'Dat adres levert alleen mail af op poort 25 van de mailserver: gewoon verkeer.', '198.51.100.200': 'Die bron probeert één keer poort 8080. Eén geweigerde poging is nog geen scan.' },
+          explain: '203.0.113.50 probeert binnen drie seconden negen poorten op 192.0.2.25. De bronpoorten lopen netjes op: een script.',
         },
         {
-          q: 'Welke poort hoort standaard bij RDP (Windows Remote Desktop)?',
-          options: ['3306', '3389', '445'],
-          answer: 1,
-          explain: 'RDP gebruikt poort 3389. 3306 is MySQL en 445 is SMB.',
+          q: 'Welke dienst op 192.0.2.25 laat de firewall door voor de scanner? Geef de gangbare afkorting van het protocol.',
+          answer: ['RDP', 'remote desktop', 'remote desktop protocol'],
+          hints: ['Zoek de regels van de scanner met ALLOW in plaats van DENY.', 'Filter met /ALLOW.*203\\.0\\.113\\.50/ en lees de bestemmingspoort.', 'Zoek die poort op in de poortentabel in de uitleg: het is toegang op afstand tot een Windows-bureaublad.'],
+          wrong: { '3389': 'Dat is de poort. Gevraagd is het protocol dat daar standaard op luistert.', 'smb': 'SMB is poort 445; die wordt hier tegengehouden.', 'mysql': 'MySQL is 3306; die wordt hier tegengehouden.', 'ssh': 'SSH is poort 22; die wordt hier tegengehouden.' },
+          why: 'Een open RDP-poort naar internet is een van de meest gebruikte ingangen bij ransomware. In een log van honderden regels is dit de ene regel die ertoe doet.',
+          explain: 'Poort 3389 staat open naar internet: RDP. Na de scan komt dezelfde bron er nog drie keer op terug.',
+        },
+        {
+          q: 'Hoeveel verschillende poorten probeert de scanner op 192.0.2.25?',
+          answer: ['9', 'negen'],
+          hints: ['Tel bestemmingspoorten, geen regels.', 'Filter op 203.0.113.50 en noteer elke poort achter 192.0.2.25 één keer.', 'Acht poorten worden geweigerd en één wordt doorgelaten.'],
+          wrong: { '12': 'Dat is het aantal regels van deze bron. Poort 3389 komt vier keer voor, maar telt als één poort.', '8': 'Dat zijn de geweigerde poorten. De doorgelaten poort hoort er ook bij.' },
+          explain: '21, 22, 23, 25, 80, 110, 445, 3306 en 3389: de bekende poorten uit de tabel.',
         },
       ],
     },
 
     {
       title: 'Taak 6 — DHCP, ARP en NAT',
+      tryFirst: true,
+      intro: `<p>Een laptop wordt aangesloten op een netwerk. In de capture zie je wat er dan gebeurt: hij vraagt een adres, zoekt de router en gaat aan het werk. Een halve minuut later gebeurt er iets wat niet klopt. Volg de pakketten van boven naar beneden en beantwoord de vragen.</p>`,
+      lab: { type: 'pcap', title: 'nieuw-apparaat.pcap', packets: NWB_PCAP_LAN },
       content: `
         <p>Drie protocollen die onzichtbaar hun werk doen, maar die je thuisnetwerk laten functioneren. Je komt ze
         gegarandeerd tegen.</p>
@@ -382,10 +527,26 @@ CS.registerRoom({
           explain: 'ARP (Address Resolution Protocol) koppelt een IP-adres aan een MAC-adres binnen het netwerk.',
         },
         {
-          q: 'Welke techniek laat veel apparaten met een privé-IP-adres via één gedeeld publiek IP-adres het internet op?',
-          answer: ['NAT', 'network address translation'],
-          hint: 'Afkorting van drie letters: Network Address ...',
-          explain: 'NAT (Network Address Translation) vertaalt privé-adressen naar één publiek adres.',
+          q: 'Welk IP-adres krijgt de laptop van de DHCP-server?',
+          answer: ['192.0.2.57'],
+          hints: ['De server doet een aanbod, de client vraagt erom, de server bevestigt.', 'Filter op DHCP en lees de kolom Info bij Offer en ACK.', 'Het adres eindigt op .57.'],
+          wrong: { '192.0.2.1': 'Dat is de DHCP-server zelf, die ook de router is.', '0.0.0.0': 'Dat is het bronadres van een apparaat dat nog geen adres heeft.', '255.255.255.255': 'Dat is het broadcast-adres: het bericht gaat naar iedereen omdat de client nog niemand kent.' },
+          explain: 'Discover, Offer, Request, ACK: in het aanbod en de bevestiging staat 192.0.2.57.',
+        },
+        {
+          q: 'Hoeveel uur is het uitgedeelde adres geldig (de lease)?',
+          answer: ['24', '24 uur'],
+          hints: ['De looptijd staat in de bevestiging van de server.', 'Lees pakket 4: de lease staat er in seconden.', 'Deel 86400 door 3600.'],
+          wrong: { '86400': 'Dat zijn seconden. Gevraagd is het aantal uren.', '1440': 'Dat zijn minuten.' },
+          explain: '86.400 seconden is precies één dag. Daarna moet de laptop het adres verlengen.',
+        },
+        {
+          q: 'Later in de capture beweert een tweede apparaat dat het IP-adres van de router bij hem hoort. Welk MAC-adres heeft dat apparaat?',
+          answer: ['de:ad:be:ef:00:99', 'de-ad-be-ef-00-99', 'deadbeef0099'],
+          hints: ['Vergelijk alle ARP-antwoorden over 192.0.2.1.', 'Filter op "192.0.2.1 is at" en kijk of het MAC-adres steeds hetzelfde is.', 'Het echte antwoord kwam in pakket 6. De andere drie komen ongevraagd, om de twee seconden.'],
+          wrong: { 'aa:bb:cc:11:22:33': 'Dat is het MAC-adres uit het eerste antwoord, direct na de vraag van de laptop. Dat is de echte router.', 'de:ad:be:ef:00:3c': 'Dat is de intranetserver op 192.0.2.80. Die claimt alleen zijn eigen adres.', '52:54:00:a3:1f:6b': 'Dat is de laptop zelf.' },
+          why: 'Als de laptop het tweede antwoord gelooft, stuurt hij al zijn verkeer naar buiten via het verkeerde apparaat. Zo werkt een man-in-the-middle op een lokaal netwerk.',
+          explain: 'de:ad:be:ef:00:99 stuurt drie keer ongevraagd "192.0.2.1 is at ...". Niemand vroeg erom: dat is ARP-spoofing.',
         },
       ],
     },
@@ -489,6 +650,107 @@ tcp    LISTEN  0       511          0.0.0.0:80           0.0.0.0:*`,
           hint: 'Kijk goed naar de hostnaam bij hop 4.',
           explain: 'Bij hop 4 staat de hostnaam NM{netwerk_verkend}.hop.nm.lab; dat is de vlag.',
         },
+        {
+          q: 'Eén dienst op deze machine is vanaf het hele netwerk bereikbaar en verstuurt alles onversleuteld. Welk protocol is dat?',
+          boss: true,
+          answer: ['http', 'http (80)', 'poort 80', '80'],
+          hints: ['Niet elke luisterende poort is voor iedereen bereikbaar. Kijk in de uitvoer van ss naar wat er vóór de poort staat.', 'Een dienst op 127.0.0.1 is alleen vanaf de machine zelf te bereiken; een dienst op 0.0.0.0 vanaf elke netwerkkaart. Zoek daarna de poorten op in de tabel van taak 5.', 'Twee TCP-diensten luisteren op 0.0.0.0. Eén daarvan is de veilige manier om op afstand in te loggen; de andere is het antwoord.'],
+          wrong: { 'ssh': 'SSH luistert wel op alle netwerkkaarten, maar versleutelt alles.', '22': 'Poort 22 is SSH: bereikbaar, maar versleuteld.', '631': 'Poort 631 luistert op 127.0.0.1 en is dus alleen vanaf de machine zelf bereikbaar.', 'dns': 'De regel met poort 53 luistert op een lokaal adres (127.0.0.53). Die is niet vanaf het netwerk bereikbaar.', 'https': 'HTTPS zou poort 443 zijn. Die staat niet in de lijst.', 'telnet': 'Telnet is poort 23. Die staat niet in de lijst.' },
+          why: 'Zo beoordeelt een beheerder of een aanvaller een machine: wat luistert er, voor wie is het bereikbaar, en is het versleuteld?',
+          explain: 'Op 0.0.0.0 luisteren poort 22 en poort 80. Poort 22 is SSH (versleuteld); poort 80 is de webserver zonder TLS. De printerdienst op 631 en de lokale DNS-resolver luisteren alleen op de machine zelf.',
+        },
+      ],
+    },
+
+    {
+      title: 'Taak 8 — Verdieping: wat de modellen weglaten',
+      kind: 'verdieping', optional: true,
+      content: `
+        <h3>Een model is een kapstok</h3>
+        <p>Het OSI-model (ISO/IEC 7498-1, 1994) is een manier om over netwerken te praten. Het internet is gebouwd op
+        TCP/IP, en echte protocollen houden zich niet netjes aan de zeven lagen. TLS wordt vaak op laag 6 gezet, maar
+        zit in de praktijk tussen transport en toepassing in. ARP hangt tussen laag 2 en 3. Gebruik het model om een
+        probleem af te bakenen ("is de kabel goed, is er een adres, is de poort bereikbaar?"), niet als natuurwet.</p>
+
+        <h3>Adressen die je moet herkennen</h3>
+        <ul>
+          <li><strong>Privé-adressen</strong> (RFC 1918, 1996): 10.0.0.0/8, 172.16.0.0/12 en 192.168.0.0/16. Die worden
+          op internet niet gerouteerd.</li>
+          <li><strong>169.254.x.x</strong> (RFC 3927, 2005): een apparaat dat geen antwoord van een DHCP-server kreeg,
+          kiest zelf zo'n adres. Zie je dit, dan is DHCP het probleem.</li>
+          <li><strong>100.64.0.0/10</strong> (RFC 6598, 2012): adressen die providers gebruiken om veel klanten achter
+          één publiek adres te zetten.</li>
+          <li><strong>192.0.2.x, 198.51.100.x en 203.0.113.x</strong> (RFC 5737, 2010): gereserveerd voor
+          documentatie. Daarom gebruiken de labs in deze room ze: ze kunnen nooit van iemand zijn.</li>
+          <li><strong>127.0.0.1</strong>: de machine zelf. Een dienst die alleen daarop luistert, is van buitenaf niet te
+          bereiken. Luistert hij op <code>0.0.0.0</code>, dan neemt hij verbindingen aan op elke netwerkkaart.</li>
+        </ul>
+
+        <h3>Poorten: de andere kant</h3>
+        <p>De tabel in taak 5 gaat over de poort waarop een dienst luistert. De client kiest voor zijn kant een
+        tijdelijke poort. IANA reserveert daarvoor 49152 tot en met 65535 (RFC 6335, 2011); Linux gebruikt
+        standaard een ruimer bereik dat lager begint. Een poortnummer is ook maar een afspraak: niets houdt
+        een beheerder of een aanvaller tegen om SSH op poort 443 te laten luisteren. Een open poort 443 bewijst dus
+        niet dat er een webserver draait.</p>
+
+        <h3>Wat er in de praktijk anders gaat</h3>
+        <ul>
+          <li><strong>NAT is geen firewall.</strong> Het verbergt adressen, maar een apparaat dat zelf naar buiten
+          belt, is gewoon bereikbaar voor het antwoord. Een firewall beslist op regels.</li>
+          <li><strong>DNS is niet alleen UDP.</strong> Grote antwoorden en zoneoverdrachten gaan over TCP, ook op
+          poort 53.</li>
+          <li><strong>Web is niet alleen TCP.</strong> HTTP/3 loopt over QUIC (RFC 9000, 2021), en dat gebruikt UDP
+          op poort 443.</li>
+          <li><strong>MAC-adressen zijn niet heilig.</strong> Telefoons en laptops gebruiken per wifi-netwerk vaak een
+          willekeurig adres, en een MAC-adres is met één commando aan te passen. Buiten het eigen netwerksegment
+          zie je het ook niet meer: elke router vervangt het door zijn eigen adres.</li>
+          <li><strong>TTL.</strong> Elk IP-pakket heeft een teller die bij elke router één omlaag gaat. Bij nul gooit
+          de router het weg en stuurt hij een melding terug. <code>traceroute</code> gebruikt precies dat om de
+          route zichtbaar te maken.</li>
+        </ul>
+      `,
+      questions: [
+        { q: 'Een dienst luistert op 127.0.0.1:631. Vanaf hoeveel andere apparaten in het netwerk is hij bereikbaar?', answer: ['0', 'geen'],
+          hints: ['Kijk naar het adres waarop de dienst luistert.', '127.0.0.1 is een bijzonder adres. De uitleg hierboven noemt het.', 'Alleen de machine zelf kan dit adres bereiken.'],
+          wrong: { '/^[1-9]/': '127.0.0.1 bestaat alleen binnen de machine zelf. Geen enkel ander apparaat kan er verbinding mee maken.' },
+          explain: 'Geen enkel. Pas als de dienst op 0.0.0.0 of op het adres van een netwerkkaart luistert, kunnen anderen erbij.' },
+        { q: 'Hoeveel poortnummers telt het bereik 49152 tot en met 65535?', answer: ['16384', '16.384'],
+          hints: ['Bij "tot en met" tellen beide grenzen mee.', 'Trek de grenzen van elkaar af en tel er één bij op.', 'Het is een macht van twee: een kwart van alle 65536 poorten.'],
+          wrong: { '16383': 'Je bent er één vergeten: beide grenzen tellen mee.', '65535': 'Dat is het hoogste poortnummer. Gevraagd is de grootte van het bereik.' },
+          explain: '65535 − 49152 + 1 = 16384.' },
+        { q: 'Een pakket vertrekt met TTL 64 en passeert zes routers. Met welke TTL komt het aan?', answer: ['58'],
+          hints: ['Elke router verlaagt de teller.', 'Per router gaat er één af.', '64 min 6.'],
+          wrong: { '64': 'De TTL blijft niet gelijk: elke router haalt er één af.', '57': 'Zes routers, zes keer één eraf. De ontvanger zelf verlaagt de teller niet.' },
+          explain: '64 − 6 = 58. Uit de TTL van een ontvangen pakket kun je zo ruwweg afleiden hoeveel routers ertussen zaten.' },
+      ],
+    },
+
+    {
+      title: 'Taak 9 — Zo komt dit voor op een examen',
+      kind: 'examen', optional: true,
+      content: `
+        <p>Examens over netwerken beschrijven meestal een storing of een stukje verkeer en vragen wat er aan de hand
+        is. De afleiders zijn protocollen die je wel kent, maar die een ander probleem oplossen. Werk van onder naar
+        boven: is er een adres, is de bestemming bereikbaar, klopt de naam, luistert de poort?</p>
+        <p>De vier vragen hieronder zijn voor deze room geschreven, in de stijl van zulke examens.</p>
+      `,
+      questions: [
+        { q: 'Een werkplek heeft na het opstarten het adres 169.254.18.40 en bereikt geen enkele server. Andere werkplekken aan dezelfde switch werken wel. Welke dienst heeft deze werkplek niet bereikt?',
+          options: ['DNS', 'DHCP', 'ARP', 'NAT'], answer: 1,
+          wrong: { 0: 'Zonder DNS werken namen niet, maar de werkplek zou dan nog wel een gewoon adres uit het netwerk hebben.', 2: 'ARP gebruikt een apparaat pas als het een adres heeft en een buurman zoekt. Het deelt zelf geen adressen uit.', 3: 'NAT speelt bij de router, op weg naar internet. Het verklaart niet waarom de werkplek dit adres heeft.' },
+          explain: 'Een adres dat met 169.254 begint, kiest een apparaat zelf als er geen antwoord van een DHCP-server komt.' },
+        { q: 'Een gebruiker kan de webserver bereiken via https://198.51.100.20, maar niet via https://www.nm.lab. Een ping naar 198.51.100.20 werkt ook. Wat is de meest waarschijnlijke oorzaak?',
+          options: ['De standaardgateway van de werkplek is fout ingesteld', 'De firewall blokkeert poort 443', 'De naam wordt niet of verkeerd omgezet door DNS', 'De three-way handshake met de server mislukt'], answer: 2,
+          wrong: { 0: 'Met een foute gateway zou het adres 198.51.100.20 in een ander netwerk ook niet bereikbaar zijn.', 1: 'De site werkt via het IP-adres over HTTPS, dus poort 443 is open.', 3: 'De handshake lukt aantoonbaar, want via het IP-adres komt de verbinding tot stand. Het gaat mis vóór er een verbinding wordt opgezet.' },
+          explain: 'Alles werkt zodra de naam uit beeld is. Dan ligt het aan de vertaling van naam naar adres.' },
+        { q: 'In een capture zie je: werkplek stuurt SYN naar 192.0.2.25 poort 445, en krijgt direct RST, ACK terug. Wat weet je nu?',
+          options: ['Een firewall gooit het verkeer stil weg', 'De host is bereikbaar, maar er luistert geen dienst op die poort', 'De verbinding is opgezet en daarna netjes afgesloten', 'De dienst gebruikt UDP in plaats van TCP'], answer: 1,
+          wrong: { 0: 'Bij stil weggooien komt er geen antwoord en zie je herhaalde SYN-pakketten. Hier komt meteen antwoord.', 2: 'Een opgezette verbinding heeft SYN, SYN-ACK en ACK. Netjes afsluiten gaat met FIN. Geen van beide is hier gebeurd.', 3: 'Een RST is een TCP-antwoord. Over UDP zegt dit niets.' },
+          explain: 'Een RST op een SYN betekent: ik ben er, maar deze poort is dicht.' },
+        { q: 'Twee computers hangen aan dezelfde switch, in hetzelfde netwerk. Computer A kent alleen het IP-adres van computer B. Wat heeft A nog nodig om een frame af te leveren, en hoe komt A eraan?',
+          options: ['Het MAC-adres van B, via een ARP-verzoek', 'Het MAC-adres van de router, via DHCP', 'De hostnaam van B, via DNS', 'Het publieke adres van B, via NAT'], answer: 0,
+          wrong: { 1: 'De router is nodig voor verkeer naar een ander netwerk. A en B zitten in hetzelfde netwerk, dus A levert rechtstreeks af. DHCP deelt bovendien geen MAC-adressen uit.', 2: 'Een naam is handig voor mensen, maar de switch werkt met MAC-adressen. A heeft het IP-adres al.', 3: 'NAT vertaalt adressen aan de rand van het netwerk. Binnen één netwerk speelt het geen rol.' },
+          explain: 'Binnen één netwerk bezorgt de switch op MAC-adres. ARP vertaalt het bekende IP-adres naar dat MAC-adres.' },
       ],
     },
   ],

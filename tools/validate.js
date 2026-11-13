@@ -10,7 +10,7 @@ const vm = require('vm');
 const crypto = require('crypto');
 
 const ROOT = path.join(__dirname, '..');
-const PATHS = ['fundamenten', 'security-kern', 'offensief', 'defensief', 'forensie', 'intelligence', 'datastromen', 'puzzels', 'meesterproeven', 'uitdagingen', 'eindopdracht'];
+const PATHS = ['fundamenten', 'security-kern', 'offensief', 'defensief', 'forensie', 'intelligence', 'datastromen', 'puzzels', 'meesterproeven', 'gamerooms', 'uitdagingen', 'eindopdracht'];
 const DIFFS = ['Makkelijk', 'Gemiddeld', 'Moeilijk'];
 const LABS = ['terminal', 'cyberchef', 'hashcrack', 'password', 'phishing', 'logs', 'http', 'sqli', 'subnet', 'hexviewer', 'pcap',
   'jwt', 'regex', 'cvss', 'timestamp', 'ioc', 'url', 'yara', 'timeline', 'chmod', 'numconv',
@@ -18,7 +18,61 @@ const LABS = ['terminal', 'cyberchef', 'hashcrack', 'password', 'phishing', 'log
   'ach', 'crimescript', 'admiralty', 'probability', 'attackmap', 'pivot', 'bluf',
   'flow', 'ordering', 'regexgolf', 'osintpuzzle', 'connections', 'chaintrace',
   'netflow', 'structuring', 'emailheader', 'dnslog', 'recon', 'detectrule',
-  'fingerprint', 'scenario', 'vigenere', 'xorcrib', 'rsa', 'vm', 'benford', 'bayes'];
+  'fingerprint', 'scenario', 'vigenere', 'xorcrib', 'rsa', 'vm', 'benford', 'bayes', 'incident', 'range'];
+
+// De incidentconsole (assets/js/game.js) laden zonder browser, om elke game room na te spelen.
+const GAME = (() => { const sb = { window: { CS: {} }, console }; vm.runInNewContext(fs.readFileSync(path.join(ROOT, 'assets/js/game.js'), 'utf8'), sb); return sb.window.CS.game; })();
+const RANGE = (() => { const sb = { window: { CS: {} }, console }; vm.runInNewContext(fs.readFileSync(path.join(ROOT, 'assets/js/range.js'), 'utf8'), sb); return sb.window.CS.range; })();
+function checkRange(rel, where, lab) {
+  for (const k of ['title', 'role', 'story', 'flag']) if (!lab[k]) err(rel, `${where}: range mist ${k}`);
+  if (!Array.isArray(lab.mandate) || lab.mandate.length < 2) err(rel, `${where}: range heeft rules of engagement (minstens twee regels) nodig`);
+  if (!Array.isArray(lab.hosts) || !lab.hosts.length) { err(rel, `${where}: range heeft geen hosts`); return; }
+  if (!Array.isArray(lab.solution) || !lab.solution.length) { err(rel, `${where}: range heeft geen oplossingsroute (solution)`); return; }
+  if (!lab.debrief) err(rel, `${where}: range heeft geen nabespreking (debrief)`);
+  const total = (lab.hosts || []).reduce((n, h) => n + (h.flags || []).length, 0);
+  if (!total) { err(rel, `${where}: range heeft geen vlaggen`); return; }
+  const seeds = [1, 2, 3, 7, 42, 1234, 99991, 31337];
+  for (const seed of seeds) {
+    const g = RANGE.create(lab, seed);
+    const left = JSON.stringify(g.cfg).match(/\{\{\w+\}\}/);
+    if (left) { err(rel, `${where}: variabele ${left[0]} heeft geen waarde in vars`); return; }
+    const fillv = (c) => c.replace(/\{\{(\w+)\}\}/g, (m, k) => (k in g.vars ? g.vars[k] : m));
+    const log = [];
+    g.solution.forEach((c) => g.exec(fillv(c)).forEach((l) => { if (l.cls === 'err' && !g.S.ended) log.push(fillv(c) + ' -> ' + l.text); }));
+    if (!g.S.ended) g.exec('done');
+    const r = g.result();
+    if (log.length) err(rel, `${where}: oplossingsroute (seed ${seed}) geeft fouten: ${log.slice(0, 2).join(' | ')}`);
+    if (!r.won) { err(rel, `${where}: oplossingsroute wint niet bij seed ${seed} (vlaggen ${r.flags}/${r.totalFlags}, meter ${r.noise}, reden ${r.reason})`); return; }
+    const idle = RANGE.create(lab, seed); idle.exec('done');
+    if (idle.result().won) { err(rel, `${where}: wie meteen afrondt, wint ook (seed ${seed})`); return; }
+  }
+  console.log(`    (range: oplossingsroute wint in ${seeds.length} varianten)`);
+}
+function checkIncident(rel, where, lab) {
+  for (const k of ['title', 'role', 'story', 'start', 'flag']) if (!lab[k]) err(rel, `${where}: incident mist ${k}`);
+  if (!Array.isArray(lab.mandate) || lab.mandate.length < 2) err(rel, `${where}: incident heeft een mandaat van minstens twee regels nodig`);
+  if (!Array.isArray(lab.objectives) || !lab.objectives.length) err(rel, `${where}: incident heeft geen doelen`);
+  if (!Array.isArray(lab.solution) || !lab.solution.length) { err(rel, `${where}: incident heeft geen oplossingsroute (solution)`); return; }
+  if (!lab.debrief) err(rel, `${where}: incident heeft geen nabespreking (debrief)`);
+  const ids = new Set((lab.threats || []).map((t) => t.id));
+  (lab.threats || []).forEach((t) => { if (!t.id || t.at == null || !t.text) err(rel, `${where}: dreiging mist id/at/text`); if (t.requires && !ids.has(t.requires)) err(rel, `${where}: dreiging ${t.id} wacht op onbekende ${t.requires}`); });
+  // Elke variant: de oplossingsroute wint zonder misgreep en zonder schade; niets doen wint niet.
+  const seeds = [1, 2, 3, 7, 42, 1234, 99991, 31337];
+  for (const seed of seeds) {
+    const g = GAME.create(lab, seed);
+    const left = JSON.stringify(g.cfg).match(/\{\{\w+\}\}/);
+    if (left) { err(rel, `${where}: variabele ${left[0]} heeft geen waarde in vars`); return; }
+    const log = [];
+    g.solution.forEach((c) => g.exec(c).forEach((l) => { if (l.cls === 'err' && !/^\s+Gevolg/.test(l.text) && !g.S.ended) log.push(c + ' -> ' + l.text); }));
+    if (!g.S.ended) g.exec('report');
+    const r = g.result();
+    if (log.length) err(rel, `${where}: oplossingsroute (seed ${seed}) geeft fouten: ${log.slice(0, 2).join(' | ')}`);
+    if (!r.won || !r.clean) { err(rel, `${where}: oplossingsroute wint niet schoon bij seed ${seed} (score ${r.score}/${r.max}, aftrek ${r.pen}, schade ${r.damage}, reden ${r.reason}${r.penalties.length ? ': ' + r.penalties[0].text : ''})`); return; }
+    const idle = GAME.create(lab, seed); idle.exec('report');
+    if (idle.result().won) { err(rel, `${where}: wie meteen afsluit, wint ook (seed ${seed})`); return; }
+  }
+  console.log(`    (incident: oplossingsroute wint in ${seeds.length} varianten)`);
+}
 
 const args = process.argv.slice(2);
 const files = args.length
@@ -54,6 +108,7 @@ function checkHtml(file, html, where) {
   if (/\$\{/.test(html)) warn(file, `${where}: bevat "\${" — bedoeld?`);
 }
 
+const hintsText = (q) => (Array.isArray(q.hints) ? q.hints : (q.hint ? [q.hint] : []));
 function labText(lab) {
   return JSON.stringify(lab);
 }
@@ -126,7 +181,10 @@ for (const file of files) {
   if (typeof r.order !== 'number') err(rel, 'order moet een getal zijn');
   if (typeof r.minutes !== 'number') err(rel, 'minutes moet een getal zijn');
   if (!Array.isArray(r.objectives) || r.objectives.length < 2) warn(rel, 'weinig of geen objectives');
+  if (r.level != null && !['Instap', 'Praktijk', 'Gevorderd', 'Expert'].includes(r.level)) err(rel, `onbekend level "${r.level}"`);
+  if (r.checked != null && !/^\d{4}-\d{2}-\d{2}$/.test(r.checked)) err(rel, 'checked moet een datum JJJJ-MM-DD zijn');
   if (!Array.isArray(r.tasks) || !r.tasks.length) { err(rel, 'geen tasks'); continue; }
+  if (r.tasks.every((t) => t.optional)) err(rel, 'alle taken zijn optional: de room kan nooit af');
   if (!Array.isArray(r.terms) || r.terms.length < 3) warn(rel, 'weinig of geen terms');
   (r.terms || []).forEach((t, i) => { if (!t.term || !t.def) err(rel, `term ${i} mist term/def`); });
   (r.resources || []).forEach((x, i) => { if (!x.title || !/^https:\/\//.test(x.url || '')) err(rel, `resource ${i} mist titel of https-url`); });
@@ -136,6 +194,10 @@ for (const file of files) {
   r.tasks.forEach((t, ti) => {
     const where = `taak ${ti + 1}`;
     if (!t.title) err(rel, `${where}: geen title`);
+    if (t.tryFirst && !t.intro) err(rel, `${where}: tryFirst vraagt om een intro (de opdracht die open staat)`);
+    if (t.tryFirst && !t.lab && !(t.questions || []).length) err(rel, `${where}: tryFirst zonder lab of vragen: er valt niets te proberen`);
+    if (t.intro) checkHtml(rel, t.intro, where + ' intro');
+    if (t.kind != null && !['verdieping', 'examen'].includes(t.kind)) err(rel, `${where}: onbekende kind "${t.kind}"`);
     if (!t.content) err(rel, `${where}: geen content`);
     else { checkHtml(rel, t.content, where); allText.push(t.content); }
     if (t.lab) allText.push(labText(t.lab)); // een vlag die letterlijk in een lab staat, telt ook als vindbaar
@@ -164,6 +226,8 @@ for (const file of files) {
           if (!Array.isArray(m.body)) err(rel, `${where}: email ${mi} body moet een array zijn`);
         });
       }
+      if (t.lab.type === 'incident') checkIncident(rel, where, t.lab);
+      if (t.lab.type === 'range') checkRange(rel, where, t.lab);
       if (t.lab.type === 'http') {
         (t.lab.routes || []).forEach((rt, ri) => { if (!rt.method || !rt.path || !rt.status) err(rel, `${where}: route ${ri} mist method/path/status`); });
       }
@@ -174,6 +238,32 @@ for (const file of files) {
       const w = `${where} vraag ${qi + 1}`;
       if (!q.q) err(rel, `${w}: geen vraagtekst`);
       if (q.noAnswer) return;
+      // Leerlus-velden (zie docs/CONTENT-SPEC.md): hints, wrong, why, boss.
+      if (q.hints != null) {
+        if (!Array.isArray(q.hints) || !q.hints.length || q.hints.length > 3 || q.hints.some((h) => typeof h !== 'string' || !h.trim())) err(rel, `${w}: hints moet een lijst van 1 tot 3 teksten zijn`);
+        if (q.hint) err(rel, `${w}: gebruik hint of hints, niet allebei`);
+      }
+      if (q.why != null && (typeof q.why !== 'string' || !q.why.trim())) err(rel, `${w}: why moet tekst zijn`);
+      if (q.wrong != null) {
+        if (typeof q.wrong !== 'object' || Array.isArray(q.wrong)) err(rel, `${w}: wrong moet een object { antwoord: uitleg } zijn`);
+        else for (const k of Object.keys(q.wrong)) {
+          if (typeof q.wrong[k] !== 'string' || !q.wrong[k].trim()) err(rel, `${w}: wrong["${k}"] heeft geen uitleg`);
+          const cut = k.lastIndexOf('/');
+          if (k.length > 2 && k[0] === '/' && cut > 0) { try { new RegExp(k.slice(1, cut), k.slice(cut + 1) || 'i'); } catch (e) { err(rel, `${w}: wrong-patroon ${k} is geen geldige regex`); } }
+          if (Array.isArray(q.options)) {
+            if (!/^\d+$/.test(k) || +k >= q.options.length) err(rel, `${w}: wrong["${k}"] is geen index van een optie`);
+            else if (+k === q.answer) err(rel, `${w}: wrong["${k}"] wijst naar het goede antwoord`);
+          } else {
+            const good = (Array.isArray(q.answer) ? q.answer : [q.answer]).map((a) => String(a).trim().toLowerCase());
+            if (good.includes(k.trim().toLowerCase())) err(rel, `${w}: wrong["${k}"] is zelf een goed antwoord`);
+          }
+        }
+      }
+      if (q.boss && hintsText(q).length && r.path !== 'uitdagingen') {
+        const plainTask = (t.content || '').replace(/<[^>]+>/g, ' ').toLowerCase();
+        const a0 = String(Array.isArray(q.answer) ? q.answer[0] : q.answer).toLowerCase();
+        if (!Array.isArray(q.options) && a0.length > 2 && plainTask.includes(a0)) err(rel, `${w}: het antwoord op een boss-vraag staat letterlijk in de taaktekst`);
+      }
       if (Array.isArray(q.options)) {
         if (typeof q.answer !== 'number' || q.answer < 0 || q.answer >= q.options.length) err(rel, `${w}: answer moet index binnen options zijn`);
         return;
@@ -205,7 +295,7 @@ for (const file of files) {
       const inText = (a, txt) => new RegExp('(^|[^a-z0-9{_])' + a.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '($|[^a-z0-9}_])').test(txt);
       const leak = answers.find((a) => a.length > 2 && inText(a, plain));
       if (leak) err(rel, `taak ${ti + 1} vraag ${qi + 1}: antwoord "${leak}" staat letterlijk in de tekst van een uitdaging`);
-      if (q.hint && answers.some((a) => a.length > 2 && inText(a, q.hint.toLowerCase()))) err(rel, `taak ${ti + 1} vraag ${qi + 1}: de hint verraadt het antwoord`);
+      if (hintsText(q).slice(0, 2).some((h) => answers.some((a) => a.length > 2 && inText(a, h.toLowerCase())))) err(rel, `taak ${ti + 1} vraag ${qi + 1}: de hint verraadt het antwoord`);
     }));
   }
   console.log(`    ${r.tasks.length} taken, ${qCount} vragen`);
@@ -223,6 +313,16 @@ Object.keys(globalDecls).forEach((nm) => {
 if (!require('./house').upToDate()) {
   errors++;
   console.log('  ✗ assets/js/house.js loopt achter op nineminds/ — draai node tools/build.js');
+}
+
+// Leerroutes (assets/js/app.js): elke genoemde room moet bestaan.
+if (!args.length) {
+  const app = fs.readFileSync(path.join(ROOT, 'assets/js/app.js'), 'utf8');
+  const block = (app.match(/const ROUTES = \[([\s\S]*?)\n  \];/) || [])[1] || '';
+  (block.match(/rooms: \[[^\]]*\]/g) || []).forEach((lst) => (lst.match(/'([^']+)'/g) || []).forEach((q) => {
+    const id = q.slice(1, -1);
+    if (!seenIds.has(id)) { errors++; console.log(`  ✗ leerroute verwijst naar een room die niet bestaat: ${id}`); }
+  }));
 }
 
 console.log(`\n${files.length} bestand(en), ${errors} fout(en), ${warnings} waarschuwing(en)`);

@@ -68,6 +68,9 @@ De bouwstenen van beveiliging.
 9. **SIM-swap & accountovername** — hoe het nummer-kapen sms-2FA breekt, de aanvalsketen, een beslissimulatie en sterkere 2FA.
 10. **Vishing & deepfake-stemmen** — voice-fraude en AI-stemkloning herkennen, de kanalen (phishing/vishing/smishing/quishing) en de juiste reacties.
 11. **Phishing gevorderd** — spear phishing, thread-hijacking, quishing en clone phishing herkennen in een lastige inbox (inclusief een legitieme mail), en verifiëren.
+12. **Identiteit, toegang en Zero Trust**: Wie ben je, wat mag je, en waarom nog steeds?
+13. **Risicomanagement en frameworks: ISO 27001, NIST CSF en BIO**: Niet alles kan tegelijk.
+14. **TLS en PKI in de praktijk**: Wat gebeurt er echt achter het slotje?
 
 ### ⚔️ Offensief (red team)
 Denken als een aanvaller — altijd in een veilig lab.
@@ -78,6 +81,9 @@ Denken als een aanvaller — altijd in een veilig lab.
 5. **Crack the Hash — de uitdaging** — een oplopende reeks hashes om zelf te herkennen en te kraken.
 6. **Reverse engineering: crackmes kraken** — lees de controle en vind de sleutel (met een echte crackme-lab).
 7. **Decoderen & multi-decode (CTF)** — gelaagde codering afpellen met de multi-decoder en CyberChef.
+8. **Verkenning en scannen**: Leer hoe een pentester een doelwit in kaart brengt: passieve en actieve verkenning, OSINT, footprinting en poortscannen met nmap — en waarom dit alleen mag met schriftelijke toestemming.
+9. **Veilig ontwikkelen en code-review**: Kwetsbaarheden vind je het goedkoopst voordat ze live staan.
+10. **Pentest-methodiek & rapportage** — de fasen van een pentest (PTES), scope en rules of engagement, OWASP WSTG, bevindingen wegen en een goed rapport schrijven.
 
 ### 🛡️ Defensief (blue team)
 Denken als een verdediger.
@@ -91,6 +97,14 @@ Denken als een verdediger.
 8. **Phishing-kit & -infrastructuur ontleden** — een phishing-kit van buitenaf analyseren (URL, IOCs, pivot) tot aan de takedown.
 9. **OT/ICS & ransomware op kritieke infra** — waarom OT anders is dan IT, hoe ransomware van IT naar OT springt en hoe je het fysieke proces beschermt.
 10. **Insider threat & datadiefstal** — soorten insider, de signalen, exfiltratie detecteren in netwerkverkeer en het zorgvuldige responsproces.
+11. **Logs lezen en aanvallen detecteren**: Blue team-werk: begrijpen wat logs zijn, wat een SIEM, IDS/IPS en SOC doen, en in echte logregels een brute force, een poortscan en een verdachte webscan opsporen.
+12. **Veilig thuis en op het werk**: Praktische digitale weerbaarheid die je vandaag nog kunt toepassen: updaten, back-ups (3-2-1), MFA en een wachtwoordmanager, veilig wifi, USB en publieke netwerken, privacy, en wat te doen als het tóch misgaat.
+13. **Cloudbeveiliging: verantwoordelijkheid, rechten en sporen**: De cloud is iemand anders zijn computer, maar jouw configuratie.
+14. **SIEM en threat hunting**: Leer hoe een SIEM logs verzamelt, normaliseert, correleert en alarmeert.
+15. **Netwerkbeveiliging en zakelijke wifi**: Een netwerk ontwerp je zo dat een inbraak op één plek niet overal een inbraak wordt.
+16. **Bedrijfscontinuïteit en herstel**: Wat moet het eerst weer draaien, hoeveel gegevens mag je kwijt, en lukt dat ook echt?
+17. **Active Directory verdedigen**: Active Directory is de sleutelbos van bijna elk Windows-netwerk.
+18. **Linux en containers harden**: Een server of container is zo veilig als zijn standaardinstellingen.
 
 ### 🕵️ Digitale forensie & opsporing
 De weg naar digitaal rechercheur — sporen vinden, veiligstellen en duiden.
@@ -106,6 +120,8 @@ De weg naar digitaal rechercheur — sporen vinden, veiligstellen en duiden.
 10. **Tijdlijnanalyse** — van tijdstempel tot super-timeline.
 11. **Forensie-CTF: Zaak Zilverlab** — een volledig onderzoek als oefening.
 12. **Verder leren** — boeken, tools en platforms.
+13. **Opsporingsbevoegdheden in het digitale onderzoek**: Wat mag een digitaal rechercheur, en wie moet toestemming geven?
+14. **Privacy en wetgeving in de praktijk**: De AVG breder dan de meldplicht, NIS2 en de Cyberbeveiligingswet, en de Wwft.
 
 ### 🧠 Cyber-intelligence & opsporing
 Van fenomeen naar interventie: denken en werken als intelligence-analist.
@@ -155,11 +171,42 @@ Voor wie de puzzels te makkelijk vond: zwaardere opgaven met meer achtergrond.
 4. **Redeneren met kansen: Bayes voor analisten** — basispercentages, likelihood ratios en de odds-vorm van Bayes, meerdere hypothesen en afhankelijk bewijs, kalibratie met de Brier-score en een Key Assumptions Check.
 5. **Bewijs in de rechtszaal: digitaal bewijs wegen en rapporteren** — bron-, activiteits- en delictsniveau, de prosecutor's fallacy (Sally Clark, Lucia de Berk), de likelihood ratio met verbale schaal, het forensisch rapport en contextuele bias.
 
+### 🗡️ Game rooms: aanvallen in een oefenrange
+Een gesimuleerd doelwit in je browser: verken, vind een ingang, log in, verhoog je rechten en pivoteer. Een vaste opdrachtenset, geen echte verbindingen en geen werkende exploitcode; de aanval is een puzzel. Met een ontdekkingsmeter als inzet, rules of engagement vooraf en een verdedigende nabespreking (wat de blue team had gezien, wat het had gestopt).
+1. **Eerste inbraak** (★) — een kwetsbare webserver: verken, vind inloggegevens in een vergeten bestand, log in en word root.
+2. **Rechten verhogen** (★★★) — van gewone gebruiker naar root via een verkeerde instelling, met valse sporen die niets opleveren.
+3. **Pivoteren** (★★★) — van de DMZ via een host met twee netwerkkaarten naar het interne net en de kroonjuwelen.
+4. **Active Directory-lite** (★★★★) — hoe één gestolen serviceaccount met te veel rechten het hele domein opent.
+5. **Rood tegen Blauw: Operatie Gelijkspel** (★★★★★) — eerst inbreken, daarna je eigen sporen terugvinden in de logs die je zojuist maakte.
+
+### 🛡️ Game rooms: verdedigen onder druk
+Je staat in een incidentconsole terwijl de aanval doorgaat. De klok loopt mee met wat je doet, een verkeerde ingreep legt het bedrijf stil, en te laat ingrijpen kost schade. Elke leerling krijgt een eigen variant; na afloop volgt een nabespreking met ATT&CK-technieken en een walkthrough.
+1. **De Nachtdienst** — een inbraak via de VPN om twee uur 's nachts: blokkeren, resetten, bewijs veiligstellen en isoleren vóór de wachtwoorden weg zijn, zonder de back-up te breken.
+2. **Ochtendspits in de mailbox** — een phishingcampagne: de juiste mail weghalen, vinden wie zijn wachtwoord afgaf, en de echte loonstrook laten staan.
+3. **Zes uur: de bestanden gaan op slot** — ransomware: patient zero vinden, het beheeraccount stilleggen, de back-up redden en in de goede volgorde terugzetten.
+4. **De vergeten server** — hardening onder tijdsdruk: wat moet dicht, en welke stevige maatregel legt de webshop plat?
+5. **De ochtend erna** — de sporen van een indringer lezen, eerst bewijs veiligstellen, en alle vier zijn wegen terug in één keer dichtzetten.
+
 ### 🎯 Uitdagingen (zonder handleiding)
 Geen uitleg en geen stappenplan: alleen een opdracht en het bewijs. De antwoorden staan nergens in de tekst en de hints zijn bewust vaag; de validator controleert dat. Kies zelf je gereedschap.
 1. **★ Het lege bureau** — een vertrokken medewerker en zijn thuismap: wat nam hij mee, waarheen, en wanneer?
 2. **★★ De gelaagde boodschap** — een "factuur" die geen factuur is, een sleutel in de bestandsstructuur en een bericht in meerdere lagen.
 3. **★★★ De onverklaarde geldstroom** — bank, boekhouding, geldstroom en open bronnen combineren; de reconciliatie alleen vertelt niet het hele verhaal.
+4. **★★ De open .git-map**: Een webshop zette per ongeluk zijn .git-map online.
+5. **★★ De kapotte back-up**: Een tandartspraktijk is zijn database kwijt.
+6. **★★★ De zijwaartse stap**: Een accountantskantoor vindt op maandag een onbekende dienst op een server.
+7. **★★★ Het lek in de DNS**: Een werkplek op de drukvloer stelt midden in de nacht vreemde DNS-vragen.
+8. **★★★★ De foto van gisteravond**: Een afperser stuurt een foto "van gisteravond".
+9. **★★★ De offerte die niet opende**: Een inkoper opent een offerte van een vaste leverancier en er gebeurt niets.
+10. **★★★ De beheerder die er niet was**: Het klantportaal van een verhuurder heeft een complete huurderslijst geëxporteerd, zogenaamd door een beheerder die die avond niet werkte.
+11. **★★★★ Twee keer dezelfde ruis**: Iemand heeft midden in de nacht het beheeraccount van een datacentrum overgenomen via een resetlink.
+12. **★★★★ Een vertrouwd toestelnummer**: Eerst zit je zelf aan de telefoon van de servicedesk, met een beller die haast heeft.
+13. **★★★★★ Drie sloten, één sleutel**: De eindbaas.
+14. **★ De nachtelijke inlog**: Op zondagochtend staat er een vreemde regel op de homepage van een hockeyclub.
+15. **★★ Het nieuwe rekeningnummer**: Een vaste leverancier belt: twee facturen zijn niet betaald.
+16. **★★★ De wolk van de vertrekker**: Een ingenieursbureau ziet veel uploads vanaf één werkplek, kort nadat een projectleider zijn ontslag indiende.
+17. **★★★ Het nachtelijke setpoint**: In een drinkwaterzuivering gaat midden in de nacht het chlooralarm af.
+18. **★★★★ Stemmen uit het veen**: Voor een referendum over een windpark duiken tientallen boze inwoners op die nooit eerder iets zeiden.
 
 ### 🏁 Eindopdracht
 1. **Mini-CTF: Operatie KoffieKlap** — breng alles samen in een afsluitende Capture The Flag met zes vlaggen.
@@ -225,11 +272,27 @@ Alle labs draaien **volledig in je browser** — veilig, offline, zonder dat er 
 | 📊 **Benford-analyse** | De eerste cijfers van bedragen vergelijken met de wet van Benford, met MAD, chi-kwadraat en het afwijkende cijfer. |
 | 🎲 **Bayes-rekenaar** | Hypothesen bijwerken met bewijs: prior, likelihoods, likelihood ratio en posterior, stap voor stap. |
 | 🦉 **Nachtwacht-VM** | Een mini-assembler: lees de code, stap erdoorheen met registers en trace, en vind de invoer die `ok` bereikt. |
+| 🛡️ **Incidentconsole** | Een game room met toestand: logs lezen, isoleren, blokkeren, resetten, veiligstellen en herstellen terwijl de klok loopt, met gevolgen voor elke ingreep. |
 | 🎲 **Beslissimulatie** | Beslissingen nemen onder druk (incident response/onderhandeling) en de gevolgen zien. |
 
 Alle tools zijn ook los te gebruiken via de **Gereedschapskist** (Gereedschap in de topbalk, of `#/tools`) — handig voor je eigen, ethische oefeningen.
 
-Je verdient **XP** en **badges**, en je voortgang wordt per vraag bewaard (lokaal, in `localStorage`).
+Je verdient **XP**, **badges** en een **rang**, en je voortgang wordt per vraag bewaard (lokaal, in `localStorage`).
+
+### Oefenen en terugkomen
+
+| Onderdeel | Wat het doet |
+|---|---|
+| **Dagpuzzel en weekopdracht** (`#/puzzel`) | Elke dag één kleine opgave om te kraken (Caesar, Base64, hex, binair, subnet, logregels, tijdstempel, poorten), elke week een vlag in drie lagen. Voor iedereen dezelfde, met een reeks. |
+| **Herhalen** (`#/herhalen`) | Wat je fout had, komt na 1, 3 en 7 dagen terug. Drie keer goed en het is weg. |
+| **Oefenarena** | Vrij oefenen, survival (tot je eerste fout) of een tijdsaanval van 90 seconden. |
+| **Scorebord** | Je rang, je zwakke plekken per onderwerp met een knop "Oefen dit", je badges en records. |
+| **Check jezelf** | Onderaan elke room: vijf vragen in een ander jasje, in drie minuten. |
+| **Leerroutes** (`#/routes`) | Vijf routes naar een rol (SOC-analist, digitaal rechercheur, intelligence-analist, financieel rechercheur, security-tester), elk met een proefexamen als eindtoets. |
+| **Proefexamen** (`#/proefexamen`) | 40 tot 90 vragen met een tijdslimiet, markeren voor later, geen terugkoppeling tot het eind en daarna een analyse per domein. Oefening, geen erkend examen. |
+| **Resultaatkaart** (`#/kaart`) | Een afdrukbare kaart per voltooid leerpad. Geen erkend certificaat; je naam blijft in je browser. |
+
+Hints zijn gelaagd en kosten een deel van de XP van de vraag; een fout antwoord krijgt waar mogelijk een specifieke uitleg. Het waarom staat in [ADR-0002](docs/adr/0002-spelmechanieken-binnen-de-huisstijl.md).
 
 **Back-up van je voortgang.** Klik rechtsboven op je XP → **Back-up downloaden**. Je krijgt een `.json`-bestand dat je via **Back-up terugzetten** weer inleest: na het wissen van je browser, in een andere browser of op een ander apparaat. Zet het bestand bijvoorbeeld in OneDrive of Google Drive.
 
@@ -263,6 +326,11 @@ Werkwijze:
 | `node tools/build-artifact.js` | Bouwt de losse versie `dist/nineminds-cyber-dojo.html` (alles in één bestand, ook de letters). |
 | `node tools/smoke.js` | Laadt het portaal in een headless browser en controleert dat alles rendert: de leerpaden, elke room, het NineMinds-teken. |
 | `node tools/labtest.js` + `labtest-extra.js` | Bedienen de labs echt en controleren de uitkomsten. |
+| `node tools/labtest-spel.js [--shots map]` | Test de dagpuzzel, weekopdracht, rangen, zwakke plekken, arena-modi, "Check jezelf" en de resultaatkaart, ook op 390 px. |
+| `node tools/labtest-examen.js` | Test de leerroutes en het proefexamen: geen terugkoppeling onderweg, markeren, analyse per domein. |
+| `node tools/labtest-game.js [--shots map]` | Speelt elke game room in de browser met zijn oplossingsroute, en test misgrepen, verliezen en de telefoonweergave. |
+| `node tools/labtest-leerlus.js` | Test de leerlus in een proefroom: gelaagde hints en hun XP-prijs, foutfeedback, herhaling en oude voortgang. |
+| `node tools/audit.js [--md]` | Classificeert elke vraag (herinneren, toepassen, analyseren) en zet de rooms op volgorde van zwakste eerst. |
 | `node tools/labtest-meester.js` | Test de labs van Meesterproeven (Vigenère, many-time pad, Benford, Bayes, RSA, VM), de sleutelcasussen en de antwoorden van die rooms. |
 
 *(De testscripts gebruiken Node + Playwright; de validator en build werken met alleen Node.)*
@@ -299,6 +367,7 @@ assets/
   js/icons.js           # getekende iconen, één per leerpad en voor de bediening
   js/app.js             # engine: routering, leerpaden, voortgang, XP, badges, zoeken
   js/labs.js            # alle interactieve labs + crypto-helpers
+  js/game.js            # de incidentconsole voor de game rooms (zie docs/adr/0003)
 content/
   rooms/*.js            # de lesinhoud (één bestand per room)
 docs/CONTENT-SPEC.md    # handleiding om content te schrijven

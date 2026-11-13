@@ -10,7 +10,7 @@ laadt de bestanden als gewone `<script>`-tags, zodat het ook werkt door `index.h
 /* Room: Netwerken — de basis */
 CS.registerRoom({
   id: 'netwerken-basis',            // gelijk aan de bestandsnaam, kebab-case
-  path: 'fundamenten',              // 'fundamenten' | 'security-kern' | 'offensief' | 'defensief' | 'forensie' | 'intelligence' | 'datastromen' | 'puzzels' | 'meesterproeven' | 'eindopdracht'
+  path: 'fundamenten',              // 'fundamenten' | 'security-kern' | 'offensief' | 'defensief' | 'forensie' | 'intelligence' | 'datastromen' | 'puzzels' | 'meesterproeven' | 'gamerooms' | 'uitdagingen' | 'eindopdracht'
   order: 2,                         // volgorde binnen het leerpad
   title: 'Netwerken: de basis',
   icon: '🌐',                       // optioneel; de interface toont het niet meer (een leerpad heeft een getekend teken, zie docs/adr/0001)
@@ -80,6 +80,51 @@ Velden:
 - `explain` (optioneel, aanbevolen): verschijnt na een goed antwoord.
 - `xp` (optioneel): standaard 10 voor open, 5 voor meerkeuze, 2 voor noAnswer.
 - `encoded: true` (optioneel): de vlag staat gecodeerd in de room (bijv. Base64 of ROT13), zodat de validator hem niet letterlijk vindt.
+
+### De leerlus: hints in lagen, foutfeedback, boss-vraag
+
+```js
+{ q: 'Welk account is overgenomen?', answer: ['svc-backup'],
+  hints: ['Kijk waar de mislukte aanmeldingen ophouden.',        // 1: een richting
+          'Filter het log op 4624 direct na de reeks 4625.',     // 2: het gereedschap of de plek
+          'Het is een serviceaccount; de naam begint met svc-.'],// 3: bijna het antwoord
+  wrong: { 'administrator': 'Daar wordt wel op geprobeerd, maar geen enkele poging slaagt.',
+           '/^10\\./': 'Je geeft een IP-adres; gevraagd is het account.' },
+  why: 'Serviceaccounts hebben vaak geen MFA en een wachtwoord dat nooit verloopt.',
+  explain: 'Na 41 mislukte pogingen volgt één 4624 voor svc-backup.' }
+```
+
+- `hints` (1 tot 3 teksten) vervangt `hint`. Elke geopende hint kost 15% van de XP van de vraag; dat staat op de knop.
+  Een bestaand `hint: '...'` blijft werken als één laag. Gebruik niet allebei.
+- `wrong`: uitleg bij een typisch fout antwoord. De sleutel is het foute antwoord (hoofdletters en spaties tellen
+  niet mee), een regex als `'/patroon/i'`, of bij meerkeuze de index van de optie. Bij examenstijlvragen leg je zo
+  uit waarom elke afleider fout is.
+- `why`: één of twee zinnen "waarom dit ertoe doet in de praktijk", zichtbaar na een goed antwoord.
+- `boss: true`: de boss-vraag van de room, standaard 25 XP. Het antwoord mag niet in de taaktekst staan (de
+  validator controleert dat) en vraagt om twee of meer technieken uit de room.
+- Een fout antwoord komt na 1, 3 en 7 dagen terug op `#/herhalen`. Daar hoef je niets voor te doen.
+
+### Eerst proberen, dan lezen; Verdieping; examenvragen
+
+```js
+{ title: 'Taak 2 — Wie logde er in?', tryFirst: true,
+  intro: '<p>De opdracht in twee zinnen. Dit staat open.</p>',
+  content: '<p>De uitleg. Die staat ingeklapt onder "Uitleg: lees dit als je vastzit".</p>',
+  lab: { ... }, questions: [ ... ] }
+
+{ title: 'Taak 7 — Verdieping: hoe Kerberos echt werkt', kind: 'verdieping', optional: true, content: '...', questions: [ ... ] }
+{ title: 'Taak 8 — Zo komt dit voor op een examen', kind: 'examen', optional: true, content: '...', questions: [ ... ] }
+```
+
+- `tryFirst: true` vraagt om een `intro` en om een lab of vragen.
+- `optional: true`: de vragen leveren XP op maar tellen niet mee voor "room af". Niet elke taak mag optional zijn.
+- `kind: 'verdieping'` of `'examen'` zet het juiste stempel boven de taak.
+
+`check: [ { q, options, answer, explain } ]` op de room (optioneel, minstens drie): eigen vragen voor "Check jezelf"
+onderaan de room. Zonder `check` draait de engine de begrippenlijst om (omschrijving gegeven, kies het begrip).
+
+Op de room zelf: `level: 'Instap' | 'Praktijk' | 'Gevorderd' | 'Expert'` en `checked: '2026-11-12'` (laatst
+inhoudelijk gecontroleerd). Beide zijn optioneel.
 
 Controleer je room met `node tools/validate.js content/rooms/<room-id>.js`.
 
@@ -763,6 +808,109 @@ Toont per eerste cijfer het waargenomen en het verwachte percentage (log10(1 + 1
 Nigrini (≤ 0,006 · ≤ 0,012 · ≤ 0,015), χ² met de 5%-grens (15,51 bij 8 vrijheidsgraden) en het sterkst
 oververtegenwoordigde cijfer. **Genereer datasets deterministisch en reken de uitkomst na** met `CS.stats.benfordStats`.
 Bedenk dat de MAD-grenzen voor grote reeksen bedoeld zijn: bij een paar honderd bedragen is ruis normaal.
+
+### `range`: offensieve oefenrange (gesimuleerd)
+
+Een gesimuleerd netwerk van fictieve hosts met toestand: de leerling verkent, vindt een ingang, verzamelt inloggegevens,
+verhoogt rechten en pivoteert. Vaste opdrachtenset, geen `eval`, geen echte verbindingen, geen werkende exploitcode. De
+engine staat in `assets/js/range.js`; het waarom in [ADR-0004](adr/0004-offensieve-oefenranges.md). Pad `gamerooms`;
+kijk naar `content/rooms/range-eerste-inbraak.js` als voorbeeld.
+
+```js
+lab: {
+  type: 'range',
+  title: 'Kade Transport - web-01',
+  role: 'Wie de leerling is en welke (getekende) scope hij heeft.',
+  story: 'Twee zinnen: de opdracht.',
+  mandate: ['Alles is gesimuleerd ...', 'Je scope is ...', ...],   // rules of engagement; de leerling accepteert ze
+  vars: { ip: ['203.0.113.10', '198.51.100.10'], pass: ['Zomer2024!', 'Welkom-2025'], tool: ['tar', 'awk'] }, // {{ip}} overal
+  startNet: 'ext', startScan: 'ext', maxNoise: 100, quietUnder: 45,   // quietUnder: stiller dan dit telt als "schoon"
+  nets: { ext: { cidr: 'ext', label: 'internet' }, intern: { cidr: '10.10.0.0/24' } },
+  hosts: [ {
+    name: 'web-01', ip: '{{ip}}', net: 'ext', role: '...',
+    bridges: ['intern'],                     // welke netten deze host opent zodra je er een shell hebt (pivot)
+    ports: [ { n: 22, svc: 'ssh', ver: 'OpenSSH 8.9' }, { n: 80, svc: 'http', ver: 'nginx 1.18' } ],
+    pages: { '/': '...', '/robots.txt': 'Disallow: /backup', '/backup/config.php.bak': '... {{pass}} ...' }, // web <host> [pad]
+    secrets: [ { loc: 'web:/backup/config.php.bak', cred: { user: 'webadmin', pass: '{{pass}}', target: 'web-01' }, text: '...' } ],
+    accounts: { webadmin: '{{pass}}' },      // geldige logins (user: wachtwoord); ssh lukt alleen met een gevonden cred
+    files: { '/home/webadmin/user.txt': 'NM{...}', '/root/root.txt': 'NM{...}' },   // shell-bestanden; /root is root-only
+    rootOnly: ['/etc/shadow'],               // extra root-only paden (naast /root/...)
+    escalation: { via: 'sudo', token: '{{tool}}', show: '/usr/bin/{{tool}}', note: '...' }, // via: 'sudo'|'suid'|'cron'
+    onRoot: [ { cred: { user: 'root', pass: '...', target: 'db-01' }, text: 'wachtwoordhergebruik' } ], // loot bij root
+    flags: [ { id: 'user', value: 'NM{...}', path: '/home/webadmin/user.txt', root: false, points: 10 },
+             { id: 'root', value: 'NM{...}', path: '/root/root.txt', root: true, points: 15 } ],
+  } ],
+  objectives: [ { text: '...', found: ['shell:web-01'] }, { text: '...', flags: ['root'] } ],  // found-sleutels of flag-ids
+  flag: 'NM{...}',                            // de eindvlag (meestal de laatste rootvlag)
+  solution: ['scan ext', 'scan web-01', 'web web-01 /robots.txt', ..., 'escalate {{tool}}', 'cat /root/root.txt', 'done'],
+  solutionNotes: ['Waarom deze stap', ...],  // een per stap
+  debrief: '<h4>De keten die je liep</h4> ... <h4>Wat de beheerder had kunnen zien</h4> ... <h4>Wat elke stap had gestopt</h4> ...',
+  ask: [ { q: 'Welk account gebruikte je?', answer: ['webadmin'] } ],   // in de nabespreking
+}
+```
+
+- **Opdrachten**: `scan <subnet|host>` (een subnet is luidruchtiger; alleen bereikbare hosts verschijnen), `web <host> [pad]`,
+  `creds`, `ssh <user>@<host>` (lukt alleen met een gevonden wachtwoord), `ls`/`cat`, `whoami`/`id`/`ps`, `sudo -l`/`find-suid`/`crontab -l`
+  (tonen de zwakte en zetten de sleutel `privseen`), `escalate <token>` (root worden), `use <host>`, `flag <waarde>`, `note`/`notes`, `done`.
+- **Vlaggen** worden gepakt door het bestand te `cat`-en (root-vlaggen pas als je root bent) of met `flag <waarde>`.
+- **Pivoteren**: een host met `bridges` opent die netten zodra je er een shell hebt; daarna `scan <net>` voor de interne hosts.
+- **found-sleutels** voor doelen: `seen:<host>`, `shell:<host>`, `privseen:<host>`, `root:<host>`.
+- **De validator** speelt `solution` na in acht varianten: alle vlaggen pakken en winnen, en meteen `done` mag niet winnen.
+- **Ethiek** (ADR-0004): alles fictief, geen werkende exploitcode, rules of engagement vooraf en een verdedigende debrief.
+
+### `incident`: game room met toestand (incidentconsole)
+
+Een verdedigende simulatie: de leerling typt opdrachten in een console, elke opdracht kost minuten, de aanval loopt door
+tot hij gestopt is, en een verkeerde ingreep heeft gevolgen. De engine staat in `assets/js/game.js`; het waarom in
+[ADR-0003](adr/0003-game-rooms-zijn-verdedigend.md). Een game room staat in het pad `gamerooms`; kijk naar
+`content/rooms/game-nachtdienst.js` als voorbeeld.
+
+```js
+lab: {
+  type: 'incident',
+  title: 'Kade Transport BV · nachtdienst',
+  role: 'Wie de leerling is en welk mandaat hij heeft.',
+  story: 'Twee zinnen: wat er aan de hand is.',
+  mandate: ['Alles gebeurt in deze simulatie ...', 'Je mag ...', ...],   // minstens twee regels; de leerling accepteert ze
+  vars: { ip: ['203.0.113.47', '198.51.100.61'], user: ['m.jansen', 's.bakker'] },  // per leerling één waarde; {{ip}} overal
+  start: '02:10', deadline: 50, maxDamage: 60,          // klok, einde van de dienst (minuten), schade waarbij je verliest
+  hosts: [ { name: 'ws-{{ws}}', ip: '...', role: '...', compromised: true },        // besmet: isoleren is terecht
+           { name: 'fs-01', role: '...', critical: true, compromisedBy: 'zijwaarts' }, // kritiek: zonder reden isoleren kost punten
+           { name: 'bak-01', role: '...', critical: true, safeToIsolate: true } ],    // afschermen is een goede zet
+  accounts: [ { name: '{{user}}', role: '...', compromised: true }, { name: 'svc-backup', role: '...', critical: true, lockText: '...' } ],
+  legit: [ { value: '198.51.100.20', text: 'Waarom blokkeren hier fout is.' } ],     // adressen of domeinen die niet geblokkeerd mogen
+  alerts: [ { t: -3, text: '...' }, { t: 12, text: '...', unless: ['isolate:ws-{{ws}}'] }, { t: 17, text: '...', after: 'dump' } ],
+  logs: { 'vpn-gw': [ { t: -8, line: '...' } ], firewall: [ ... ] },            // logs <bron> [zoekterm]
+  procs: { 'ws-{{ws}}': [ { pid: '612', name: 'lsass.exe', user: 'SYSTEM', critical: true, killText: '...' } ] },
+  mails: [ { id: 'm-1', t: -25, from: '...', subject: '...', to: 38, reported: 3, malicious: true, detail: ['header', ...] } ],
+  show: { ssh: ['regel', ...] },                                                  // show <onderwerp>
+  fixes: [ { id: 'ssh-root', good: true, text: '...', done: '...' }, { id: 'ssh-uit', good: false, points: 15, text: '...', why: '...' } ],
+  restore: ['fs-01'],                                                             // hosts met een offline back-up
+  rules: [ { on: 'restore:fs-01', unless: ['isolate:ws-31'], points: 20, text: 'Gevolg als je dit doet zonder het andere.' } ],
+  threats: [ { id: 'dump', at: 16, label: 'Kort, met ATT&CK-ID', text: 'Wat er gebeurt.', stoppedBy: ['isolate:ws-{{ws}}'], damage: 15 },
+             { id: 'exfil', at: 34, requires: 'zijwaarts', stoppedBy: ['block:{{ip}}'], ... },   // alleen als 'zijwaarts' gebeurde
+             { id: 'terug', at: 35, stoppedByAll: ['fix:a', 'fix:b'], stoppedBy: ['isolate:app-02'], ... } ],
+  objectives: [ { text: '...', all: ['block:{{ip}}'], points: 10 }, { text: '...', any: ['isolate:ws-{{ws}}'], before: 16, required: true } ],
+  pass: 30,                                                                       // standaard 70% van de punten
+  flag: 'NM{...}',
+  solution: ['alerts', 'logs vpn-gw {{ip}}', 'block {{ip}}', ..., 'report'],     // de oplossingsroute, ook de walkthrough
+  solutionNotes: ['Waarom deze stap', ...],                                       // één per stap
+  debrief: '<h4>Wat de aanvaller deed</h4> ... <h4>Wat je had kunnen zien</h4> ... <h4>Wat het had gestopt</h4> ...',
+  ask: [ { q: 'Vanaf welk IP-adres kwam de aanval?', answer: ['{{ip}}'] } ],    // in de nabespreking, over de eigen variant
+}
+```
+
+- **Handelingen** en hun sleutels: `isolate:<host>`, `shutdown:<host>` (telt ook als isolate), `block:<ip of domein>`,
+  `reset:<account>`, `disable:<account>`, `kill:<host>:<pid>`, `snapshot:<host>`, `restore:<host>`, `purge:<mail-id>`,
+  `fix:<id>`. Doelen, dreigingen en regels verwijzen naar deze sleutels.
+- **Tijd**: `t` en `at` zijn minuten vanaf `start` (negatief is al gebeurd). Een handeling telt op het moment dat ze klaar is.
+  Wie afsluit terwijl er nog dreigingen openstaan, ziet die alsnog gebeuren als ze niet gestopt zijn.
+- **Gevolgen die de engine zelf geeft**: een niet-besmette kritieke host isoleren of uitzetten (15), een besmette host
+  uitzetten zonder snapshot (15), een `legit` adres blokkeren, een kritiek account uitschakelen, een kritiek proces stoppen,
+  een echte mail verwijderen, een `fix` met `good: false`. Eigen gevolgen leg je vast in `rules`.
+- **De validator** speelt `solution` na in acht varianten. De route moet winnen zonder gevolgen en zonder schade, en meteen
+  afsluiten mag niet winnen. Zet de vlag als gewone vraag in dezelfde taak; de leerling krijgt hem in de nabespreking.
+- **Ethiek**: game rooms zijn verdedigend (ADR-0003). Het mandaat begint met de regel dat alles een simulatie is.
 
 ### `bayes`: hypothesen bijwerken met bewijs
 
