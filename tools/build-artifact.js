@@ -72,6 +72,9 @@ ${safeJs(labs)}
 <script>
 ${safeJs(read('assets/js/game.js'))}
 </script>
+<script>
+${safeJs(read('assets/js/range.js'))}
+</script>
 ${roomScripts}
 <script>CS.boot();</script>
 `;

@@ -809,6 +809,55 @@ Nigrini (≤ 0,006 · ≤ 0,012 · ≤ 0,015), χ² met de 5%-grens (15,51 bij 8
 oververtegenwoordigde cijfer. **Genereer datasets deterministisch en reken de uitkomst na** met `CS.stats.benfordStats`.
 Bedenk dat de MAD-grenzen voor grote reeksen bedoeld zijn: bij een paar honderd bedragen is ruis normaal.
 
+### `range`: offensieve oefenrange (gesimuleerd)
+
+Een gesimuleerd netwerk van fictieve hosts met toestand: de leerling verkent, vindt een ingang, verzamelt inloggegevens,
+verhoogt rechten en pivoteert. Vaste opdrachtenset, geen `eval`, geen echte verbindingen, geen werkende exploitcode. De
+engine staat in `assets/js/range.js`; het waarom in [ADR-0004](adr/0004-offensieve-oefenranges.md). Pad `gamerooms`;
+kijk naar `content/rooms/range-eerste-inbraak.js` als voorbeeld.
+
+```js
+lab: {
+  type: 'range',
+  title: 'Kade Transport - web-01',
+  role: 'Wie de leerling is en welke (getekende) scope hij heeft.',
+  story: 'Twee zinnen: de opdracht.',
+  mandate: ['Alles is gesimuleerd ...', 'Je scope is ...', ...],   // rules of engagement; de leerling accepteert ze
+  vars: { ip: ['203.0.113.10', '198.51.100.10'], pass: ['Zomer2024!', 'Welkom-2025'], tool: ['tar', 'awk'] }, // {{ip}} overal
+  startNet: 'ext', startScan: 'ext', maxNoise: 100, quietUnder: 45,   // quietUnder: stiller dan dit telt als "schoon"
+  nets: { ext: { cidr: 'ext', label: 'internet' }, intern: { cidr: '10.10.0.0/24' } },
+  hosts: [ {
+    name: 'web-01', ip: '{{ip}}', net: 'ext', role: '...',
+    bridges: ['intern'],                     // welke netten deze host opent zodra je er een shell hebt (pivot)
+    ports: [ { n: 22, svc: 'ssh', ver: 'OpenSSH 8.9' }, { n: 80, svc: 'http', ver: 'nginx 1.18' } ],
+    pages: { '/': '...', '/robots.txt': 'Disallow: /backup', '/backup/config.php.bak': '... {{pass}} ...' }, // web <host> [pad]
+    secrets: [ { loc: 'web:/backup/config.php.bak', cred: { user: 'webadmin', pass: '{{pass}}', target: 'web-01' }, text: '...' } ],
+    accounts: { webadmin: '{{pass}}' },      // geldige logins (user: wachtwoord); ssh lukt alleen met een gevonden cred
+    files: { '/home/webadmin/user.txt': 'NM{...}', '/root/root.txt': 'NM{...}' },   // shell-bestanden; /root is root-only
+    rootOnly: ['/etc/shadow'],               // extra root-only paden (naast /root/...)
+    escalation: { via: 'sudo', token: '{{tool}}', show: '/usr/bin/{{tool}}', note: '...' }, // via: 'sudo'|'suid'|'cron'
+    onRoot: [ { cred: { user: 'root', pass: '...', target: 'db-01' }, text: 'wachtwoordhergebruik' } ], // loot bij root
+    flags: [ { id: 'user', value: 'NM{...}', path: '/home/webadmin/user.txt', root: false, points: 10 },
+             { id: 'root', value: 'NM{...}', path: '/root/root.txt', root: true, points: 15 } ],
+  } ],
+  objectives: [ { text: '...', found: ['shell:web-01'] }, { text: '...', flags: ['root'] } ],  // found-sleutels of flag-ids
+  flag: 'NM{...}',                            // de eindvlag (meestal de laatste rootvlag)
+  solution: ['scan ext', 'scan web-01', 'web web-01 /robots.txt', ..., 'escalate {{tool}}', 'cat /root/root.txt', 'done'],
+  solutionNotes: ['Waarom deze stap', ...],  // een per stap
+  debrief: '<h4>De keten die je liep</h4> ... <h4>Wat de beheerder had kunnen zien</h4> ... <h4>Wat elke stap had gestopt</h4> ...',
+  ask: [ { q: 'Welk account gebruikte je?', answer: ['webadmin'] } ],   // in de nabespreking
+}
+```
+
+- **Opdrachten**: `scan <subnet|host>` (een subnet is luidruchtiger; alleen bereikbare hosts verschijnen), `web <host> [pad]`,
+  `creds`, `ssh <user>@<host>` (lukt alleen met een gevonden wachtwoord), `ls`/`cat`, `whoami`/`id`/`ps`, `sudo -l`/`find-suid`/`crontab -l`
+  (tonen de zwakte en zetten de sleutel `privseen`), `escalate <token>` (root worden), `use <host>`, `flag <waarde>`, `note`/`notes`, `done`.
+- **Vlaggen** worden gepakt door het bestand te `cat`-en (root-vlaggen pas als je root bent) of met `flag <waarde>`.
+- **Pivoteren**: een host met `bridges` opent die netten zodra je er een shell hebt; daarna `scan <net>` voor de interne hosts.
+- **found-sleutels** voor doelen: `seen:<host>`, `shell:<host>`, `privseen:<host>`, `root:<host>`.
+- **De validator** speelt `solution` na in acht varianten: alle vlaggen pakken en winnen, en meteen `done` mag niet winnen.
+- **Ethiek** (ADR-0004): alles fictief, geen werkende exploitcode, rules of engagement vooraf en een verdedigende debrief.
+
 ### `incident`: game room met toestand (incidentconsole)
 
 Een verdedigende simulatie: de leerling typt opdrachten in een console, elke opdracht kost minuten, de aanval loopt door

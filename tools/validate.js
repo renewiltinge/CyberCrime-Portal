@@ -18,10 +18,36 @@ const LABS = ['terminal', 'cyberchef', 'hashcrack', 'password', 'phishing', 'log
   'ach', 'crimescript', 'admiralty', 'probability', 'attackmap', 'pivot', 'bluf',
   'flow', 'ordering', 'regexgolf', 'osintpuzzle', 'connections', 'chaintrace',
   'netflow', 'structuring', 'emailheader', 'dnslog', 'recon', 'detectrule',
-  'fingerprint', 'scenario', 'vigenere', 'xorcrib', 'rsa', 'vm', 'benford', 'bayes', 'incident'];
+  'fingerprint', 'scenario', 'vigenere', 'xorcrib', 'rsa', 'vm', 'benford', 'bayes', 'incident', 'range'];
 
 // De incidentconsole (assets/js/game.js) laden zonder browser, om elke game room na te spelen.
 const GAME = (() => { const sb = { window: { CS: {} }, console }; vm.runInNewContext(fs.readFileSync(path.join(ROOT, 'assets/js/game.js'), 'utf8'), sb); return sb.window.CS.game; })();
+const RANGE = (() => { const sb = { window: { CS: {} }, console }; vm.runInNewContext(fs.readFileSync(path.join(ROOT, 'assets/js/range.js'), 'utf8'), sb); return sb.window.CS.range; })();
+function checkRange(rel, where, lab) {
+  for (const k of ['title', 'role', 'story', 'flag']) if (!lab[k]) err(rel, `${where}: range mist ${k}`);
+  if (!Array.isArray(lab.mandate) || lab.mandate.length < 2) err(rel, `${where}: range heeft rules of engagement (minstens twee regels) nodig`);
+  if (!Array.isArray(lab.hosts) || !lab.hosts.length) { err(rel, `${where}: range heeft geen hosts`); return; }
+  if (!Array.isArray(lab.solution) || !lab.solution.length) { err(rel, `${where}: range heeft geen oplossingsroute (solution)`); return; }
+  if (!lab.debrief) err(rel, `${where}: range heeft geen nabespreking (debrief)`);
+  const total = (lab.hosts || []).reduce((n, h) => n + (h.flags || []).length, 0);
+  if (!total) { err(rel, `${where}: range heeft geen vlaggen`); return; }
+  const seeds = [1, 2, 3, 7, 42, 1234, 99991, 31337];
+  for (const seed of seeds) {
+    const g = RANGE.create(lab, seed);
+    const left = JSON.stringify(g.cfg).match(/\{\{\w+\}\}/);
+    if (left) { err(rel, `${where}: variabele ${left[0]} heeft geen waarde in vars`); return; }
+    const fillv = (c) => c.replace(/\{\{(\w+)\}\}/g, (m, k) => (k in g.vars ? g.vars[k] : m));
+    const log = [];
+    g.solution.forEach((c) => g.exec(fillv(c)).forEach((l) => { if (l.cls === 'err' && !g.S.ended) log.push(fillv(c) + ' -> ' + l.text); }));
+    if (!g.S.ended) g.exec('done');
+    const r = g.result();
+    if (log.length) err(rel, `${where}: oplossingsroute (seed ${seed}) geeft fouten: ${log.slice(0, 2).join(' | ')}`);
+    if (!r.won) { err(rel, `${where}: oplossingsroute wint niet bij seed ${seed} (vlaggen ${r.flags}/${r.totalFlags}, meter ${r.noise}, reden ${r.reason})`); return; }
+    const idle = RANGE.create(lab, seed); idle.exec('done');
+    if (idle.result().won) { err(rel, `${where}: wie meteen afrondt, wint ook (seed ${seed})`); return; }
+  }
+  console.log(`    (range: oplossingsroute wint in ${seeds.length} varianten)`);
+}
 function checkIncident(rel, where, lab) {
   for (const k of ['title', 'role', 'story', 'start', 'flag']) if (!lab[k]) err(rel, `${where}: incident mist ${k}`);
   if (!Array.isArray(lab.mandate) || lab.mandate.length < 2) err(rel, `${where}: incident heeft een mandaat van minstens twee regels nodig`);
@@ -201,6 +227,7 @@ for (const file of files) {
         });
       }
       if (t.lab.type === 'incident') checkIncident(rel, where, t.lab);
+      if (t.lab.type === 'range') checkRange(rel, where, t.lab);
       if (t.lab.type === 'http') {
         (t.lab.routes || []).forEach((rt, ri) => { if (!rt.method || !rt.path || !rt.status) err(rel, `${where}: route ${ri} mist method/path/status`); });
       }
