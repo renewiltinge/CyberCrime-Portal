@@ -28,7 +28,7 @@ const rooms = fs.readdirSync(path.join(__dirname, '../content/rooms')).filter((f
   const start = async (sel) => { const btn = sel + ' .incident-start .btn.primary'; const disabled = await page.$eval(btn, (b) => b.disabled); await page.check(sel + ' .mandaat-ok input'); await page.click(btn); await page.waitForSelector(sel + ' .term'); return disabled; };
 
   console.log('Oefenranges: ' + rooms.map((r) => r.id).join(', '));
-  ok('Minstens een oefenrange', rooms.length >= 1); // wordt 5 als alle ranges er zijn
+  ok('Minstens vijf oefenranges', rooms.length >= 5);
 
   for (const room of rooms) {
     const ti = room.tasks.findIndex((t) => t.lab && t.lab.type === 'range');
@@ -57,7 +57,7 @@ const rooms = fs.readdirSync(path.join(__dirname, '../content/rooms')).filter((f
   // ---- Negatief in de eerste range
   await page.evaluate(() => localStorage.clear());
   await page.reload({ waitUntil: 'networkidle' });
-  const first = rooms[0];
+  const first = rooms.find((r) => r.id === 'range-eerste-inbraak') || rooms[0];
   const fti = first.tasks.findIndex((t) => t.lab && t.lab.type === 'range');
   const sel = '#task-' + fti;
   await open('#/room/' + first.id);

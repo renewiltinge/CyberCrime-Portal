@@ -106,8 +106,9 @@ CS.registerRoom({
           'Rond af; ga nu naar taak 3.',
         ],
         debrief: `
-          <p>Je bent binnen en weer root. Onthoud je stappen: in taak 3 zoek je ze terug in de logs. De volledige verdedigende
-          analyse (detectie en maatregel per stap) staat in taak 4.</p>
+          <p>Je bent binnen en weer root. Onthoud je stappen: in taak 3 zoek je ze terug in de logs die dit heeft achtergelaten.
+          Elke stap die je zette, had het blauwe team kunnen zien; wat elke stap had gestopt, staat per stap uitgewerkt in taak 4.</p>
+          <p>Verder leren: <a href="#/room/logs-detectie">Logs en detectie</a>, <a href="#/room/siem-threat-hunting">SIEM en threat hunting</a>.</p>
         `,
         ask: [
           { q: 'Welk account gebruikte je om in te loggen?', answer: ['wdeploy'] },
