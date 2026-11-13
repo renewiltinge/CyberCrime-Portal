@@ -1946,7 +1946,7 @@
     { id: 'financieel-rechercheur', title: 'Financieel rechercheur', desc: 'Het geld volgen: fraudevormen, witwassen, crypto en de cijfers die niet kloppen.',
       rooms: ['fraudevormen', 'money-mule-ronseling', 'carding-economie', 'witwassen-structurering', 'follow-the-money', 'crypto-witwassen', 'cryptomixer-onderzoek', 'financiele-recherche', 'fraude-in-de-cijfers', 'privacy-wetgeving-praktijk'] },
     { id: 'security-tester', title: 'Security-tester (basis)', desc: 'Begrijpen hoe een aanval werkt, zodat je kwetsbaarheden kunt vinden, wegen en melden. Altijd in een lab of met schriftelijke toestemming.',
-      rooms: ['intro-cybersecurity', 'netwerken-basis', 'hoe-het-web-werkt', 'linux-basis', 'cryptografie', 'kwetsbaarheden-cvss', 'owasp-top-10', 'verkenning-scannen', 'webhacking-sqli', 'wachtwoorden-kraken', 'reverse-engineering', 'game-vergeten-server', 'tls-pki', 'veilig-ontwikkelen-codereview', 'linux-container-hardening'] },
+      rooms: ['intro-cybersecurity', 'netwerken-basis', 'hoe-het-web-werkt', 'linux-basis', 'cryptografie', 'kwetsbaarheden-cvss', 'owasp-top-10', 'verkenning-scannen', 'webhacking-sqli', 'wachtwoorden-kraken', 'reverse-engineering', 'veilig-ontwikkelen-codereview', 'tls-pki', 'linux-container-hardening', 'game-vergeten-server', 'range-eerste-inbraak', 'range-rechten-verhogen', 'range-pivoteren', 'range-active-directory', 'range-rood-vs-blauw', 'pentest-methodiek-rapportage'] },
   ];
   const routeRooms = (rt) => rt.rooms.map((id) => ROOMS.find((r) => r.id === id)).filter(Boolean);
   function renderRoutes() {

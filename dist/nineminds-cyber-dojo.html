@@ -3211,7 +3211,7 @@ table.weak th { font-size: var(--nm-size-label); letter-spacing: var(--nm-tracki
     { id: 'financieel-rechercheur', title: 'Financieel rechercheur', desc: 'Het geld volgen: fraudevormen, witwassen, crypto en de cijfers die niet kloppen.',
       rooms: ['fraudevormen', 'money-mule-ronseling', 'carding-economie', 'witwassen-structurering', 'follow-the-money', 'crypto-witwassen', 'cryptomixer-onderzoek', 'financiele-recherche', 'fraude-in-de-cijfers', 'privacy-wetgeving-praktijk'] },
     { id: 'security-tester', title: 'Security-tester (basis)', desc: 'Begrijpen hoe een aanval werkt, zodat je kwetsbaarheden kunt vinden, wegen en melden. Altijd in een lab of met schriftelijke toestemming.',
-      rooms: ['intro-cybersecurity', 'netwerken-basis', 'hoe-het-web-werkt', 'linux-basis', 'cryptografie', 'kwetsbaarheden-cvss', 'owasp-top-10', 'verkenning-scannen', 'webhacking-sqli', 'wachtwoorden-kraken', 'reverse-engineering', 'game-vergeten-server', 'tls-pki', 'veilig-ontwikkelen-codereview', 'linux-container-hardening'] },
+      rooms: ['intro-cybersecurity', 'netwerken-basis', 'hoe-het-web-werkt', 'linux-basis', 'cryptografie', 'kwetsbaarheden-cvss', 'owasp-top-10', 'verkenning-scannen', 'webhacking-sqli', 'wachtwoorden-kraken', 'reverse-engineering', 'veilig-ontwikkelen-codereview', 'tls-pki', 'linux-container-hardening', 'game-vergeten-server', 'range-eerste-inbraak', 'range-rechten-verhogen', 'range-pivoteren', 'range-active-directory', 'range-rood-vs-blauw', 'pentest-methodiek-rapportage'] },
   ];
   const routeRooms = (rt) => rt.rooms.map((id) => ROOMS.find((r) => r.id === id)).filter(Boolean);
   function renderRoutes() {
@@ -7636,6 +7636,446 @@ table.weak th { font-size: var(--nm-size-label); letter-spacing: var(--nm-tracki
       box.append(d);
       const walk = box.querySelector('.walk'); if (walk) paintWalk(walk);
       if (r.won && CS.triumph) CS.triumph(d, 'INCIDENT BEHEERST', r.score);
+      d.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    briefing();
+  });
+})();
+
+</script>
+<script>
+/* ======================================================================
+   NineMinds Cyber Dojo — game rooms: de oefenrange (offensief)
+   Een gesimuleerd netwerk van fictieve hosts met toestand. Je verkent,
+   vindt een ingang, verzamelt inloggegevens, verhoogt rechten en pivoteert
+   naar een volgend net. Alles is een vaste, geteste opdrachtenset: er wordt
+   niets van de leerling uitgevoerd (geen eval), er gaat niets het netwerk op,
+   en er is geen werkende exploitcode. De "aanval" is een puzzel: lees de
+   uitvoer, trek de juiste conclusie, zet de volgende stap.
+
+   Elke range opent met rules of engagement en sluit af met een verdedigende
+   debrief: wat de blue team had gezien, en wat elke stap had gestopt. Zo
+   blijft het een leerportaal. Zie docs/CONTENT-SPEC.md ("range") en ADR-0004.
+
+   De kern (CS.range.create) gebruikt geen DOM, zodat tools/validate.js en de
+   tests elke range met zijn oplossingsroute kunnen naspelen.
+   ====================================================================== */
+(function () {
+  'use strict';
+  const root = typeof window !== 'undefined' ? window : globalThis;
+  const CS = root.CS = root.CS || {};
+
+  function rng(seed) {
+    let t = seed >>> 0;
+    return () => { t += 0x6D2B79F5; let r = Math.imul(t ^ (t >>> 15), 1 | t); r ^= r + Math.imul(r ^ (r >>> 7), 61 | r); return ((r ^ (r >>> 14)) >>> 0) / 4294967296; };
+  }
+  function hashStr(s) { let h = 2166136261; s = String(s); for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+  function pickVars(cfg, seed) {
+    const r = rng(seed), out = {};
+    Object.keys(cfg.vars || {}).forEach((k) => { const a = cfg.vars[k]; out[k] = String(a[Math.floor(r() * a.length)]); });
+    return out;
+  }
+  function fill(x, vars) {
+    if (typeof x === 'string') return x.replace(/\{\{(\w+)\}\}/g, (m, k) => (k in vars ? vars[k] : m));
+    if (Array.isArray(x)) return x.map((y) => fill(y, vars));
+    if (x && typeof x === 'object') { const o = {}; Object.keys(x).forEach((k) => { o[fill(k, vars)] = fill(x[k], vars); }); return o; }
+    return x;
+  }
+  const lc = (s) => String(s == null ? '' : s).trim().toLowerCase();
+  const pad = (s, n) => String(s).padEnd(n);
+
+  // Hoeveel de ontdekkingsmeter stijgt. Luidruchtig scannen en mislukte pogingen vallen op.
+  const NOISE = { scanNet: 6, scanHost: 3, loudscan: 20, web: 1, sshFail: 10, escalateFail: 6, brute: 15 };
+
+  function create(raw, seed) {
+    const vars = pickVars(raw, seed);
+    const cfg = fill(Object.assign({}, raw, { vars: null }), vars);
+    const hosts = {};
+    (cfg.hosts || []).forEach((h) => { hosts[lc(h.name)] = h; hosts[lc(h.ip)] = h; });
+    const maxNoise = cfg.maxNoise || 100;
+    const startNet = cfg.startNet || 'ext';
+    const S = { nets: new Set([startNet]), shells: {}, active: null, creds: [], found: new Set(), flags: new Set(), noise: 0, notes: [], history: [], ended: null, bluelog: [] };
+
+    const hostByName = (n) => hosts[lc(n)];
+    const netOf = (h) => h.net || 'ext';
+    const reachable = (h) => S.nets.has(netOf(h));
+    const haveCred = (user, target) => S.creds.some((c) => lc(c.user) === lc(user) && (!target || !c.target || lc(c.target) === lc(target)));
+    const isRoot = (h) => S.shells[lc(h.name)] === 'root';
+    const addNoise = (n, out, why) => {
+      S.noise += n;
+      if (S.noise >= maxNoise && !S.ended) { out.push({ cls: 'err', text: 'De verdediger heeft je gezien: de ontdekkingsmeter staat vol. ' + (why || '') }); end('betrapt', out); }
+    };
+    const blue = (txt) => S.bluelog.push({ step: S.history.length, text: txt });
+
+    function end(reason, out) {
+      if (S.ended) return;
+      S.ended = reason;
+      const left = flagsLeft();
+      out.push({ cls: reason === 'betrapt' ? 'err' : 'muted', text: reason === 'betrapt'
+        ? 'De blue team isoleert je toegang en je verliest de range. Wat je te luid deed, had stiller gekund.'
+        : (left ? 'Je rondt af met ' + S.flags.size + ' van ' + totalFlags() + ' vlaggen.' : 'Alle vlaggen binnen. Lees de nabespreking.') });
+    }
+    const totalFlags = () => (cfg.hosts || []).reduce((n, h) => n + (h.flags || []).length, 0);
+    const flagsLeft = () => totalFlags() - S.flags.size;
+
+    function reveal(h, locKey, out) {
+      (h.secrets || []).forEach((sec) => {
+        if (lc(sec.loc) !== lc(locKey) || S.found.has('secret:' + h.name + ':' + sec.loc)) return;
+        S.found.add('secret:' + h.name + ':' + sec.loc);
+        if (sec.cred) { S.creds.push({ user: sec.cred.user, pass: sec.cred.pass, target: sec.cred.target || '', note: sec.cred.note || ('gevonden op ' + h.name) }); out.push({ cls: 'ok', text: '   Inloggegevens gevonden: ' + sec.cred.user + (sec.cred.target ? ' (voor ' + sec.cred.target + ')' : '') + ' — opgeslagen in je kladblok (creds).' }); }
+        if (sec.text) out.push({ cls: 'ok', text: '   ' + sec.text });
+      });
+    }
+    function captureFlagsAt(h, path, out) {
+      (h.flags || []).forEach((f) => {
+        if (lc(f.path) !== lc(path) || S.flags.has(f.id + '@' + h.name)) return;
+        if (f.root && !isRoot(h)) return;
+        S.flags.add(f.id + '@' + h.name);
+        out.push({ cls: 'flag', text: '   >> VLAG: ' + f.value + '  (+' + (f.points || 10) + ')' });
+      });
+    }
+
+    // ---- shell-bestandssysteem (alleen lezen) -----------------------------
+    function shellHost() { return S.active ? hostByName(S.active) : null; }
+    function dirList(h, dir) {
+      const files = h.files || {};
+      dir = dir.replace(/\/$/, '') || '';
+      const names = new Set();
+      Object.keys(files).forEach((p) => {
+        if (lc(p).startsWith(lc(dir) + '/')) {
+          const rest = p.slice(dir.length + 1).split('/')[0];
+          if (rest) names.add(rest + (p.slice(dir.length + 1).includes('/') ? '/' : ''));
+        }
+      });
+      return [...names].sort();
+    }
+
+    const V = {
+      help(a, out) {
+        const rows = [
+          ['scan <subnet|host>', 'poorten en diensten in kaart brengen (een subnet is luidruchtiger)'],
+          ['web <host> [pad]', 'een webserver bekijken; begin bij / en /robots.txt'],
+          ['creds', 'de inloggegevens die je hebt gevonden'],
+          ['ssh <gebruiker>@<host>', 'inloggen met een wachtwoord dat je al hebt gevonden'],
+          ['ls [pad] · cat <pad>', 'bestanden lezen op de host waar je nu een shell hebt'],
+          ['whoami · id · ps', 'wie en wat je bent op deze host'],
+          ['sudo -l · find-suid · crontab -l', 'zoeken naar een manier om root te worden'],
+          ['escalate <aanwijzing>', 'root worden via de zwakte die je vond'],
+          ['hosts · use <host>', 'je shells; wisselen van actieve host'],
+          ['flag <waarde> · notes · note <tekst>', 'een vlag inleveren; je kladblok'],
+          ['done', 'de opdracht afronden'],
+        ];
+        out.push({ cls: 'muted', text: 'Opdrachten:' });
+        rows.forEach((r) => out.push({ text: '  ' + pad(r[0], 30) + r[1] }));
+        out.push({ cls: 'muted', text: 'Alles is gesimuleerd. Doe dit nooit buiten een lab of zonder schriftelijke toestemming.' });
+        return out;
+      },
+      status(a, out) {
+        out.push({ text: 'Vlaggen ' + S.flags.size + '/' + totalFlags() + ' · ontdekkingsmeter ' + S.noise + '/' + maxNoise + ' · netten: ' + [...S.nets].join(', ') });
+        (cfg.objectives || []).forEach((o) => out.push({ cls: objOk(o) ? 'ok' : 'muted', text: '  [' + (objOk(o) ? 'x' : ' ') + '] ' + o.text }));
+        const sh = Object.keys(S.shells);
+        if (sh.length) out.push({ cls: 'muted', text: 'Shells: ' + sh.map((n) => n + ' (' + S.shells[n] + ')').join(', ') });
+        return out;
+      },
+      hosts(a, out) {
+        const seen = (cfg.hosts || []).filter((h) => S.found.has('seen:' + h.name) || S.shells[lc(h.name)]);
+        if (!seen.length) { out.push({ cls: 'muted', text: 'Nog niets ontdekt. Begin met scan ' + (cfg.startScan || startNet) + '.' }); return out; }
+        seen.forEach((h) => out.push({ text: pad(h.ip, 15) + pad(h.name, 14) + pad(S.shells[lc(h.name)] ? 'shell: ' + S.shells[lc(h.name)] : '', 16) + h.role }));
+        return out;
+      },
+      scan(a, out) {
+        const t = lc(a[0]);
+        if (!t) { out.push({ cls: 'err', text: 'Gebruik: scan <subnet of host>. Bekende netten: ' + [...S.nets].join(', ') }); return out; }
+        const loud = a.includes('-p-') || a.includes('--all');
+        // Subnet of net-id
+        const asNet = cfg.nets && cfg.nets[t] ? t : (Object.keys(cfg.nets || {}).find((n) => lc(cfg.nets[n].cidr) === t));
+        if (asNet || t === 'all') {
+          if (asNet && !S.nets.has(asNet)) { out.push({ cls: 'err', text: 'Dat net is van hieruit niet bereikbaar. Je moet eerst een voet aan de grond krijgen op een host die eraan grenst.' }); return out; }
+          addNoise(loud ? NOISE.loudscan : NOISE.scanNet, out, 'Een breed poortscan valt op.');
+          if (S.ended) return out;
+          const list = (cfg.hosts || []).filter((h) => (asNet ? netOf(h) === asNet : reachable(h)) && reachable(h));
+          if (!list.length) { out.push({ cls: 'muted', text: 'Geen hosts gevonden.' }); return out; }
+          list.forEach((h) => { S.found.add('seen:' + h.name); blue('poortscan gezien op ' + h.ip + ' vanaf het aanvalsadres'); out.push({ text: pad(h.ip, 15) + pad(h.name, 14) + (h.ports || []).map((p) => p.n + '/' + p.svc).join(' ') }); });
+          return out;
+        }
+        const h = hostByName(t);
+        if (!h || !reachable(h)) { out.push({ cls: 'err', text: t + ': geen bereikbare host met dat adres.' }); return out; }
+        addNoise(NOISE.scanHost, out);
+        if (S.ended) return out;
+        S.found.add('seen:' + h.name);
+        blue('gerichte poortscan op ' + h.ip);
+        out.push({ cls: 'muted', text: 'Nmap-achtig resultaat voor ' + h.ip + ' (' + h.name + '):' });
+        (h.ports || []).forEach((p) => out.push({ text: '  ' + pad(p.n + '/tcp', 10) + pad('open', 6) + pad(p.svc, 10) + (p.ver || '') + (p.note ? '   ' + p.note : '') }));
+        return out;
+      },
+      web(a, out) {
+        const h = hostByName(a[0]);
+        if (!h || !reachable(h)) { out.push({ cls: 'err', text: (a[0] || '(leeg)') + ': geen bereikbare webhost.' }); return out; }
+        if (!h.pages) { out.push({ cls: 'err', text: h.name + ' heeft geen webserver die je kunt lezen.' }); return out; }
+        const path = a[1] || '/';
+        const body = h.pages[path] != null ? h.pages[path] : h.pages[lc(path)];
+        addNoise(NOISE.web, out);
+        blue('HTTP-verzoek ' + path + ' op ' + h.name);
+        if (body == null) { out.push({ cls: 'muted', text: 'HTTP 404 Not Found: ' + path }); return out; }
+        out.push({ cls: 'muted', text: 'GET ' + path + ' op ' + h.name + ':' });
+        String(body).split('\n').forEach((l) => out.push({ text: '  ' + l }));
+        reveal(h, 'web:' + path, out);
+        captureFlagsAt(h, 'web:' + path, out);
+        return out;
+      },
+      creds(a, out) {
+        if (!S.creds.length) { out.push({ cls: 'muted', text: 'Nog geen inloggegevens gevonden. Lees bestanden en webpaginas.' }); return out; }
+        S.creds.forEach((c) => out.push({ text: '  ' + pad(c.user + (c.pass ? ':' + c.pass : ''), 28) + (c.target ? '-> ' + c.target + '  ' : '') + (c.note || '') }));
+        return out;
+      },
+      ssh(a, out) {
+        const m = (a[0] || '').match(/^([^@]+)@(.+)$/);
+        if (!m) { out.push({ cls: 'err', text: 'Gebruik: ssh <gebruiker>@<host>' }); return out; }
+        const user = m[1], h = hostByName(m[2]);
+        if (!h || !reachable(h)) { out.push({ cls: 'err', text: m[2] + ': niet bereikbaar.' }); return out; }
+        const accs = h.accounts || {};
+        if (!accs[user]) { addNoise(NOISE.sshFail, out); blue('mislukte SSH-aanmelding voor ' + user + ' op ' + h.name); out.push({ cls: 'err', text: 'Aanmelding geweigerd voor ' + user + '. Fout wachtwoord of geen account.' }); return out; }
+        if (!haveCred(user, h.name) && !haveCred(user)) { addNoise(NOISE.brute, out, 'Wachtwoorden blind proberen valt op.'); blue('veel mislukte SSH-pogingen voor ' + user + ' op ' + h.name); out.push({ cls: 'err', text: 'Je hebt het wachtwoord van ' + user + ' nog niet gevonden. Blind proberen is luidruchtig.' }); return out; }
+        S.shells[lc(h.name)] = user; S.active = lc(h.name); S.found.add('shell:' + h.name);
+        blue('geslaagde SSH-aanmelding ' + user + ' op ' + h.name);
+        out.push({ cls: 'ok', text: 'Verbonden met ' + h.name + ' als ' + user + '.' });
+        (h.bridges || []).forEach((n) => { if (!S.nets.has(n)) { S.nets.add(n); out.push({ cls: 'ok', text: '   Deze host grenst aan een nieuw net: ' + n + ' (scan ' + n + ').' }); } });
+        return out;
+      },
+      use(a, out) {
+        const h = hostByName(a[0]);
+        if (!h || !S.shells[lc(h.name)]) { out.push({ cls: 'err', text: (a[0] || '(leeg)') + ': daar heb je geen shell. Typ hosts.' }); return out; }
+        S.active = lc(h.name); out.push({ cls: 'muted', text: 'Actieve host: ' + h.name + ' (' + S.shells[S.active] + ').' });
+        return out;
+      },
+      whoami(a, out) { const h = shellHost(); out.push({ text: h ? S.shells[S.active] : 'geen shell' }); return out; },
+      id(a, out) { const h = shellHost(); out.push({ text: h ? 'uid=' + S.shells[S.active] + (isRoot(h) ? ' (root)' : '') + ' op ' + h.name : 'geen shell' }); return out; },
+      ps(a, out) { const h = shellHost(); if (!h) { out.push({ cls: 'err', text: 'Geen shell.' }); return out; } (h.procs || ['init', 'sshd', 'bash']).forEach((p) => out.push({ text: '  ' + p })); return out; },
+      ls(a, out) {
+        const h = shellHost(); if (!h) { out.push({ cls: 'err', text: 'Geen shell. Log eerst in met ssh.' }); return out; }
+        const dir = a[0] || (isRoot(h) ? '/root' : '/home/' + S.shells[S.active]);
+        const entries = dirList(h, dir);
+        if (!entries.length) { out.push({ cls: 'muted', text: '(leeg of geen toegang: ' + dir + ')' }); return out; }
+        entries.forEach((e) => out.push({ text: '  ' + e }));
+        return out;
+      },
+      cat(a, out) {
+        const h = shellHost(); if (!h) { out.push({ cls: 'err', text: 'Geen shell.' }); return out; }
+        const p = a[0]; if (!p) { out.push({ cls: 'err', text: 'Gebruik: cat <pad>' }); return out; }
+        const files = h.files || {};
+        const body = files[p] != null ? files[p] : files[lc(p)];
+        const rootOnly = /^\/root\//.test(p) || (h.rootOnly || []).some((x) => lc(x) === lc(p));
+        if (body == null) { out.push({ cls: 'muted', text: 'cat: ' + p + ': bestaat niet' }); return out; }
+        if (rootOnly && !isRoot(h)) { out.push({ cls: 'err', text: 'cat: ' + p + ': toegang geweigerd (root)' }); return out; }
+        String(body).split('\n').forEach((l) => out.push({ text: l }));
+        reveal(h, 'file:' + p, out);
+        captureFlagsAt(h, p, out);
+        return out;
+      },
+      'find-suid': function (a, out) {
+        const h = shellHost(); if (!h) { out.push({ cls: 'err', text: 'Geen shell.' }); return out; }
+        const esc = h.escalation;
+        out.push({ cls: 'muted', text: 'SUID-bestanden op ' + h.name + ':' });
+        ['/usr/bin/passwd', '/usr/bin/sudo'].concat(esc && esc.via === 'suid' ? [esc.show || ('/usr/bin/' + esc.token)] : []).forEach((f) => out.push({ text: '  -rwsr-xr-x ' + f }));
+        if (esc && esc.via === 'suid') { S.found.add('privseen:' + h.name); out.push({ cls: 'ok', text: '   Opvallend: ' + (esc.note || (esc.token + ' hoort hier geen SUID te hebben')) + '  (escalate ' + esc.token + ')'}); }
+        return out;
+      },
+      sudo(a, out) {
+        const h = shellHost(); if (!h) { out.push({ cls: 'err', text: 'Geen shell.' }); return out; }
+        const esc = h.escalation;
+        if (a[0] === '-l') {
+          out.push({ cls: 'muted', text: 'Toegestane sudo-opdrachten voor ' + S.shells[S.active] + ' op ' + h.name + ':' });
+          if (esc && esc.via === 'sudo') { S.found.add('privseen:' + h.name); out.push({ text: '  (ALL) NOPASSWD: ' + (esc.show || esc.token) }); out.push({ cls: 'ok', text: '   ' + (esc.note || 'Dit laat zich misbruiken om root te worden') + '  (escalate ' + esc.token + ')' }); }
+          else out.push({ text: '  (geen)' });
+          return out;
+        }
+        out.push({ cls: 'muted', text: 'Gebruik sudo -l om te zien wat mag, of escalate <aanwijzing>.' });
+        return out;
+      },
+      crontab(a, out) {
+        const h = shellHost(); if (!h) { out.push({ cls: 'err', text: 'Geen shell.' }); return out; }
+        const esc = h.escalation;
+        out.push({ cls: 'muted', text: 'Geplande taken op ' + h.name + ':' });
+        if (esc && esc.via === 'cron') { S.found.add('privseen:' + h.name); out.push({ text: '  ' + (esc.show || ('*/5 * * * * root ' + esc.token)) }); out.push({ cls: 'ok', text: '   ' + (esc.note || 'Dit script draait als root en is te beinvloeden') + '  (escalate ' + esc.token + ')' }); }
+        else out.push({ text: '  (geen interessante taken)' });
+        return out;
+      },
+      escalate(a, out) {
+        const h = shellHost(); if (!h) { out.push({ cls: 'err', text: 'Geen shell.' }); return out; }
+        const esc = h.escalation;
+        if (isRoot(h)) { out.push({ cls: 'muted', text: 'Je bent hier al root.' }); return out; }
+        if (!esc) { out.push({ cls: 'err', text: 'Op deze host is geen eenvoudige weg naar root die je zo kunt nemen.' }); return out; }
+        if (!S.found.has('privseen:' + h.name)) { addNoise(NOISE.escalateFail, out); out.push({ cls: 'err', text: 'Je weet nog niet welke zwakte je zou misbruiken. Zoek eerst (sudo -l, find-suid, crontab -l).' }); return out; }
+        if (lc(a[0]) !== lc(esc.token)) { addNoise(NOISE.escalateFail, out); out.push({ cls: 'err', text: (a[0] || '(leeg)') + ' brengt je niet naar root. Kijk nog eens naar wat opviel.' }); return out; }
+        S.shells[lc(h.name)] = 'root'; S.found.add('root:' + h.name);
+        blue('rechtenverhoging naar root op ' + h.name + ' via ' + esc.via);
+        out.push({ cls: 'ok', text: 'Je bent nu root op ' + h.name + '.' });
+        (h.onRoot || []).forEach((sec) => { if (sec.cred) { S.creds.push({ user: sec.cred.user, pass: sec.cred.pass, target: sec.cred.target || '', note: sec.cred.note || 'uit root-toegang op ' + h.name }); out.push({ cls: 'ok', text: '   Inloggegevens gevonden: ' + sec.cred.user + (sec.cred.target ? ' (voor ' + sec.cred.target + ')' : '') }); } if (sec.text) out.push({ cls: 'ok', text: '   ' + sec.text }); });
+        return out;
+      },
+      flag(a, out) {
+        const v = (a[0] || '').trim();
+        let hit = null;
+        (cfg.hosts || []).forEach((h) => (h.flags || []).forEach((f) => { if (lc(f.value) === lc(v)) hit = { h, f }; }));
+        if (!hit) { out.push({ cls: 'err', text: 'Dat is geen vlag uit deze range.' }); return out; }
+        const key = hit.f.id + '@' + hit.h.name;
+        if (S.flags.has(key)) { out.push({ cls: 'muted', text: 'Die vlag had je al.' }); return out; }
+        out.push({ cls: 'flag', text: '>> VLAG AANVAARD: ' + hit.f.value + '  (+' + (hit.f.points || 10) + ')' });
+        S.flags.add(key);
+        return out;
+      },
+      note(a, out) { if (a.length) { S.notes.push(a.join(' ')); out.push({ cls: 'muted', text: 'Genoteerd.' }); } return out; },
+      notes(a, out) { if (!S.notes.length) out.push({ cls: 'muted', text: 'Je kladblok is leeg.' }); S.notes.forEach((n) => out.push({ text: '- ' + n })); return out; },
+      done(a, out) { end('klaar', out); return out; },
+    };
+
+    function objOk(o) {
+      if (o.flags) return o.flags.every((id) => [...S.flags].some((k) => k.split('@')[0] === id || k === id));
+      if (o.found) return o.found.every((k) => S.found.has(k));
+      if (o.all) return o.all.every((k) => S.found.has(k));
+      return false;
+    }
+
+    function exec(line) {
+      const out = [];
+      const raw = String(line == null ? '' : line).trim();
+      if (!raw) return out;
+      if (S.ended && !['help', 'notes', 'status'].includes(lc(raw.split(/\s+/)[0]))) return [{ cls: 'muted', text: 'De opdracht is afgesloten. Lees de nabespreking of begin opnieuw.' }];
+      S.history.push(raw);
+      const parts = raw.split(/\s+/);
+      let verb = lc(parts[0]);
+      const alias = { connect: 'ssh', download: 'cat', get: 'web', 'suid': 'find-suid' };
+      if (alias[verb]) verb = alias[verb];
+      const fn = Object.prototype.hasOwnProperty.call(V, verb) ? V[verb] : null;
+      if (!fn) { out.push({ cls: 'err', text: parts[0] + ': onbekend commando. Typ help.' }); return out; }
+      fn(parts.slice(1), out);
+      if (!S.ended && flagsLeft() === 0 && (cfg.objectives || []).every(objOk)) end('klaar', out);
+      return out;
+    }
+
+    function result() {
+      const objs = (cfg.objectives || []).map((o) => ({ text: o.text, points: o.points || 10, ok: objOk(o), required: o.required !== false }));
+      const flagPts = (cfg.hosts || []).reduce((n, h) => n + (h.flags || []).reduce((m, f) => m + (S.flags.has(f.id + '@' + h.name) ? (f.points || 10) : 0), 0), 0);
+      const max = (cfg.hosts || []).reduce((n, h) => n + (h.flags || []).reduce((m, f) => m + (f.points || 10), 0), 0);
+      const won = S.ended && S.ended !== 'betrapt' && S.flags.size === totalFlags() && objs.every((o) => !o.required || o.ok);
+      return { objs, flags: S.flags.size, totalFlags: totalFlags(), score: flagPts, max, noise: S.noise, won, caught: S.ended === 'betrapt', reason: S.ended, bluelog: S.bluelog.slice() };
+    }
+    return { cfg, vars, S, exec, result, objOk, solution: cfg.solution || [], totalFlags, flagsLeft };
+  }
+
+  CS.range = { create, hashStr, pickVars, fill };
+
+  // =======================================================================
+  //  Weergave in de browser
+  // =======================================================================
+  if (!CS.registerLab || typeof document === 'undefined') return;
+  CS.registerLab('range', function (container, raw, ctx) {
+    const { el, esc } = CS.util;
+    const store = CS.store ? CS.store() : {};
+    store.range = store.range || {};
+    if (store.seed == null) store.seed = Math.floor(Math.random() * 1e9);
+    const key = ctx && ctx.room ? ctx.room.id : 'gereedschap';
+    const rec = store.range[key] = store.range[key] || { attempts: 0, wins: 0, best: null, variant: 0, clean: false };
+    const save = () => { if (CS.saveStore) CS.saveStore(); };
+    save();
+    const box = el('div', { class: 'lab range' });
+    container.append(box);
+    let game, openedAt = Date.now();
+    const head = () => el('div', { class: 'lab-head' }, el('span', { class: 'title', html: 'Oefenrange · <b>' + esc(raw.title || '') + '</b>' }));
+    const variantName = () => (CS.range.hashStr(store.seed + ':' + key + ':' + rec.variant) % 65536).toString(16).padStart(4, '0');
+    const newGame = () => { game = CS.range.create(raw, CS.range.hashStr(store.seed + ':' + key + ':' + rec.variant)); box.__game = game; };
+
+    function briefing() {
+      newGame();
+      box.innerHTML = '';
+      const pad0 = el('div', { class: 'lab-pad' });
+      if (raw.role) pad0.append(el('p', {}, [el('strong', { text: 'Jouw rol. ' }), el('span', { text: game.cfg.role })]));
+      if (raw.story) pad0.append(el('p', { text: game.cfg.story }));
+      pad0.append(el('h4', { text: 'Rules of engagement' }));
+      pad0.append(el('ul', { class: 'mandaat' }, (game.cfg.mandate || []).map((m) => el('li', { text: m }))));
+      const chk = el('input', { type: 'checkbox', id: 'roe-' + key });
+      const go = el('button', { class: 'btn primary', disabled: true, onclick: () => consoleView() }, [CS.icon('play', 16), el('span', { text: 'Start de oefening' })]);
+      chk.addEventListener('change', () => { go.disabled = !chk.checked; });
+      pad0.append(el('label', { class: 'mandaat-ok', for: 'roe-' + key }, [chk, el('span', { text: 'Ik blijf binnen de scope en begrijp dat dit een simulatie is.' })]));
+      pad0.append(el('div', { class: 'incident-start' }, [go, el('span', { class: 'num', text: 'Variant ' + variantName() }), el('button', { class: 'lnk', text: 'Andere variant', onclick: () => { rec.variant++; save(); briefing(); } })]));
+      box.append(head(), pad0);
+    }
+
+    function consoleView() {
+      box.innerHTML = '';
+      const hud = el('div', { class: 'hud' });
+      const term = el('div', { class: 'term', role: 'log', 'aria-live': 'polite' });
+      const input = el('input', { type: 'text', autocomplete: 'off', spellcheck: 'false', 'aria-label': 'Opdracht voor de oefenrange' });
+      const inrow = el('div', { class: 'inrow' }, [el('span', { class: 'prompt', text: 'range> ' }), input]);
+      term.append(inrow);
+      const hist = []; let hi = 0;
+      const print = (lines) => { lines.forEach((l) => inrow.before(el('div', { class: 'line' + (l.cls === 'err' ? ' err' : l.cls === 'muted' ? ' muted' : l.cls === 'ok' ? ' okline' : l.cls === 'flag' ? ' flagline' : ''), text: l.text }))); term.scrollTop = term.scrollHeight; };
+      const run = (cmd) => { print([{ cls: 'prompt', text: 'range> ' + cmd }]); print(game.exec(cmd)); paintHud(); if (game.S.ended) debrief(); };
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') { const v = input.value; input.value = ''; if (v.trim()) { hist.push(v); hi = hist.length; run(v); } }
+        else if (e.key === 'ArrowUp' && hi > 0) { hi--; input.value = hist[hi]; e.preventDefault(); }
+        else if (e.key === 'ArrowDown') { hi = Math.min(hist.length, hi + 1); input.value = hist[hi] || ''; e.preventDefault(); }
+      });
+      term.addEventListener('click', () => input.focus());
+      function paintHud() {
+        hud.innerHTML = '';
+        const r = game.result();
+        hud.append(
+          el('div', { class: 'cell' }, [el('span', { class: 'label', text: 'Vlaggen' }), el('span', { class: 'num big', text: r.flags + ' / ' + r.totalFlags })]),
+          el('div', { class: 'cell' }, [el('span', { class: 'label', text: 'Ontdekkingsmeter' }), el('span', { class: 'num big', text: game.S.noise + ' / ' + (game.cfg.maxNoise || 100) }), el('div', { class: 'meter-line', role: 'meter', 'aria-valuemin': '0', 'aria-valuemax': String(game.cfg.maxNoise || 100), 'aria-valuenow': String(game.S.noise), 'aria-label': 'Ontdekkingsmeter' }, el('i', { style: 'width:' + Math.min(100, Math.round((100 * game.S.noise) / (game.cfg.maxNoise || 100))) + '%' }))]),
+          el('div', { class: 'cell' }, [el('span', { class: 'label', text: 'Netten' }), el('span', { class: 'num big', text: String(game.S.nets.size) }), el('span', { class: 'found-note', text: [...game.S.nets].join(', ') })]),
+        );
+        hud.append(el('ul', { class: 'goals' }, (game.cfg.objectives || []).map((o) => el('li', { class: game.objOk(o) ? 'ok' : '' }, [CS.icon(game.objOk(o) ? 'check' : 'target', 15), el('span', { text: o.text })]))));
+      }
+      const chips = el('div', { class: 'chip-row' }, ['help', 'status', 'hosts', 'creds', 'notes'].map((c) => el('span', { class: 'chip', role: 'button', tabindex: '0', text: c, onclick: () => run(c), onkeydown: (e) => { if (e.key === 'Enter') run(c); } })));
+      const finish = el('button', { class: 'btn', onclick: () => run('done') }, [CS.icon('flag', 16), el('span', { text: 'Afronden' })]);
+      const walk = el('div', { class: 'walk' });
+      box.append(head(), hud, el('div', { class: 'lab-body' }, term), el('div', { class: 'lab-pad incident-foot' }, [chips, finish, walk]));
+      paintWalk(walk);
+      print([{ cls: 'muted', text: game.cfg.motd || 'Typ help. Begin met scan ' + (game.cfg.startScan || game.cfg.startNet || 'ext') + '.' }]);
+      paintHud();
+      input.focus({ preventScroll: true });
+    }
+
+    function paintWalk(node) {
+      node.innerHTML = '';
+      const open = rec.attempts > 0 || Date.now() - openedAt > 15 * 60000;
+      if (!open) { node.append(el('p', { class: 'found-note', text: 'De walkthrough komt vrij na je eerste poging, of na een kwartier proberen.' })); setTimeout(() => { if (document.body.contains(node)) paintWalk(node); }, 60000); return; }
+      node.append(el('details', {}, [el('summary', { text: 'Walkthrough (voor deze variant)' }), el('ol', { class: 'walklist' }, game.solution.map((c, i) => el('li', {}, [el('code', { text: c }), (game.cfg.solutionNotes || [])[i] ? el('span', { text: ' ' + game.cfg.solutionNotes[i] }) : null])))]));
+    }
+
+    function debrief() {
+      const r = game.result();
+      rec.attempts++;
+      if (r.won) rec.wins++;
+      if (r.score > (rec.best || 0)) rec.best = r.score;
+      if (r.won && !r.caught && r.noise <= (game.cfg.quietUnder != null ? game.cfg.quietUnder : 40)) rec.clean = true;
+      save();
+      if (CS.checkBadges) CS.checkBadges();
+      const d = el('div', { class: 'lab-pad debrief' + (r.won ? ' won' : '') });
+      d.append(el('span', { class: 'stamp', text: 'Nabespreking' }));
+      d.append(el('h3', {}, [CS.icon(r.won ? 'check' : 'cross', 18), el('span', { text: r.won ? 'Alle vlaggen binnen' : (r.caught ? 'Betrapt' : 'Nog niet alle vlaggen') })]));
+      d.append(el('p', { class: 'num', text: 'Vlaggen ' + r.flags + '/' + r.totalFlags + ' · score ' + r.score + '/' + r.max + ' · ontdekkingsmeter ' + r.noise + '/' + (game.cfg.maxNoise || 100) }));
+      const li = (ok, text) => el('li', { class: ok ? 'ok' : 'no' }, [CS.icon(ok ? 'check' : 'cross', 15), el('span', { text })]);
+      d.append(el('h4', { text: 'Doelen' }), el('ul', { class: 'goals' }, r.objs.map((o) => li(o.ok, o.text))));
+      if (game.cfg.debrief) d.append(el('div', { class: 'body', html: game.cfg.debrief }));
+      if ((game.cfg.ask || []).length) {
+        d.append(el('h4', { text: 'Leg vast wat je deed' }));
+        game.cfg.ask.forEach((q) => {
+          const inp = el('input', { type: 'text', autocomplete: 'off', spellcheck: 'false', 'aria-label': q.q });
+          const fb = el('div', { class: 'feedback' });
+          const chk = () => { const ok = (q.answer || []).some((x) => lc(x) === lc(inp.value)); fb.className = 'feedback show ' + (ok ? 'ok' : 'no'); fb.textContent = ok ? 'Klopt.' : 'Nog niet; kijk terug in de console.'; if (ok) inp.disabled = true; };
+          inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') chk(); });
+          d.append(el('div', { class: 'askrow' }, [el('label', { text: q.q }), el('div', { class: 'ans-row' }, [inp, el('button', { class: 'btn small', text: 'Controleer', onclick: chk })]), fb]));
+        });
+      }
+      if (r.won) { if (game.cfg.flag) d.append(el('p', { class: 'flagline' }, [el('span', { text: 'Eindvlag: ' }), el('code', { text: game.cfg.flag })])); }
+      else d.append(el('p', { class: 'found-note', text: 'Haal alle vlaggen zonder betrapt te worden. De walkthrough staat nu open.' }));
+      d.append(el('div', { class: 'incident-start' }, [el('button', { class: 'btn primary', text: 'Opnieuw, zelfde variant', onclick: () => briefing() }), el('button', { class: 'btn', text: 'Andere variant', onclick: () => { rec.variant++; save(); briefing(); } })]));
+      box.append(d);
+      const walk = box.querySelector('.walk'); if (walk) paintWalk(walk);
+      if (r.won && CS.triumph) CS.triumph(d, 'ALLE VLAGGEN BINNEN', r.score);
       d.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
@@ -19676,6 +20116,621 @@ diff --git a/portaal/config.py b/portaal/config.py
     { title: 'OWASP Cheat Sheet: Query Parameterization', url: 'https://cheatsheetseries.owasp.org/cheatsheets/Query_Parameterization_Cheat_Sheet.html' },
     { title: 'OWASP Cheat Sheet: Threat Modeling', url: 'https://cheatsheetseries.owasp.org/cheatsheets/Threat_Modeling_Cheat_Sheet.html' },
     { title: 'OWASP Application Security Verification Standard (ASVS)', url: 'https://owasp.org/www-project-application-security-verification-standard/' },
+  ],
+});
+
+</script>
+<script>
+/* Room: Pentest-methodiek en rapportage (PTES, OWASP WSTG) */
+CS.registerRoom({
+  id: 'pentest-methodiek-rapportage',
+  path: 'offensief',
+  order: 10,
+  title: 'Pentest-methodiek en rapportage',
+  icon: '📋',
+  difficulty: 'Gemiddeld',
+  minutes: 70,
+  level: 'Praktijk',
+  checked: '2026-11-13',
+  summary: 'Niet het hacken maar het vak eromheen: werk volgens een methodiek (PTES, OWASP WSTG), spreek scope en rules of engagement af, weeg bevindingen met kans maal impact en lever een rapport dat een opdrachtgever echt kan gebruiken.',
+  objectives: [
+    'De zeven fasen van een pentest volgens PTES op hoofdlijnen benoemen en op volgorde zetten',
+    'Een scope en rules of engagement opstellen en weten wat je doet bij gevoelige data of dreigende schade',
+    'Black box, grey box en white box onderscheiden, en pentest, red teaming en een kwetsbaarhedenscan uit elkaar houden',
+    'OWASP WSTG herkennen als teststandaard (checklist-gedachte) voor webapplicaties en OSSTMM kunnen plaatsen',
+    'Een bevinding wegen met kans maal impact en CVSS in bedrijfscontext, en een bruikbaar rapport opbouwen',
+    'De wettelijke en ethische grenzen uitleggen: schriftelijke toestemming, art. 138ab Sr en coordinated vulnerability disclosure via het NCSC',
+  ],
+  tasks: [
+    {
+      title: 'Taak 1 — De zeven fasen van PTES',
+      tryFirst: true,
+      intro: '<p>In het lab staan de zeven fasen van een pentest volgens de Penetration Testing Execution Standard (PTES), maar door elkaar. Zet ze op de juiste volgorde van begin tot eind. Pas als het klopt, verschijnt een vlag. Probeer het eerst op je gevoel voor een vaste werkwijze; de uitleg staat eronder voor als je vastzit.</p>',
+      content: `
+        <p>Een pentest is geen wilde zoektocht waarbij je maar wat probeert. Het is gestructureerd werk. De bekendste
+        openbare werkwijze is de <strong>Penetration Testing Execution Standard (PTES)</strong>: een door de
+        beroepsgroep opgestelde standaard die een opdracht in zeven fasen verdeelt. PTES schrijft niet voor met welke
+        tool je werkt; het beschrijft <em>welke stappen</em> je in welke volgorde doorloopt, zodat een test herhaalbaar
+        en compleet is.</p>
+
+        <h3>De zeven fasen</h3>
+        <ol>
+          <li><strong>Pre-engagement interactions:</strong> de afspraken vooraf. Doel van de opdracht, scope, rules of
+          engagement, tijdvenster, contactpersonen en de toestemming op papier. Hierover gaat taak 2.</li>
+          <li><strong>Intelligence gathering:</strong> informatie verzamelen over het doelwit (verkenning en OSINT).
+          Zie de room <code>verkenning-scannen</code>, die deze fase uitwerkt.</li>
+          <li><strong>Threat modeling:</strong> op basis van wat je vond, bedenken wie het doelwit zou aanvallen,
+          waarom, en welke bedrijfsmiddelen (assets) het belangrijkst zijn. Zo richt je de test op wat ertoe doet.</li>
+          <li><strong>Vulnerability analysis:</strong> kwetsbaarheden opsporen en beoordelen. Niet elk gevonden lek is
+          even belangrijk; het wegen ervan komt in taak 5.</li>
+          <li><strong>Exploitation:</strong> gecontroleerd aantonen dat een kwetsbaarheid echt te misbruiken is. In dit
+          portaal oefen je dat in aparte labrooms; hier gaat het om de plek in de werkwijze.</li>
+          <li><strong>Post-exploitation:</strong> wat zou een aanvaller hierna kunnen? Welke gegevens zijn bereikbaar,
+          hoe diep reikt de toegang, en wat is de zakelijke impact? Dit bepaalt hoe erg een vondst werkelijk is.</li>
+          <li><strong>Reporting:</strong> alles vastleggen in een rapport dat de opdrachtgever kan gebruiken. Dit is
+          het eindproduct waar taak 6 over gaat.</li>
+        </ol>
+
+        <div class="callout info">
+          <strong>Waarom een vaste volgorde?</strong> Hoe beter je de eerste fasen doet, hoe gerichter en rustiger de
+          latere fasen verlopen. Zonder duidelijke afspraken vooraf loop je juridisch en praktisch vast; zonder goede
+          verkenning mis je systemen; zonder rapport heeft de hele test geen waarde voor de klant.
+        </div>
+      `,
+      lab: {
+        type: 'ordering',
+        prompt: 'Zet de zeven PTES-fasen op volgorde, van de eerste stap tot het eindproduct.',
+        items: [
+          { id: 'p5', label: 'Exploitation (gecontroleerd aantonen dat een lek te misbruiken is)' },
+          { id: 'p1', label: 'Pre-engagement interactions (afspraken, scope, toestemming)' },
+          { id: 'p7', label: 'Reporting (het rapport opleveren)' },
+          { id: 'p3', label: 'Threat modeling (wie valt aan, welke assets tellen)' },
+          { id: 'p2', label: 'Intelligence gathering (verkenning en OSINT)' },
+          { id: 'p6', label: 'Post-exploitation (reikwijdte en zakelijke impact bepalen)' },
+          { id: 'p4', label: 'Vulnerability analysis (kwetsbaarheden opsporen en beoordelen)' },
+        ],
+        correct: ['p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7'],
+        flag: 'NM{ptes_zeven_fasen}',
+        explain: 'Pre-engagement, intelligence gathering, threat modeling, vulnerability analysis, exploitation, post-exploitation, reporting.',
+      },
+      questions: [
+        { q: 'Welke vlag verschijnt als de zeven fasen in de juiste volgorde staan?', answer: ['NM{ptes_zeven_fasen}'],
+          hints: ['De afspraken vooraf staan altijd bovenaan; het rapport altijd onderaan.', 'Verkenning komt voor het opsporen van kwetsbaarheden, en uitbuiten komt na het opsporen.', 'Volgorde: pre-engagement, intelligence gathering, threat modeling, vulnerability analysis, exploitation, post-exploitation, reporting.'],
+          why: 'Werken volgens een standaard als PTES maakt een test herhaalbaar en controleerbaar: een collega kan jouw stappen volgen en een opdrachtgever weet wat hij koopt.',
+          explain: 'Met de juiste volgorde levert het lab NM{ptes_zeven_fasen} op.' },
+        { q: 'Waarom staat reporting als aparte, laatste fase in PTES, en niet als bijzaak aan het eind van de test?', options: [
+            'Het rapport is het eindproduct waar de opdrachtgever voor betaalt; zonder begrijpelijke bevindingen en adviezen heeft de hele test geen waarde',
+            'Omdat je pas na afloop mag opschrijven wat je hebt gedaan van de wet',
+            'Omdat het rapport alleen bedoeld is voor andere pentesters als naslag'],
+          answer: 0,
+          wrong: { 1: 'Je legt juist tijdens de hele test vast wat je doet. De fase gaat over het samenbrengen in een bruikbaar eindproduct.', 2: 'Een rapport is er juist voor de opdrachtgever, inclusief niet-technische lezers; collega-pentesters zijn niet de doelgroep.' },
+          explain: 'Reporting is een volwaardige fase omdat het rapport het resultaat is dat de klant kan gebruiken om risico te verkleinen.' },
+        { q: 'Ik begrijp dat een pentest een gestructureerde werkwijze volgt en geen losse verzameling trucs is.', noAnswer: true },
+      ],
+    },
+
+    {
+      title: 'Taak 2 — Scope en rules of engagement',
+      tryFirst: true,
+      intro: '<p>Je staat op het punt een opdracht te beginnen en krijgt onderweg lastige keuzes voor je kiezen: toestemming die nog niet rond is, gevoelige data die je per ongeluk tegenkomt, een server die dreigt vast te lopen. Loop de beslissimulatie in het lab door en maak steeds de verdedigbare keuze. De uitleg hieronder helpt je als je twijfelt.</p>',
+      content: `
+        <p>De belangrijkste fase van een pentest gebeurt vóór de eerste scan: het vastleggen van <strong>scope</strong>
+        en <strong>rules of engagement (RoE)</strong>. Dit is wat een toegestane test onderscheidt van een strafbaar
+        feit.</p>
+
+        <h3>Scope: wat mag wel en niet</h3>
+        <p>De scope legt precies vast welke systemen je mag raken: welke IP-adressen, domeinen, applicaties en
+        accounts. Alles wat er niet in staat, is verboden terrein, ook al lijkt het verleidelijk of makkelijk. Een
+        aangrenzend systeem van een ander bedrijf, een koppeling naar een leverancier of de privételefoon van een
+        medewerker valt er niet vanzelf onder. Bij twijfel geldt: buiten de scope, dus niet doen.</p>
+
+        <h3>Rules of engagement: hoe en wanneer</h3>
+        <p>De RoE beschrijven de spelregels van de uitvoering:</p>
+        <ul>
+          <li><strong>Tijdvenster:</strong> wanneer mag je testen? Soms alleen buiten kantooruren, om de bedrijfsvoering
+          niet te raken.</li>
+          <li><strong>Toegestane technieken:</strong> mag je social engineering gebruiken, denial-of-service testen,
+          of juist niet?</li>
+          <li><strong>Contactpersonen:</strong> wie bel je als er iets misgaat, en wie mag beslissen om door te gaan of
+          te stoppen? Spreek een bereikbaar escalatiecontact af.</li>
+          <li><strong>Omgaan met gevoelige data:</strong> kom je persoonsgegevens of bedrijfsgeheimen tegen, dan kijk je
+          niet verder dan nodig om de bevinding aan te tonen, je maakt geen kopie mee naar buiten en je meldt het.</li>
+          <li><strong>Noodstop:</strong> dreigt er schade of uitval, dan stop je en bel je het contact. Doorgaan om het
+          toch te laten lukken is geen optie.</li>
+        </ul>
+
+        <h3>De toestemmingsbrief ("get out of jail")</h3>
+        <p>Je werkt altijd met schriftelijke toestemming van iemand die daar werkelijk over gaat. Veel testers dragen
+        tijdens de opdracht een ondertekende machtiging bij zich, informeel een <strong>get-out-of-jail-brief</strong>
+        genoemd: een document dat bevestigt dat je handelt in opdracht, met de scope, het tijdvenster en een
+        contactpersoon erin. Het beschermt je niet tegen alles, maar het toont aan dat je niet wederrechtelijk handelt.</p>
+
+        <div class="callout danger">
+          <strong>Vind je iets ernstigs of dreigt er iets kapot te gaan?</strong> Stop, raak niets verder aan, en bel
+          je afgesproken contactpersoon. Je lost het niet stilletjes zelf op en je buit het niet verder uit om indruk
+          te maken.
+        </div>
+      `,
+      lab: {
+        type: 'scenario',
+        title: 'Rules of engagement — beslismomenten',
+        scenario: 'Je bent ingehuurd door Vlietstroom Verzekeringen B.V. (fictief) voor een webapplicatietest. Onderweg moet je een paar keer beslissen.',
+        pass: 3,
+        flag: 'NM{scope_en_mandaat_eerst}',
+        steps: [
+          { situation: 'De dag voor de start belt de IT-manager: "Ga maar vast beginnen, de getekende opdracht komt later deze week wel." Wat doe je?', choices: [
+            { label: 'Wachten tot de getekende toestemming en de scope op papier binnen zijn, en dat ook bevestigen per mail', good: true, feedback: 'Goed. Zonder schriftelijke toestemming test je niet, hoe aardig het telefoontje ook is. Een mailbevestiging is het minimum.' },
+            { label: 'Alvast beginnen, want een mondelinge toezegging is ook een toezegging', good: false, feedback: 'Fout. Een mondelinge toezegging is juridisch zwak en de scope is nog niet vastgelegd. Dit kan computervredebreuk zijn.' },
+            { label: 'Alleen de homepage scannen, dat valt vast nog niet onder de wet', good: false, feedback: 'Fout. Ook een scan raakt hun systeem aan en kan strafbaar zijn zonder toestemming.' },
+          ] },
+          { situation: 'Tijdens de test kun je een exportbestand met echte klantpersoonsgegevens downloaden. Wat doe je?', choices: [
+            { label: 'Vaststellen dat het bestand bereikbaar is, een beperkt bewijs vastleggen (bijvoorbeeld een paar velden onleesbaar maken) en het melden; geen volledige kopie meenemen', good: true, feedback: 'Goed. Je toont de bevinding aan met minimale toegang en behandelt de data vertrouwelijk.' },
+            { label: 'De hele dataset downloaden als bewijs voor in het rapport', good: false, feedback: 'Fout. Een volledige kopie van persoonsgegevens meenemen is onnodig en zelf een datalek-risico.' },
+            { label: 'Een paar records op een forum plaatsen om de ernst te laten zien', good: false, feedback: 'Fout en strafbaar. Je maakt gevoelige gegevens nooit openbaar.' },
+          ] },
+          { situation: 'Je scan maakt een productieserver merkbaar traag; er dreigt uitval tijdens kantooruren. Wat doe je?', choices: [
+            { label: 'De scan stoppen en direct je afgesproken contactpersoon bellen om te overleggen', good: true, feedback: 'Goed. De noodstop en het escalatiecontact uit de RoE zijn hier precies voor bedoeld.' },
+            { label: 'Doorzetten; als het valt, weet je tenminste dat het kwetsbaar is', good: false, feedback: 'Fout. Een test mag de bedrijfsvoering niet opzettelijk platleggen. Dat is schade, geen bevinding.' },
+            { label: 'Niks melden en stilletjes verdergaan op een andere host', good: false, feedback: 'Fout. Een dreigend incident meld je altijd; transparantie hoort bij het vak.' },
+          ] },
+          { situation: 'Je vindt een kritiek lek dat volgens de logs al actief wordt misbruikt. Wat doe je?', choices: [
+            { label: 'Het meteen buiten de normale rapportage om melden bij je contactpersoon, zodat de klant direct kan ingrijpen', good: true, feedback: 'Goed. Bij acuut gevaar wacht je niet tot het eindrapport; je waarschuwt per direct.' },
+            { label: 'Het bewaren voor een mooie onthulling in het eindrapport over twee weken', good: false, feedback: 'Fout. Bij actief misbruik is twee weken wachten onverantwoord.' },
+            { label: 'Zelf het lek volledig uitbuiten om de volledige impact te laten zien', good: false, feedback: 'Fout. Je gaat niet verder dan nodig, zeker niet bij een lek dat al misbruikt wordt.' },
+          ] },
+        ],
+      },
+      questions: [
+        { q: 'Welke vlag verschijnt als je de simulatie goed doorloopt?', answer: ['NM{scope_en_mandaat_eerst}'],
+          hints: ['Kies steeds de optie die toestemming, vertrouwelijkheid en overleg vooropstelt.', 'Bij twijfel: stoppen en de afgesproken contactpersoon bellen is bijna nooit fout.', 'De vlag verwijst naar wat altijd eerst moet zijn: de scope en het mandaat.'],
+          explain: 'Wie steeds de verdedigbare keuze maakt, haalt NM{scope_en_mandaat_eerst}.' },
+        { q: 'Je komt tijdens een toegestane test per ongeluk een map met klantgegevens tegen. Wat is de juiste eerste reactie?', options: [
+            'Vaststellen dat de map bereikbaar is, niet verder kijken dan nodig om het aan te tonen, geen kopie meenemen en het melden',
+            'De gegevens volledig downloaden zodat je sterk bewijs hebt voor het rapport',
+            'Niets doen en de vondst weglaten, want het valt misschien buiten scope'],
+          answer: 0,
+          wrong: { 1: 'Een volledige kopie van persoonsgegevens meenemen is onnodig en maakt jou zelf tot een datalekrisico.', 2: 'Een bereikbare map met klantgegevens is juist een belangrijke bevinding; die meld je, je verzwijgt hem niet.' },
+          why: 'Juist omgaan met gevoelige data beschermt de betrokkenen en je eigen positie; onnodig data meenemen kan een nieuw datalek veroorzaken.',
+          explain: 'Toon de bevinding aan met minimale toegang, behandel de data vertrouwelijk en meld het aan je contactpersoon.' },
+        { q: 'Wat is het doel van de ondertekende machtiging die een tester bij zich draagt (de "get-out-of-jail"-brief)?', options: [
+            'Aantonen dat je in opdracht en binnen afgesproken grenzen handelt, dus niet wederrechtelijk',
+            'Garanderen dat je nooit vervolgd kunt worden, wat je ook doet',
+            'De opdrachtgever verplichten elk gevonden lek te betalen'],
+          answer: 0,
+          wrong: { 1: 'Geen enkel document geeft vrijstelling voor alles. Ga je buiten de scope, dan beschermt de brief je niet.', 2: 'De brief gaat over toestemming en grenzen, niet over een beloning per bevinding.' },
+          explain: 'De brief bevestigt de opdracht, de scope, het tijdvenster en een contactpersoon, en toont aan dat je handelt met toestemming.' },
+      ],
+    },
+
+    {
+      title: 'Taak 3 — Soorten opdracht en begrippen',
+      tryFirst: true,
+      intro: '<p>In het lab staan zestien begrippen uit het pentestvak door elkaar. Groepeer ze in vier groepen van vier die bij elkaar horen (opdrachtsoorten, PTES-fasen, rules of engagement, rapportonderdelen). Pas als alle vier kloppen, krijg je de vlag. Probeer het eerst; de uitleg hieronder behandelt de begrippen die nieuw zijn.</p>',
+      content: `
+        <p>"Een pentest" is geen eenduidig product. Opdrachten verschillen in hoeveel de tester vooraf weet en in wat
+        het doel is.</p>
+
+        <h3>Hoeveel weet de tester vooraf?</h3>
+        <ul>
+          <li><strong>Black box:</strong> de tester krijgt vrijwel geen voorkennis, net als een buitenstaander. Dit
+          voelt realistisch, maar kost veel tijd aan verkenning en mist soms diepe lekken.</li>
+          <li><strong>Grey box:</strong> de tester krijgt beperkte informatie, bijvoorbeeld een gewoon gebruikersaccount
+          en wat documentatie. Dit is in de praktijk de meest gekozen vorm: realistisch én efficiënt.</li>
+          <li><strong>White box:</strong> de tester krijgt alles wat beschikbaar is, zoals broncode, ontwerpdocumenten
+          en beheeraccounts. Hiermee vind je in dezelfde tijd de meeste kwetsbaarheden.</li>
+        </ul>
+
+        <h3>Pentest, red teaming of een scan?</h3>
+        <ul>
+          <li>Een <strong>kwetsbaarhedenscan</strong> is grotendeels geautomatiseerd: een tool zoekt naar bekende
+          lekken en levert een lijst. Snel en breed, maar zonder menselijke verificatie zitten er vals-positieven in en
+          wordt de zakelijke impact niet gewogen.</li>
+          <li>Een <strong>pentest</strong> is mensenwerk met een afgebakende scope en tijd: een tester verifieert lekken,
+          combineert ze en beoordeelt de impact. Breedte boven diepte-op-één-doel.</li>
+          <li><strong>Red teaming</strong> is een doelgerichte, langlopende simulatie van een echte tegenstander, vaak
+          inclusief social engineering en fysieke toegang. Een belangrijk doel is te meten of het verdedigende team
+          (het blue team) de aanval opmerkt en erop reageert. Werken het rode en het blauwe team daarna samen om
+          detectie te verbeteren, dan heet dat purple teaming.</li>
+          <li>Een <strong>bug bounty</strong> is doorlopend: een organisatie nodigt externe onderzoekers uit om lekken
+          te melden tegen een beloning, binnen een vast beleid.</li>
+        </ul>
+
+        <div class="callout tip">
+          <strong>Kies op basis van de vraag.</strong> Wil een klant weten of hun SOC een echte aanval zou merken, dan
+          past red teaming beter dan een brede pentest. Wil een klant vooral breed weten waar de gaten zitten, dan is
+          een grey-box-pentest vaak de beste verhouding tussen kosten en inzicht.
+        </div>
+      `,
+      lab: {
+        type: 'connections',
+        prompt: 'Groepeer de zestien begrippen in vier groepen van vier.',
+        flag: 'NM{soorten_opdracht_geordend}',
+        groups: [
+          { name: 'Soort opdracht', items: ['Kwetsbaarhedenscan', 'Pentest', 'Red teaming', 'Bug bounty'] },
+          { name: 'PTES-fase', items: ['Pre-engagement', 'Threat modeling', 'Exploitation', 'Reporting'] },
+          { name: 'Rules of engagement', items: ['Tijdvenster', 'Escalatiecontact', 'Get-out-of-jail-brief', 'Scope'] },
+          { name: 'Rapportonderdeel', items: ['Managementsamenvatting', 'Risicoscore', 'Reproductiestappen', 'Hertest'] },
+        ],
+      },
+      questions: [
+        { q: 'Welke vlag verschijnt als alle vier de groepen kloppen?', answer: ['NM{soorten_opdracht_geordend}'],
+          hints: ['Vier begrippen zijn soorten opdracht, vier zijn fasen uit taak 1.', 'Tijdvenster, escalatiecontact, scope en de get-out-of-jail-brief horen bij de afspraken over de uitvoering.', 'Wat overblijft, zijn onderdelen die je in een rapport terugvindt.'],
+          explain: 'Vier kloppende groepen leveren NM{soorten_opdracht_geordend} op.' },
+        { q: 'Bij welke opdrachtvariant krijgt de tester vooraf de meeste informatie, zoals broncode en beheeraccounts?', options: [
+            'White box: er is zoveel mogelijk gedeeld, waardoor je in dezelfde tijd de meeste lekken vindt',
+            'Black box: de tester begint met vrijwel niets en werkt zich van buitenaf naar binnen',
+            'Grey box: de tester heeft alleen een gewoon account en wat documentatie'],
+          answer: 0,
+          wrong: { 1: 'Dat is juist de variant met de minste voorkennis; die kost veel verkenningstijd.', 2: 'Grey box zit ertussenin: beperkte informatie, niet alles.' },
+          explain: 'Bij een white-box-opdracht deelt de klant zoveel mogelijk vooraf, zodat de tester efficiënt diep kan gaan.' },
+        { q: 'Een klant wil vooral weten of zijn beveiligingsteam een echte, gerichte aanval zou opmerken en stoppen. Welke opdracht past daar het beste bij?', options: [
+            'Red teaming, omdat het een realistische tegenstander simuleert en meet of detectie en respons werken',
+            'Een geautomatiseerde kwetsbaarhedenscan, omdat die het snelst een lijst oplevert',
+            'Een black-box-pentest met een strak tijdvenster van twee uur'],
+          answer: 0,
+          wrong: { 1: 'Een scan vindt bekende lekken, maar test niet of mensen en processen een aanval opmerken.', 2: 'Een korte pentest meet dekking van kwetsbaarheden, niet de detectie- en reactiecapaciteit over langere tijd.' },
+          why: 'De juiste opdrachtsoort kiezen bepaalt of je de vraag van de klant echt beantwoordt; anders lever je een goed rapport over de verkeerde vraag.',
+          explain: 'Red teaming is doelgericht en langlopend en toetst juist de detectie- en reactiecapaciteit (het blue team).' },
+      ],
+    },
+
+    {
+      title: 'Taak 4 — OWASP WSTG als teststandaard',
+      content: `
+        <p>Voor webapplicaties bestaat een veelgebruikte, gratis teststandaard: de <strong>OWASP Web Security Testing
+        Guide (WSTG)</strong>. De huidige stabiele versie is <strong>4.2</strong> (uit 2020). De WSTG is geen tool maar
+        een <em>checklist-gedachte</em>: een gestructureerde lijst van dingen die je in een webapplicatie hoort te
+        controleren, zodat je niet op gevoel rondklikt en halverwege een hele categorie vergeet.</p>
+
+        <h3>Categorieën met een code</h3>
+        <p>De WSTG verdeelt de tests in categorieën, elk met een korte code, en geeft elke individuele test een ID in de
+        vorm <code>WSTG-XXXX-YY</code>. Een paar voorbeelden van de codes:</p>
+        <ul>
+          <li><code>WSTG-INFO</code> voor het verzamelen van informatie over de applicatie.</li>
+          <li><code>WSTG-CONF</code> voor configuratie en inrichting (bijvoorbeeld een beheerpagina die open staat).</li>
+          <li><code>WSTG-ATHN</code> voor authenticatie (hoe het inloggen is beveiligd).</li>
+          <li><code>WSTG-ATHZ</code> voor autorisatie (mag deze gebruiker dit wel?).</li>
+          <li><code>WSTG-INPV</code> voor invoervalidatie (zoals injectie en cross-site scripting).</li>
+        </ul>
+        <p>Noteer je bij een bevinding het bijbehorende ID, dan kan iedereen later precies terugvinden welke test je
+        deed. Versie 4.2 voegde ook een categorie toe voor het testen van koppelingen tussen systemen onderling
+        (machine-naar-machine), die in oudere versies nog ontbrak.</p>
+
+        <h3>De checklist-gedachte in de praktijk</h3>
+        <p>Het nut zit in de volledigheid. Wie zonder lijst werkt, test vaak grondig wat hij toevallig interessant
+        vindt en slaat onbewust hele onderwerpen over. De WSTG dwingt je elke categorie langs te gaan en bewust te
+        zeggen: "dit heb ik getest, dit niet, en waarom". Dat maakt je rapport ook controleerbaar.</p>
+
+        <div class="callout info">
+          <strong>WSTG tegenover PTES.</strong> PTES (taak 1) beschrijft de werkwijze van een hele opdracht, van
+          afspraken tot rapport. De WSTG is specifieker: het vult de fase waarin je een webapplicatie onderzoekt met
+          een concrete lijst van controles. Ze bijten elkaar niet, ze vullen elkaar aan.
+        </div>
+
+        <h3>OSSTMM, kort</h3>
+        <p>Je komt ook de <strong>OSSTMM</strong> tegen (Open Source Security Testing Methodology Manual, beheerd door
+        ISECOM, versie 3 uit 2010). Dat is een bredere, meer meetkundige methodiek die verder gaat dan alleen het web.
+        Je hoeft de details hier niet te kennen; het is genoeg om te weten dat de naam bestaat en waar hij voor staat.</p>
+      `,
+      questions: [
+        { q: 'In een rapport staat de bevinding "WSTG-SESS-02". Uit de code kun je het onderwerp afleiden. Waar gaat deze test over?', answer: ['sessiebeheer', 'sessie', 'session management', 'sessies', 'sessie management'],
+          hints: ['Kijk naar het middelste deel van het ID: de categoriecode.', 'De voorbeelden in de tekst volgen hetzelfde patroon: INFO, CONF, ATHN, ATHZ, INPV.', 'SESS is een afkorting van het Engelse woord voor "sessie".'],
+          wrong: { '/authentic/i': 'Authenticatie is de code ATHN. SESS staat voor iets anders: het beheer van de ingelogde sessie.', '/invoer|injectie/i': 'Dat is invoervalidatie (INPV). SESS gaat over het beheer van de sessie zelf.' },
+          why: 'Door bevindingen aan een WSTG-ID te koppelen, kan iedereen later precies nagaan welke test is gedaan; dat maakt je rapport controleerbaar.',
+          explain: 'SESS staat voor sessiebeheer: hoe de applicatie de ingelogde sessie beheert (cookies, verlopen, opnieuw aanmaken na inloggen).' },
+        { q: 'WSTG 4.2 voegde een categorie toe voor het testen van koppelingen tussen systemen onderling (machine-naar-machine). Hoe heet zo\'n koppeling in één woord (de gangbare afkorting)?', answer: ['API', 'apis', "api's", 'api testing', 'application programming interface'],
+          hints: ['Het gaat om de techniek waarmee programma\'s rechtstreeks met elkaar praten, zonder tussenkomst van een gebruiker.', 'Denk aan de interface waarmee een app gegevens ophaalt bij een server.', 'Drie letters, begint met een A.'],
+          wrong: { '/web ?service/i': 'Webservice komt in de buurt, maar de categorie en de gangbare term is korter en specifieker.', '/koppeling/i': 'Dat is de Nederlandse omschrijving; gevraagd is de gangbare afkorting van drie letters.' },
+          explain: 'Het gaat om het testen van API\'s (Application Programming Interfaces), de koppelingen waarmee systemen onderling gegevens uitwisselen.' },
+        { q: 'Ik begrijp dat de WSTG een checklist-gedachte is die helpt om geen hele categorie controles over te slaan.', noAnswer: true },
+      ],
+    },
+
+    {
+      title: 'Taak 5 — Bevindingen wegen: kans, impact en context',
+      tryFirst: true,
+      intro: '<p>Twee bevindingen, één calculator. In het lab staat een CVSS v3.1-calculator. Bepaal voor beide bevindingen hieronder de basisscore door de vector in te voeren of te plakken, en denk daarna na waarom de hoogste score niet altijd bovenaan hoort. De uitleg helpt je bij het wegen.</p>',
+      content: `
+        <p>Een lange lijst met lekken is niet hetzelfde als een bruikbaar rapport. Je moet bevindingen <em>wegen</em>,
+        zodat de opdrachtgever weet wat eerst moet. De kern is simpel:</p>
+
+        <div class="callout info">
+          <strong>Risico = kans × impact.</strong> De kans dat iets misbruikt wordt, maal de impact als dat gebeurt.
+          Een technisch zware fout waar in de praktijk niemand bij kan, kan een lager risico zijn dan een matige fout
+          die zeker misbruikt wordt.
+        </div>
+
+        <h3>CVSS voor de technische ernst</h3>
+        <p>Voor de technische ernst gebruik je <strong>CVSS</strong> (Common Vulnerability Scoring System). De
+        basisscore vat samen hoe makkelijk een lek te misbruiken is en wat de gevolgen zijn, op een schaal van 0 tot
+        10. Het rekenwerk en de acht metrieken worden uitgelegd in de room <code>kwetsbaarheden-cvss</code>; hier
+        gebruik je de calculator om twee bevindingen te scoren.</p>
+
+        <h3>Twee bevindingen</h3>
+        <p><strong>Bevinding A — injectie op de bestel-API.</strong> Op het openbare endpoint kan iedereen op internet,
+        zonder account, databaseopdrachten uitvoeren. Het werkt elke keer en er hoeft geen gebruiker iets te doen. De
+        aanvaller kan alle klantgegevens lezen, bestellingen wijzigen en de database legen. De schade blijft binnen de
+        applicatie en haar database.</p>
+        <p><strong>Bevinding B — reflected cross-site scripting in de zoekfunctie.</strong> Een aanvaller maakt een
+        speciale link; het slachtoffer moet erop klikken. Daarna draait er script in de browser van het slachtoffer,
+        dus buiten de webserver zelf. Er is beperkt lezen en beperkt wijzigen namens het slachtoffer mogelijk; de
+        beschikbaarheid wordt niet geraakt.</p>
+
+        <h3>CVSS is niet het eindoordeel</h3>
+        <p>De basisscore is generiek: overal ter wereld hetzelfde. Hij weet niets over <em>jouw</em> omgeving. Een
+        bevinding met een iets lagere score op een kroonjuweel dat open op internet staat, kan belangrijker zijn dan een
+        hogere score op een afgeschermde testomgeving. Daarom combineer je de CVSS-basisscore altijd met de
+        bedrijfscontext: waar staat het systeem, hoe belangrijk is het, en wordt dit soort lek nu actief misbruikt?</p>
+
+        <div class="callout tip">
+          <strong>Hulp bij het vertalen naar een vector:</strong> "via internet" is AV:N, "werkt elke keer" is AC:L,
+          "zonder account" is PR:N, "slachtoffer moet klikken" is UI:R, "buiten het kwetsbare onderdeel" is S:C, "alles"
+          is H, "beperkt" is L en "niet geraakt" is N.
+        </div>
+      `,
+      lab: { type: 'cvss', vector: 'CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H' },
+      questions: [
+        { q: 'Voer bevinding A in de calculator in. Wat is de CVSS v3.1-basisscore?', answer: ['9.8', '9,8'],
+          hints: ['Vertaal de woorden: via internet, elke keer, zonder account, zonder hulp van een gebruiker.', 'De schade blijft binnen de applicatie (S:U), maar lezen, wijzigen en wissen zijn allemaal volledig (H).', 'De vector is AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H.'],
+          why: 'Zelf kunnen scoren maakt je onafhankelijk van wat een scanner oplepelt; je kunt een score uitleggen en verdedigen tegenover de klant.',
+          explain: 'AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H geeft 9.8 (Critical).' },
+        { q: 'Voer nu bevinding B in. Wat is de basisscore?', answer: ['6.1', '6,1'],
+          hints: ['Nu moet het slachtoffer klikken (UI:R) en komt de schade buiten de webserver terecht (S:C).', 'Lezen en wijzigen zijn beperkt (L), beschikbaarheid is niet geraakt (N).', 'De vector is AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N.'],
+          explain: 'AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N geeft 6.1 (Medium), een klassieke score voor reflected XSS.' },
+        { q: 'Bevinding A scoort hoger dan B. Toch zet een team B bovenaan. Wat is daarvoor de meest verdedigbare reden?', options: [
+            'B zit op een kroonjuweel dat open op internet staat terwijl A op een afgeschermde testomgeving draait; de bedrijfscontext weegt mee bovenop de basisscore',
+            'Een lagere CVSS-score betekent altijd dat je het als eerste moet oplossen',
+            'Cross-site scripting is per definitie ernstiger dan een injectiefout'],
+          answer: 0,
+          wrong: { 1: 'Een lagere score is geen reden om voor te gaan; het gaat om de context eromheen.', 2: 'Er is geen vaste rangorde tussen lektypes; de context en impact bepalen de ernst.' },
+          why: 'Wie blind op de hoogste CVSS sorteert, patcht soms eerst een afgeschermde testserver terwijl het kroonjuweel openstaat.',
+          explain: 'De basisscore kent jouw omgeving niet. Een iets lagere score op een internet-facing kroonjuweel kan zwaarder wegen (zie ook de room kwetsbaarheden-cvss).' },
+        { q: 'Welke uitspraak over het wegen van risico klopt?', options: [
+            'Je combineert de kans op misbruik met de impact als het gebeurt; een zware fout met verwaarloosbare kans kan een lager risico zijn dan een matige fout die zeker misbruikt wordt',
+            'Risico is precies gelijk aan de CVSS-basisscore',
+            'Voor risico telt alleen de impact; de kans doet er niet toe'],
+          answer: 0,
+          wrong: { 1: 'De CVSS-basisscore is de technische ernst, niet het complete risico voor jouw organisatie.', 2: 'Zonder de kans mee te wegen overschat je lekken die in de praktijk onbereikbaar zijn.' },
+          explain: 'Risico is kans maal impact; CVSS levert vooral de impactkant van de technische ernst.' },
+      ],
+    },
+
+    {
+      title: 'Taak 6 — Het rapport: van bevinding tot advies',
+      tryFirst: true,
+      intro: '<p>In het lab staat een rommelige, technische beschrijving van een bevinding. Herschrijf hem tot een managementsamenvatting (BLUF): conclusie eerst, begrijpelijk voor iemand zonder technische kennis. Toets je versie daarna tegen de rubric. Lees de uitleg als je wilt weten wat een goede bevinding onderscheidt van een slechte.</p>',
+      content: `
+        <p>Het rapport is het eindproduct. Een opdrachtgever leest het om te beslissen wat hij gaat doen, dus het moet
+        begrijpelijk én bruikbaar zijn.</p>
+
+        <h3>De managementsamenvatting (BLUF)</h3>
+        <p>Bovenaan staat een samenvatting voor beslissers die geen tijd of technische achtergrond hebben. Schrijf die
+        volgens <strong>BLUF</strong> (Bottom Line Up Front): de conclusie eerst, dan de onderbouwing. Niet "we hebben
+        een scan gedraaid en vervolgens...", maar "de webshop kan door een buitenstaander worden overgenomen; drie
+        bevindingen zijn kritiek en vragen deze week actie." Vermijd jargon of leg het uit.</p>
+
+        <h3>Per bevinding, vaste onderdelen</h3>
+        <p>Elke bevinding beschrijf je volgens een vast stramien, zodat de lezer niet hoeft te zoeken:</p>
+        <ol>
+          <li><strong>Titel:</strong> kort en concreet, gericht op het risico. "Onbevoegde kan klantgegevens inzien via
+          de bestel-API", niet "SQL-fout".</li>
+          <li><strong>Risico:</strong> een niveau (bijvoorbeeld Hoog) met korte onderbouwing uit kans en impact,
+          eventueel met de CVSS-score erbij.</li>
+          <li><strong>Bewijs en reproductie:</strong> hoe toon je het aan en hoe herhaalt de klant het? Genoeg om het na
+          te doen, zonder een kant-en-klaar aanvalsrecept dat misbruik uitnodigt.</li>
+          <li><strong>Impact:</strong> wat betekent dit zakelijk? Welke gegevens, welke systemen, welke gevolgen?</li>
+          <li><strong>Advies:</strong> een concrete, uitvoerbare aanbeveling. Dit is waar je echt waarde toevoegt.</li>
+        </ol>
+
+        <h3>Een goede tegenover een slechte bevinding</h3>
+        <p>Slecht: titel "Kwetsbaar", bewijs "zie screenshot", advies "beveiligen". Daar kan niemand iets mee. Goed:
+        een concrete titel, een onderbouwd risiconiveau, reproduceerbare stappen, de zakelijke impact en een advies dat
+        de ontwikkelaar maandag kan oppakken.</p>
+
+        <h3>Prioritering en hertest</h3>
+        <p>Zet de bevindingen op volgorde van <strong>risico</strong>, niet op volgorde van vinden en niet puur op
+        CVSS. Wat actief misbruikt wordt op een internet-facing kroonjuweel gaat voor. En het werk is pas af na een
+        <strong>hertest</strong>: nadat de klant de adviezen heeft doorgevoerd, controleer je of de bevindingen echt
+        verholpen zijn. Blijft een risico bewust open, dan hoort de opdrachtgever dat formeel te accepteren.</p>
+      `,
+      lab: {
+        type: 'bluf',
+        source: 'Op 2026-11-10 om 14:03 is met een handmatige request op het endpoint /api/bestellingen een foutmelding uitgelokt die de databasestructuur prijsgaf. Vervolgens bleek dat via hetzelfde endpoint zonder authenticatie records uit de tabel klanten konden worden opgevraagd. De tester heeft dit aangetoond op een beperkt aantal records en niet verder geexporteerd. Het endpoint is vanaf internet bereikbaar. De applicatie draait op het klantportaal, dat door de organisatie als kroonjuweel is aangemerkt. CVSS v3.1 basisscore 9.8 (Critical). Aanbevolen wordt het endpoint te voorzien van authenticatie en de queries te parametriseren (prepared statements).',
+        model: 'Conclusie: een buitenstaander kan nu zonder in te loggen klantgegevens uit het klantportaal opvragen. Dit is de ernstigste bevinding van de test en vraagt deze week actie. Oorzaak: een bestel-API staat open op internet en controleert de identiteit niet. Advies: zet de API achter authenticatie en gebruik prepared statements; laat daarna een hertest doen. Eigenaar: team Klantportaal.',
+      },
+      questions: [
+        { q: 'Welke samenvatting is een goede BLUF voor de directie?', options: [
+            'Een buitenstaander kan zonder inloggen klantgegevens uit het klantportaal opvragen; dit is de ernstigste bevinding en vraagt deze week actie. Oorzaak en advies volgen hieronder.',
+            'We zijn begonnen met verkenning, hebben daarna een scan gedraaid, logs bekeken en uiteindelijk iets bij een API gevonden.',
+            'Het endpoint /api/bestellingen gaf bij een malformed request een stacktrace met de schema-definitie van de tabel klanten prijs.'],
+          answer: 0,
+          wrong: { 1: 'Dit is chronologie, geen conclusie. Een beslisser wil eerst weten wat er aan de hand is.', 2: 'Dit is technisch jargon dat een niet-technische lezer niet begrijpt; het hoort in de bevinding, niet in de managementsamenvatting.' },
+          why: 'Beslissers lezen vooral de samenvatting; staat de conclusie daar niet helder bovenaan, dan landt de urgentie niet en gebeurt er niets.',
+          explain: 'BLUF betekent conclusie eerst, in begrijpelijke taal, met de urgentie meteen duidelijk.' },
+        { q: 'Welke bevindingstitel is bruikbaar in een rapport?', options: [
+            'Onbevoegde kan klantgegevens inzien via de onbeveiligde bestel-API',
+            'SQL-fout',
+            'Kwetsbaar endpoint gevonden tijdens de test'],
+          answer: 0,
+          wrong: { 1: 'Te kaal: het zegt niets over wat er misgaat of waarom het erg is.', 2: 'Vaag: welk endpoint, en wat is het risico? De lezer moet gaan zoeken.' },
+          explain: 'Een goede titel is concreet en risicogericht: wie kan wat, waardoor.' },
+        { q: 'Op welke volgorde zet je de bevindingen in het rapport?', options: [
+            'Op risico: wat het zwaarst weegt (bijvoorbeeld actief misbruikt op een internet-facing kroonjuweel) staat bovenaan',
+            'Op de volgorde waarin je ze toevallig vond tijdens de test',
+            'Strikt op CVSS-basisscore, zonder naar de omgeving te kijken'],
+          answer: 0,
+          wrong: { 1: 'De vindvolgorde zegt niets over belangrijkheid en helpt de lezer niet kiezen.', 2: 'CVSS alleen negeert de bedrijfscontext; een iets lagere score op een kroonjuweel kan voorgaan.' },
+          explain: 'Prioriteer op risico (kans maal impact in context), niet op vindvolgorde of CVSS alleen.' },
+        { q: 'Ik heb mijn managementsamenvatting tegen de rubric in het lab getoetst.', noAnswer: true },
+      ],
+    },
+
+    {
+      title: 'Taak 7 — Ethiek, recht en verantwoord melden',
+      content: `
+        <p>Alles in deze room staat of valt met één voorwaarde: je werkt met toestemming en binnen de grenzen van de
+        wet. Zonder dat ben je geen pentester maar een inbreker.</p>
+
+        <h3>Alleen met schriftelijke toestemming</h3>
+        <p>Je test uitsluitend systemen die van jou zijn of waarvoor je uitdrukkelijke, schriftelijke toestemming hebt
+        van iemand die daarover gaat. Een mondelinge toezegging of een vermoeden dat het "wel goed zit", is niet genoeg.
+        De scope en de rules of engagement uit taak 2 zijn precies wat die toestemming concreet maakt.</p>
+
+        <h3>De wet in Nederland</h3>
+        <p>Opzettelijk en wederrechtelijk binnendringen in een geautomatiseerd werk is strafbaar als
+        <strong>computervredebreuk</strong>, geregeld in <strong>artikel 138ab van het Wetboek van Strafrecht</strong>.
+        "Binnendringen" wordt ruim uitgelegd: ook het doorbreken van een beveiliging of het gebruiken van een valse
+        sleutel of identiteit valt eronder. Ongeautoriseerd scannen is het voorportaal daarvan. Onwetendheid is geen
+        excuus, en ook een nobele bedoeling maakt het niet legaal.</p>
+
+        <h3>Vind je per ongeluk iets buiten je opdracht?</h3>
+        <p>Struikel je zonder opdracht over een echt lek, dan buit je het niet uit en maak je het niet openbaar. Je
+        meldt het verantwoord, een proces dat in Nederland bekendstaat als coordinated vulnerability disclosure. Je
+        geeft de eigenaar een redelijke termijn om het te herstellen voordat er iets naar buiten komt. Veel
+        organisaties publiceren hun meldbeleid in een <code>security.txt</code>-bestand; kom je er met de organisatie
+        zelf niet uit, dan kun je terecht bij het <strong>NCSC</strong> (Nationaal Cyber Security Centrum).</p>
+
+        <div class="callout danger">
+          <strong>De kern:</strong> je kennis is bedoeld om te beschermen. Toestemming eerst, netjes melden, nooit
+          verder gaan dan nodig. Dat is het verschil tussen een vak en een misdrijf.
+        </div>
+
+        <p>Tot slot de boss-vraag van deze room: vier teams leveren dezelfde bevinding anders aan. Beoordeel welke het
+        goed doet, zowel in prioritering als in rapportage.</p>
+      `,
+      questions: [
+        { q: 'Ik begrijp dat ik alleen test met uitdrukkelijke, schriftelijke toestemming, en dat computervredebreuk (art. 138ab Sr) strafbaar is.', noAnswer: true },
+        { q: 'Je vindt buiten je opdracht een ernstig lek en wilt het netjes melden, zodat de eigenaar eerst tijd krijgt om te herstellen. Hoe heet dit meldproces (de gangbare Engelse afkorting van drie letters)?', answer: ['CVD', 'cvd'],
+          hints: ['De volledige Engelse term staat in de tekst; gevraagd is de afkorting.', 'De woorden beginnen met Coordinated, Vulnerability en Disclosure.', 'Neem de eerste letter van elk van die drie woorden.'],
+          wrong: { '/responsible/i': 'Responsible disclosure is de oudere naam; gevraagd is de huidige afkorting van drie letters.', '/ncsc/i': 'Het NCSC is een instantie waar je terecht kunt, niet de naam van het meldproces zelf.' },
+          why: 'Verantwoord melden beschermt zowel de gebruikers van het kwetsbare systeem als jezelf tegen strafrechtelijke problemen.',
+          explain: 'Het proces heet coordinated vulnerability disclosure, afgekort CVD.' },
+        { q: 'Boss — vier teams rapporteren hetzelfde kritieke lek op het internet-facing klantportaal. Welke aanpak is correct geprioriteerd én gerapporteerd?', boss: true, options: [
+            'Duidelijke titel, risico Hoog onderbouwd met kans en impact, reproductiestappen, zakelijke impact en een concreet advies; bovenaan gezet omdat het lek op het internet-facing kroonjuweel zit en actief wordt misbruikt',
+            'Als eerste bevinding opgenomen omdat die toevallig het eerst werd gevonden, zonder onderbouwing van het risico',
+            'Alleen een screenshot van een foutmelding met het woord "kwetsbaar", en bovenaan gezet puur omdat de CVSS het hoogst is, zonder naar de context te kijken',
+            'Keurig beschreven maar zonder advies en zonder risico-inschatting, en onderaan gezet terwijl het een kroonjuweel betreft'],
+          answer: 0,
+          wrong: { 1: 'Vindvolgorde zegt niets over belangrijkheid, en zonder risico-onderbouwing kan de klant niet kiezen.', 2: 'Een screenshot met "kwetsbaar" is niet reproduceerbaar, en puur op CVSS sorteren negeert de bedrijfscontext.', 3: 'Zonder advies en risico-inschatting mist de bevinding haar waarde, en een kroonjuweel hoort niet onderaan.' },
+          why: 'Een rapport is pas waardevol als prioritering op risico en volledige, reproduceerbare bevindingen samenkomen; mist er een van beide, dan kan de klant niet goed handelen.',
+          explain: 'Alleen de eerste aanpak combineert een complete bevinding (titel, risico, reproductie, impact, advies) met een prioritering op risico en context.' },
+      ],
+    },
+
+    {
+      title: 'Taak 8 — Verdieping: hertest, risicoacceptatie en purple teaming',
+      kind: 'verdieping',
+      optional: true,
+      content: `
+        <p>Een rapport opleveren is niet het einde van de relatie met een opdrachtgever; het is vaak het begin van een
+        herstelronde. Drie onderwerpen verdienen daarbij extra aandacht.</p>
+
+        <h3>De hertest telt echt</h3>
+        <p>Nadat de opdrachtgever de adviezen heeft doorgevoerd, doe je een hertest. Je controleert per bevinding of het
+        probleem werkelijk weg is en of de oplossing geen nieuw gat heeft geslagen. Een "opgelost" in een ticketsysteem
+        is geen bewijs; alleen een herhaalde controle is dat. In de hertest kun je per bevinding een status geven:
+        verholpen, deels verholpen, of nog open. Die statussen zijn voor de opdrachtgever waardevoller dan de oude
+        scores, want ze laten de voortgang zien.</p>
+
+        <h3>Wie accepteert het restrisico?</h3>
+        <p>Soms wordt een bevinding bewust niet opgelost: de kosten wegen niet op tegen het risico, of een fix raakt een
+        proces dat niet stil mag liggen. Dat mag, mits het een bewuste keuze is. Zo'n risicoacceptatie hoort formeel te
+        worden vastgelegd en ondertekend door iemand met de bevoegdheid om dat risico namens de organisatie te dragen,
+        meestal een verantwoordelijke manager of eigenaar, niet de pentester en niet een individuele ontwikkelaar. De
+        tester adviseert; de organisatie beslist en tekent. Zo is later duidelijk wie welke keuze maakte en waarom.</p>
+
+        <h3>Van tegenstander naar samenwerking</h3>
+        <p>Een pentest en een red-teamoefening zetten de tester tegenover de organisatie. Maar het doel is uiteindelijk
+        dat de verdediging beter wordt. In purple teaming werken de aanvallende en de verdedigende kant daarom samen:
+        de aanvallers laten precies zien welke stappen ze zetten, en de verdedigers kijken live of hun monitoring die
+        stappen oppikt. Waar een signaal mist, bouwen ze samen een nieuwe detectie. Zo verandert een eenmalig rapport in
+        een doorlopende verbetering van detectie en respons, wat voor veel organisaties meer oplevert dan telkens een
+        nieuwe lijst met lekken.</p>
+      `,
+      questions: [
+        { q: 'Na een hertest blijft één bevinding bewust open, omdat de klant het restrisico aanvaardt. Wie hoort die risicoacceptatie formeel te ondertekenen?', answer: ['de opdrachtgever', 'opdrachtgever', 'management', 'de manager', 'verantwoordelijke manager', 'eigenaar', 'de organisatie'],
+          hints: ['De tester adviseert, maar beslist niet namens de organisatie.', 'Het moet iemand zijn die het risico namens de organisatie mag dragen.', 'Denk aan een verantwoordelijke manager of eigenaar, niet aan de pentester of een losse ontwikkelaar.'],
+          wrong: { '/pentester|tester/i': 'De tester adviseert alleen; hij draagt het risico niet namens de organisatie.', '/ontwikkelaar/i': 'Een individuele ontwikkelaar heeft die bevoegdheid meestal niet; het hoort bij een verantwoordelijke manager of eigenaar.' },
+          explain: 'Risicoacceptatie is een organisatiebesluit en hoort te worden getekend door iemand die het risico mag dragen, niet door de tester.' },
+        { q: 'Waarom is een melding "opgelost" in een ticketsysteem geen voldoende bewijs dat een bevinding echt verholpen is?', answer: ['je moet het hertesten', 'alleen een hertest bewijst het', 'omdat je het opnieuw moet controleren', 'hertest', 'een herhaalde controle', 'controleren'],
+          hints: ['Denk aan de laatste echte stap van het werk voordat je iets als afgerond beschouwt.', 'Een status in een systeem zegt dat iemand denkt dat het klaar is, niet dat het zo is.', 'Alleen een herhaalde controle levert bewijs: de hertest.'],
+          explain: 'Alleen een hertest bewijst dat de oplossing werkt en geen nieuw probleem heeft gemaakt; een ticketstatus is een bewering, geen bewijs.' },
+        { q: 'Wat maakt purple teaming anders dan een gewone pentest of red-teamoefening?', answer: ['aanvallers en verdedigers werken samen', 'rode en blauwe team werken samen', 'samenwerking tussen aanval en verdediging', 'samenwerken om detectie te verbeteren', 'ze werken samen'],
+          hints: ['Het gaat om de verhouding tussen de aanvallende en de verdedigende kant.', 'Bij een pentest staan die twee tegenover elkaar; bij purple teaming niet.', 'De twee kanten werken samen om de detectie en respons te verbeteren.'],
+          explain: 'Bij purple teaming werken de aanvallende en verdedigende kant samen, zodat ontbrekende detecties direct worden verbeterd.' },
+      ],
+    },
+
+    {
+      title: 'Taak 9 — Zo komt dit voor op een examen',
+      kind: 'examen',
+      optional: true,
+      content: `
+        <p>Vijf scenariovragen in de stijl die je op een examen of in de praktijk tegenkomt. Lees ze rustig: de fout
+        geformuleerde opties zijn met opzet verleidelijk. Deze vragen zijn zelf geschreven voor dit portaal en zijn
+        geen echte examenvragen.</p>
+      `,
+      questions: [
+        { q: 'Halverwege een webapplicatietest vraagt de opdrachtgever per mail of je "even" ook het domein van een zusterbedrijf meeneemt, dat niet in de scope staat. Wat doe je?', options: [
+            'Niet testen tot de scope formeel is aangepast en opnieuw schriftelijk is goedgekeurd door iemand die daarover gaat',
+            'Direct meenemen; de opdrachtgever vraagt er zelf om, dus het is toegestaan',
+            'Alleen een snelle passieve verkenning doen, want dat raakt het systeem niet',
+            'Het zusterbedrijf zelf bellen om toestemming te vragen'],
+          answer: 0,
+          wrong: { 1: 'Je contactpersoon gaat niet automatisch over een ander bedrijf; een losse mail is geen geldige scope-uitbreiding.', 2: 'Ook passieve verkenning hoort binnen een afgesproken scope; bovendien glijd je zo makkelijk door naar actief werk.', 3: 'Dat is niet jouw rol; de scope-uitbreiding moet via de juiste, bevoegde weg lopen.' },
+          explain: 'Een scope-uitbreiding, zeker naar een ander bedrijf, moet formeel en schriftelijk worden vastgelegd en goedgekeurd door iemand met de bevoegdheid. Tot die tijd blijft het buiten scope.' },
+        { q: 'Tijdens een toegestane test vind je een onbeveiligde map met echte medische gegevens van klanten. Wat is de juiste handelwijze?', options: [
+            'Vaststellen dat de map bereikbaar is, niet verder kijken dan nodig, geen kopie meenemen en het meteen melden aan je contactpersoon',
+            'De gegevens downloaden zodat je een sterk bewijsstuk hebt voor het eindrapport',
+            'Niets doen en de vondst weglaten, want het is te gevoelig om te noemen',
+            'De map eerst zelf opschonen om de klant te helpen'],
+          answer: 0,
+          wrong: { 1: 'Een kopie van medische gegevens meenemen is onnodig en maakt jou zelf tot een datalekrisico.', 2: 'Een bereikbare map met medische gegevens is een zeer belangrijke bevinding; die verzwijg je nooit.', 3: 'Je wijzigt of verwijdert geen data van de klant; dat valt buiten je opdracht en vernietigt bewijs.' },
+          explain: 'Toon de bevinding aan met minimale toegang, behandel de data vertrouwelijk en meld het. Data meenemen of zelf aanpassen hoort niet.' },
+        { q: 'Je hebt een concrete checklist nodig om systematisch een webapplicatie te testen zonder categorieën over te slaan. Welke bron pak je erbij?', options: [
+            'De OWASP Web Security Testing Guide (WSTG)',
+            'De CVSS-specificatie van FIRST',
+            'De CISA KEV-catalogus',
+            'Het Wetboek van Strafrecht, artikel 138ab'],
+          answer: 0,
+          wrong: { 1: 'CVSS helpt een gevonden lek te scoren, maar geeft geen lijst van wat je allemaal moet testen.', 2: 'De KEV-catalogus toont actief misbruikte lekken; het is geen testchecklist voor een applicatie.', 3: 'Dat artikel gaat over de juridische grens, niet over hoe je methodisch test.' },
+          explain: 'De WSTG is de teststandaard met de checklist-gedachte voor webapplicaties. CVSS, KEV en de wet dienen andere doelen.' },
+        { q: 'Je schrijft de managementsamenvatting van het rapport voor de directie. Welke aanpak is juist?', options: [
+            'Begin met de conclusie en de urgentie in begrijpelijke taal (BLUF), en laat de techniek voor de bevindingen zelf',
+            'Beschrijf chronologisch welke tools je in welke volgorde hebt gebruikt',
+            'Plak de ruwe scanuitvoer erin, zodat de directie alle details heeft',
+            'Gebruik zoveel mogelijk vakjargon, zodat het deskundig overkomt'],
+          answer: 0,
+          wrong: { 1: 'De directie wil de conclusie, niet jouw werkvolgorde; chronologie verbergt de boodschap.', 2: 'Ruwe uitvoer is onleesbaar voor beslissers en hoort hooguit in een bijlage.', 3: 'Jargon sluit juist de doelgroep uit; een goede samenvatting is begrijpelijk.' },
+          explain: 'Een managementsamenvatting volgt BLUF: conclusie eerst, begrijpelijk, met de urgentie meteen helder.' },
+        { q: 'De opdrachtgever meldt dat alle kritieke bevindingen zijn opgelost. Wat bevestigt dat het werk echt klaar is?', options: [
+            'Een hertest waarin je per bevinding controleert of het probleem weg is en geen nieuw gat is ontstaan',
+            'De bevestiging van de ontwikkelaar dat hij het heeft aangepast',
+            'Het sluiten van de tickets in het projectsysteem',
+            'Een nieuwe volledige kwetsbaarhedenscan die geen enkel resultaat meer geeft'],
+          answer: 0,
+          wrong: { 1: 'Een bewering van de ontwikkelaar is geen bewijs; de fix kan onvolledig zijn of iets nieuws breken.', 2: 'Een gesloten ticket zegt dat iemand het klaar vindt, niet dat het aantoonbaar verholpen is.', 3: 'Een scan vindt bekende patronen, maar verifieert niet gericht of jouw specifieke bevindingen zijn opgelost.' },
+          explain: 'Alleen een gerichte hertest per bevinding bewijst dat een probleem echt verholpen is.' },
+      ],
+    },
+  ],
+  terms: [
+    { term: 'PTES', def: 'Penetration Testing Execution Standard: openbare standaard die een pentest in zeven fasen verdeelt, van pre-engagement tot reporting.' },
+    { term: 'Scope', def: 'De vooraf vastgelegde grens van een opdracht: welke systemen, domeinen en accounts je wel en niet mag raken.' },
+    { term: 'Rules of engagement (RoE)', def: 'De spelregels van de uitvoering: tijdvenster, toegestane technieken, contactpersonen, omgaan met gevoelige data en de noodstop.' },
+    { term: 'Get-out-of-jail-brief', def: 'Een ondertekende machtiging die je tijdens de opdracht bij je draagt en die aantoont dat je in opdracht en binnen de scope handelt.' },
+    { term: 'Black/grey/white box', def: 'Mate van voorkennis van de tester: geen (black), beperkt (grey) of volledig zoals broncode en accounts (white).' },
+    { term: 'Red teaming', def: 'Doelgerichte, langlopende simulatie van een echte tegenstander die ook test of het blue team de aanval opmerkt en erop reageert.' },
+    { term: 'OWASP WSTG', def: 'Web Security Testing Guide (versie 4.2, 2020): teststandaard met een checklist van controles voor webapplicaties, met test-ID\'s als WSTG-ATHN-02.' },
+    { term: 'OSSTMM', def: 'Open Source Security Testing Methodology Manual (ISECOM, versie 3, 2010): bredere, meer meetkundige testmethodiek dan alleen het web.' },
+    { term: 'Managementsamenvatting (BLUF)', def: 'Begrijpelijke samenvatting bovenaan het rapport, geschreven volgens Bottom Line Up Front: de conclusie eerst, dan de onderbouwing.' },
+    { term: 'Hertest', def: 'Herhaalde controle na het herstel, om te bewijzen dat een bevinding echt verholpen is en geen nieuw probleem is ontstaan.' },
+    { term: 'Coordinated Vulnerability Disclosure (CVD)', def: 'Verantwoord melden van een kwetsbaarheid bij de eigenaar of het NCSC, zonder misbruik en met een redelijke hersteltermijn.' },
+  ],
+  resources: [
+    { title: 'PTES — The Penetration Testing Execution Standard', url: 'https://www.pentest-standard.org/' },
+    { title: 'OWASP Web Security Testing Guide (WSTG)', url: 'https://owasp.org/www-project-web-security-testing-guide/' },
+    { title: 'NCSC — Coordinated Vulnerability Disclosure', url: 'https://www.ncsc.nl/' },
   ],
 });
 
@@ -47015,6 +48070,1092 @@ CS.registerRoom({
   resources: [
     { title: 'MITRE ATT&CK: Web Shell (T1505.003)', url: 'https://attack.mitre.org/techniques/T1505/003/' },
     { title: 'MITRE ATT&CK: SSH Authorized Keys (T1098.004)', url: 'https://attack.mitre.org/techniques/T1098/004/' },
+  ],
+});
+
+</script>
+<script>
+/* Game room: Eerste inbraak (offensief, gesimuleerd) */
+CS.registerRoom({
+  id: 'range-eerste-inbraak',
+  path: 'gamerooms',
+  order: 6,
+  title: 'Eerste inbraak',
+  difficulty: 'Makkelijk',
+  level: 'Praktijk',
+  checked: '2026-11-13',
+  minutes: 30,
+  summary: 'Je mag als pentester één webserver van Kade Transport testen. Verken hem, vind de verborgen map, log in met wat je vindt, en word root. Twee vlaggen.',
+  objectives: [
+    'Een doelwit verkennen met een poortscan en de webserver bekijken',
+    'Inloggegevens vinden die ergens zijn blijven slingeren',
+    'Van een gewone gebruiker root worden via een verkeerd ingestelde sudo-regel',
+    'Begrijpen wat de beheerder bij elke stap had kunnen zien en voorkomen',
+  ],
+  tasks: [
+    {
+      title: 'Taak 1 — De opdracht',
+      content: `
+        <p>Dit is je eerste <strong>oefenrange</strong>: een nagebootst doelwit in je browser. Je typt opdrachten in een console,
+        en de "aanval" is een puzzel. Er wordt niets echt uitgevoerd en er gaat niets het netwerk op; het is een simulatie om te
+        leren hoe een aanvaller denkt, zodat je het kunt tegenhouden.</p>
+        <p>De aanpak is bijna altijd dezelfde keten:</p>
+        <ol>
+          <li><strong>Verkennen</strong>: welke poorten en diensten staan open? (<code>scan</code>)</li>
+          <li><strong>Een ingang vinden</strong>: een verborgen map, een vergeten bestand, een zwak wachtwoord. (<code>web</code>)</li>
+          <li><strong>Binnenkomen</strong>: inloggen met wat je vond. (<code>ssh</code>)</li>
+          <li><strong>Rechten verhogen</strong>: van gewone gebruiker naar root. (<code>sudo -l</code>, <code>escalate</code>)</li>
+        </ol>
+        <p>Let op de <strong>ontdekkingsmeter</strong> rechtsboven: hoe luidruchtiger je bent (een breed scan, blind wachtwoorden
+        proberen), hoe sneller de verdediger je ziet. Staat hij vol, dan ben je betrapt en ben je de range kwijt.</p>
+        <div class="callout warn"><strong>Let op:</strong> dit mag je alleen in dit lab of op systemen met schriftelijke toestemming.
+        Ongeautoriseerd binnendringen is computervredebreuk (art. 138ab Sr).</div>
+      `,
+      questions: [
+        { q: 'Je vindt een databasewachtwoord in een vergeten back-upbestand op de webserver, en het blijkt ook het SSH-wachtwoord van de beheerder. Welke fout maakt dit mogelijk?',
+          options: ['Een te sterk wachtwoord', 'Wachtwoordhergebruik en een gevoelig bestand in de webroot', 'Een verouderde nginx-versie', 'Een open poort 22'],
+          answer: 1,
+          wrong: { 0: 'Een sterk wachtwoord is juist goed; het probleem is dat hetzelfde wachtwoord op meer plekken geldt.', 2: 'Een oude versie kan een risico zijn, maar hier is het de combinatie van een gelekt bestand en hergebruik.', 3: 'Poort 22 open is normaal; het wachtwoord dat uitlekt is het probleem.' },
+          explain: 'Een geheim in de webroot plus hetzelfde wachtwoord voor database en SSH: twee fouten die samen de inbraak maken.' },
+      ],
+    },
+    {
+      title: 'Taak 2 — De range',
+      content: `
+        <p>Lees de rules of engagement, start de oefening en typ <code>help</code>. Begin met <code>scan ext</code> om het doelwit te
+        vinden, en daarna <code>scan</code> op het adres zelf. Bekijk de webserver met <code>web</code>, en vergeet
+        <code>/robots.txt</code> niet. Elke leerling krijgt een eigen variant; de walkthrough komt vrij na je eerste poging.</p>
+      `,
+      lab: {
+        type: 'range',
+        title: 'Kade Transport · web-01',
+        role: 'Pentester met een getekende opdracht om alleen web-01 (de publieke webserver van Kade Transport BV, fictief) te testen.',
+        story: 'De klant wil weten of een aanvaller vanaf internet bij de server kan. Je krijgt alleen het begin van het netwerk; de rest zoek je zelf.',
+        mandate: [
+          'Alles in deze oefening is gesimuleerd. Doe dit nooit op systemen zonder schriftelijke toestemming.',
+          'Je scope is uitsluitend web-01. Blijf erbinnen.',
+          'Werk zo stil mogelijk: een goede pentester maakt niet onnodig lawaai.',
+          'Leg vast wat je doet, zodat de klant het incident later kan naspelen.',
+        ],
+        vars: {
+          ip: ['203.0.113.10', '198.51.100.10', '192.0.2.10', '203.0.113.60'],
+          pass: ['Zomer2024!', 'Welkom-2025', 'Fiets#Blauw7', 'Koffie@0800', 'R0zenstruik'],
+          tool: ['tar', 'awk', 'less'],
+        },
+        startNet: 'ext',
+        startScan: 'ext',
+        maxNoise: 100,
+        quietUnder: 45,
+        nets: { ext: { cidr: 'ext', label: 'internet' } },
+        motd: 'Oefenrange web-01. Typ help. Begin met scan ext.',
+        hosts: [
+          {
+            name: 'web-01', ip: '{{ip}}', net: 'ext', role: 'Publieke webserver (nginx)',
+            ports: [{ n: 22, svc: 'ssh', ver: 'OpenSSH 8.9' }, { n: 80, svc: 'http', ver: 'nginx 1.18.0', note: 'webshop' }],
+            pages: {
+              '/': 'Kade Transport BV - vrachten over water\nWelkom op ons portaal. Log in via /beheer.',
+              '/robots.txt': 'User-agent: *\nDisallow: /backup\nDisallow: /beheer',
+              '/beheer': 'Beheerdersaanmelding. Gebruikersnaam en wachtwoord vereist.',
+              '/backup': 'Index van /backup:\n  config.php.bak\n  readme.txt',
+              '/backup/': 'Index van /backup:\n  config.php.bak\n  readme.txt',
+              '/backup/readme.txt': 'Tijdelijke back-up voor de migratie. NIET online laten staan. (staat er nog steeds)',
+              '/backup/config.php.bak': "<?php\n$db_host='localhost';\n$db_user='webadmin';\n$db_pass='{{pass}}';  // zelfde als serverlogin, moet ik nog scheiden\n?>",
+            },
+            secrets: [
+              { loc: 'web:/backup/config.php.bak', cred: { user: 'webadmin', pass: '{{pass}}', target: 'web-01', note: 'uit config.php.bak' } },
+            ],
+            accounts: { webadmin: '{{pass}}' },
+            files: {
+              '/home/webadmin/user.txt': 'NM{eerste_voet_binnen}',
+              '/home/webadmin/notities.txt': 'todo: wachtwoorden scheiden, back-upmap weghalen',
+              '/root/root.txt': 'NM{kade_tot_root}',
+            },
+            escalation: { via: 'sudo', token: '{{tool}}', show: '/usr/bin/{{tool}}', note: '{{tool}} mag je als root draaien en kan een shell openen; zo word je root' },
+            flags: [
+              { id: 'user', value: 'NM{eerste_voet_binnen}', path: '/home/webadmin/user.txt', root: false, points: 10 },
+              { id: 'root', value: 'NM{kade_tot_root}', path: '/root/root.txt', root: true, points: 15 },
+            ],
+          },
+        ],
+        objectives: [
+          { text: 'Een shell op web-01 gekregen', found: ['shell:web-01'], points: 10 },
+          { text: 'De gebruikersvlag gevonden', flags: ['user'], points: 10 },
+          { text: 'Root geworden en de rootvlag gevonden', flags: ['root'], points: 15 },
+        ],
+        flag: 'NM{kade_tot_root}',
+        solution: ['scan ext', 'scan web-01', 'web web-01', 'web web-01 /robots.txt', 'web web-01 /backup/', 'web web-01 /backup/config.php.bak', 'ssh webadmin@web-01', 'cat /home/webadmin/user.txt', 'sudo -l', 'escalate {{tool}}', 'cat /root/root.txt', 'done'],
+        solutionNotes: [
+          'Vind het doelwit op internet.',
+          'Open poorten: 22 (SSH) en 80 (web).',
+          'De voorpagina wijst naar /beheer.',
+          'robots.txt verraadt een map die niet gevonden had mogen worden: /backup.',
+          'In /backup staat een back-up van een configuratiebestand.',
+          'Daarin staat het wachtwoord, met de opmerking dat het ook de serverlogin is.',
+          'Log in als webadmin; het wachtwoord staat nu in je kladblok.',
+          'De eerste vlag staat in de thuismap.',
+          'sudo -l laat zien welk programma je als root mag draaien.',
+          'Dat programma brengt je naar root.',
+          'De tweede vlag staat in /root.',
+          'Rond af.',
+        ],
+        debrief: `
+          <h4>De keten die je liep</h4>
+          <ol>
+            <li>Verkenning van een publieke server (ATT&CK T1595).</li>
+            <li>Een gevoelig bestand in de webroot, gevonden via robots.txt (T1083, T1552.001: inloggegevens in een bestand).</li>
+            <li>Inloggen met een geldig, hergebruikt wachtwoord (T1078).</li>
+            <li>Rechtenverhoging via een verkeerd ingestelde sudo-regel (T1548.003).</li>
+          </ol>
+          <h4>Wat de beheerder had kunnen zien</h4>
+          <ul>
+            <li>Verzoeken naar <code>/backup</code> en <code>/robots.txt</code> in de webserverlogs.</li>
+            <li>Een SSH-aanmelding van het webadmin-account vanaf een extern adres.</li>
+            <li>Het gebruik van sudo door een account dat dat normaal nooit doet.</li>
+          </ul>
+          <h4>Wat elke stap had gestopt</h4>
+          <ul>
+            <li>Geen back-ups of configuratiebestanden in de webroot, en een strak <code>robots.txt</code> is geen beveiliging.</li>
+            <li>Verschillende wachtwoorden voor database en serverlogin, en liever sleutels dan wachtwoorden voor SSH.</li>
+            <li>Geen <code>NOPASSWD</code>-sudo op programmas die een shell kunnen openen; alleen precies wat nodig is.</li>
+          </ul>
+          <p>Verder leren: <a href="#/room/verkenning-scannen">Verkenning en scannen</a>,
+          <a href="#/room/linux-container-hardening">Linux- en containerhardening</a>,
+          <a href="#/room/wachtwoorden-authenticatie">Wachtwoorden en authenticatie</a>.</p>
+        `,
+        ask: [
+          { q: 'Welk account gebruikte je om in te loggen?', answer: ['webadmin'] },
+          { q: 'Via welke map vond je het wachtwoord? (begin met /)', answer: ['/backup', '/backup/'] },
+        ],
+      },
+      questions: [
+        { q: 'Pak beide vlaggen. Welke rootvlag krijg je in de nabespreking?', answer: ['NM{kade_tot_root}'], encoded: true,
+          hints: ['De rootvlag staat in /root en kun je pas lezen als je root bent.', 'Word eerst webadmin via het gevonden wachtwoord, bekijk dan sudo -l.', 'Draai escalate met het programma dat sudo -l je als root laat draaien, en lees daarna /root/root.txt.'],
+          explain: 'De rootvlag verschijnt in de nabespreking zodra je root bent en hem leest. Elke variant heeft een eigen vlagwoord; probeer een andere variant zonder walkthrough.' },
+        { q: 'Een breed poortscan over het hele internetblok leek sneller, maar je deed het gericht. Waarom?',
+          options: ['Omdat een gericht scan meer poorten vindt', 'Omdat een breed, luidruchtig scan de ontdekkingsmeter snel vult en je buiten scope brengt', 'Omdat scannen verboden is', 'Omdat de server dan crasht'],
+          answer: 1,
+          wrong: { 0: 'Een gericht scan vindt niet meer poorten; het valt alleen minder op.', 2: 'Scannen binnen je scope mag; het gaat om hoe luid je het doet.', 3: 'De server crasht er niet van; het gaat om opvallen en om je scope.' },
+          why: 'Een pentester werkt binnen scope en zo stil als kan. Onnodig lawaai waarschuwt de verdediger en kan buiten de afspraak vallen.',
+          explain: 'Gericht blijven scheelt ruis op de ontdekkingsmeter en houdt je binnen de afgesproken scope (alleen web-01).' },
+      ],
+    },
+    {
+      title: 'Taak 3 — De nabespreking',
+      content: `
+        <p>Lees de nabespreking onder de console. Als pentester is dat het belangrijkste deel: niet dat je binnenkwam, maar wat de
+        klant eraan heeft. Elke bevinding krijgt een advies dat de volgende aanvaller tegenhoudt.</p>
+        <p>In een echt rapport schrijf je dit uit met risico, bewijs en advies per bevinding. Zie
+        <a href="#/room/pentest-methodiek-rapportage">Pentest-methodiek en rapportage</a>.</p>
+      `,
+      questions: [
+        { q: 'Welke maatregel had deze hele keten het vroegst gestopt?',
+          options: ['Een sterker rootwachtwoord', 'Geen back-up- en configuratiebestanden in de webroot', 'Een andere webserver dan nginx', 'Poort 80 sluiten'],
+          answer: 1,
+          wrong: { 0: 'De aanvaller werd nooit gevraagd het rootwachtwoord te raden; hij werd root via sudo.', 2: 'De webserver zelf was niet het probleem.', 3: 'Dan is er geen webshop meer; de fout zat in wat er in de webroot stond.' },
+          why: 'Het vroegste punt in de keten is meestal het goedkoopst om te dichten. Zonder het gelekte bestand was er geen wachtwoord en geen ingang.',
+          explain: 'Zonder dat gelekte configuratiebestand had de aanvaller geen wachtwoord, en begon de rest van de keten nooit.' },
+        { q: 'Welke ATT&CK-techniek hoort bij het vinden van een wachtwoord dat in een bestand op het systeem staat? (ID)', answer: ['T1552.001', 't1552.001'],
+          hints: ['Het valt onder Unsecured Credentials, T1552.', 'De eerste subtechniek gaat over inloggegevens in bestanden.', 'Het is T1552 punt nul nul een.'],
+          wrong: { 't1552': 'Dat is de techniek; gevraagd is de subtechniek voor inloggegevens in bestanden.', 't1078': 'Dat is Valid Accounts: het gebruiken van het wachtwoord, niet het vinden ervan.' },
+          explain: 'T1552.001 Credentials In Files: wachtwoorden en sleutels die in gewone bestanden staan.' },
+      ],
+    },
+  ],
+  terms: [
+    { term: 'Oefenrange', def: 'Een nagebootst doelwit of netwerk om legaal op te oefenen, hier volledig in de browser gesimuleerd.' },
+    { term: 'Webroot', def: 'De map die de webserver aan bezoekers toont. Alles wat er staat, kan opgevraagd worden; gevoelige bestanden horen er niet.' },
+    { term: 'Rechtenverhoging', def: 'Van een gewone gebruiker naar root of beheerder, meestal via een verkeerde instelling (privilege escalation).' },
+    { term: 'sudo', def: 'Een opdracht als een andere gebruiker (vaak root) uitvoeren. Een te ruime sudo-regel is een veelgemaakte fout.' },
+    { term: 'Wachtwoordhergebruik', def: 'Hetzelfde wachtwoord op meer plekken. Lekt het op één plek, dan vallen de andere ook.' },
+    { term: 'Ontdekkingsmeter', def: 'In deze range: hoe zichtbaar je bezig bent. Luidruchtig scannen en blind proberen vullen hem.' },
+  ],
+  resources: [
+    { title: 'MITRE ATT&CK: Unsecured Credentials (T1552)', url: 'https://attack.mitre.org/techniques/T1552/' },
+    { title: 'OWASP: Testing for Exposed Backup and Old Files (WSTG)', url: 'https://owasp.org/www-project-web-security-testing-guide/' },
+  ],
+});
+
+</script>
+<script>
+/* Game room: Rechten verhogen (offensief, gesimuleerd) */
+CS.registerRoom({
+  id: 'range-rechten-verhogen',
+  path: 'gamerooms',
+  order: 7,
+  title: 'Rechten verhogen',
+  difficulty: 'Gemiddeld',
+  level: 'Praktijk',
+  checked: '2026-11-13',
+  minutes: 35,
+  summary: 'Je hebt al snel een shell als gewone gebruiker op een Linux-host van Gemeente Meerdijk. De kunst is de weg naar root: er liggen meerdere sporen (sudo -l, find-suid, crontab -l), maar maar een ervan werkt echt. Twee vlaggen.',
+  objectives: [
+    'Een gelekt wachtwoord vinden en als gewone gebruiker inloggen',
+    'Alle drie de bekende sporen naar root onderzoeken en de valkuilen herkennen',
+    'Root worden via een verkeerd gezette SUID-bit en de rootvlag pakken',
+    'Begrijpen wat de beheerder bij elke stap had kunnen zien en voorkomen',
+  ],
+  tasks: [
+    {
+      title: 'Taak 1 - De opdracht',
+      content: `
+        <p>In de vorige range kwam je binnen. Deze range gaat over de stap daarna: <strong>rechten verhogen</strong>
+        (privilege escalation). Je krijgt het makkelijke deel bijna cadeau. Een gewone gebruiker ben je zo, want zijn
+        wachtwoord staat voor het oprapen op de webserver. De echte puzzel is: hoe word je van die gewone gebruiker
+        <strong>root</strong>?</p>
+        <p>Op een Linux-host zijn er drie klassieke plekken om te kijken:</p>
+        <ol>
+          <li><code>sudo -l</code>: welke opdrachten mag je als root draaien zonder je eigen wachtwoord?</li>
+          <li><code>find-suid</code>: welke programmas draaien altijd als hun eigenaar (vaak root), door de SUID-bit?</li>
+          <li><code>crontab -l</code>: welke taken draaien automatisch, en als wie?</li>
+        </ol>
+        <p>Niet elk spoor leidt ergens heen. Je komt een SUID-programma tegen dat niets oplevert (zo hoort het: <code>passwd</code>
+        en <code>sudo</code> hebben die bit met een goede reden) en een geplande taak die je niet kunt beinvloeden. Precies een
+        van de drie sporen is de echte fout. Dat scheiden van de valse sporen is de vaardigheid die je hier oefent.</p>
+        <p>Let weer op de <strong>ontdekkingsmeter</strong>: blind wachtwoorden proberen of een mislukte escalatie valt op.
+        Zoek eerst, raad niet.</p>
+        <div class="callout warn"><strong>Let op:</strong> dit mag je alleen in dit lab of op systemen met schriftelijke toestemming.
+        Ongeautoriseerd binnendringen en rechten verhogen is computervredebreuk (art. 138ab Sr).</div>
+      `,
+      questions: [
+        { q: 'Een programma heeft ten onrechte de SUID-bit en kan andere opdrachten starten. Waarom is dat gevaarlijk?',
+          options: ['Het programma draait trager', 'Het draait met de rechten van de eigenaar (vaak root), dus elke opdracht die het start, start ook als root', 'Het is zichtbaar in de proceslijst', 'Het gebruikt meer geheugen'],
+          answer: 1,
+          wrong: { 0: 'Snelheid heeft er niets mee te maken; het gaat om de rechten waarmee het draait.', 2: 'Zichtbaarheid in ps is normaal en niet het probleem.', 3: 'Geheugengebruik is niet de zwakte; de rechten zijn dat.' },
+          explain: 'De SUID-bit laat een programma draaien als zijn eigenaar. Staat die bit op een programma dat andere opdrachten kan starten, dan draaien die opdrachten ook als de eigenaar, en dus als root.' },
+        { q: 'Je hebt een shell als gewone gebruiker en wilt root worden. Wat doe je eerst?',
+          options: ['Blind het rootwachtwoord raden', 'De bekende sporen onderzoeken (sudo -l, find-suid, crontab -l) voordat je iets probeert', 'De server opnieuw opstarten', 'Meteen escalate typen'],
+          answer: 1,
+          wrong: { 0: 'Blind raden vult de ontdekkingsmeter en levert zelden iets op.', 2: 'Opnieuw opstarten helpt niet en valt enorm op.', 3: 'escalate werkt pas als je de zwakte eerst hebt gezien; zoeken gaat voor.' },
+          explain: 'Eerst verkennen welke zwakte er is, dan pas handelen. Zo voorkom je lawaai en mislukte pogingen.' },
+      ],
+    },
+    {
+      title: 'Taak 2 - De range',
+      content: `
+        <p>Lees de rules of engagement, start de oefening en typ <code>help</code>. Zoek eerst het doelwit en het gelekte
+        wachtwoord, en kom binnen als gewone gebruiker. Onderzoek daarna <strong>alle drie</strong> de sporen naar root voordat
+        je conclusies trekt: <code>sudo -l</code>, <code>find-suid</code> en <code>crontab -l</code>. Maar een ervan is de echte
+        fout. Elke leerling krijgt een eigen variant; de walkthrough komt vrij na je eerste poging.</p>
+      `,
+      lab: {
+        type: 'range',
+        title: 'Gemeente Meerdijk · app-03',
+        role: 'Pentester met een getekende opdracht om alleen app-03 (een interne applicatieserver van Gemeente Meerdijk, fictief) te testen.',
+        story: 'De gemeente wil weten hoever een aanvaller komt die al een gewoon account heeft bemachtigd. Je start met toegang tot het netwerk waar app-03 aan hangt; de rest zoek je zelf.',
+        mandate: [
+          'Alles in deze oefening is gesimuleerd. Doe dit nooit op systemen zonder schriftelijke toestemming.',
+          'Je scope is uitsluitend app-03. Blijf erbinnen.',
+          'Werk zo stil mogelijk: blind proberen en mislukte pogingen vallen op.',
+          'Leg vast wat je doet, zodat de gemeente het incident later kan naspelen.',
+        ],
+        vars: {
+          ip: ['203.0.113.23', '198.51.100.23', '192.0.2.23', '203.0.113.71'],
+          pass: ['Meerdijk-2025!', 'Lente#Groen4', 'Tulp@0318', 'Kaasstolp7', 'Gracht-Blauw9'],
+          tool: ['find', 'env', 'vim'],
+          leak: ['/.env', '/config/app.env', '/intern/settings.env'],
+        },
+        startNet: 'ext',
+        startScan: 'ext',
+        maxNoise: 100,
+        quietUnder: 45,
+        nets: { ext: { cidr: 'ext', label: 'intern netwerk' } },
+        motd: 'Oefenrange app-03. Typ help. Begin met scan ext.',
+        hosts: [
+          {
+            name: 'app-03', ip: '{{ip}}', net: 'ext', role: 'Interne applicatieserver (Linux, nginx + Node)',
+            ports: [{ n: 22, svc: 'ssh', ver: 'OpenSSH 9.2' }, { n: 80, svc: 'http', ver: 'nginx 1.24.0', note: 'aanvraagportaal' }],
+            pages: {
+              '/': 'Gemeente Meerdijk - intern aanvraagportaal\nAanmelden via /portaal. Ontwikkelaarsnotities: zie /robots.txt.',
+              '/robots.txt': 'User-agent: *\nDisallow: {{leak}}\nDisallow: /backup',
+              '/portaal': 'Aanmeldscherm. Gebruikersnaam en wachtwoord vereist.',
+              '/backup': 'Index van /backup:\n  dump-2023.sql.gz  (0 bytes, leeg)\n  oud-logo.png',
+              '/backup/': 'Index van /backup:\n  dump-2023.sql.gz  (0 bytes, leeg)\n  oud-logo.png',
+              '{{leak}}': "# Omgevingsbestand - per ongeluk via de webserver bereikbaar\nAPP_USER=jdevries\nAPP_PASS={{pass}}\n# NB: dit is ook het Linux-wachtwoord van jdevries, nog scheiden",
+            },
+            secrets: [
+              { loc: 'web:{{leak}}', cred: { user: 'jdevries', pass: '{{pass}}', target: 'app-03', note: 'uit het omgevingsbestand op de webserver' } },
+            ],
+            accounts: { jdevries: '{{pass}}' },
+            files: {
+              '/home/jdevries/user.txt': 'NM{voet_aan_de_grond}',
+              '/home/jdevries/leesmij.txt': 'todo: APP_PASS niet in de webroot laten staan, en apart van mijn serverwachtwoord zetten',
+              '/root/root.txt': 'NM{suid_naar_root}',
+              '/root/overdracht.txt': 'Herinnering: het back-upaccount gebruikt nog hetzelfde wachtwoord als hier. Scheiden!',
+            },
+            escalation: { via: 'suid', token: '{{tool}}', show: '/usr/bin/{{tool}}', note: '{{tool}} heeft hier ten onrechte de SUID-bit, draait dus als de eigenaar (root) en kan andere opdrachten starten; zo word je root' },
+            onRoot: [
+              { cred: { user: 'backupsvc', pass: '{{pass}}', target: 'backup-01', note: 'uit /root/overdracht.txt; hergebruikt wachtwoord' }, text: 'Loot: het back-upaccount backupsvc (voor backup-01) gebruikt hetzelfde wachtwoord. Buiten scope hier, maar wel een bevinding voor het rapport.' },
+            ],
+            flags: [
+              { id: 'user', value: 'NM{voet_aan_de_grond}', path: '/home/jdevries/user.txt', root: false, points: 10 },
+              { id: 'root', value: 'NM{suid_naar_root}', path: '/root/root.txt', root: true, points: 15 },
+            ],
+          },
+        ],
+        objectives: [
+          { text: 'Een shell op app-03 gekregen als jdevries', found: ['shell:app-03'], points: 10 },
+          { text: 'De gebruikersvlag gevonden', flags: ['user'], points: 10 },
+          { text: 'Root geworden via de SUID-fout en de rootvlag gevonden', flags: ['root'], points: 15 },
+        ],
+        flag: 'NM{suid_naar_root}',
+        solution: ['scan ext', 'scan app-03', 'web app-03', 'web app-03 /robots.txt', 'web app-03 {{leak}}', 'ssh jdevries@app-03', 'cat /home/jdevries/user.txt', 'sudo -l', 'crontab -l', 'find-suid', 'escalate {{tool}}', 'cat /root/root.txt', 'done'],
+        solutionNotes: [
+          'Vind het doelwit op het interne netwerk.',
+          'Open poorten: 22 (SSH) en 80 (web).',
+          'De voorpagina wijst naar ontwikkelaarsnotities in robots.txt.',
+          'robots.txt verraadt een omgevingsbestand dat niet online had mogen staan.',
+          'In dat bestand staat het wachtwoord van jdevries, ook zijn serverlogin.',
+          'Log in als jdevries; het wachtwoord staat nu in je kladblok.',
+          'De eerste vlag staat in de thuismap.',
+          'Spoor 1: sudo -l geeft hier niets; geen bruikbare sudo-regel.',
+          'Spoor 3: crontab -l toont geen taak die je kunt beinvloeden.',
+          'Spoor 2: find-suid toont een programma met de SUID-bit dat er niet hoort.',
+          'Dat programma draait als root en brengt je naar root.',
+          'De tweede vlag staat in /root; daar vind je ook de loot voor het rapport.',
+        ],
+        debrief: `
+          <h4>De keten die je liep</h4>
+          <ol>
+            <li>Verkenning van een interne server (ATT&CK T1595).</li>
+            <li>Een omgevingsbestand met een wachtwoord in de webroot, gevonden via robots.txt (T1083, T1552.001: inloggegevens in een bestand).</li>
+            <li>Inloggen met een geldig, hergebruikt wachtwoord (T1078).</li>
+            <li>Rechtenverhoging via een verkeerd gezette SUID-bit (T1548.001: Setuid and Setgid).</li>
+          </ol>
+          <h4>De valse sporen</h4>
+          <ul>
+            <li><code>sudo -l</code> gaf niets: er was geen te ruime sudo-regel. Een leeg resultaat is ook informatie.</li>
+            <li><code>crontab -l</code> toonde geen taak die je kon beinvloeden. Een geplande taak die als root draait is pas een
+            risico als jij het script of een pad erin kunt aanpassen; dat kon hier niet.</li>
+            <li><code>find-suid</code> toonde ook <code>passwd</code> en <code>sudo</code>. Die horen de SUID-bit te hebben en
+            leveren je niets op. De fout was het derde programma, dat die bit niet hoort te hebben.</li>
+          </ul>
+          <h4>Wat de beheerder had kunnen zien</h4>
+          <ul>
+            <li>Een verzoek naar het omgevingsbestand en <code>/robots.txt</code> in de webserverlogs.</li>
+            <li>Een SSH-aanmelding van jdevries vanaf een ongebruikelijk adres (T1078).</li>
+            <li>Een proces dat via het SUID-programma een shell als root startte, zichtbaar in auditd of EDR (T1548.001).</li>
+          </ul>
+          <h4>Wat elke stap had gestopt</h4>
+          <ul>
+            <li>Geen omgevings- of configuratiebestanden in de webroot, en verschillende wachtwoorden voor applicatie en serverlogin.</li>
+            <li>Een strak SUID-beleid: regelmatig <code>find</code> op onverwachte SUID-bestanden, en die bit alleen waar hij echt nodig is.</li>
+            <li>Geen wachtwoordhergebruik tussen accounts (het back-upaccount deelde het wachtwoord), liefst aparte sleutels per dienst.</li>
+          </ul>
+          <p>Verder leren: <a href="#/room/linux-container-hardening">Linux- en containerhardening</a>,
+          <a href="#/room/wachtwoorden-authenticatie">Wachtwoorden en authenticatie</a>,
+          <a href="#/room/range-eerste-inbraak">Eerste inbraak</a>.</p>
+        `,
+        ask: [
+          { q: 'Welk van de drie sporen naar root werkte echt? (sudo, suid of cron)', answer: ['suid', 'find-suid', 'find suid'] },
+          { q: 'Welk account gebruikte je om in te loggen?', answer: ['jdevries'] },
+        ],
+      },
+      questions: [
+        { q: 'Pak beide vlaggen. Welke rootvlag krijg je in de nabespreking?', answer: ['NM{suid_naar_root}'], encoded: true,
+          hints: ['De rootvlag staat in /root en kun je pas lezen als je root bent.', 'Word eerst jdevries via het gelekte wachtwoord, en onderzoek daarna alle drie de sporen.', 'Alleen find-suid levert iets op; escalate met het SUID-programma dat er niet hoort, en lees dan /root/root.txt.'],
+          explain: 'De rootvlag verschijnt in de nabespreking zodra je root bent en hem leest. Elke variant heeft een eigen vlagwoord en een eigen SUID-programma; probeer een andere variant zonder walkthrough.' },
+        { q: 'Je typte escalate voordat je een spoor had onderzocht, en kreeg een foutmelding plus ruis op de meter. Waarom werkt het zo?',
+          options: ['Omdat escalate altijd eerst mislukt', 'Omdat je pas kunt escaleren als je de zwakte hebt gezien; blind proberen valt op', 'Omdat de server traag is', 'Omdat je geen shell had'],
+          answer: 1,
+          wrong: { 0: 'escalate mislukt niet altijd; het lukt zodra je de juiste zwakte hebt gevonden en benoemt.', 2: 'Snelheid speelt geen rol; het gaat om de volgorde zoeken, dan handelen.', 3: 'Je had wel een shell; je had alleen de zwakte nog niet onderzocht.' },
+          why: 'Een echte escalatie begint met weten welke fout je misbruikt. Zonder die kennis is escalate blind proberen, en dat is luidruchtig.',
+          explain: 'De range eist dat je de zwakte eerst ziet (via sudo -l, find-suid of crontab -l). Dat spiegelt de werkelijkheid: eerst de fout vinden, dan pas misbruiken.' },
+      ],
+    },
+    {
+      title: 'Taak 3 - De nabespreking',
+      content: `
+        <p>Lees de nabespreking onder de console. Het belangrijkste is niet dat je root werd, maar wat de gemeente eraan heeft:
+        waarom de twee valse sporen geen risico waren, en waarom het derde dat wel was. Een goed rapport legt ook uit wat je
+        probeerde en niets opleverde, zodat de beheerder weet wat al in orde is.</p>
+        <p>In een echt rapport schrijf je per bevinding risico, bewijs en advies uit. Zie
+        <a href="#/room/pentest-methodiek-rapportage">Pentest-methodiek en rapportage</a>.</p>
+      `,
+      questions: [
+        { q: 'Waarom was de gevonden cronjob hier geen risico, terwijl een cronjob soms juist de weg naar root is?',
+          options: ['Omdat cronjobs nooit als root draaien', 'Omdat je het script of een pad erin niet kon aanpassen; een taak als root is pas misbruikbaar als jij invloed hebt op wat hij uitvoert', 'Omdat crontab verboden is', 'Omdat de taak te vaak draaide'],
+          answer: 1,
+          wrong: { 0: 'Cronjobs kunnen juist wel als root draaien; dat maakt ze soms gevaarlijk.', 2: 'crontab -l lezen is gewoon toegestaan en nuttig.', 3: 'Hoe vaak de taak draait, bepaalt het risico niet; invloed op wat hij uitvoert wel.' },
+          why: 'Een geplande taak die als root draait is pas een probleem als een gewone gebruiker het uitgevoerde script, of een pad daarin, kan aanpassen. Zonder die invloed verandert er niets.',
+          explain: 'De cronjob draaide als root, maar je kon niet beinvloeden wat hij deed. Daarom was het een vals spoor en geen bevinding.' },
+        { q: 'Welke ATT&CK-techniek hoort bij rechten verhogen via een verkeerd gezette SUID-bit? (ID)', answer: ['T1548.001', 't1548.001'],
+          hints: ['Het valt onder Abuse Elevation Control Mechanism, T1548.', 'De eerste subtechniek gaat over Setuid en Setgid.', 'Het is T1548 punt nul nul een.'],
+          wrong: { 't1548': 'Dat is de techniek; gevraagd is de subtechniek voor Setuid en Setgid.', 't1548.003': 'Dat is Sudo and Sudo Caching; hier ging het om de SUID-bit, niet om sudo.' },
+          explain: 'T1548.001 Setuid and Setgid: misbruik van de SUID- of SGID-bit om met hogere rechten te draaien.' },
+      ],
+    },
+  ],
+  terms: [
+    { term: 'Rechtenverhoging', def: 'Van een gewone gebruiker naar root of beheerder, meestal via een verkeerde instelling (privilege escalation).' },
+    { term: 'SUID-bit', def: 'Een bestandsrecht waardoor een programma draait als zijn eigenaar in plaats van als wie het start. Op een programma dat opdrachten kan uitvoeren is dat gevaarlijk.' },
+    { term: 'sudo -l', def: 'Toont welke opdrachten je als een andere gebruiker (vaak root) mag draaien. Een te ruime regel is een veelgemaakte fout.' },
+    { term: 'cronjob', def: 'Een taak die automatisch op gezette tijden draait. Draait hij als root en kun jij het script beinvloeden, dan is dat een weg naar root.' },
+    { term: 'Vals spoor', def: 'Een aanwijzing die veelbelovend lijkt maar nergens heen leidt. Herkennen scheelt tijd en lawaai.' },
+    { term: 'Ontdekkingsmeter', def: 'In deze range: hoe zichtbaar je bezig bent. Blind proberen en mislukte escalaties vullen hem.' },
+  ],
+  resources: [
+    { title: 'MITRE ATT&CK: Abuse Elevation Control Mechanism (T1548)', url: 'https://attack.mitre.org/techniques/T1548/' },
+    { title: 'MITRE ATT&CK: Setuid and Setgid (T1548.001)', url: 'https://attack.mitre.org/techniques/T1548/001/' },
+  ],
+});
+
+</script>
+<script>
+/* Game room: Pivoteren (offensief, gesimuleerd) */
+CS.registerRoom({
+  id: 'range-pivoteren',
+  path: 'gamerooms',
+  order: 8,
+  title: 'Pivoteren',
+  difficulty: 'Moeilijk',
+  level: 'Gevorderd',
+  checked: '2026-11-13',
+  minutes: 45,
+  summary: 'Twee netten. Je bereikt alleen de DMZ-host van Noorderlicht Energie; daarachter ligt een intern net dat je nergens anders kunt raken. Neem de DMZ-host over, gebruik hem als springplank en haal de eindvlag van een interne server. Drie vlaggen.',
+  objectives: [
+    'Een DMZ-host overnemen die als enige vanaf buiten bereikbaar is',
+    'Root worden op de DMZ-host en daar de inloggegevens voor het interne net vinden',
+    'Via de DMZ-host het interne net openen, scannen en een interne server bereiken',
+    'Begrijpen waarom netsegmentatie de aanval had moeten stoppen',
+  ],
+  tasks: [
+    {
+      title: 'Taak 1 - De opdracht',
+      content: `
+        <p>Tot nu toe stond je doelwit op een net. Nu zijn er twee: een <strong>DMZ</strong> (de zone met servers die vanaf
+        buiten bereikbaar zijn) en een <strong>intern net</strong> dat je vanaf je startplek niet kunt zien. De eindvlag staat
+        binnen. Hoe kom je daar?</p>
+        <p>Het antwoord is <strong>pivoteren</strong>: je neemt eerst een host over die aan beide netten hangt, en gebruikt die
+        als springplank naar het net erachter. De keten is:</p>
+        <ol>
+          <li>De DMZ-host overnemen (verkennen, binnenkomen, root worden).</li>
+          <li>Op die host de inloggegevens voor het interne net vinden (vaak laten beheerders die slingeren).</li>
+          <li>Het interne net openen en scannen; dat kan pas vanaf de DMZ-host.</li>
+          <li>Inloggen op de interne server en de eindvlag pakken.</li>
+        </ol>
+        <p>De les voor de verdediging zit in stap 3: een goed ingericht netwerk laat een overgenomen DMZ-host <em>niet</em>
+        zomaar bij het interne net. Dat heet netsegmentatie, en het is precies wat hier ontbreekt.</p>
+        <div class="callout warn"><strong>Let op:</strong> dit mag je alleen in dit lab of op systemen met schriftelijke toestemming.
+        Ongeautoriseerd binnendringen en doorstappen naar andere systemen is computervredebreuk (art. 138ab Sr).</div>
+      `,
+      questions: [
+        { q: 'Wat betekent pivoteren in een aanval?',
+          options: ['Een server opnieuw opstarten', 'Een overgenomen host als springplank gebruiken om een net te bereiken dat je direct niet kunt raken', 'Een wachtwoord kraken', 'Meerdere poorten tegelijk scannen'],
+          answer: 1,
+          wrong: { 0: 'Opnieuw opstarten heeft er niets mee te maken.', 2: 'Een wachtwoord kraken kan een stap zijn, maar pivoteren is het doorstappen naar een ander net.', 3: 'Dat is scannen; pivoteren is het bereiken van een net via een tussenliggende host.' },
+          explain: 'Pivoteren is een overgenomen host gebruiken als bruggenhoofd naar een net dat je van buitenaf niet kunt zien.' },
+        { q: 'Welke verdedigende maatregel maakt pivoteren vanaf een DMZ-host naar het interne net veel moeilijker?',
+          options: ['Een sterker wachtwoord op de DMZ-host', 'Netsegmentatie: de DMZ mag het interne net niet zomaar benaderen', 'Een snellere server', 'Meer logging op de webserver'],
+          answer: 1,
+          wrong: { 0: 'Een sterker wachtwoord vertraagt de eerste stap, maar stopt het doorstappen niet.', 2: 'Logging helpt je het zien, maar houdt het verkeer niet tegen.', 3: 'Snelheid verandert niets aan de bereikbaarheid tussen netten.' },
+          explain: 'Met strakke netsegmentatie en een firewall tussen DMZ en intern net loopt de aanvaller na de DMZ-host vast.' },
+      ],
+    },
+    {
+      title: 'Taak 2 - De range',
+      content: `
+        <p>Lees de rules of engagement, start de oefening en typ <code>help</code>. Begin met <code>scan dmz</code> om de
+        bereikbare host te vinden. Neem die volledig over (tot root). Zoek daarna op die host de inloggegevens voor het interne
+        net. Pas als je een shell op de DMZ-host hebt, kun je <code>scan intern</code> doen. Elke leerling krijgt een eigen
+        variant; de walkthrough komt vrij na je eerste poging.</p>
+      `,
+      lab: {
+        type: 'range',
+        title: 'Noorderlicht Energie · DMZ en intern net',
+        role: 'Pentester met een getekende opdracht om het publieke segment van Noorderlicht Energie BV (fictief) te testen, inclusief doorstappen naar achterliggende netten voor zover de afspraak dat toestaat.',
+        story: 'De klant wil weten of een aanvaller die de DMZ haalt, verder kan tot de interne fileserver. Je bereikt alleen de DMZ; de rest moet je verdienen.',
+        mandate: [
+          'Alles in deze oefening is gesimuleerd. Doe dit nooit op systemen zonder schriftelijke toestemming.',
+          'Je scope is de DMZ-host en, na overname, de interne server die eraan vastzit. Blijf erbinnen.',
+          'Werk zo stil mogelijk: een breed scan en blind proberen vallen op.',
+          'Leg elke stap vast, zodat de klant de pivot later kan naspelen.',
+        ],
+        vars: {
+          ip: ['203.0.113.40', '198.51.100.40', '203.0.113.88'],
+          iip: ['10.10.20.15', '10.10.20.31', '10.10.20.52'],
+          pass: ['Noorderlicht-2025!', 'Wind#Zee8', 'Kust@0592', 'Duin-Grijs6'],
+          ipass: ['Fileserver#2024', 'Intern-Kluis7', 'Archief@Noord3', 'Depot-Geel5'],
+          job: ['/opt/scripts/backup.sh', '/usr/local/bin/sync.sh', '/opt/jobs/opschonen.sh'],
+          leak: ['/.env', '/config/proxy.env', '/intern/deploy.env'],
+        },
+        startNet: 'dmz',
+        startScan: 'dmz',
+        maxNoise: 100,
+        quietUnder: 45,
+        nets: { dmz: { cidr: '203.0.113.0/24', label: 'DMZ (publiek bereikbaar)' }, intern: { cidr: '10.10.20.0/24', label: 'intern net' } },
+        motd: 'Oefenrange Noorderlicht. Typ help. Begin met scan dmz.',
+        hosts: [
+          {
+            name: 'dmz-01', ip: '{{ip}}', net: 'dmz', role: 'Reverse proxy en jumphost (Linux)', bridges: ['intern'],
+            ports: [{ n: 22, svc: 'ssh', ver: 'OpenSSH 9.2' }, { n: 80, svc: 'http', ver: 'nginx 1.24.0', note: 'reverse proxy' }],
+            pages: {
+              '/': 'Noorderlicht Energie - serviceportaal\nDeze host verwijst door naar interne diensten. Beheer: zie /robots.txt.',
+              '/robots.txt': 'User-agent: *\nDisallow: {{leak}}\nDisallow: /status',
+              '/status': 'proxy: online\nupstream: fs-01 (intern)\nlaatste deploy: geslaagd',
+              '{{leak}}': "# Omgevingsbestand van de reverse proxy - per ongeluk bereikbaar\nPROXY_USER=wsmit\nPROXY_PASS={{pass}}\n# wsmit is ook het Linux-account op deze host",
+            },
+            secrets: [
+              { loc: 'web:{{leak}}', cred: { user: 'wsmit', pass: '{{pass}}', target: 'dmz-01', note: 'uit het omgevingsbestand van de proxy' } },
+            ],
+            accounts: { wsmit: '{{pass}}' },
+            files: {
+              '/home/wsmit/user.txt': 'NM{dmz_voet_aan_de_grond}',
+              '/home/wsmit/leesmij.txt': 'todo: proxy-omgevingsbestand uit de webroot halen',
+              '/root/root.txt': 'NM{dmz_volledig_overgenomen}',
+              '/root/deploy-notities.txt': 'Deploy naar fs-01 (intern) gaat met account beheer. Wachtwoord staat in de deploysleutel; moet naar een kluis.',
+            },
+            escalation: { via: 'cron', token: '{{job}}', show: '*/5 * * * * root {{job}}', note: 'deze taak draait als root en voert {{job}} uit, een script dat op deze host door jouw gebruiker aan te passen is; daarmee word je root' },
+            onRoot: [
+              { cred: { user: 'beheer', pass: '{{ipass}}', target: 'fs-01', note: 'uit de deploysleutel op dmz-01; geeft toegang tot de interne fileserver' }, text: 'Loot: inloggegevens voor beheer op fs-01 (intern net). Hiermee kun je pivoteren.' },
+            ],
+            flags: [
+              { id: 'foothold', value: 'NM{dmz_voet_aan_de_grond}', path: '/home/wsmit/user.txt', root: false, points: 10 },
+              { id: 'rootdmz', value: 'NM{dmz_volledig_overgenomen}', path: '/root/root.txt', root: true, points: 15 },
+            ],
+          },
+          {
+            name: 'fs-01', ip: '{{iip}}', net: 'intern', role: 'Interne fileserver (Linux)',
+            ports: [{ n: 22, svc: 'ssh', ver: 'OpenSSH 9.2' }, { n: 445, svc: 'smb', ver: 'Samba 4.19', note: 'bestandsdeling' }],
+            accounts: { beheer: '{{ipass}}' },
+            files: {
+              '/home/beheer/eindvlag.txt': 'NM{dwars_het_netwerk_door}',
+              '/home/beheer/gedeeld/overzicht.txt': 'Interne fileserver. Alleen bereikbaar vanaf het interne net.',
+            },
+            flags: [
+              { id: 'kroon', value: 'NM{dwars_het_netwerk_door}', path: '/home/beheer/eindvlag.txt', root: false, points: 20 },
+            ],
+          },
+        ],
+        objectives: [
+          { text: 'Een shell op de DMZ-host (dmz-01)', found: ['shell:dmz-01'], points: 10 },
+          { text: 'Root geworden op dmz-01', flags: ['rootdmz'], points: 15 },
+          { text: 'De eindvlag op de interne fileserver fs-01', flags: ['kroon'], points: 20 },
+        ],
+        flag: 'NM{dwars_het_netwerk_door}',
+        solution: ['scan dmz', 'scan dmz-01', 'web dmz-01', 'web dmz-01 /robots.txt', 'web dmz-01 {{leak}}', 'ssh wsmit@dmz-01', 'cat /home/wsmit/user.txt', 'crontab -l', 'escalate {{job}}', 'cat /root/root.txt', 'scan intern', 'scan fs-01', 'ssh beheer@fs-01', 'cat /home/beheer/eindvlag.txt', 'done'],
+        solutionNotes: [
+          'Alleen de DMZ is vanaf je startplek bereikbaar.',
+          'Open poorten op de DMZ-host: 22 (SSH) en 80 (proxy).',
+          'De voorpagina wijst naar beheerpaden in robots.txt.',
+          'robots.txt verraadt een omgevingsbestand van de proxy.',
+          'Daarin staat het wachtwoord van wsmit, ook zijn serverlogin.',
+          'Log in als wsmit; door deze shell opent zich het interne net.',
+          'De eerste vlag staat in de thuismap.',
+          'crontab -l toont een taak die als root draait en te beinvloeden is.',
+          'Via die taak word je root; in /root vind je de loot voor de pivot.',
+          'De tweede vlag staat in /root.',
+          'Nu de DMZ-host je springplank is, kun je het interne net scannen.',
+          'Scan de interne fileserver die je nu ziet.',
+          'Log in op fs-01 met de inloggegevens die je als root vond.',
+          'De eindvlag staat op de interne server.',
+          'Rond af.',
+        ],
+        debrief: `
+          <h4>De keten die je liep</h4>
+          <ol>
+            <li>Verkenning van de enige bereikbare host in de DMZ (ATT&CK T1595).</li>
+            <li>Een omgevingsbestand met een wachtwoord in de webroot (T1552.001: inloggegevens in een bestand).</li>
+            <li>Inloggen met een geldig, hergebruikt wachtwoord (T1078).</li>
+            <li>Rechtenverhoging via een beinvloedbare cronjob die als root draait (T1548 en T1053.003: Cron).</li>
+            <li>Inloggegevens voor het interne net gevonden op de DMZ-host (T1552.001).</li>
+            <li>Pivoteren naar het interne net en inloggen op fs-01 via SSH (T1021.004: Remote Services, SSH).</li>
+          </ol>
+          <h4>Wat de beheerder had kunnen zien</h4>
+          <ul>
+            <li>Verzoeken naar het omgevingsbestand en <code>/robots.txt</code> in de proxylogs.</li>
+            <li>Een SSH-aanmelding van wsmit vanaf een extern adres, en kort daarna een rootproces uit de cronjob (T1078, T1053.003).</li>
+            <li>Nieuw SSH-verkeer van de DMZ-host naar het interne net: verkeer dat er nooit had mogen zijn.</li>
+          </ul>
+          <h4>Wat elke stap had gestopt</h4>
+          <ul>
+            <li>Geen omgevingsbestanden in de webroot, en verschillende wachtwoorden voor proxy en serverlogin.</li>
+            <li>Een cronjob die als root draait mag geen script uitvoeren dat een gewone gebruiker kan aanpassen; zet de rechten strak.</li>
+            <li>Geen inloggegevens voor het interne net op een DMZ-host laten staan; gebruik kortlevende, afgeschermde sleutels.</li>
+            <li>De grootste maatregel: netsegmentatie. Een firewall tussen DMZ en intern net die alleen de noodzakelijke diensten toelaat, had de pivot tegengehouden, ook nadat de DMZ-host al over was.</li>
+          </ul>
+          <p>Verder leren: <a href="#/room/netwerksegmentatie">Netwerksegmentatie</a>,
+          <a href="#/room/linux-container-hardening">Linux- en containerhardening</a>,
+          <a href="#/room/range-rechten-verhogen">Rechten verhogen</a>.</p>
+        `,
+        ask: [
+          { q: 'Op welk net stond de eindvlag? (dmz of intern)', answer: ['intern'] },
+          { q: 'Welk account gebruikte je op de interne fileserver?', answer: ['beheer'] },
+        ],
+      },
+      questions: [
+        { q: 'Pak alle drie de vlaggen. Welke eindvlag (op de interne server) krijg je in de nabespreking?', answer: ['NM{dwars_het_netwerk_door}'], encoded: true,
+          hints: ['De eindvlag staat op fs-01, en fs-01 zie je pas nadat je een shell op de DMZ-host hebt.', 'Neem dmz-01 volledig over; de inloggegevens voor fs-01 vind je pas als je root bent op dmz-01.', 'Na root op dmz-01 heb je de loot: scan intern, log in op fs-01 als beheer, en lees de eindvlag.'],
+          explain: 'De eindvlag verschijnt in de nabespreking zodra je hem op fs-01 leest. Elke variant heeft een eigen vlagwoord; probeer een andere variant zonder walkthrough.' },
+        { q: 'Je probeerde meteen scan intern, nog voordat je een shell op de DMZ-host had. Waarom lukte dat niet?',
+          options: ['Omdat het interne net niet bestaat', 'Omdat het interne net pas bereikbaar is via een host die eraan grenst; zonder springplank zie je het niet', 'Omdat scannen te luidruchtig is', 'Omdat je geen scan-opdracht mag gebruiken'],
+          answer: 1,
+          wrong: { 0: 'Het interne net bestaat wel; het is alleen niet direct bereikbaar.', 2: 'Een scan is luidruchtig, maar dat is niet de reden dat het interne net onzichtbaar bleef.', 3: 'Scannen mag; het net was alleen nog niet bereikbaar.' },
+          why: 'Een intern net is per ontwerp afgeschermd. Je bereikt het pas via een host die aan beide netten hangt, en die moet je eerst overnemen.',
+          explain: 'Pas na een shell op dmz-01 (die aan het interne net grenst) opent zich dat net en kun je het scannen.' },
+      ],
+    },
+    {
+      title: 'Taak 3 - De nabespreking',
+      content: `
+        <p>Lees de nabespreking onder de console. De pivot is het leermoment: de DMZ-host overnemen was vervelend, maar het
+        doorstappen naar het interne net had nooit mogen kunnen. Een goed rapport legt de nadruk daar, want een laag die de
+        aanval in het midden breekt, is vaak meer waard dan tien kleine fixes aan de buitenkant.</p>
+        <p>In een echt rapport schrijf je per bevinding risico, bewijs en advies uit. Zie
+        <a href="#/room/pentest-methodiek-rapportage">Pentest-methodiek en rapportage</a>.</p>
+      `,
+      questions: [
+        { q: 'Welke maatregel had de aanval het meest ingeperkt, ook nadat de DMZ-host al was overgenomen?',
+          options: ['Een sterker wachtwoord voor wsmit', 'Netsegmentatie: een firewall die de DMZ niet zomaar bij het interne net laat', 'Een nieuwere nginx-versie', 'Poort 445 op fs-01 sluiten'],
+          answer: 1,
+          wrong: { 0: 'Dat vertraagt de eerste stap, maar na overname van de DMZ-host had de pivot alsnog gekund.', 2: 'De versie was niet het probleem; de bereikbaarheid tussen netten wel.', 3: 'Alleen poort 445 sluiten helpt niet; de pivot ging via SSH naar poort 22.' },
+          why: 'Maatregelen aan de buitenkant vertragen, maar een harde grens tussen DMZ en intern net breekt de keten in het midden, ook als de voorkant al valt.',
+          explain: 'Netsegmentatie houdt een overgenomen DMZ-host weg bij het interne net. Dat stopt de pivot, los van hoe de host zelf werd gekraakt.' },
+        { q: 'Welke ATT&CK-techniek hoort bij het inloggen op de interne server via SSH, vanaf de overgenomen host? (ID)', answer: ['T1021.004', 't1021.004'],
+          hints: ['Het valt onder Remote Services, T1021.', 'De subtechniek gaat specifiek over SSH.', 'Het is T1021 punt nul nul vier.'],
+          wrong: { 't1021': 'Dat is de techniek; gevraagd is de subtechniek voor SSH.', 't1078': 'Dat is Valid Accounts: het geldige account. Gevraagd is het doorstappen via SSH.' },
+          explain: 'T1021.004 Remote Services: SSH, het laterale doorstappen naar een andere host via SSH.' },
+      ],
+    },
+  ],
+  terms: [
+    { term: 'Pivoteren', def: 'Een overgenomen host als springplank gebruiken om een net te bereiken dat je direct niet kunt zien (lateral movement).' },
+    { term: 'DMZ', def: 'Demilitarized zone: de netzone met servers die vanaf buiten bereikbaar zijn, gescheiden van het interne net.' },
+    { term: 'Netsegmentatie', def: 'Het netwerk opdelen in zones met firewalls ertussen, zodat een overgenomen zone niet zomaar bij de andere kan.' },
+    { term: 'Springplank', def: 'Een host die aan meerdere netten hangt en waarmee een aanvaller van het ene net naar het andere stapt (jumphost).' },
+    { term: 'Cronjob', def: 'Een taak die automatisch op gezette tijden draait. Draait hij als root en kun jij het script aanpassen, dan is dat een weg naar root.' },
+    { term: 'Lateraal bewegen', def: 'Binnen een netwerk van host naar host stappen nadat je ergens binnen bent, richting het echte doel.' },
+  ],
+  resources: [
+    { title: 'MITRE ATT&CK: Remote Services, SSH (T1021.004)', url: 'https://attack.mitre.org/techniques/T1021/004/' },
+    { title: 'MITRE ATT&CK: Scheduled Task/Job, Cron (T1053.003)', url: 'https://attack.mitre.org/techniques/T1053/003/' },
+  ],
+});
+
+</script>
+<script>
+/* Game room: Active Directory-lite (offensief, gesimuleerd) */
+CS.registerRoom({
+  id: 'range-active-directory',
+  path: 'gamerooms',
+  order: 9,
+  title: 'Active Directory-lite: één account, het hele domein',
+  difficulty: 'Moeilijk',
+  level: 'Expert',
+  checked: '2026-11-13',
+  minutes: 40,
+  summary: 'Je staat als pentester binnen op het kantoornetwerk. Vind een vergeten helpdeskaccount, steel een serviceaccount dat te veel mag, en zie hoe één wachtwoord het hele domein opent.',
+  objectives: [
+    'Een eerste werkplek overnemen met een vergeten standaardwachtwoord',
+    'Een serviceaccount vinden dat te veel rechten heeft (over-privileged service account)',
+    'Zien hoe wachtwoordhergebruik één account overal laat passen',
+    'Begrijpen wat tiering, LAPS en sterke serviceaccounts hadden gestopt',
+  ],
+  tasks: [
+    {
+      title: 'Taak 1 — De opdracht',
+      content: `
+        <p>Dit is een <strong>oefenrange</strong> op een nagebootst Windows-domein. Je bent al binnen op het kantoornetwerk (zoals
+        een aanvaller na een geslaagde phishingmail), en je zoekt de weg naar de <strong>domeinbeheerder</strong>: wie dat account
+        heeft, bezit het hele domein.</p>
+        <p>In deze range leer je conceptueel hoe zo'n keten loopt. Je gebruikt <code>connect &lt;gebruiker&gt;@&lt;host&gt;</code> om je
+        aan te melden op een host waarvan je het wachtwoord hebt gevonden (dat is hier de aanmeld-opdracht). Er wordt niets echt
+        aangevallen; de stappen zijn een puzzel.</p>
+        <p>Twee fouten maken deze range mogelijk, en ze komen in het echt vaak voor:</p>
+        <ul>
+          <li>Een <strong>serviceaccount met te veel rechten</strong>: een account voor een achtergronddienst dat per ongeluk in de
+          groep Domain Admins zit. Aanvallers jagen hierop (onder meer met <em>kerberoasting</em>; hier vind je het wachtwoord al
+          hersteld, zodat je je op de les kunt richten).</li>
+          <li><strong>Wachtwoordhergebruik</strong>: hetzelfde wachtwoord op meer machines. Eén gestolen account past dan overal.</li>
+        </ul>
+        <div class="callout warn"><strong>Let op:</strong> dit mag alleen in dit lab of met schriftelijke toestemming. Ongeautoriseerd
+        binnendringen is computervredebreuk (art. 138ab Sr).</div>
+      `,
+      questions: [
+        { q: 'Een serviceaccount voor een SQL-back-up blijkt lid van Domain Admins. Waarom is dat gevaarlijk?',
+          options: ['Serviceaccounts hebben geen wachtwoord', 'Als iemand dat ene account steelt, heeft hij meteen het hele domein', 'Domain Admins kunnen niet inloggen', 'Een back-up hoort nooit versleuteld te zijn'],
+          answer: 1,
+          wrong: { 0: 'Serviceaccounts hebben wel degelijk een wachtwoord, vaak een zwak en zelden gewijzigd.', 2: 'Domain Admins kunnen juist overal inloggen; dat is het probleem.', 3: 'Dat gaat niet over dit risico.' },
+          explain: 'Een dienst heeft zelden domeinbeheer nodig. Zit het serviceaccount toch in Domain Admins, dan is dat account de sleutel tot alles.' },
+      ],
+    },
+    {
+      title: 'Taak 2 — De range',
+      content: `
+        <p>Lees de rules of engagement en start. Begin met <code>scan corp</code> om de machines te vinden. Er is een intranet met een
+        helpdeskpagina, een werkplek, een bestandsserver en een domeincontroller. Zoek eerst een eerste account, en volg van daar de
+        inloggegevens. Aanmelden doe je met <code>connect &lt;gebruiker&gt;@&lt;host&gt;</code>.</p>
+      `,
+      lab: {
+        type: 'range',
+        title: 'Rijnmond Zorg · kantoordomein nm.lab',
+        role: 'Pentester met opdracht om het interne domein van Rijnmond Zorg (fictief) te testen vanaf een werkplek binnen het netwerk.',
+        story: 'De klant wil weten hoe ver een aanvaller komt die al één werkplek heeft. Je begint op het kantoornetwerk en zoekt de weg naar de domeinbeheerder.',
+        mandate: [
+          'Alles in deze oefening is gesimuleerd. Doe dit nooit op een echt domein zonder schriftelijke toestemming.',
+          'Je scope is het kantoornetwerk corp en de domeinaccounts.',
+          'Werk gericht: breed en luid scannen valt op en kan buiten de afspraak vallen.',
+          'Leg vast welke accounts je gebruikte, zodat de klant het kan naspelen en opschonen.',
+        ],
+        vars: {
+          hpass: ['Welkom2019', 'Helpdesk!01', 'Start123!', 'Zorg2020'],
+          spass: ['Zomer2019', 'Backup#2018', 'SqlService1', 'Winter2020'],
+          ws: ['12', '18', '27', '33'],
+        },
+        startNet: 'corp',
+        startScan: 'corp',
+        maxNoise: 100,
+        quietUnder: 55,
+        nets: { corp: { cidr: '10.20.0.0/24', label: 'kantoornetwerk' } },
+        motd: 'Oefenrange kantoordomein. Typ help. Begin met scan corp. Aanmelden: connect <gebruiker>@<host>.',
+        hosts: [
+          {
+            name: 'intranet', ip: '10.20.0.5', net: 'corp', role: 'Intranet / helpdeskportaal',
+            ports: [{ n: 80, svc: 'http', ver: 'IIS 10.0' }],
+            pages: {
+              '/': 'Rijnmond Zorg - intranet\nHelpdesk: /helpdesk',
+              '/helpdesk': 'Veelgestelde vragen.\n- Wachtwoord vergeten? Zie de handleiding: /helpdesk/handleiding',
+              '/helpdesk/handleiding': "Nieuwe medewerker aanmelden op de werkplek:\n  gebruiker: helpdesk\n  tijdelijk wachtwoord: {{hpass}}  (wijzigen bij eerste aanmelding - gebeurt bijna nooit)\n  werkplek: ws-{{ws}}",
+            },
+            secrets: [
+              { loc: 'web:/helpdesk/handleiding', cred: { user: 'helpdesk', pass: '{{hpass}}', target: 'ws-{{ws}}', note: 'standaard helpdeskwachtwoord uit de handleiding' } },
+            ],
+          },
+          {
+            name: 'ws-{{ws}}', ip: '10.20.0.{{ws}}', net: 'corp', role: 'Werkplek (Windows 11)',
+            ports: [{ n: 22, svc: 'ssh', ver: 'OpenSSH (Windows)' }, { n: 445, svc: 'smb', ver: 'Windows' }],
+            accounts: { helpdesk: '{{hpass}}' },
+            files: {
+              '/home/helpdesk/user.txt': 'NM{eerste_werkplek_binnen}',
+              '/opt/scripts/sql-backup.ps1': "# Dagelijkse SQL-back-up naar dc-01\n# draait onder serviceaccount:\n#   gebruiker: svc-sql\n#   wachtwoord: {{spass}}\n# svc-sql is lid van Domain Admins (moet iemand nog terugzetten)",
+            },
+            secrets: [
+              { loc: 'file:/opt/scripts/sql-backup.ps1', cred: { user: 'svc-sql', pass: '{{spass}}', target: 'dc-01', note: 'serviceaccount, lid van Domain Admins' }, text: 'Let op: svc-sql is domeinbeheerder. Dat is veel te veel voor een back-updienst.' },
+            ],
+            flags: [{ id: 'user', value: 'NM{eerste_werkplek_binnen}', path: '/home/helpdesk/user.txt', root: false, points: 10 }],
+          },
+          {
+            name: 'fs-01', ip: '10.20.0.20', net: 'corp', role: 'Bestandsserver',
+            ports: [{ n: 445, svc: 'smb', ver: 'Windows' }, { n: 22, svc: 'ssh', ver: 'OpenSSH (Windows)' }],
+            accounts: { 'svc-sql': '{{spass}}' },
+            files: { '/share/hr/salarissen.txt': 'Vertrouwelijk - salarisoverzicht\nNM{overal_hetzelfde_wachtwoord}' },
+            flags: [{ id: 'share', value: 'NM{overal_hetzelfde_wachtwoord}', path: '/share/hr/salarissen.txt', root: false, points: 10 }],
+          },
+          {
+            name: 'dc-01', ip: '10.20.0.10', net: 'corp', role: 'Domeincontroller (nm.lab)',
+            ports: [{ n: 22, svc: 'ssh', ver: 'OpenSSH (Windows)' }, { n: 389, svc: 'ldap', ver: 'Active Directory' }, { n: 445, svc: 'smb', ver: 'Windows' }],
+            accounts: { 'svc-sql': '{{spass}}' },
+            files: { '/domein/beheer/flag.txt': 'Domeincontroller nm.lab\nNM{domein_overgenomen}' },
+            flags: [{ id: 'domein', value: 'NM{domein_overgenomen}', path: '/domein/beheer/flag.txt', root: false, points: 20 }],
+          },
+        ],
+        objectives: [
+          { text: 'Een werkplek overgenomen', found: ['shell:ws-{{ws}}'], points: 10 },
+          { text: 'De gebruikersvlag op de werkplek', flags: ['user'], points: 10 },
+          { text: 'Met het serviceaccount de bestandsserver geopend', flags: ['share'], points: 10 },
+          { text: 'De domeincontroller overgenomen', flags: ['domein'], points: 20 },
+        ],
+        flag: 'NM{domein_overgenomen}',
+        solution: ['scan corp', 'web intranet /helpdesk', 'web intranet /helpdesk/handleiding', 'connect helpdesk@ws-{{ws}}', 'cat /home/helpdesk/user.txt', 'cat /opt/scripts/sql-backup.ps1', 'connect svc-sql@fs-01', 'cat /share/hr/salarissen.txt', 'connect svc-sql@dc-01', 'cat /domein/beheer/flag.txt', 'done'],
+        solutionNotes: [
+          'Vind de machines op het kantoornetwerk.',
+          'De helpdeskpagina verwijst naar een handleiding.',
+          'In de handleiding staat het standaard helpdeskwachtwoord en op welke werkplek.',
+          'Meld je aan op de werkplek met dat account.',
+          'De eerste vlag staat in de thuismap.',
+          'Een back-upscript op de werkplek bevat het wachtwoord van het serviceaccount svc-sql, en verraadt dat het domeinbeheerder is.',
+          'Hetzelfde wachtwoord opent de bestandsserver: wachtwoordhergebruik.',
+          'Daar staat vertrouwelijke data (en een vlag).',
+          'Hetzelfde account opent de domeincontroller.',
+          'De domeinvlag.',
+          'Rond af.',
+        ],
+        debrief: `
+          <h4>De keten die je liep</h4>
+          <ol>
+            <li>Een geldig standaardaccount van de helpdesk (ATT&CK T1078: valid accounts).</li>
+            <li>Inloggegevens van een serviceaccount in een script op de werkplek (T1552.001). In het echt haal je zo'n
+            serviceaccount vaak via kerberoasting (T1558.003) en kraak je het offline, juist omdat het wachtwoord zwak en oud is.</li>
+            <li>Wachtwoordhergebruik waardoor datzelfde account op meerdere machines paste (T1078).</li>
+            <li>Een serviceaccount dat in Domain Admins zat, dus meteen het hele domein (T1078.002).</li>
+          </ol>
+          <h4>Wat de beheerder had kunnen zien</h4>
+          <ul>
+            <li>Een helpdeskaccount dat zich op een werkplek aanmeldt, en daarna een serviceaccount dat zich op een bestandsserver en een domeincontroller aanmeldt waar het niets te zoeken heeft.</li>
+            <li>Veel aanvragen voor service-tickets (kerberoasting) in de logs van de domeincontroller (gebeurtenis 4769).</li>
+          </ul>
+          <h4>Wat elke stap had gestopt</h4>
+          <ul>
+            <li>Standaardwachtwoorden afdwingen te wijzigen, en per werkplek een uniek lokaal beheerwachtwoord (LAPS).</li>
+            <li>Serviceaccounts met een lang, willekeurig wachtwoord (group managed service accounts), en nooit in Domain Admins: alleen de rechten die de dienst echt nodig heeft.</li>
+            <li>Tiering: beheeraccounts gescheiden per niveau, zodat een werkplek nooit een domeinbeheerder ziet. Geen wachtwoordhergebruik tussen machines.</li>
+          </ul>
+          <p>Verder leren: <a href="#/room/active-directory-verdedigen">Active Directory verdedigen</a>,
+          <a href="#/room/iam-zero-trust">IAM en Zero Trust</a>, <a href="#/room/wachtwoorden-authenticatie">Wachtwoorden en authenticatie</a>.</p>
+        `,
+        ask: [
+          { q: 'Welk serviceaccount gaf je de domeincontroller?', answer: ['svc-sql'] },
+          { q: 'Op welke werkplek kwam je als eerste binnen? (bijv. ws-12)', answer: ['ws-{{ws}}'] },
+        ],
+      },
+      questions: [
+        { q: 'Neem het domein over. Welke domeinvlag krijg je in de nabespreking?', answer: ['NM{domein_overgenomen}'], encoded: true,
+          hints: ['De domeinvlag staat op dc-01; daar kom je pas met het juiste account.', 'Zoek op de werkplek naar een script of taak die onder een serviceaccount draait.', 'Het serviceaccount svc-sql is domeinbeheerder en gebruikt overal hetzelfde wachtwoord: meld je daarmee aan op dc-01.'],
+          explain: 'De domeinvlag verschijnt zodra je dc-01 opent met het serviceaccount. Probeer een andere variant zonder walkthrough.' },
+        { q: 'Je kwam op de bestandsserver met hetzelfde wachtwoord als op de domeincontroller. Welke zwakte is dat?',
+          options: ['Een te complex wachtwoord', 'Wachtwoordhergebruik tussen machines', 'Een verouderd SMB-protocol', 'Een open poort 389'],
+          answer: 1,
+          wrong: { 0: 'Complexiteit was het probleem niet; het was overal hetzelfde.', 2: 'SMB-versie speelt hier geen rol; het account paste gewoon overal.', 3: 'Poort 389 (LDAP) hoort bij een domeincontroller en is hier niet de fout.' },
+          why: 'Eén gestolen account dat overal past, vergroot de schade enorm. Uniek per machine beperkt de blast radius.',
+          explain: 'Hetzelfde wachtwoord op meer machines (password reuse): één gestolen account opent ze allemaal.' },
+      ],
+    },
+    {
+      title: 'Taak 3 — De nabespreking',
+      content: `
+        <p>Lees de nabespreking onder de console. De kracht van deze zaak zit niet in een exploit, maar in twee beheerfouten die je
+        in heel veel organisaties vindt: een serviceaccount met te veel rechten, en wachtwoordhergebruik.</p>
+        <p>De verdedigende kant staat uitgewerkt in <a href="#/room/active-directory-verdedigen">Active Directory verdedigen</a>: hoe je
+        kerberoasting en dit soort aanmeldingen herkent in de logs en wat je dichtzet.</p>
+      `,
+      questions: [
+        { q: 'Wat had deze keten het grondigst gestopt?',
+          options: ['De domeincontroller achter een firewall', 'Serviceaccounts met een sterk, uniek wachtwoord en zonder domeinbeheer, plus tiering', 'Een langer wachtwoord voor de helpdesk', 'De bestandsserver uitschakelen'],
+          answer: 1,
+          wrong: { 0: 'De aanvaller zat al binnen op het kantoornetwerk; een firewall aan de rand helpt dan niet.', 2: 'Dat vertraagt alleen de eerste stap; de echte schade kwam van het serviceaccount.', 3: 'Dan werkt de bestandsserver niet meer, en het domein was nog steeds te nemen.' },
+          why: 'De grootste hefboom in de keten was het over-privileged serviceaccount met een hergebruikt wachtwoord. Dat wegnemen breekt de keten op het duurste punt voor de aanvaller.',
+          explain: 'Sterke, unieke serviceaccountwachtwoorden, geen onnodig domeinbeheer, en tiering nemen de hefboom weg waarmee één account het hele domein opende.' },
+        { q: 'Welke ATT&CK-techniek beschrijft het stelen van een serviceaccount via zijn Kerberos-service-tickets? (ID)', answer: ['T1558.003', 't1558.003'],
+          hints: ['Het valt onder Steal or Forge Kerberos Tickets, T1558.', 'De subtechniek heet Kerberoasting.', 'Het is T1558 punt nul nul drie.'],
+          wrong: { 't1558': 'Dat is de techniek; gevraagd is de subtechniek Kerberoasting.', 't1078': 'Dat is Valid Accounts: het gebruiken van een account, niet het stelen van het ticket.' },
+          explain: 'T1558.003 Kerberoasting: service-tickets opvragen en offline kraken, juist bij serviceaccounts met een zwak wachtwoord.' },
+      ],
+    },
+  ],
+  terms: [
+    { term: 'Active Directory', def: 'De centrale gebruikers- en rechtenadministratie van een Windows-netwerk, beheerd door een domeincontroller.' },
+    { term: 'Domeinbeheerder (Domain Admin)', def: 'Een account dat het hele domein beheert. Wie dit heeft, bezit vrijwel alles.' },
+    { term: 'Serviceaccount', def: 'Een account waaronder een achtergronddienst draait. Vaak met een zwak, zelden gewijzigd wachtwoord.' },
+    { term: 'Kerberoasting', def: 'Service-tickets van serviceaccounts opvragen en offline kraken (ATT&CK T1558.003). Werkt vooral bij zwakke wachtwoorden.' },
+    { term: 'Tiering', def: 'Beheeraccounts scheiden per niveau, zodat een werkplek nooit inloggegevens van een domeinbeheerder ziet.' },
+    { term: 'LAPS', def: 'Windows Local Administrator Password Solution: per machine een uniek, automatisch beheerd lokaal beheerwachtwoord.' },
+  ],
+  resources: [
+    { title: 'MITRE ATT&CK: Kerberoasting (T1558.003)', url: 'https://attack.mitre.org/techniques/T1558/003/' },
+    { title: 'Microsoft: beveiligen van Active Directory (tiering, gelaagd beheer)', url: 'https://learn.microsoft.com/security/' },
+  ],
+});
+
+</script>
+<script>
+/* Game room: Rood tegen Blauw — Operatie Gelijkspel (offensief + defensief) */
+CS.registerRoom({
+  id: 'range-rood-vs-blauw',
+  path: 'gamerooms',
+  order: 11,
+  title: 'Rood tegen Blauw: Operatie Gelijkspel',
+  difficulty: 'Moeilijk',
+  level: 'Expert',
+  checked: '2026-11-13',
+  minutes: 45,
+  summary: 'Eerst breek je als rood team in op een server. Daarna draai je om: je zoekt je eigen sporen terug in de logs die je zojuist hebt gemaakt. Zo leer je wat een aanvaller achterlaat.',
+  objectives: [
+    'Een server overnemen en twee vlaggen pakken (rood)',
+    'Je eigen aanval terugvinden in de logs: welk adres, welk account, hoe laat (blauw)',
+    'Elke aanvalsstap koppelen aan een detectie en een maatregel',
+  ],
+  tasks: [
+    {
+      title: 'Taak 1 — De oefening',
+      content: `
+        <p>Deze oefening heeft twee helften. In <strong>taak 2</strong> ben je het <strong>rode team</strong>: je neemt een server over,
+        net als in de andere oefenranges. In <strong>taak 3</strong> ben je het <strong>blauwe team</strong>: je krijgt de logs van diezelfde
+        server te zien, en je zoekt jouw eigen sporen terug.</p>
+        <p>Dat is de beste les in wat een aanvaller achterlaat. Elke stap die je als rood zet, laat iets na: een verzoek in de
+        webserverlog, een aanmelding in de auth-log, een sudo-regel. Als blauw leer je die te lezen.</p>
+        <p>In deze oefening ligt het aanvalsadres vast (<code>203.0.113.133</code>), zodat de logs in taak 3 precies op jouw aanval
+        aansluiten.</p>
+        <div class="callout warn"><strong>Let op:</strong> dit mag alleen in dit lab of met schriftelijke toestemming. Ongeautoriseerd
+        binnendringen is computervredebreuk (art. 138ab Sr).</div>
+      `,
+      questions: [
+        { q: 'Je logt als aanvaller in met een gevonden wachtwoord en gebruikt daarna sudo. Welke twee logbronnen verraden dat het duidelijkst?',
+          options: ['De DNS-log en de DHCP-log', 'De auth-log (aanmelding en sudo) en de webserverlog (hoe je het wachtwoord vond)', 'De printerlog en de mailserverlog', 'Alleen de firewalllog'],
+          answer: 1,
+          wrong: { 0: 'DNS en DHCP gaan over namen en adressen, niet over deze aanmelding.', 2: 'Printer en mail spelen hier geen rol.', 3: 'De firewall ziet verkeer, maar niet welk account inlogde of sudo gebruikte.' },
+          explain: 'De auth-log toont de geslaagde aanmelding en het sudo-gebruik; de webserverlog toont hoe je bij het wachtwoord kwam.' },
+      ],
+    },
+    {
+      title: 'Taak 2 — Rood: de inbraak',
+      content: `
+        <p>Neem de server over. Begin met <code>scan ext</code>, bekijk de webserver, vind het wachtwoord, log in en word root. Twee
+        vlaggen. Onthoud wat je doet: in de volgende taak zoek je het terug.</p>
+      `,
+      lab: {
+        type: 'range',
+        title: 'Operatie Gelijkspel · app-05',
+        role: 'Rode-teamlid met opdracht om app-05 van Haven Analytics (fictief) te testen vanaf het vaste aanvalsadres 203.0.113.133.',
+        story: 'Je valt aan vanaf een vast adres, zodat het blauwe team de oefening daarna kan naspelen op jouw sporen.',
+        mandate: [
+          'Alles in deze oefening is gesimuleerd. Doe dit nooit op systemen zonder schriftelijke toestemming.',
+          'Je scope is uitsluitend app-05.',
+          'Je werkt vanaf het afgesproken aanvalsadres 203.0.113.133.',
+          'Leg je stappen vast: in taak 3 zoek je ze terug in de logs.',
+        ],
+        startNet: 'ext',
+        startScan: 'ext',
+        maxNoise: 100,
+        quietUnder: 50,
+        nets: { ext: { cidr: 'ext', label: 'internet' } },
+        motd: 'Operatie Gelijkspel. Typ help. Begin met scan ext.',
+        hosts: [
+          {
+            name: 'app-05', ip: '203.0.113.5', net: 'ext', role: 'Rapportageportaal (Apache)',
+            ports: [{ n: 22, svc: 'ssh', ver: 'OpenSSH 8.9' }, { n: 80, svc: 'http', ver: 'Apache 2.4.52' }],
+            pages: {
+              '/': 'Haven Analytics - rapportageportaal\nAanmelden via /portal.',
+              '/robots.txt': 'User-agent: *\nDisallow: /uploads',
+              '/uploads': 'Index van /uploads:\n  db.conf.bak\n  logo.png',
+              '/uploads/': 'Index van /uploads:\n  db.conf.bak\n  logo.png',
+              '/uploads/db.conf.bak': "# databaseconfig (back-up, per ongeluk online)\nuser=wdeploy\npass=Deploy2025!\n# zelfde account als de serverlogin",
+            },
+            secrets: [
+              { loc: 'web:/uploads/db.conf.bak', cred: { user: 'wdeploy', pass: 'Deploy2025!', target: 'app-05', note: 'uit db.conf.bak' } },
+            ],
+            accounts: { wdeploy: 'Deploy2025!' },
+            files: {
+              '/home/wdeploy/user.txt': 'NM{rood_eerste_vlag}',
+              '/root/root.txt': 'NM{rood_root_gehaald}',
+            },
+            escalation: { via: 'sudo', token: 'env', show: '/usr/bin/env', note: 'env mag je als root draaien en kan een shell openen; zo word je root' },
+            flags: [
+              { id: 'user', value: 'NM{rood_eerste_vlag}', path: '/home/wdeploy/user.txt', root: false, points: 10 },
+              { id: 'root', value: 'NM{rood_root_gehaald}', path: '/root/root.txt', root: true, points: 15 },
+            ],
+          },
+        ],
+        objectives: [
+          { text: 'Een shell op app-05', found: ['shell:app-05'], points: 10 },
+          { text: 'De gebruikersvlag', flags: ['user'], points: 10 },
+          { text: 'Root en de rootvlag', flags: ['root'], points: 15 },
+        ],
+        flag: 'NM{rood_root_gehaald}',
+        solution: ['scan ext', 'scan app-05', 'web app-05 /robots.txt', 'web app-05 /uploads/', 'web app-05 /uploads/db.conf.bak', 'ssh wdeploy@app-05', 'cat /home/wdeploy/user.txt', 'sudo -l', 'escalate env', 'cat /root/root.txt', 'done'],
+        solutionNotes: [
+          'Vind het doelwit.',
+          'Open poorten: 22 en 80.',
+          'robots.txt verraadt /uploads.',
+          'Daar staat een back-up van de databaseconfig.',
+          'Met het wachtwoord erin, dat ook de serverlogin is.',
+          'Log in als wdeploy.',
+          'De eerste vlag.',
+          'sudo -l toont wat je als root mag draaien.',
+          'Daarmee word je root.',
+          'De tweede vlag.',
+          'Rond af; ga nu naar taak 3.',
+        ],
+        debrief: `
+          <p>Je bent binnen en weer root. Onthoud je stappen: in taak 3 zoek je ze terug in de logs die dit heeft achtergelaten.
+          Elke stap die je zette, had het blauwe team kunnen zien; wat elke stap had gestopt, staat per stap uitgewerkt in taak 4.</p>
+          <p>Verder leren: <a href="#/room/logs-detectie">Logs en detectie</a>, <a href="#/room/siem-threat-hunting">SIEM en threat hunting</a>.</p>
+        `,
+        ask: [
+          { q: 'Welk account gebruikte je om in te loggen?', answer: ['wdeploy'] },
+          { q: 'Via welk bestand vond je het wachtwoord?', answer: ['db.conf.bak', '/uploads/db.conf.bak'] },
+        ],
+      },
+      questions: [
+        { q: 'Pak beide vlaggen (rood). Welke rootvlag krijg je?', answer: ['NM{rood_root_gehaald}'], encoded: true,
+          hints: ['De rootvlag staat in /root; lees hem als je root bent.', 'Het wachtwoord staat in de back-up in /uploads.', 'Word wdeploy, bekijk sudo -l en draai escalate met het programma dat je als root mag draaien.'],
+          explain: 'Nu je weet welke stappen je zette, kun je ze in taak 3 terugvinden in de logs.' },
+      ],
+    },
+    {
+      title: 'Taak 3 — Blauw: zoek je eigen sporen',
+      content: `
+        <p>Nu ben je het blauwe team. Hieronder staan de logs van app-05 over het tijdvak van jouw aanval. Zoek je eigen sporen terug:
+        vanaf welk adres kwam de aanval, welk account logde in, hoe laat werd er root gehaald, en via welk pad vond de aanvaller het
+        wachtwoord. Gebruik het filter (tekst of <code>/regex/</code>).</p>
+      `,
+      lab: {
+        type: 'logs',
+        title: 'app-05 · gecombineerde logs (web + auth)',
+        lines: `2026-11-13 09:58:11 [web] 198.51.100.24 GET /portal 200
+2026-11-13 10:00:02 [web] 203.0.113.133 GET / 200
+2026-11-13 10:00:14 [web] 203.0.113.133 GET /robots.txt 200
+2026-11-13 10:00:31 [web] 203.0.113.133 GET /uploads/ 200
+2026-11-13 10:00:48 [web] 203.0.113.133 GET /uploads/db.conf.bak 200
+2026-11-13 10:01:20 [web] 77.12.9.4 GET /portal 200
+2026-11-13 10:02:05 [auth] sshd: Failed password for admin from 45.9.18.2 port 51112
+2026-11-13 10:02:40 [auth] sshd: Accepted password for wdeploy from 203.0.113.133 port 52033
+2026-11-13 10:03:02 [auth] sshd: pam_unix session opened for user wdeploy
+2026-11-13 10:03:55 [auth] sudo: wdeploy : TTY=pts/0 ; PWD=/home/wdeploy ; USER=root ; COMMAND=/usr/bin/env
+2026-11-13 10:03:55 [auth] sudo: session opened for user root by wdeploy
+2026-11-13 10:05:12 [web] 198.51.100.24 GET /portal 200
+2026-11-13 10:07:40 [auth] sshd: Accepted password for jvries from 198.51.100.24 port 50440
+2026-11-13 10:09:03 [web] 203.0.113.133 GET /uploads/logo.png 200
+2026-11-13 10:12:19 [auth] sshd: Failed password for root from 61.4.200.7 port 40002`
+      },
+      questions: [
+        { q: 'Vanaf welk IP-adres kwam de aanval?', answer: ['203.0.113.133'],
+          hints: ['Zoek een adres dat zowel in de webregels als in de auth-regels terugkomt.', 'Filter op het adres dat /uploads/db.conf.bak opvroeg.', 'Het is hetzelfde adres dat daarna als wdeploy inlogt.'],
+          wrong: { '45.9.18.2': 'Dat adres probeert admin en faalt; het hoort niet bij de geslaagde inbraak.', '198.51.100.24': 'Dat is een gewone gebruiker (jvries) die normaal werkt.' },
+          why: 'Eén adres dat eerst een gevoelig bestand opvraagt en daarna inlogt, is een sterker signaal dan losse mislukte pogingen.',
+          explain: 'Hetzelfde adres vraagt db.conf.bak op en logt daarna in als wdeploy: dat is de aanvaller.' },
+        { q: 'Welk account werd overgenomen?', answer: ['wdeploy'],
+          hints: ['Zoek de geslaagde aanmelding vanaf het aanvalsadres.', 'Filter op "Accepted password" en het aanvalsadres.', 'Het account staat ook in de back-up die werd opgevraagd.'],
+          wrong: { 'admin': 'admin faalt juist (Failed password) vanaf een ander adres.', 'jvries': 'jvries is een gewone gebruiker vanaf een intern adres.' },
+          explain: 'Accepted password for wdeploy from 203.0.113.133: dat account werd gebruikt.' },
+        { q: 'Hoe laat (uu:mm:ss) werd er root gehaald?', answer: ['10:03:55'],
+          hints: ['Zoek de regel waarin wdeploy naar root gaat.', 'Filter op "sudo" en "root".', 'De sudo-regel met USER=root draagt de tijd.'],
+          wrong: { '10:02:40': 'Dat is de aanmelding als wdeploy, nog niet root.', '10:03:02': 'Dat is het openen van de sessie, nog niet de rechtenverhoging.' },
+          why: 'Het exacte moment van rechtenverhoging is het ankerpunt van je tijdlijn: daarvoor was de aanvaller gewone gebruiker, daarna root.',
+          explain: 'Om 10:03:55 draait wdeploy via sudo /usr/bin/env als root: het moment van de rechtenverhoging.' },
+        { q: 'Welk bestand verraadt hoe de aanvaller het wachtwoord vond? (naam)', answer: ['db.conf.bak', '/uploads/db.conf.bak'], boss: true,
+          hints: ['Kijk in de webregels van het aanvalsadres, net voor de aanmelding.', 'Het staat in /uploads en eindigt op .bak.', 'Het is de back-up van een databaseconfig.'],
+          wrong: { 'logo.png': 'logo.png werd ook opgevraagd, maar daar staat geen wachtwoord in.' },
+          explain: 'Vlak voor de aanmelding vraagt het aanvalsadres /uploads/db.conf.bak op: daar stond het wachtwoord.' },
+      ],
+    },
+    {
+      title: 'Taak 4 — De nabespreking: koppel aanval aan verdediging',
+      content: `
+        <p>Je hebt beide kanten gezien. Zet nu per aanvalsstap wat het blauwe team had kunnen zien en wat het had gestopt. Dat is
+        precies het gesprek tussen rood en blauw dat een organisatie sterker maakt (<em>purple teaming</em>).</p>
+        <table>
+          <thead><tr><th>Aanvalsstap</th><th>Wat blauw ziet</th><th>Wat het stopt</th></tr></thead>
+          <tbody>
+            <tr><td>Verkenning en /uploads opvragen</td><td>Webverzoeken naar /robots.txt en /uploads van één extern adres</td><td>Geen back-ups in de webroot; alerteren op toegang tot gevoelige paden</td></tr>
+            <tr><td>Inloggen als wdeploy</td><td>Accepted password vanaf een extern adres voor een serviceaccount</td><td>Sleutels in plaats van wachtwoorden; geen externe SSH; MFA</td></tr>
+            <tr><td>sudo naar root</td><td>sudo met USER=root door een account dat dat normaal nooit doet</td><td>Geen ruime NOPASSWD-sudo; alerteren op sudo door serviceaccounts</td></tr>
+          </tbody>
+        </table>
+      `,
+      questions: [
+        { q: 'Eén logregel is samen het sterkste alarm. Welke?',
+          options: ['Een mislukte aanmelding voor admin vanaf een onbekend adres', 'Een geslaagde aanmelding voor wdeploy vanaf een extern adres, vlak na het opvragen van db.conf.bak', 'Een GET naar /logo.png', 'Een geslaagde aanmelding voor jvries vanaf een intern adres'],
+          answer: 1,
+          wrong: { 0: 'Mislukte pogingen zijn er altijd; op zichzelf zwak.', 2: 'Een plaatje opvragen is onschuldig.', 3: 'Een interne gebruiker die normaal inlogt, is geen alarm.' },
+          why: 'Een detectie wordt sterk als hij twee signalen combineert: toegang tot een gevoelig bestand en daarna een geslaagde aanmelding, vanaf hetzelfde externe adres.',
+          explain: 'De combinatie (gevoelig bestand opgevraagd, daarna geslaagde login vanaf hetzelfde externe adres) is het sterkste signaal.' },
+        { q: 'Wat is de kortste samenvatting van de les van deze oefening?',
+          options: ['Aanvallen is makkelijker dan verdedigen', 'Elke aanvalsstap laat een spoor na dat je kunt detecteren en afdekken', 'Logs zijn onbetrouwbaar', 'Alleen een firewall is genoeg'],
+          answer: 1,
+          wrong: { 0: 'Dat is geen les uit de oefening; het punt is dat beide kanten elkaar versterken.', 2: 'De logs waren juist het bewijs; ze zijn waardevol.', 3: 'Een firewall zag het account en de sudo niet eens.' },
+          explain: 'Wie beide kanten kent, bouwt betere detectie: elke stap van rood is een kans voor blauw.' },
+      ],
+    },
+  ],
+  terms: [
+    { term: 'Rood team', def: 'De aanvallende kant in een oefening: zoekt en benut zwakheden om te laten zien wat mogelijk is.' },
+    { term: 'Blauw team', def: 'De verdedigende kant: detecteert, reageert en versterkt op basis van wat er gebeurt.' },
+    { term: 'Purple teaming', def: 'Rood en blauw die samenwerken: elke aanvalsstap wordt meteen een detectie en een maatregel.' },
+    { term: 'auth-log', def: 'Het logbestand met aanmeldingen en rechtenverhogingen (SSH, sudo) op een Linux-systeem.' },
+    { term: 'Detectie', def: 'Een regel of signaal dat kwaadaardig gedrag zichtbaar maakt, het liefst door meerdere aanwijzingen te combineren.' },
+  ],
+  resources: [
+    { title: 'MITRE ATT&CK: Valid Accounts (T1078)', url: 'https://attack.mitre.org/techniques/T1078/' },
+    { title: 'NCSC: logging en detectie', url: 'https://www.ncsc.nl/' },
   ],
 });
 

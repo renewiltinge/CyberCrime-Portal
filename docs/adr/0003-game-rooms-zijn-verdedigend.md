@@ -1,6 +1,6 @@
 # ADR-0003: Game rooms zijn verdedigend, met toestand en gevolgen
 
-- Status: Accepted
+- Status: Accepted (de keuze om aanvalsrooms uit te stellen is later herzien, zie ADR-0004)
 - Date: 2026-11-12
 - Hangt samen met: ADR-0001 (huisstijl), ADR-0002 (spelmechanieken), `docs/optimalisatie-prompt.md` (werkstroom B)
 

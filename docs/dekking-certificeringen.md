@@ -1,6 +1,6 @@
 # Dekkingsmatrix: Cyber Dojo tegenover certificeringen en kaders
 
-> **Lees dit eerst.** Dit portaal vervangt geen erkend examen en levert geen certificaat op. Deze matrix is een eigen inschatting van de makers, niet beoordeeld of goedgekeurd door CompTIA, ISC2, INE, TCM Security, OffSec, Security Blue Team, GIAC, EC-Council, MITRE of een andere exameninstantie. Laatst gecontroleerd op 2026-11-12, tegen 120 rooms in `content/rooms/`.
+> **Lees dit eerst.** Dit portaal vervangt geen erkend examen en levert geen certificaat op. Deze matrix is een eigen inschatting van de makers, niet beoordeeld of goedgekeurd door CompTIA, ISC2, INE, TCM Security, OffSec, Security Blue Team, GIAC, EC-Council, MITRE of een andere exameninstantie. Laatst gecontroleerd op 2026-11-13, tegen 126 rooms in `content/rooms/`.
 
 ## Hoe je deze matrix leest
 
@@ -102,17 +102,17 @@ De rijen zijn thema's, geen officiële examendoelen. eJPT (INE), PNPT (TCM Secur
 | Scannen en servicedetectie (nmap) | gedekt | `verkenning-scannen`, `mini-ctf` | Gesimuleerde nmap-uitvoer. |
 | Service-enumeratie (bestandsdeling, mail, beheerprotocollen) | deels | `verkenning-scannen`, `netwerken-basis` | Poorten bekend, geen enumeratie per dienst. |
 | Kwetsbaarheden vinden en beoordelen | gedekt | `kwetsbaarheden-cvss` | Zonder scannertools. |
-| Exploitatie van hosts (exploitframeworks, shells) | ontbreekt | | |
+| Exploitatie van hosts (exploitframeworks, shells) | deels | `range-eerste-inbraak`, `range-rechten-verhogen` | Gesimuleerd in de oefenranges (ADR-0004): een ingang vinden en benutten als puzzel, geen echte exploitframeworks. |
 | Wachtwoordaanvallen | gedekt | `wachtwoorden-kraken`, `crack-the-hash`, `kraak-ctf` | Offline kraken. Online brute force alleen vanuit de detectiekant in `logs-detectie`. |
 | Web: SQL-injectie, XSS, gebroken toegangscontrole (IDOR) | gedekt | `webhacking-sqli`, `owasp-top-10`, `mini-ctf` | |
 | Web: overige technieken (SSRF, bestandsupload, commando-injectie, tokens, proxytooling) | deels | `owasp-top-10`, `kraak-ctf` | SSRF beschreven, JWT in één station. Geen werken met een onderscheppende proxy. |
-| Privilege escalation op Linux | deels | `linux-container-hardening`, `linux-basis`, `mini-ctf` | SUID en sudo als controlepunt voor de verdediger. Escalatie als aanvalstechniek bewust niet uitgewerkt (ADR-0003). |
-| Privilege escalation op Windows | ontbreekt | `active-directory-verdedigen` | Bewust uitgesteld (ADR-0003). De verdedigende kant (tiering, LAPS) staat in active-directory-verdedigen. |
-| Post-exploitatie, persistentie en laterale beweging | deels | `windows-basis`, `praktijkcase-intel`, `ransomware-respons` | Alleen vanuit verdediger en analist. |
-| Pivoting en tunneling tussen netwerken | ontbreekt |  | Bewust uitgesteld (ADR-0003). "Pivoten" betekent in de dojo OSINT-pivoting. |
-| Active Directory-aanvallen | deels | `active-directory-verdedigen`, `windows-basis`, `kraak-ctf`, `crack-the-hash` | Alleen herkennen en detecteren (onder meer kerberoasting in 4769-logs) en hardening. Geen aanvalsketen, bewust (ADR-0003). |
-| Methodiek (PTES, OWASP WSTG) | deels | `verkenning-scannen` | Fasen van een pentest. De standaarden zelf worden niet genoemd. |
-| Rapporteren van bevindingen | deels | `verkenning-scannen`, `mini-ctf`, `kraak-ctf` | Van verkenning naar rapportage, write-up. Geen volledig pentestrapport met bevinding, risico en advies. |
+| Privilege escalation op Linux | gedekt | `range-rechten-verhogen`, `linux-container-hardening` | Van gebruiker naar root via SUID, sudo en cron, gesimuleerd, met de verdediging ernaast. |
+| Privilege escalation op Windows | deels | `range-active-directory`, `active-directory-verdedigen` | Verticale beweging via een over-privileged account, gesimuleerd. Lokale Windows-escalatietechnieken niet apart. |
+| Post-exploitatie, persistentie en laterale beweging | gedekt | `range-pivoteren`, `range-active-directory`, `game-ochtend-erna` | Laterale beweging en pivoten in de ranges; persistentie opruimen in een game room. |
+| Pivoting en tunneling tussen netwerken | gedekt | `range-pivoteren` | Van de DMZ via een dual-homed host naar het interne net, gesimuleerd (ADR-0004). |
+| Active Directory-aanvallen | gedekt | `range-active-directory`, `active-directory-verdedigen` | De keten (serviceaccount, wachtwoordhergebruik, domeinbeheer) gesimuleerd, en de detectie ervan. |
+| Methodiek (PTES, OWASP WSTG) | gedekt | `pentest-methodiek-rapportage` | PTES-fasen, scope en rules of engagement, OWASP WSTG als checklist. |
+| Rapporteren van bevindingen | gedekt | `pentest-methodiek-rapportage` | Een volledig rapport: managementsamenvatting, per bevinding risico, bewijs en advies, prioritering, hertest. |
 
 ## 3. Defensief en SOC: CySA+, BTL1 en GCIH-thema's
 
@@ -252,23 +252,25 @@ Per groot gat hierboven: wat er nu staat.
 | 1. IAM en Zero Trust | gedicht | `iam-zero-trust` |
 | 2. Cloudbeveiliging | gedicht | `cloudbeveiliging` |
 | 3. Risicomanagement en frameworks | gedicht | `risicomanagement-frameworks` |
-| 4. Active Directory | deels: alleen verdedigen | `active-directory-verdedigen` |
-| 5. Privilege escalation | bewust uitgesteld | zie ADR-0003; controlepunten in `linux-container-hardening` |
-| 6. Pivoting en tunneling | bewust uitgesteld | zie ADR-0003 |
+| 4. Active Directory | gedicht: verdedigen en aanvalsketen | `active-directory-verdedigen`, `range-active-directory` |
+| 5. Privilege escalation | gedicht (gesimuleerd), Windows deels | `range-rechten-verhogen`, `linux-container-hardening` |
+| 6. Pivoting en tunneling | gedicht (gesimuleerd) | `range-pivoteren` |
 | 7. SIEM en threat hunting | gedicht | `siem-threat-hunting` |
 | 8. Privacy en wetgeving | gedicht | `privacy-wetgeving-praktijk` |
 | 9. Opsporingsbevoegdheden en Wet computercriminaliteit III | gedicht | `opsporing-bevoegdheden` |
-| 10. Pentest-methodiek en rapportage | open | nog geen eigen room |
+| 10. Pentest-methodiek en rapportage | gedicht | `pentest-methodiek-rapportage` |
 | 11. Netwerkbeveiliging en draadloos | gedicht | `netwerkbeveiliging-wifi` |
 | 12. Hardening van Linux en containers | gedicht | `linux-container-hardening`, `game-vergeten-server` |
 | 13. Veilige softwareontwikkeling en code-review | gedicht | `veilig-ontwikkelen-codereview` |
 | 14. TLS en PKI | gedicht | `tls-pki` |
 | 15. Bedrijfscontinuïteit en disaster recovery | gedicht | `bedrijfscontinuiteit-herstel` |
 
-Daarnaast zijn er vijf verdedigende game rooms (pad `gamerooms`) die incident response, phishing, ransomware,
-hardening en persistentie onder tijdsdruk laten oefenen, en achttien uitdagingen zonder handleiding.
+Daarnaast zijn er vijf verdedigende game rooms en vijf offensieve oefenranges (pad `gamerooms`) die incident response,
+phishing, ransomware, hardening en persistentie, en aan de andere kant inbreken, rechten verhogen, pivoteren, een
+Active Directory-keten en rood-tegen-blauw onder tijdsdruk laten oefenen, plus achttien uitdagingen zonder handleiding.
 
-**Bewust uitgesteld.** Aanvalstechnieken als rechten verhogen, pivoteren en een Active Directory-aanvalsketen zijn in
-deze ronde niet uitgewerkt (zie [ADR-0003](adr/0003-game-rooms-zijn-verdedigend.md)). Voor eJPT, PNPT en OSCP betekent
-dat: de dojo dekt verkenning, web en hashes, maar niet de praktijk van het binnendringen en doorbewegen. Oefen dat op een
-platform dat daarvoor gemaakt is, binnen de regels ervan.
+**Offensief als gesimuleerde range.** Aanvalstechnieken (een ingang vinden, rechten verhogen, pivoteren, een Active
+Directory-keten) zijn nu gedekt met vijf gesimuleerde oefenranges (zie [ADR-0004](adr/0004-offensieve-oefenranges.md)):
+een vaste opdrachtenset in de browser, geen werkende exploitcode, met een verdedigende debrief. Dat leert het denkwerk en
+de keten, niet het bedienen van echte aanvalstooling. Voor de praktijk van eJPT, PNPT en OSCP (echte tools op echte doelen)
+blijft oefenen op een platform dat daarvoor gemaakt is nodig, binnen de regels ervan.

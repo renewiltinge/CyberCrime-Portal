@@ -83,6 +83,7 @@ Denken als een aanvaller — altijd in een veilig lab.
 7. **Decoderen & multi-decode (CTF)** — gelaagde codering afpellen met de multi-decoder en CyberChef.
 8. **Verkenning en scannen**: Leer hoe een pentester een doelwit in kaart brengt: passieve en actieve verkenning, OSINT, footprinting en poortscannen met nmap — en waarom dit alleen mag met schriftelijke toestemming.
 9. **Veilig ontwikkelen en code-review**: Kwetsbaarheden vind je het goedkoopst voordat ze live staan.
+10. **Pentest-methodiek & rapportage** — de fasen van een pentest (PTES), scope en rules of engagement, OWASP WSTG, bevindingen wegen en een goed rapport schrijven.
 
 ### 🛡️ Defensief (blue team)
 Denken als een verdediger.
@@ -169,6 +170,14 @@ Voor wie de puzzels te makkelijk vond: zwaardere opgaven met meer achtergrond.
 3. **Fraude in de cijfers: Benford, drempels en verzonnen bedragen** — de wet van Benford met MAD en chi-kwadraat, opgesplitste facturen onder een goedkeuringsgrens, verzonnen declaraties herkennen en een signaal uitwerken tot dossier.
 4. **Redeneren met kansen: Bayes voor analisten** — basispercentages, likelihood ratios en de odds-vorm van Bayes, meerdere hypothesen en afhankelijk bewijs, kalibratie met de Brier-score en een Key Assumptions Check.
 5. **Bewijs in de rechtszaal: digitaal bewijs wegen en rapporteren** — bron-, activiteits- en delictsniveau, de prosecutor's fallacy (Sally Clark, Lucia de Berk), de likelihood ratio met verbale schaal, het forensisch rapport en contextuele bias.
+
+### 🗡️ Game rooms: aanvallen in een oefenrange
+Een gesimuleerd doelwit in je browser: verken, vind een ingang, log in, verhoog je rechten en pivoteer. Een vaste opdrachtenset, geen echte verbindingen en geen werkende exploitcode; de aanval is een puzzel. Met een ontdekkingsmeter als inzet, rules of engagement vooraf en een verdedigende nabespreking (wat de blue team had gezien, wat het had gestopt).
+1. **Eerste inbraak** (★) — een kwetsbare webserver: verken, vind inloggegevens in een vergeten bestand, log in en word root.
+2. **Rechten verhogen** (★★★) — van gewone gebruiker naar root via een verkeerde instelling, met valse sporen die niets opleveren.
+3. **Pivoteren** (★★★) — van de DMZ via een host met twee netwerkkaarten naar het interne net en de kroonjuwelen.
+4. **Active Directory-lite** (★★★★) — hoe één gestolen serviceaccount met te veel rechten het hele domein opent.
+5. **Rood tegen Blauw: Operatie Gelijkspel** (★★★★★) — eerst inbreken, daarna je eigen sporen terugvinden in de logs die je zojuist maakte.
 
 ### 🛡️ Game rooms: verdedigen onder druk
 Je staat in een incidentconsole terwijl de aanval doorgaat. De klok loopt mee met wat je doet, een verkeerde ingreep legt het bedrijf stil, en te laat ingrijpen kost schade. Elke leerling krijgt een eigen variant; na afloop volgt een nabespreking met ATT&CK-technieken en een walkthrough.
