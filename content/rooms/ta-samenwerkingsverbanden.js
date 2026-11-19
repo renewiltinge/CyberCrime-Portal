@@ -167,7 +167,7 @@ vos    uil     betaling  0,4 BTC  12-04-2026     blockchainanalyse</code></pre>
           <li><code>uniq -c</code> telt per naam hoe vaak hij voorkomt.</li>
           <li><code>sort -rn</code> sorteert op dat getal, van hoog naar laag.</li>
         </ul>
-        <p>Met <code>-f 3</code> tel je de ontvangers. Met <code>grep uil berichten.csv</code> zie je alle regels waar een naam in
+        <p>Met <code>-f 3</code> tel je de ontvangers. Met <code>grep vos berichten.csv</code> zie je alle regels waar een naam in
         voorkomt, als afzender of als ontvanger. Let op: de kopregel telt mee als je die niet weglaat, en <code>wc -l</code> telt
         hem ook.</p>
       `,
@@ -325,14 +325,14 @@ vos    uil     betaling  0,4 BTC  12-04-2026     blockchainanalyse</code></pre>
         steps: [
           { situation: 'Concept: "uil is waarschijnlijk een Oost-Europese crimineel, want hij schrijft gebrekkig Nederlands."', choices: [
             { label: 'Laten staan; het is een nuttige aanwijzing voor het team', good: false, feedback: 'Van taalfouten naar afkomst en dan naar "crimineel" is een stereotype, geen analyse.' },
-            { label: '"uil schrijft Nederlands met fouten die passen bij een niet-moedertaalspreker (afgeleid, 6 berichten)"', good: true, feedback: 'Je beschrijft wat je ziet, met label en bron, en trekt geen conclusie over afkomst.' },
+            { label: '"uil schrijft Nederlands met fouten die passen bij een niet-moedertaalspreker (afgeleid, 4 berichten)"', good: true, feedback: 'Je beschrijft wat je ziet, met label en bron, en trekt geen conclusie over afkomst.' },
             { label: 'De hele passage schrappen; taal zeg je nooit iets over', good: false, feedback: 'Taalgebruik kan een bruikbaar kenmerk zijn, bijvoorbeeld om aliassen te koppelen. Het gaat om hoe je het formuleert.' } ] },
           { situation: 'Concept: "vos is de leider van het netwerk."', choices: [
             { label: '"vos is de leider (bekend)"', good: false, feedback: 'Niets in de bronnen laat een leidersrol rechtstreeks zien.' },
             { label: '"vos stuurt de meeste berichten (bekend, 12 van 40); of hij leiding geeft, is een aanname"', good: true, feedback: 'Activiteit is een waarneming, leiderschap een interpretatie. Je houdt ze uit elkaar.' },
             { label: '"vos is de leider, want hij heeft de hoogste betweenness"', good: false, feedback: 'Dat klopt niet: uil heeft de hoogste betweenness. En betweenness is ook geen bewijs van leiderschap.' } ] },
-          { situation: 'Concept: "uil is alleen actief tussen 02:00 en 06:00 Nederlandse tijd, dus hij woont in Azië."', choices: [
-            { label: '"uil is vooral \'s nachts Nederlandse tijd actief; dat past bij een andere tijdzone, maar ook bij nachtwerk of een ander ritme (aanname)"', good: true, feedback: 'Een ritme is een aanwijzing. Je noemt de alternatieven en labelt het als aanname.' },
+          { situation: 'Concept: "specht (uit een ander onderzoek) is alleen actief tussen 02:00 en 06:00 Nederlandse tijd, dus hij woont in Azië."', choices: [
+            { label: '"specht is vooral \'s nachts Nederlandse tijd actief; dat past bij een andere tijdzone, maar ook bij nachtwerk of een ander ritme (aanname)"', good: true, feedback: 'Een ritme is een aanwijzing. Je noemt de alternatieven en labelt het als aanname.' },
             { label: 'Laten staan; tijdzones liegen niet', good: false, feedback: 'Mensen werken \'s nachts, plannen berichten in of gebruiken een server elders. Het ritme bewijst geen woonplaats.' },
             { label: 'Vervangen door "uil woont in Nederland"', good: false, feedback: 'Daar is evenmin bewijs voor. Je ruilt de ene onderbouwde gok in voor een andere.' } ] },
           { situation: 'Concept, laatste alinea: "Advies: houd eerst vos aan, want hij is het actiefst."', choices: [
@@ -349,7 +349,7 @@ vos    uil     betaling  0,4 BTC  12-04-2026     blockchainanalyse</code></pre>
           wrong: { 0: 'Het zegt niets over wat hij in het netwerk doet.', 1: 'Het gaat niet om wat hij kan, maar om hoe voorzichtig hij is.', 3: 'De aansluiting is een middel, maar het punt is dat hij zijn voorzorg liet varen.' },
           why: 'OPSEC-fouten zijn vaak de eerste ingang voor identificatie, maar alleen als je ze apart vastlegt.',
           explain: 'Een OPSEC-fout: de alias liet één keer zijn eigen verbinding zien.' },
-        { q: 'Welke formulering is een waarneming en geen interpretatie?', options: ['"reiger is de financieel brein van de groep"', '"reiger stuurde in april 8 berichten, waarvan 4 aan meeuw"', '"reiger is gevaarlijk"', '"reiger is waarschijnlijk de oudste van de groep"'], answer: 1,
+        { q: 'Welke formulering is een waarneming en geen interpretatie?', options: ['"reiger is het financiële brein van de groep"', '"reiger stuurde in april 8 berichten, waarvan 4 aan meeuw"', '"reiger is gevaarlijk"', '"reiger is waarschijnlijk de oudste van de groep"'], answer: 1,
           wrong: { 0: 'Een rol als "brein" is een interpretatie die je moet onderbouwen.', 2: 'Een oordeel, geen waarneming.', 3: 'Een aanname zonder zichtbare onderbouwing.' },
           explain: 'Een telling uit een bron met een periode erbij is een waarneming.' },
       ],
@@ -406,7 +406,7 @@ vos    uil     betaling  0,4 BTC  12-04-2026     blockchainanalyse</code></pre>
           hints: ['Zoek de alias die in alle drie de onderzoeken terugkomt, direct of via een selector.', 'Let op de wallet in onderzoek Heide en Kade en het contact in de forumprofielen.', 'Het is de crypter met negen berichten.'],
           wrong: { 'vos': 'vos stuurt de meeste berichten, maar zit alleen in onderzoek Lantaarn. Zijn wegvallen raakt één cel.', 'reiger': 'reiger zit alleen in Lantaarn en is makkelijk te vervangen: minstens twintig anderen bieden hetzelfde aan.', 'mus': 'mus zit alleen in onderzoek Heide.', 'specht': 'specht zit alleen in onderzoek Kade.' },
           why: 'De sterkste interventie raakt een schaarse facilitator die meerdere groepen verbindt, niet de luidste deelnemer van één groep.',
-          explain: 'ijsvogel komt in Lantaarn voor via de chat, en in Heide en Kade via wallet bc1q-fictief-ijs-01, die ook in zijn forumprofiel staat. Hij levert een schaarse dienst (crypter, maximaal vijf klanten) aan drie groepen: lage degree, hoge betweenness, moeilijk te vervangen.' },
+          explain: 'ijsvogel wordt in Lantaarn genoemd in de chat van vos (een bewering, nog geen waargenomen contact), en in Heide en Kade via wallet bc1q-fictief-ijs-01, die ook in zijn forumprofiel staat. Hij levert een schaarse dienst (crypter, maximaal vijf klanten) aan drie groepen: lage degree, hoge betweenness, moeilijk te vervangen.' },
         { q: 'Welke selector verbindt de optredens in onderzoek Heide en Kade met het forumprofiel?', answer: ['bc1q-fictief-ijs-01', 'de wallet', 'wallet'],
           hints: ['Zoek een gegeven dat letterlijk in drie fragmenten staat.', 'Het is geen alias maar een cryptoadres.', 'Het begint met bc1q.'],
           explain: 'Hetzelfde wallet-adres staat in Heide, Kade en het forumprofiel. Dat maakt de koppeling sterker dan alleen een gelijke alias.' },
