@@ -18,7 +18,7 @@ const LS = 'nineminds-cyber-dojo-v1';
 
   await open('#/routes');
   const routes = await page.evaluate(() => window.CS.routes.map((r) => r.id));
-  ok('Vijf leerroutes op de routepagina', routes.length === 5 && (await page.$$('.pathrow')).length === 5);
+  ok('Zes leerroutes op de routepagina', routes.length === 6 && (await page.$$('.pathrow')).length === 6);
   for (const id of routes) {
     await open('#/route/' + id);
     const rows = (await page.$$('.spine .roomrow')).length;
