@@ -1,0 +1,2498 @@
+tijd,server,operator,ip,doelbank,actie
+2026-10-24T08:49:31+02:00,B,Lantaarn,192.0.2.45,polderbank,inlog
+2026-10-16T18:05:59+02:00,B,Spinner,203.0.113.77,polderbank,export
+2026-10-20T17:04:05+02:00,B,Spinner,203.0.113.77,polderbank,inlog
+2026-10-20T14:44:52Z,A,spinner ,198.51.100.14,Neder Bank,inlog
+2026-10-15T14:38:31Z,A,Lantaarn,192.0.2.45,NederBank,inlog
+2026-10-23T06:00:39Z,A,spinner ,203.0.113.77,Neder Bank,buit_bekeken
+2026-10-20T09:57:23+02:00,B,lantaarn,192.0.2.45,Duinkrediet,export
+2026-10-18T14:35:05Z,A,kever,198.51.100.61,polderbank,buit_bekeken
+2026-10-20T11:18:55Z,A,MOTTE,198.51.100.30,nederbank,buit_bekeken
+2026-10-25T09:47:12Z,A,spinner ,203.0.113.77,NederBank,buit_bekeken
+2026-10-20T16:13:27Z,A,spinner ,203.0.113.77,NederBank,inlog
+2026-10-15T09:32:09Z,A,MOTTE,203.0.113.21,Polderbank,inlog
+2026-10-19T11:27:17Z,A,dwaallicht,192.0.2.88,NederBank,inlog
+2026-10-12T15:30:34+02:00,B,motte,203.0.113.21,NederBank,inlog
+2026-10-13T12:09:17Z,A,motte,198.51.100.30,Neder Bank,inlog
+2026-10-22T09:42:52Z,A,motte,198.51.100.30,polderbank,inlog
+2026-10-27T14:56:22Z,A,Lantaarn,192.0.2.45,NEDERBANK,inlog
+2026-10-13T11:19:48Z,A,Spinner,203.0.113.77,Duinkrediet,inlog
+2026-10-20T07:46:07Z,A,lantaarn,192.0.2.45,polderbank,inlog
+2026-10-21T16:43:43Z,A,Lantaarn,203.0.113.90,Duinkrediet,inlog
+2026-10-20T09:11:19+02:00,B,Lantaarn,203.0.113.90,Neder Bank,inlog
+2026-10-27T16:23:47+01:00,B,Lantaarn,203.0.113.90,Duinkrediet,inlog
+2026-10-18T22:20:36Z,A,Lantaarn,192.0.2.45,Polderbank,inlog
+2026-10-13T08:43:05+02:00,B,spinner ,203.0.113.77,Duinkrediet,export
+2026-10-30T13:12:29Z,A,spinner ,198.51.100.14,NEDERBANK,buit_bekeken
+2026-10-19T10:57:26Z,A,motte,198.51.100.30,NederBank,buit_bekeken
+2026-10-12T20:35:44+02:00,B,spinner,198.51.100.14,Duinkrediet,inlog
+2026-10-20T00:21:29+02:00,B,motte,198.51.100.30,polderbank,inlog
+2026-10-16T07:23:21Z,A,spinner,198.51.100.14,polderbank,export
+2026-10-15T13:54:25+02:00,B,spinner ,198.51.100.14,NEDERBANK,inlog
+2026-10-15T11:52:40+02:00,B,motte,203.0.113.21,nederbank,inlog
+2026-10-27T10:57:08Z,A,Lantaarn,192.0.2.45,Duinkrediet,inlog
+2026-10-30T19:38:06Z,A,Lantaarn,203.0.113.90,Polderbank,inlog
+2026-10-17T13:18:03Z,A,dwaallicht,192.0.2.88,Duinkrediet,inlog
+2026-10-20T09:11:14+02:00,B,kever,198.51.100.61,NEDERBANK,inlog
+2026-10-28T06:23:20Z,A,kever,198.51.100.61,NEDERBANK,inlog
+2026-10-24T00:47:10+02:00,B,lantaarn,203.0.113.90,NEDERBANK,inlog
+2026-10-28T11:37:38Z,A,Spinner,198.51.100.14,Polderbank,buit_bekeken
+2026-10-26T12:10:48+01:00,B,MOTTE,198.51.100.30,Polderbank,inlog
+2026-10-14T09:13:32+02:00,B,motte,198.51.100.30,Duinkrediet,inlog
+2026-10-14T08:45:44+02:00,B,kever,198.51.100.61,Duinkrediet,buit_bekeken
+2026-10-17T20:15:16Z,A,lantaarn,203.0.113.90,Polderbank,inlog
+2026-10-20T20:45:55Z,A,Lantaarn,203.0.113.90,NEDERBANK,inlog
+2026-10-24T21:19:15+02:00,B,motte,198.51.100.30,Duinkrediet,inlog
+2026-10-21T17:25:58+02:00,B,spinner ,198.51.100.14,nederbank,export
+2026-10-12T09:30:32Z,A,MOTTE,203.0.113.21,Duinkrediet,inlog
+2026-10-18T14:08:09+02:00,B,motte,203.0.113.21,Polderbank,inlog
+2026-10-29T17:18:07+01:00,B,dwaallicht,192.0.2.88,Duinkrediet,inlog
+2026-10-18T10:40:26+02:00,B,lantaarn,192.0.2.45,Duinkrediet,buit_bekeken
+2026-10-31T14:25:07Z,A,Spinner,203.0.113.77,NEDERBANK,export
+2026-10-27T10:00:38Z,A,motte,203.0.113.21,polderbank,inlog
+2026-10-31T15:17:52Z,A,lantaarn,203.0.113.90,Polderbank,inlog
+2026-10-18T15:05:51+02:00,B,MOTTE,198.51.100.30,nederbank,inlog
+2026-10-29T08:41:21Z,A,MOTTE,198.51.100.30,Duinkrediet,inlog
+2026-10-22T09:57:14+02:00,B,motte,198.51.100.30,polderbank,inlog
+2026-10-14T11:58:07Z,A,Lantaarn,203.0.113.90,NEDERBANK,inlog
+2026-10-19T12:13:27Z,A,spinner,198.51.100.14,Neder Bank,buit_bekeken
+2026-10-25T07:22:58+01:00,B,spinner ,203.0.113.77,Neder Bank,buit_bekeken
+2026-10-29T21:28:28Z,A,MOTTE,203.0.113.21,NEDERBANK,inlog
+2026-10-13T10:45:45+02:00,B,dwaallicht,192.0.2.88,Polderbank,inlog
+2026-10-22T09:16:43+02:00,B,spinner ,198.51.100.14,Duinkrediet,inlog
+2026-10-26T19:35:58+01:00,B,lantaarn,203.0.113.90,nederbank,inlog
+2026-10-20T07:15:58Z,A,dwaallicht,192.0.2.88,nederbank,inlog
+2026-10-21T15:43:02+02:00,B,Spinner,203.0.113.77,polderbank,buit_bekeken
+2026-10-21T14:17:13Z,A,MOTTE,203.0.113.21,Polderbank,inlog
+2026-10-31T10:08:38Z,A,lantaarn,192.0.2.45,Neder Bank,inlog
+2026-10-19T21:29:34+02:00,B,Spinner,198.51.100.14,NederBank,inlog
+2026-10-17T19:02:37+02:00,B,lantaarn,192.0.2.45,Duinkrediet,inlog
+2026-10-23T15:31:20Z,A,spinner ,203.0.113.77,polderbank,inlog
+2026-10-20T07:11:54Z,A,lantaarn,203.0.113.90,polderbank,inlog
+2026-10-20T07:22:00Z,A,MOTTE,203.0.113.21,Polderbank,export
+2026-10-20T16:45:50Z,A,Lantaarn,203.0.113.90,nederbank,buit_bekeken
+2026-10-16T12:24:34Z,A,Lantaarn,192.0.2.45,NEDERBANK,buit_bekeken
+2026-10-14T16:21:52Z,A,dwaallicht,192.0.2.88,polderbank,inlog
+2026-10-22T13:08:56Z,A,lantaarn,192.0.2.45,nederbank,buit_bekeken
+2026-10-16T16:48:27+02:00,B,motte,203.0.113.21,nederbank,inlog
+2026-10-27T15:22:04+01:00,B,lantaarn,192.0.2.45,Duinkrediet,export
+2026-10-23T00:48:38+02:00,B,kever,198.51.100.61,NederBank,inlog
+2026-10-21T13:39:05Z,A,lantaarn,192.0.2.45,NEDERBANK,buit_bekeken
+2026-10-16T18:47:37+02:00,B,motte,198.51.100.30,Neder Bank,inlog
+2026-10-20T09:03:38+02:00,B,kever,198.51.100.61,polderbank,inlog
+2026-10-21T17:48:30Z,A,dwaallicht,192.0.2.88,Duinkrediet,inlog
+2026-10-16T13:41:10Z,A,dwaallicht,192.0.2.88,Neder Bank,buit_bekeken
+2026-10-14T22:31:34+02:00,B,spinner,203.0.113.77,polderbank,buit_bekeken
+2026-10-24T16:42:08+02:00,B,dwaallicht,192.0.2.88,nederbank,buit_bekeken
+2026-10-23T03:18:49+02:00,B,MOTTE,198.51.100.30,Duinkrediet,export
+2026-10-19T19:31:14Z,A,Lantaarn,192.0.2.45,Neder Bank,buit_bekeken
+2026-10-20T09:01:13Z,A,Spinner,198.51.100.14,NederBank,inlog
+2026-10-15T12:41:48Z,A,motte,203.0.113.21,nederbank,buit_bekeken
+2026-10-20T22:42:21+02:00,B,motte,203.0.113.21,NEDERBANK,inlog
+2026-10-16T10:02:02+02:00,B,motte,198.51.100.30,Polderbank,inlog
+2026-10-28T08:58:30Z,A,Spinner,203.0.113.77,Duinkrediet,buit_bekeken
+2026-10-20T19:54:37Z,A,spinner,203.0.113.77,NederBank,inlog
+2026-10-29T13:36:18Z,A,spinner,203.0.113.77,NEDERBANK,inlog
+2026-10-30T13:37:25Z,A,lantaarn,203.0.113.90,Neder Bank,inlog
+2026-10-31T20:01:09+01:00,B,lantaarn,192.0.2.45,Duinkrediet,inlog
+2026-10-24T08:24:55+02:00,B,spinner ,198.51.100.14,Duinkrediet,inlog
+2026-10-24T06:49:31Z,A,Lantaarn,192.0.2.45,polderbank,inlog
+2026-10-16T07:48:31Z,A,spinner ,203.0.113.77,NederBank,inlog
+2026-10-19T10:36:19Z,A,Spinner,198.51.100.14,Polderbank,buit_bekeken
+2026-10-20T08:13:47Z,A,spinner ,203.0.113.77,nederbank,inlog
+2026-10-25T14:04:20Z,A,lantaarn,203.0.113.90,NEDERBANK,inlog
+2026-10-12T02:37:51Z,A,spinner ,203.0.113.77,NEDERBANK,inlog
+2026-10-28T07:21:25+01:00,B,spinner,198.51.100.14,Neder Bank,inlog
+2026-10-27T09:12:38Z,A,motte,198.51.100.30,Neder Bank,buit_bekeken
+2026-10-19T08:07:43+02:00,B,motte,198.51.100.30,polderbank,inlog
+2026-10-27T13:46:19Z,A,Spinner,203.0.113.77,nederbank,inlog
+2026-10-14T18:12:16Z,A,kever,198.51.100.61,NEDERBANK,inlog
+2026-10-18T06:02:21Z,A,lantaarn,203.0.113.90,Duinkrediet,inlog
+2026-10-18T18:11:55Z,A,Lantaarn,192.0.2.45,Neder Bank,inlog
+2026-10-26T07:10:28Z,A,MOTTE,198.51.100.30,nederbank,inlog
+2026-10-27T05:29:46Z,A,motte,198.51.100.30,polderbank,inlog
+2026-10-20T09:03:09+02:00,B,motte,198.51.100.30,Polderbank,export
+2026-10-29T18:52:47Z,A,dwaallicht,192.0.2.88,Neder Bank,inlog
+2026-10-23T17:04:08+02:00,B,dwaallicht,192.0.2.88,Neder Bank,inlog
+2026-10-17T07:35:58Z,A,spinner ,203.0.113.77,Polderbank,inlog
+2026-10-23T00:45:35+02:00,B,spinner ,198.51.100.14,Duinkrediet,inlog
+2026-10-23T15:24:01+02:00,B,MOTTE,203.0.113.21,Neder Bank,export
+2026-10-30T17:33:39+01:00,B,MOTTE,203.0.113.21,polderbank,buit_bekeken
+2026-10-30T22:06:51Z,A,Lantaarn,203.0.113.90,NederBank,inlog
+2026-10-20T22:28:10+02:00,B,motte,198.51.100.30,NEDERBANK,inlog
+2026-10-25T13:04:32+01:00,B,lantaarn,203.0.113.90,Polderbank,export
+2026-10-20T10:12:57Z,A,motte,203.0.113.21,NEDERBANK,inlog
+2026-10-30T08:44:14+01:00,B,dwaallicht,192.0.2.88,Polderbank,inlog
+2026-10-22T19:56:20Z,A,motte,203.0.113.21,nederbank,inlog
+2026-10-14T10:25:33+02:00,B,MOTTE,203.0.113.21,NederBank,inlog
+2026-10-12T17:17:47+02:00,B,lantaarn,192.0.2.45,Duinkrediet,inlog
+2026-10-22T18:31:45Z,A,MOTTE,198.51.100.30,Neder Bank,inlog
+2026-10-26T07:09:25Z,A,spinner ,198.51.100.14,Polderbank,inlog
+2026-10-13T12:21:11Z,A,lantaarn,203.0.113.90,NederBank,inlog
+2026-10-15T11:12:03Z,A,kever,198.51.100.61,Polderbank,buit_bekeken
+2026-10-26T13:19:55Z,A,dwaallicht,192.0.2.88,polderbank,inlog
+2026-10-15T14:09:46+02:00,B,spinner,203.0.113.77,NEDERBANK,inlog
+2026-10-20T09:07:01+02:00,B,Spinner,203.0.113.77,NEDERBANK,buit_bekeken
+2026-10-29T19:45:07Z,A,motte,203.0.113.21,nederbank,inlog
+2026-10-20T09:45:37+02:00,B,spinner,203.0.113.77,Duinkrediet,buit_bekeken
+2026-10-20T07:53:02Z,A,kever,198.51.100.61,NederBank,buit_bekeken
+2026-10-31T15:24:46Z,A,kever,198.51.100.61,nederbank,inlog
+2026-10-25T16:03:21+01:00,B,motte,198.51.100.30,polderbank,export
+2026-10-20T07:00:35Z,A,MOTTE,198.51.100.30,Duinkrediet,inlog
+2026-10-14T16:44:01Z,A,dwaallicht,192.0.2.88,Duinkrediet,inlog
+2026-10-12T11:11:21Z,A,Spinner,203.0.113.77,polderbank,buit_bekeken
+2026-10-20T13:23:53+02:00,B,lantaarn,203.0.113.90,nederbank,inlog
+2026-10-26T05:41:45+01:00,B,lantaarn,192.0.2.45,Neder Bank,buit_bekeken
+2026-10-25T15:59:23Z,A,MOTTE,203.0.113.21,Duinkrediet,buit_bekeken
+2026-10-20T08:20:27Z,A,dwaallicht,192.0.2.88,Neder Bank,inlog
+2026-10-29T19:04:21Z,A,lantaarn,192.0.2.45,Polderbank,inlog
+2026-10-22T12:58:10+02:00,B,motte,198.51.100.30,polderbank,inlog
+2026-10-14T20:25:50Z,A,MOTTE,203.0.113.21,NederBank,inlog
+2026-10-31T14:51:45Z,A,spinner ,198.51.100.14,NederBank,inlog
+2026-10-31T18:18:03Z,A,kever,198.51.100.61,Duinkrediet,inlog
+2026-10-27T16:24:29+01:00,B,Lantaarn,192.0.2.45,nederbank,inlog
+2026-10-14T14:07:52Z,A,MOTTE,203.0.113.21,polderbank,export
+2026-10-23T08:37:07+02:00,B,MOTTE,203.0.113.21,Duinkrediet,buit_bekeken
+2026-10-30T12:33:50+01:00,B,Spinner,203.0.113.77,Neder Bank,inlog
+2026-10-27T16:59:11Z,A,Spinner,203.0.113.77,NederBank,inlog
+2026-10-31T01:17:47+01:00,B,dwaallicht,192.0.2.88,nederbank,export
+2026-10-19T13:07:24+02:00,B,motte,198.51.100.30,polderbank,inlog
+2026-10-21T09:07:23Z,A,Spinner,203.0.113.77,NederBank,buit_bekeken
+2026-10-18T16:10:11Z,A,Lantaarn,192.0.2.45,Duinkrediet,inlog
+2026-10-12T08:34:18Z,A,dwaallicht,192.0.2.88,Duinkrediet,inlog
+2026-10-16T10:34:49+02:00,B,dwaallicht,192.0.2.88,nederbank,inlog
+2026-10-26T13:40:24+01:00,B,motte,198.51.100.30,Duinkrediet,inlog
+2026-10-30T14:57:17Z,A,motte,203.0.113.21,NederBank,buit_bekeken
+2026-10-18T06:18:47Z,A,MOTTE,198.51.100.30,NederBank,inlog
+2026-10-19T08:52:03Z,A,spinner,198.51.100.14,NEDERBANK,inlog
+2026-10-30T16:29:55Z,A,spinner ,198.51.100.14,NEDERBANK,inlog
+2026-10-18T02:55:24+02:00,B,MOTTE,203.0.113.21,nederbank,inlog
+2026-10-29T05:56:32Z,A,lantaarn,203.0.113.90,Polderbank,inlog
+2026-10-19T20:01:57Z,A,MOTTE,198.51.100.30,NEDERBANK,buit_bekeken
+2026-10-30T10:03:14+01:00,B,dwaallicht,192.0.2.88,Duinkrediet,buit_bekeken
+2026-10-30T07:24:13+01:00,B,motte,198.51.100.30,nederbank,inlog
+2026-10-22T12:14:39Z,A,MOTTE,198.51.100.30,nederbank,inlog
+2026-10-20T09:29:38+02:00,B,MOTTE,203.0.113.21,Polderbank,export
+2026-10-26T18:14:09Z,A,spinner ,203.0.113.77,nederbank,inlog
+2026-10-12T13:45:46+02:00,B,kever,198.51.100.61,Polderbank,inlog
+2026-10-12T11:41:17+02:00,B,dwaallicht,192.0.2.88,nederbank,inlog
+2026-10-22T17:09:24+02:00,B,motte,203.0.113.21,NederBank,inlog
+2026-10-17T14:32:15Z,A,Spinner,198.51.100.14,nederbank,buit_bekeken
+2026-10-20T09:13:26+02:00,B,spinner ,198.51.100.14,Neder Bank,inlog
+2026-10-24T19:36:08Z,A,motte,203.0.113.21,Neder Bank,inlog
+2026-10-14T10:22:44+02:00,B,motte,203.0.113.21,nederbank,inlog
+2026-10-23T09:51:00Z,A,MOTTE,198.51.100.30,Polderbank,inlog
+2026-10-21T16:15:30Z,A,dwaallicht,192.0.2.88,nederbank,inlog
+2026-10-28T10:24:49Z,A,Spinner,198.51.100.14,NEDERBANK,inlog
+2026-10-12T12:58:40+02:00,B,MOTTE,198.51.100.30,Duinkrediet,inlog
+2026-10-28T08:45:38+01:00,B,kever,198.51.100.61,polderbank,export
+2026-10-17T17:23:34Z,A,spinner ,203.0.113.77,Neder Bank,inlog
+2026-10-31T17:18:14+01:00,B,Lantaarn,203.0.113.90,polderbank,inlog
+2026-10-20T07:25:25+02:00,B,dwaallicht,192.0.2.88,nederbank,inlog
+2026-10-31T12:22:15+01:00,B,spinner,198.51.100.14,Neder Bank,inlog
+2026-10-28T09:01:53+01:00,B,MOTTE,203.0.113.21,Polderbank,inlog
+2026-10-28T21:14:12+01:00,B,MOTTE,198.51.100.30,Duinkrediet,inlog
+2026-10-30T23:17:36Z,A,MOTTE,198.51.100.30,Neder Bank,inlog
+2026-10-14T09:27:35+02:00,B,Lantaarn,192.0.2.45,Neder Bank,inlog
+2026-10-25T11:11:42+01:00,B,MOTTE,203.0.113.21,Polderbank,buit_bekeken
+2026-10-29T07:56:01+01:00,B,dwaallicht,192.0.2.88,nederbank,inlog
+2026-10-22T09:09:51+02:00,B,MOTTE,198.51.100.30,Polderbank,inlog
+2026-10-24T12:50:48Z,A,Lantaarn,192.0.2.45,nederbank,buit_bekeken
+2026-10-20T07:12:01Z,A,MOTTE,203.0.113.21,nederbank,inlog
+2026-10-27T06:40:40+01:00,B,motte,198.51.100.30,NEDERBANK,inlog
+2026-10-30T08:55:43Z,A,Lantaarn,203.0.113.90,Duinkrediet,inlog
+2026-10-24T16:07:24+02:00,B,lantaarn,203.0.113.90,Duinkrediet,inlog
+2026-10-24T02:50:37Z,A,dwaallicht,192.0.2.88,NEDERBANK,inlog
+2026-10-16T07:54:26+02:00,B,kever,198.51.100.61,Duinkrediet,inlog
+2026-10-13T09:09:22Z,A,dwaallicht,192.0.2.88,NEDERBANK,inlog
+2026-10-31T13:01:30Z,A,lantaarn,192.0.2.45,polderbank,buit_bekeken
+2026-10-13T19:26:12Z,A,lantaarn,192.0.2.45,NEDERBANK,inlog
+2026-10-24T15:39:39Z,A,MOTTE,198.51.100.30,Duinkrediet,inlog
+2026-10-23T14:33:39+02:00,B,spinner ,203.0.113.77,NEDERBANK,buit_bekeken
+2026-10-27T18:54:06+01:00,B,Spinner,198.51.100.14,Neder Bank,inlog
+2026-10-16T08:45:54+02:00,B,motte,203.0.113.21,NederBank,inlog
+2026-10-26T08:20:39Z,A,spinner,203.0.113.77,Polderbank,inlog
+2026-10-19T09:07:18+02:00,B,MOTTE,198.51.100.30,NEDERBANK,inlog
+2026-10-25T13:23:26+01:00,B,kever,198.51.100.61,Neder Bank,inlog
+2026-10-14T17:32:18+02:00,B,spinner ,203.0.113.77,Neder Bank,inlog
+2026-10-20T09:29:48+02:00,B,spinner ,203.0.113.77,nederbank,inlog
+2026-10-16T16:34:10Z,A,spinner ,203.0.113.77,Polderbank,export
+2026-10-14T04:09:40+02:00,B,MOTTE,203.0.113.21,Duinkrediet,buit_bekeken
+2026-10-16T13:06:21+02:00,B,Lantaarn,192.0.2.45,Polderbank,inlog
+2026-10-26T07:18:49Z,A,Spinner,203.0.113.77,Polderbank,inlog
+2026-10-14T10:20:01+02:00,B,kever,198.51.100.61,polderbank,inlog
+2026-10-29T09:18:25+01:00,B,Lantaarn,203.0.113.90,Neder Bank,inlog
+2026-10-17T13:08:49+02:00,B,lantaarn,192.0.2.45,Polderbank,buit_bekeken
+2026-10-15T21:48:34+02:00,B,dwaallicht,192.0.2.88,Neder Bank,buit_bekeken
+2026-10-20T07:34:30Z,A,dwaallicht,192.0.2.88,NEDERBANK,inlog
+2026-10-16T14:24:34+02:00,B,Lantaarn,192.0.2.45,NEDERBANK,buit_bekeken
+2026-10-31T16:13:47+01:00,B,Lantaarn,192.0.2.45,NederBank,inlog
+2026-10-20T11:42:29+02:00,B,MOTTE,203.0.113.21,NEDERBANK,inlog
+2026-10-12T10:47:07Z,A,dwaallicht,192.0.2.88,Duinkrediet,buit_bekeken
+2026-10-12T18:55:42Z,A,motte,198.51.100.30,polderbank,inlog
+2026-10-31T18:50:26Z,A,dwaallicht,192.0.2.88,polderbank,inlog
+2026-10-20T07:49:35Z,A,lantaarn,192.0.2.45,Duinkrediet,inlog
+2026-10-15T11:03:39+02:00,B,MOTTE,203.0.113.21,NEDERBANK,buit_bekeken
+2026-10-29T07:06:29Z,A,MOTTE,198.51.100.30,Neder Bank,inlog
+2026-10-18T11:47:44Z,A,lantaarn,203.0.113.90,Polderbank,buit_bekeken
+2026-10-30T08:44:37+01:00,B,dwaallicht,192.0.2.88,NederBank,inlog
+2026-10-17T12:41:40+02:00,B,lantaarn,192.0.2.45,Duinkrediet,inlog
+2026-10-21T09:49:11Z,A,kever,198.51.100.61,polderbank,buit_bekeken
+2026-10-23T11:39:25+02:00,B,lantaarn,192.0.2.45,NederBank,inlog
+2026-10-18T16:19:30Z,A,MOTTE,198.51.100.30,polderbank,buit_bekeken
+2026-10-21T15:20:07+02:00,B,kever,198.51.100.61,NederBank,inlog
+2026-10-12T21:59:32+02:00,B,Spinner,203.0.113.77,NEDERBANK,inlog
+2026-10-23T21:33:56Z,A,dwaallicht,192.0.2.88,Duinkrediet,inlog
+2026-10-12T13:23:11+02:00,B,Spinner,203.0.113.77,Duinkrediet,inlog
+2026-10-16T16:42:02Z,A,Spinner,203.0.113.77,NederBank,inlog
+2026-10-21T12:04:15Z,A,Lantaarn,203.0.113.90,NEDERBANK,inlog
+2026-10-31T14:29:27+01:00,B,lantaarn,192.0.2.45,NEDERBANK,buit_bekeken
+2026-10-24T06:12:01Z,A,lantaarn,203.0.113.90,Neder Bank,inlog
+2026-10-14T18:12:16Z,A,kever,198.51.100.61,NEDERBANK,inlog
+2026-10-28T12:52:07+01:00,B,kever,198.51.100.61,Duinkrediet,export
+2026-10-26T08:55:07+01:00,B,MOTTE,198.51.100.30,Duinkrediet,inlog
+2026-10-31T12:10:15+01:00,B,lantaarn,203.0.113.90,nederbank,inlog
+2026-10-12T17:37:36Z,A,lantaarn,192.0.2.45,NEDERBANK,buit_bekeken
+2026-10-31T13:22:51+01:00,B,kever,198.51.100.61,NEDERBANK,inlog
+2026-10-13T09:07:00Z,A,motte,203.0.113.21,polderbank,inlog
+2026-10-28T14:43:14Z,A,MOTTE,198.51.100.30,Polderbank,inlog
+2026-10-30T08:31:41Z,A,Lantaarn,203.0.113.90,Duinkrediet,inlog
+2026-10-25T14:04:09Z,A,dwaallicht,192.0.2.88,polderbank,inlog
+2026-10-20T09:02:57+02:00,B,dwaallicht,192.0.2.88,NederBank,buit_bekeken
+2026-10-27T09:42:08+01:00,B,spinner,203.0.113.77,Polderbank,buit_bekeken
+2026-10-12T10:03:05+02:00,B,motte,203.0.113.21,Polderbank,inlog
+2026-10-14T12:33:32+02:00,B,MOTTE,203.0.113.21,NEDERBANK,inlog
+2026-10-21T15:14:02+02:00,B,dwaallicht,192.0.2.88,NederBank,inlog
+2026-10-30T10:49:01+01:00,B,lantaarn,203.0.113.90,NEDERBANK,inlog
+2026-10-23T18:32:51+02:00,B,lantaarn,203.0.113.90,Neder Bank,export
+2026-10-25T08:51:56Z,A,Lantaarn,203.0.113.90,NEDERBANK,inlog
+2026-10-22T13:15:57Z,A,kever,198.51.100.61,NEDERBANK,buit_bekeken
+2026-10-17T11:34:14+02:00,B,spinner,203.0.113.77,Polderbank,inlog
+2026-10-28T22:54:39Z,A,spinner ,203.0.113.77,Duinkrediet,buit_bekeken
+2026-10-12T13:04:05Z,A,spinner ,203.0.113.77,Duinkrediet,inlog
+2026-10-15T22:31:09Z,A,kever,198.51.100.61,NederBank,inlog
+2026-10-14T05:51:36Z,A,Lantaarn,203.0.113.90,polderbank,inlog
+2026-10-14T16:34:56+02:00,B,Lantaarn,203.0.113.90,Duinkrediet,inlog
+2026-10-25T14:59:55+01:00,B,Spinner,203.0.113.77,NEDERBANK,inlog
+2026-10-18T02:08:21+02:00,B,kever,198.51.100.61,Duinkrediet,export
+2026-10-12T20:02:37Z,A,motte,198.51.100.30,Duinkrediet,inlog
+2026-10-24T12:18:47Z,A,spinner ,203.0.113.77,Polderbank,inlog
+2026-10-12T13:42:42Z,A,MOTTE,203.0.113.21,NederBank,inlog
+2026-10-20T09:11:19+02:00,B,Lantaarn,203.0.113.90,Neder Bank,inlog
+2026-10-20T07:01:18Z,A,motte,198.51.100.30,polderbank,inlog
+2026-10-31T15:20:10+01:00,B,spinner,203.0.113.77,nederbank,export
+2026-10-16T12:23:58+02:00,B,Lantaarn,192.0.2.45,polderbank,inlog
+2026-10-30T14:11:22Z,A,Spinner,203.0.113.77,Duinkrediet,inlog
+2026-10-14T08:09:28+02:00,B,spinner ,203.0.113.77,polderbank,inlog
+2026-10-17T13:41:00Z,A,motte,203.0.113.21,Duinkrediet,buit_bekeken
+2026-10-30T23:14:38+01:00,B,MOTTE,203.0.113.21,NederBank,inlog
+2026-10-28T12:47:03Z,A,Lantaarn,192.0.2.45,polderbank,inlog
+2026-10-17T07:39:16Z,A,dwaallicht,192.0.2.88,Duinkrediet,buit_bekeken
+2026-10-19T09:16:19+02:00,B,dwaallicht,192.0.2.88,NEDERBANK,export
+2026-10-16T12:56:34+02:00,B,kever,198.51.100.61,NEDERBANK,inlog
+2026-10-20T11:20:03+02:00,B,motte,198.51.100.30,NederBank,buit_bekeken
+2026-10-20T12:27:04Z,A,MOTTE,203.0.113.21,nederbank,inlog
+2026-10-19T09:07:18+02:00,B,MOTTE,198.51.100.30,NEDERBANK,inlog
+2026-10-26T16:09:24Z,A,MOTTE,203.0.113.21,Polderbank,buit_bekeken
+2026-10-30T07:58:47Z,A,spinner ,198.51.100.14,Neder Bank,inlog
+2026-10-29T08:37:18Z,A,Spinner,198.51.100.14,Duinkrediet,inlog
+2026-10-21T20:58:24Z,A,MOTTE,198.51.100.30,Duinkrediet,buit_bekeken
+2026-10-20T07:50:15Z,A,Lantaarn,192.0.2.45,NederBank,inlog
+2026-10-21T11:26:38+02:00,B,motte,203.0.113.21,Neder Bank,inlog
+2026-10-16T06:46:15Z,A,Spinner,198.51.100.14,Neder Bank,inlog
+2026-10-28T08:45:23Z,A,MOTTE,203.0.113.21,Duinkrediet,buit_bekeken
+2026-10-13T16:47:06+02:00,B,motte,198.51.100.30,Polderbank,inlog
+2026-10-24T18:37:08Z,A,dwaallicht,192.0.2.88,Polderbank,inlog
+2026-10-15T12:59:24+02:00,B,spinner ,198.51.100.14,NederBank,inlog
+2026-10-15T21:49:28+02:00,B,motte,203.0.113.21,NederBank,export
+2026-10-12T10:39:24+02:00,B,lantaarn,203.0.113.90,nederbank,inlog
+2026-10-20T09:17:03+02:00,B,spinner ,203.0.113.77,Neder Bank,buit_bekeken
+2026-10-23T17:04:08+02:00,B,dwaallicht,192.0.2.88,Neder Bank,inlog
+2026-10-31T08:31:45+01:00,B,spinner,198.51.100.14,nederbank,inlog
+2026-10-23T15:14:48Z,A,MOTTE,203.0.113.21,Duinkrediet,inlog
+2026-10-13T07:27:55Z,A,lantaarn,203.0.113.90,NederBank,export
+2026-10-12T09:35:40Z,A,dwaallicht,192.0.2.88,NEDERBANK,buit_bekeken
+2026-10-18T13:23:56+02:00,B,spinner ,198.51.100.14,Duinkrediet,inlog
+2026-10-29T17:35:22+01:00,B,lantaarn,192.0.2.45,Neder Bank,inlog
+2026-10-25T13:47:19Z,A,motte,203.0.113.21,Polderbank,buit_bekeken
+2026-10-19T16:56:22+02:00,B,spinner,203.0.113.77,nederbank,inlog
+2026-10-23T22:57:54Z,A,kever,198.51.100.61,NederBank,inlog
+2026-10-26T10:05:45+01:00,B,MOTTE,203.0.113.21,polderbank,inlog
+2026-10-19T04:16:56+02:00,B,Lantaarn,203.0.113.90,nederbank,inlog
+2026-10-29T03:56:23Z,A,MOTTE,203.0.113.21,Polderbank,inlog
+2026-10-15T05:13:08Z,A,spinner,198.51.100.14,Duinkrediet,buit_bekeken
+2026-10-21T11:25:54Z,A,lantaarn,203.0.113.90,polderbank,buit_bekeken
+2026-10-18T10:35:33+02:00,B,spinner,198.51.100.14,NEDERBANK,inlog
+2026-10-12T21:10:29+02:00,B,Spinner,203.0.113.77,NederBank,inlog
+2026-10-25T13:39:59Z,A,lantaarn,192.0.2.45,NederBank,inlog
+2026-10-17T03:09:19Z,A,spinner,198.51.100.14,NEDERBANK,inlog
+2026-10-24T11:28:32+02:00,B,motte,203.0.113.21,Polderbank,export
+2026-10-15T12:32:19+02:00,B,dwaallicht,192.0.2.88,NederBank,buit_bekeken
+2026-10-20T09:17:41+02:00,B,dwaallicht,192.0.2.88,NederBank,inlog
+2026-10-12T14:42:10+02:00,B,motte,198.51.100.30,NederBank,buit_bekeken
+2026-10-25T17:37:09+01:00,B,Lantaarn,203.0.113.90,Polderbank,export
+2026-10-25T08:56:55Z,A,dwaallicht,192.0.2.88,Polderbank,inlog
+2026-10-22T17:54:31+02:00,B,spinner,198.51.100.14,Duinkrediet,inlog
+2026-10-20T09:45:40+02:00,B,spinner,198.51.100.14,nederbank,export
+2026-10-25T14:24:13Z,A,MOTTE,198.51.100.30,Polderbank,buit_bekeken
+2026-10-22T06:10:24+02:00,B,Spinner,198.51.100.14,Duinkrediet,buit_bekeken
+2026-10-17T10:30:11+02:00,B,motte,198.51.100.30,polderbank,inlog
+2026-10-18T09:09:12+02:00,B,Spinner,198.51.100.14,NederBank,buit_bekeken
+2026-10-19T07:37:05Z,A,motte,203.0.113.21,Duinkrediet,inlog
+2026-10-30T21:01:50Z,A,Spinner,203.0.113.77,NederBank,inlog
+2026-10-14T14:17:14+02:00,B,motte,198.51.100.30,Duinkrediet,inlog
+2026-10-21T09:13:19+02:00,B,kever,198.51.100.61,polderbank,inlog
+2026-10-23T16:54:28Z,A,Spinner,198.51.100.14,nederbank,inlog
+2026-10-12T14:57:00+02:00,B,MOTTE,203.0.113.21,Polderbank,buit_bekeken
+2026-10-31T09:12:51Z,A,motte,198.51.100.30,Duinkrediet,inlog
+2026-10-13T09:55:29Z,A,motte,203.0.113.21,nederbank,inlog
+2026-10-20T13:27:49Z,A,spinner ,198.51.100.14,Duinkrediet,buit_bekeken
+2026-10-31T14:26:42+01:00,B,Spinner,198.51.100.14,Polderbank,export
+2026-10-21T09:10:01+02:00,B,motte,203.0.113.21,NederBank,buit_bekeken
+2026-10-23T13:30:07+02:00,B,dwaallicht,192.0.2.88,NEDERBANK,inlog
+2026-10-15T08:22:34+02:00,B,Spinner,203.0.113.77,NederBank,inlog
+2026-10-12T14:08:31Z,A,MOTTE,198.51.100.30,NEDERBANK,export
+2026-10-27T09:33:37Z,A,dwaallicht,192.0.2.88,polderbank,inlog
+2026-10-22T18:55:08Z,A,lantaarn,203.0.113.90,polderbank,inlog
+2026-10-25T12:19:06Z,A,MOTTE,198.51.100.30,Polderbank,inlog
+2026-10-27T10:06:11+01:00,B,motte,203.0.113.21,Duinkrediet,buit_bekeken
+2026-10-26T13:59:52+01:00,B,spinner,198.51.100.14,Duinkrediet,inlog
+2026-10-13T10:29:11Z,A,spinner ,198.51.100.14,Neder Bank,inlog
+2026-10-27T18:22:05+01:00,B,MOTTE,203.0.113.21,NederBank,inlog
+2026-10-30T09:48:08Z,A,Spinner,198.51.100.14,Duinkrediet,inlog
+2026-10-29T16:48:07+01:00,B,MOTTE,198.51.100.30,NEDERBANK,export
+2026-10-26T16:14:08+01:00,B,MOTTE,198.51.100.30,NEDERBANK,inlog
+2026-10-25T14:05:10+01:00,B,MOTTE,203.0.113.21,polderbank,inlog
+2026-10-24T12:02:55+02:00,B,dwaallicht,192.0.2.88,nederbank,buit_bekeken
+2026-10-20T09:33:03+02:00,B,spinner ,198.51.100.14,polderbank,buit_bekeken
+2026-10-30T12:10:11+01:00,B,Lantaarn,203.0.113.90,NEDERBANK,export
+2026-10-25T13:45:45Z,A,MOTTE,203.0.113.21,NEDERBANK,inlog
+2026-10-19T17:59:15+02:00,B,Spinner,198.51.100.14,nederbank,buit_bekeken
+2026-10-16T12:57:54Z,A,motte,198.51.100.30,nederbank,inlog
+2026-10-21T09:37:27Z,A,Lantaarn,192.0.2.45,nederbank,inlog
+2026-10-15T10:38:28Z,A,dwaallicht,192.0.2.88,polderbank,inlog
+2026-10-23T16:07:23Z,A,spinner,203.0.113.77,polderbank,buit_bekeken
+2026-10-20T06:12:40+02:00,B,spinner ,198.51.100.14,Duinkrediet,buit_bekeken
+2026-10-25T08:55:18Z,A,dwaallicht,192.0.2.88,Neder Bank,inlog
+2026-10-20T07:43:55Z,A,dwaallicht,192.0.2.88,NEDERBANK,inlog
+2026-10-27T08:57:10+01:00,B,Spinner,198.51.100.14,Duinkrediet,inlog
+2026-10-14T17:31:16+02:00,B,lantaarn,192.0.2.45,nederbank,buit_bekeken
+2026-10-30T17:25:37Z,A,motte,203.0.113.21,Duinkrediet,export
+2026-10-29T14:52:35+01:00,B,spinner,198.51.100.14,NederBank,inlog
+2026-10-19T14:54:09Z,A,MOTTE,198.51.100.30,nederbank,inlog
+2026-10-22T10:21:18Z,A,Lantaarn,203.0.113.90,Neder Bank,inlog
+2026-10-27T11:48:55+01:00,B,dwaallicht,192.0.2.88,polderbank,buit_bekeken
+2026-10-24T10:34:58+02:00,B,lantaarn,192.0.2.45,NEDERBANK,buit_bekeken
+2026-10-21T14:05:50+02:00,B,spinner,198.51.100.14,Duinkrediet,inlog
+2026-10-23T23:45:01Z,A,motte,198.51.100.30,Neder Bank,buit_bekeken
+2026-10-27T05:29:46Z,A,motte,198.51.100.30,polderbank,inlog
+2026-10-19T20:40:44Z,A,Lantaarn,192.0.2.45,Neder Bank,inlog
+2026-10-16T07:22:37Z,A,spinner ,203.0.113.77,NederBank,export
+2026-10-31T06:47:51+01:00,B,Lantaarn,192.0.2.45,NEDERBANK,inlog
+2026-10-14T09:31:57Z,A,motte,198.51.100.30,polderbank,inlog
+2026-10-21T07:03:21+02:00,B,motte,203.0.113.21,Neder Bank,buit_bekeken
+2026-10-13T07:38:26Z,A,spinner ,203.0.113.77,polderbank,inlog
+2026-10-23T14:10:54+02:00,B,motte,203.0.113.21,Neder Bank,buit_bekeken
+2026-10-22T08:01:11Z,A,spinner ,203.0.113.77,Polderbank,inlog
+2026-10-28T13:59:15Z,A,dwaallicht,192.0.2.88,nederbank,inlog
+2026-10-22T20:47:05+02:00,B,Spinner,198.51.100.14,Polderbank,inlog
+2026-10-21T14:31:30+02:00,B,spinner,198.51.100.14,polderbank,inlog
+2026-10-15T05:13:08Z,A,spinner,198.51.100.14,Duinkrediet,buit_bekeken
+2026-10-24T14:44:23+02:00,B,Spinner,203.0.113.77,NEDERBANK,buit_bekeken
+2026-10-24T08:44:53Z,A,dwaallicht,192.0.2.88,Duinkrediet,inlog
+2026-10-25T07:21:13+01:00,B,spinner ,203.0.113.77,Duinkrediet,buit_bekeken
+2026-10-18T11:35:15Z,A,Lantaarn,192.0.2.45,nederbank,inlog
+2026-10-21T17:32:48+02:00,B,motte,203.0.113.21,polderbank,buit_bekeken
+2026-10-27T08:10:52Z,A,motte,203.0.113.21,Polderbank,export
+2026-10-17T18:35:32Z,A,Lantaarn,203.0.113.90,polderbank,inlog
+2026-10-13T13:39:34Z,A,spinner ,198.51.100.14,nederbank,buit_bekeken
+2026-10-24T09:29:55+02:00,B,Lantaarn,203.0.113.90,NEDERBANK,buit_bekeken
+2026-10-23T04:38:24Z,A,MOTTE,203.0.113.21,polderbank,buit_bekeken
+2026-10-22T05:19:49+02:00,B,kever,198.51.100.61,Polderbank,inlog
+2026-10-21T15:13:12+02:00,B,spinner,203.0.113.77,polderbank,inlog
+2026-10-28T06:03:48Z,A,dwaallicht,192.0.2.88,polderbank,inlog
+2026-10-17T14:50:01Z,A,kever,198.51.100.61,nederbank,buit_bekeken
+2026-10-30T09:51:42+01:00,B,MOTTE,203.0.113.21,polderbank,inlog
+2026-10-13T11:43:54+02:00,B,motte,198.51.100.30,NEDERBANK,inlog
+2026-10-31T12:13:10+01:00,B,spinner ,198.51.100.14,Neder Bank,inlog
+2026-10-16T03:21:35+02:00,B,dwaallicht,192.0.2.88,Neder Bank,inlog
+2026-10-20T07:44:07Z,A,dwaallicht,192.0.2.88,NEDERBANK,inlog
+2026-10-26T20:35:02+01:00,B,Lantaarn,203.0.113.90,Duinkrediet,inlog
+2026-10-21T20:30:45Z,A,Lantaarn,203.0.113.90,Duinkrediet,inlog
+2026-10-25T09:08:19Z,A,Spinner,203.0.113.77,polderbank,inlog
+2026-10-20T10:01:05+02:00,B,kever,198.51.100.61,polderbank,inlog
+2026-10-26T07:42:13+01:00,B,lantaarn,192.0.2.45,polderbank,buit_bekeken
+2026-10-31T10:29:07+01:00,B,motte,203.0.113.21,Duinkrediet,inlog
+2026-10-12T20:35:44+02:00,B,spinner,198.51.100.14,Duinkrediet,inlog
+2026-10-20T09:48:02+02:00,B,spinner ,203.0.113.77,Polderbank,buit_bekeken
+2026-10-18T22:31:14+02:00,B,kever,198.51.100.61,Duinkrediet,inlog
+2026-10-23T22:37:06+02:00,B,dwaallicht,192.0.2.88,nederbank,inlog
+2026-10-17T17:58:37Z,A,spinner,198.51.100.14,polderbank,inlog
+2026-10-18T10:45:09Z,A,motte,198.51.100.30,Polderbank,buit_bekeken
+2026-10-13T13:17:31Z,A,lantaarn,203.0.113.90,Polderbank,inlog
+2026-10-16T16:22:40Z,A,motte,198.51.100.30,polderbank,inlog
+2026-10-24T11:15:39+02:00,B,MOTTE,198.51.100.30,nederbank,buit_bekeken
+2026-10-20T07:47:27Z,A,spinner,203.0.113.77,Polderbank,inlog
+2026-10-18T17:10:51+02:00,B,motte,198.51.100.30,NederBank,inlog
+2026-10-13T04:04:13Z,A,MOTTE,203.0.113.21,Polderbank,buit_bekeken
+2026-10-17T09:24:45+02:00,B,MOTTE,198.51.100.30,Polderbank,inlog
+2026-10-22T19:38:14Z,A,Lantaarn,203.0.113.90,nederbank,inlog
+2026-10-16T15:00:48+02:00,B,Spinner,203.0.113.77,nederbank,inlog
+2026-10-23T11:27:13Z,A,kever,198.51.100.61,Duinkrediet,inlog
+2026-10-16T08:28:35Z,A,lantaarn,192.0.2.45,polderbank,inlog
+2026-10-14T14:11:37Z,A,spinner ,203.0.113.77,NederBank,inlog
+2026-10-20T09:30:44+02:00,B,spinner,198.51.100.14,Polderbank,inlog
+2026-10-25T15:35:40+01:00,B,MOTTE,203.0.113.21,Polderbank,inlog
+2026-10-16T08:06:56+02:00,B,Lantaarn,192.0.2.45,NederBank,buit_bekeken
+2026-10-21T18:01:41+02:00,B,spinner ,198.51.100.14,nederbank,inlog
+2026-10-23T20:49:42+02:00,B,spinner ,203.0.113.77,NEDERBANK,buit_bekeken
+2026-10-31T18:36:14+01:00,B,Lantaarn,192.0.2.45,Duinkrediet,inlog
+2026-10-31T11:53:57+01:00,B,kever,198.51.100.61,NEDERBANK,inlog
+2026-10-31T15:36:52Z,A,dwaallicht,192.0.2.88,Neder Bank,inlog
+2026-10-28T11:08:09Z,A,motte,203.0.113.21,Polderbank,inlog
+2026-10-24T10:34:14Z,A,kever,198.51.100.61,Duinkrediet,inlog
+2026-10-24T07:08:05Z,A,MOTTE,198.51.100.30,Duinkrediet,inlog
+2026-10-22T23:34:51Z,A,MOTTE,198.51.100.30,Duinkrediet,inlog
+2026-10-20T16:35:51Z,A,Lantaarn,192.0.2.45,Polderbank,buit_bekeken
+2026-10-13T02:17:58Z,A,dwaallicht,192.0.2.88,nederbank,inlog
+2026-10-25T16:23:49Z,A,spinner,198.51.100.14,NEDERBANK,inlog
+2026-10-23T08:00:14+02:00,B,motte,198.51.100.30,Polderbank,inlog
+2026-10-17T23:42:14Z,A,spinner ,203.0.113.77,NederBank,inlog
+2026-10-12T09:53:10Z,A,dwaallicht,192.0.2.88,Duinkrediet,inlog
+2026-10-29T19:10:15+01:00,B,Spinner,203.0.113.77,nederbank,inlog
+2026-10-13T02:19:13+02:00,B,dwaallicht,192.0.2.88,NEDERBANK,inlog
+2026-10-26T22:47:10Z,A,lantaarn,192.0.2.45,Polderbank,export
+2026-10-26T06:13:33Z,A,Spinner,198.51.100.14,NederBank,inlog
+2026-10-14T21:53:14+02:00,B,dwaallicht,192.0.2.88,NederBank,inlog
+2026-10-16T13:54:03+02:00,B,MOTTE,203.0.113.21,Polderbank,inlog
+2026-10-22T17:46:55Z,A,Spinner,203.0.113.77,Neder Bank,buit_bekeken
+2026-10-21T22:48:23+02:00,B,spinner,198.51.100.14,NEDERBANK,inlog
+2026-10-19T05:05:29Z,A,Spinner,198.51.100.14,nederbank,inlog
+2026-10-26T06:11:29Z,A,lantaarn,203.0.113.90,nederbank,inlog
+2026-10-28T13:36:55+01:00,B,spinner ,203.0.113.77,polderbank,export
+2026-10-13T21:13:10Z,A,kever,198.51.100.61,NEDERBANK,inlog
+2026-10-26T12:44:02Z,A,spinner,198.51.100.14,Polderbank,inlog
+2026-10-12T09:46:34+02:00,B,Lantaarn,203.0.113.90,Duinkrediet,buit_bekeken
+2026-10-12T06:11:01Z,A,MOTTE,203.0.113.21,NederBank,buit_bekeken
+2026-10-20T09:43:40+02:00,B,Spinner,203.0.113.77,NEDERBANK,inlog
+2026-10-26T17:57:24+01:00,B,spinner ,203.0.113.77,Polderbank,inlog
+2026-10-14T13:33:16+02:00,B,spinner,203.0.113.77,NederBank,inlog
+2026-10-22T04:55:24+02:00,B,motte,203.0.113.21,nederbank,inlog
+2026-10-22T10:24:28Z,A,motte,198.51.100.30,nederbank,buit_bekeken
+2026-10-26T07:18:49Z,A,Spinner,203.0.113.77,Polderbank,inlog
+2026-10-23T08:48:18Z,A,kever,198.51.100.61,nederbank,inlog
+2026-10-18T06:28:01Z,A,spinner ,203.0.113.77,Polderbank,inlog
+2026-10-18T21:38:21+02:00,B,spinner,198.51.100.14,Duinkrediet,inlog
+2026-10-28T01:44:09Z,A,spinner,198.51.100.14,Duinkrediet,inlog
+2026-10-14T06:40:38Z,A,MOTTE,203.0.113.21,NEDERBANK,inlog
+2026-10-27T03:25:27Z,A,Spinner,203.0.113.77,NederBank,inlog
+2026-10-22T10:04:24+02:00,B,Spinner,203.0.113.77,Neder Bank,inlog
+2026-10-13T12:01:33+02:00,B,lantaarn,203.0.113.90,Duinkrediet,inlog
+2026-10-19T17:23:38Z,A,kever,198.51.100.61,Polderbank,inlog
+2026-10-18T07:45:36Z,A,lantaarn,203.0.113.90,nederbank,inlog
+2026-10-20T12:55:50Z,A,Spinner,203.0.113.77,polderbank,inlog
+2026-10-13T17:03:19Z,A,Lantaarn,203.0.113.90,NEDERBANK,inlog
+2026-10-16T06:51:36Z,A,kever,198.51.100.61,NEDERBANK,inlog
+2026-10-16T21:29:44+02:00,B,Spinner,203.0.113.77,nederbank,export
+2026-10-12T14:07:27Z,A,Spinner,203.0.113.77,polderbank,inlog
+2026-10-22T07:47:30Z,A,Spinner,198.51.100.14,Duinkrediet,inlog
+2026-10-29T08:36:54+01:00,B,MOTTE,198.51.100.30,polderbank,inlog
+2026-10-31T16:11:13+01:00,B,MOTTE,198.51.100.30,NederBank,inlog
+2026-10-31T06:36:20Z,A,spinner,203.0.113.77,Neder Bank,inlog
+2026-10-24T08:46:25+02:00,B,Spinner,198.51.100.14,Duinkrediet,inlog
+2026-10-24T09:50:39+02:00,B,dwaallicht,192.0.2.88,Duinkrediet,inlog
+2026-10-30T08:18:27+01:00,B,Lantaarn,203.0.113.90,Polderbank,inlog
+2026-10-24T04:35:20+02:00,B,dwaallicht,192.0.2.88,Neder Bank,buit_bekeken
+2026-10-21T16:04:53+02:00,B,kever,198.51.100.61,Polderbank,buit_bekeken
+2026-10-27T10:29:41+01:00,B,MOTTE,198.51.100.30,Neder Bank,export
+2026-10-22T15:21:54+02:00,B,spinner,198.51.100.14,Duinkrediet,inlog
+2026-10-16T16:04:35Z,A,dwaallicht,192.0.2.88,NederBank,inlog
+2026-10-31T18:59:29Z,A,Lantaarn,192.0.2.45,NederBank,inlog
+2026-10-31T11:54:35Z,A,motte,198.51.100.30,Duinkrediet,inlog
+2026-10-28T04:31:05+01:00,B,Spinner,203.0.113.77,polderbank,inlog
+2026-10-19T18:18:34+02:00,B,lantaarn,192.0.2.45,polderbank,inlog
+2026-10-26T10:31:59+01:00,B,Spinner,203.0.113.77,polderbank,buit_bekeken
+2026-10-18T16:29:40+02:00,B,lantaarn,192.0.2.45,Polderbank,inlog
+2026-10-26T09:24:22Z,A,kever,198.51.100.61,NEDERBANK,inlog
+2026-10-20T19:34:42+02:00,B,spinner,198.51.100.14,NederBank,inlog
+2026-10-31T13:53:00+01:00,B,MOTTE,203.0.113.21,Polderbank,export
+2026-10-29T10:37:19+01:00,B,Spinner,203.0.113.77,nederbank,buit_bekeken
+2026-10-26T10:55:12+01:00,B,spinner ,203.0.113.77,Duinkrediet,buit_bekeken
+2026-10-19T23:18:17Z,A,spinner ,203.0.113.77,Polderbank,inlog
+2026-10-19T17:01:38Z,A,Lantaarn,203.0.113.90,NEDERBANK,buit_bekeken
+2026-10-30T18:14:17+01:00,B,Spinner,203.0.113.77,nederbank,inlog
+2026-10-20T07:29:44Z,A,Lantaarn,203.0.113.90,polderbank,inlog
+2026-10-27T15:54:26Z,A,Lantaarn,192.0.2.45,nederbank,inlog
+2026-10-13T12:51:25+02:00,B,spinner ,198.51.100.14,NEDERBANK,buit_bekeken
+2026-10-30T18:48:57Z,A,dwaallicht,192.0.2.88,NEDERBANK,inlog
+2026-10-12T14:15:12Z,A,spinner ,198.51.100.14,NEDERBANK,export
+2026-10-29T15:10:38+01:00,B,Spinner,198.51.100.14,polderbank,inlog
+2026-10-20T07:06:09Z,A,kever,198.51.100.61,NederBank,inlog
+2026-10-24T14:42:16Z,A,motte,203.0.113.21,polderbank,inlog
+2026-10-29T18:09:30+01:00,B,motte,198.51.100.30,Polderbank,inlog
+2026-10-20T09:37:38+02:00,B,Lantaarn,203.0.113.90,Neder Bank,inlog
+2026-10-13T16:49:10+02:00,B,motte,198.51.100.30,NederBank,export
+2026-10-12T13:00:00+02:00,B,dwaallicht,192.0.2.88,Polderbank,buit_bekeken
+2026-10-20T20:16:03+02:00,B,motte,198.51.100.30,NEDERBANK,inlog
+2026-10-14T18:55:56+02:00,B,MOTTE,203.0.113.21,polderbank,inlog
+2026-10-24T00:40:10+02:00,B,Lantaarn,203.0.113.90,Duinkrediet,buit_bekeken
+2026-10-20T07:29:48Z,A,spinner ,203.0.113.77,nederbank,inlog
+2026-10-16T19:16:14+02:00,B,MOTTE,198.51.100.30,Polderbank,export
+2026-10-24T18:40:41+02:00,B,motte,198.51.100.30,NederBank,inlog
+2026-10-26T07:49:37+01:00,B,lantaarn,192.0.2.45,NEDERBANK,inlog
+2026-10-15T23:59:03+02:00,B,MOTTE,203.0.113.21,NEDERBANK,buit_bekeken
+2026-10-20T08:27:32Z,A,motte,198.51.100.30,NederBank,inlog
+2026-10-26T15:41:02Z,A,motte,198.51.100.30,nederbank,inlog
+2026-10-31T01:33:18Z,A,Spinner,198.51.100.14,Neder Bank,inlog
+2026-10-23T19:07:28+02:00,B,motte,203.0.113.21,Polderbank,inlog
+2026-10-28T02:09:51+01:00,B,spinner ,198.51.100.14,Duinkrediet,export
+2026-10-23T08:03:16+02:00,B,motte,203.0.113.21,nederbank,inlog
+2026-10-26T13:43:57+01:00,B,motte,203.0.113.21,polderbank,inlog
+2026-10-19T14:29:29Z,A,kever,198.51.100.61,NEDERBANK,buit_bekeken
+2026-10-17T17:43:26+02:00,B,MOTTE,198.51.100.30,NEDERBANK,inlog
+2026-10-20T09:03:04+02:00,B,Lantaarn,203.0.113.90,Polderbank,inlog
+2026-10-19T23:17:38+02:00,B,spinner ,203.0.113.77,Neder Bank,inlog
+2026-10-29T10:32:30+01:00,B,MOTTE,198.51.100.30,nederbank,inlog
+2026-10-20T07:24:28Z,A,Lantaarn,192.0.2.45,NederBank,inlog
+2026-10-12T14:48:53+02:00,B,motte,203.0.113.21,Duinkrediet,inlog
+2026-10-29T22:27:04+01:00,B,motte,203.0.113.21,Duinkrediet,export
+2026-10-13T11:51:09Z,A,spinner,203.0.113.77,NederBank,inlog
+2026-10-30T13:55:08Z,A,Spinner,198.51.100.14,nederbank,inlog
+2026-10-26T23:47:13+01:00,B,spinner ,198.51.100.14,Duinkrediet,export
+2026-10-30T17:10:21+01:00,B,dwaallicht,192.0.2.88,Duinkrediet,inlog
+2026-10-22T17:21:42Z,A,kever,198.51.100.61,polderbank,inlog
+2026-10-30T16:04:23Z,A,spinner,198.51.100.14,Duinkrediet,inlog
+2026-10-15T11:01:11+02:00,B,Spinner,203.0.113.77,nederbank,inlog
+2026-10-19T16:17:03+02:00,B,spinner,198.51.100.14,NEDERBANK,inlog
+2026-10-19T15:17:13+02:00,B,motte,198.51.100.30,polderbank,export
+2026-10-29T11:58:58+01:00,B,motte,198.51.100.30,NederBank,inlog
+2026-10-20T09:58:01+02:00,B,Spinner,198.51.100.14,NederBank,inlog
+2026-10-12T09:50:16Z,A,Spinner,203.0.113.77,Duinkrediet,inlog
+2026-10-25T14:59:55+01:00,B,Spinner,203.0.113.77,NEDERBANK,inlog
+2026-10-18T07:57:22Z,A,spinner,203.0.113.77,Duinkrediet,inlog
+2026-10-23T17:21:36Z,A,kever,198.51.100.61,NederBank,buit_bekeken
+2026-10-27T20:16:13+01:00,B,motte,198.51.100.30,Polderbank,export
+2026-10-12T01:04:39Z,A,Spinner,203.0.113.77,NederBank,buit_bekeken
+2026-10-20T09:00:25+02:00,B,spinner,203.0.113.77,nederbank,buit_bekeken
+2026-10-21T06:13:57Z,A,motte,198.51.100.30,Duinkrediet,inlog
+2026-10-20T10:01:05+02:00,B,kever,198.51.100.61,polderbank,inlog
+2026-10-16T11:55:19+02:00,B,motte,203.0.113.21,polderbank,inlog
+2026-10-13T13:37:53+02:00,B,Spinner,203.0.113.77,Neder Bank,inlog
+2026-10-26T12:47:54Z,A,lantaarn,203.0.113.90,NederBank,inlog
+2026-10-18T11:57:35Z,A,spinner,203.0.113.77,polderbank,inlog
+2026-10-21T08:51:53+02:00,B,Spinner,198.51.100.14,NEDERBANK,inlog
+2026-10-29T07:47:40+01:00,B,spinner ,203.0.113.77,NEDERBANK,inlog
+2026-10-22T08:21:51Z,A,dwaallicht,192.0.2.88,polderbank,export
+2026-10-31T13:08:56Z,A,dwaallicht,192.0.2.88,nederbank,buit_bekeken
+2026-10-22T16:49:03+02:00,B,dwaallicht,192.0.2.88,nederbank,export
+2026-10-20T17:24:47Z,A,spinner ,203.0.113.77,NEDERBANK,export
+2026-10-15T10:37:32+02:00,B,MOTTE,203.0.113.21,nederbank,inlog
+2026-10-19T13:07:03+02:00,B,lantaarn,192.0.2.45,NederBank,inlog
+2026-10-25T13:48:42+01:00,B,Lantaarn,192.0.2.45,Duinkrediet,buit_bekeken
+2026-10-21T18:07:06Z,A,spinner,203.0.113.77,NEDERBANK,inlog
+2026-10-20T10:59:41+02:00,B,Spinner,198.51.100.14,Neder Bank,inlog
+2026-10-23T10:09:35Z,A,spinner ,203.0.113.77,NederBank,inlog
+2026-10-30T19:14:54+01:00,B,spinner,198.51.100.14,Duinkrediet,inlog
+2026-10-12T23:17:33+02:00,B,Spinner,203.0.113.77,Neder Bank,inlog
+2026-10-23T03:59:32+02:00,B,dwaallicht,192.0.2.88,NederBank,inlog
+2026-10-19T15:26:29Z,A,MOTTE,203.0.113.21,Polderbank,inlog
+2026-10-21T13:39:05Z,A,lantaarn,192.0.2.45,NEDERBANK,buit_bekeken
+2026-10-29T13:32:40+01:00,B,spinner ,198.51.100.14,Duinkrediet,inlog
+2026-10-24T22:11:33Z,A,MOTTE,203.0.113.21,Polderbank,buit_bekeken
+2026-10-16T11:39:05+02:00,B,lantaarn,203.0.113.90,polderbank,inlog
+2026-10-22T02:09:38+02:00,B,kever,198.51.100.61,Neder Bank,inlog
+2026-10-12T17:34:19+02:00,B,motte,203.0.113.21,Duinkrediet,inlog
+2026-10-19T10:37:24+02:00,B,MOTTE,203.0.113.21,Neder Bank,export
+2026-10-30T15:38:16Z,A,Lantaarn,192.0.2.45,Duinkrediet,inlog
+2026-10-24T22:08:39+02:00,B,lantaarn,192.0.2.45,Duinkrediet,buit_bekeken
+2026-10-23T14:23:29+02:00,B,lantaarn,192.0.2.45,polderbank,export
+2026-10-12T10:29:50Z,A,spinner,198.51.100.14,NederBank,inlog
+2026-10-24T11:15:39+02:00,B,MOTTE,198.51.100.30,nederbank,buit_bekeken
+2026-10-30T23:14:38+01:00,B,MOTTE,203.0.113.21,NederBank,inlog
+2026-10-21T12:50:02+02:00,B,spinner ,198.51.100.14,NEDERBANK,inlog
+2026-10-26T19:23:49+01:00,B,motte,203.0.113.21,Duinkrediet,inlog
+2026-10-18T18:42:00+02:00,B,MOTTE,203.0.113.21,Polderbank,inlog
+2026-10-21T12:50:02+02:00,B,spinner ,198.51.100.14,NEDERBANK,inlog
+2026-10-25T17:22:09Z,A,motte,198.51.100.30,polderbank,inlog
+2026-10-19T07:10:28Z,A,spinner ,198.51.100.14,NEDERBANK,inlog
+2026-10-24T22:23:54Z,A,MOTTE,198.51.100.30,NederBank,inlog
+2026-10-12T07:45:53Z,A,MOTTE,198.51.100.30,Neder Bank,inlog
+2026-10-19T14:19:10Z,A,MOTTE,203.0.113.21,NederBank,inlog
+2026-10-23T13:35:24Z,A,Lantaarn,203.0.113.90,NederBank,inlog
+2026-10-23T16:58:43+02:00,B,lantaarn,192.0.2.45,polderbank,inlog
+2026-10-27T12:54:17+01:00,B,motte,203.0.113.21,NederBank,inlog
+2026-10-20T10:16:44Z,A,MOTTE,203.0.113.21,Duinkrediet,buit_bekeken
+2026-10-17T07:36:05+02:00,B,spinner ,198.51.100.14,polderbank,inlog
+2026-10-17T12:32:09Z,A,dwaallicht,192.0.2.88,Polderbank,inlog
+2026-10-16T11:19:26+02:00,B,motte,198.51.100.30,nederbank,buit_bekeken
+2026-10-19T08:45:33+02:00,B,Lantaarn,203.0.113.90,polderbank,buit_bekeken
+2026-10-14T23:15:01Z,A,MOTTE,198.51.100.30,Duinkrediet,inlog
+2026-10-14T17:49:46+02:00,B,dwaallicht,192.0.2.88,NEDERBANK,inlog
+2026-10-26T10:51:31Z,A,lantaarn,192.0.2.45,Duinkrediet,inlog
+2026-10-21T16:47:04+02:00,B,Spinner,198.51.100.14,nederbank,buit_bekeken
+2026-10-24T21:37:08+02:00,B,spinner,203.0.113.77,Polderbank,buit_bekeken
+2026-10-18T12:04:16+02:00,B,motte,198.51.100.30,NEDERBANK,inlog
+2026-10-15T11:56:47+02:00,B,spinner,198.51.100.14,Polderbank,inlog
+2026-10-19T02:03:32+02:00,B,MOTTE,198.51.100.30,Duinkrediet,inlog
+2026-10-19T03:11:44+02:00,B,lantaarn,192.0.2.45,NEDERBANK,buit_bekeken
+2026-10-29T03:49:02Z,A,spinner,198.51.100.14,NEDERBANK,inlog
+2026-10-31T20:28:15+01:00,B,Lantaarn,203.0.113.90,Polderbank,inlog
+2026-10-20T09:49:55+02:00,B,Spinner,203.0.113.77,NEDERBANK,inlog
+2026-10-27T10:55:44Z,A,dwaallicht,192.0.2.88,Polderbank,inlog
+2026-10-30T13:24:56+01:00,B,Spinner,198.51.100.14,NederBank,inlog
+2026-10-30T17:43:32+01:00,B,spinner,198.51.100.14,polderbank,inlog
+2026-10-19T19:40:58Z,A,Lantaarn,203.0.113.90,Polderbank,inlog
+2026-10-12T19:39:41Z,A,dwaallicht,192.0.2.88,polderbank,inlog
+2026-10-16T20:07:37+02:00,B,spinner ,198.51.100.14,Duinkrediet,inlog
+2026-10-20T07:31:10Z,A,Spinner,203.0.113.77,NederBank,buit_bekeken
+2026-10-19T18:53:17+02:00,B,Lantaarn,192.0.2.45,nederbank,inlog
+2026-10-30T06:33:22Z,A,dwaallicht,192.0.2.88,Neder Bank,buit_bekeken
+2026-10-15T18:53:23+02:00,B,Lantaarn,192.0.2.45,Neder Bank,buit_bekeken
+2026-10-12T07:41:51Z,A,Spinner,203.0.113.77,Neder Bank,inlog
+2026-10-25T00:00:29+02:00,B,spinner ,203.0.113.77,polderbank,inlog
+2026-10-31T00:15:34Z,A,spinner ,203.0.113.77,Polderbank,inlog
+2026-10-16T14:25:42+02:00,B,spinner ,198.51.100.14,Neder Bank,inlog
+2026-10-12T19:19:10+02:00,B,motte,198.51.100.30,NEDERBANK,inlog
+2026-10-14T17:21:07+02:00,B,Spinner,203.0.113.77,nederbank,inlog
+2026-10-23T12:09:54Z,A,MOTTE,198.51.100.30,Polderbank,inlog
+2026-10-30T03:41:59+01:00,B,Lantaarn,192.0.2.45,nederbank,inlog
+2026-10-29T13:18:55+01:00,B,spinner,203.0.113.77,Neder Bank,buit_bekeken
+2026-10-30T12:15:20+01:00,B,lantaarn,192.0.2.45,polderbank,inlog
+2026-10-18T07:40:59Z,A,spinner ,203.0.113.77,polderbank,inlog
+2026-10-31T08:34:38Z,A,spinner,198.51.100.14,Duinkrediet,inlog
+2026-10-20T07:08:07Z,A,spinner,203.0.113.77,polderbank,inlog
+2026-10-15T13:04:21+02:00,B,dwaallicht,192.0.2.88,Polderbank,inlog
+2026-10-28T09:29:56Z,A,spinner ,203.0.113.77,Duinkrediet,inlog
+2026-10-15T01:40:10Z,A,spinner,203.0.113.77,nederbank,inlog
+2026-10-29T13:43:00Z,A,Lantaarn,203.0.113.90,Polderbank,inlog
+2026-10-20T07:26:18Z,A,Lantaarn,192.0.2.45,polderbank,inlog
+2026-10-12T07:29:51Z,A,Spinner,198.51.100.14,NederBank,buit_bekeken
+2026-10-20T07:11:06Z,A,MOTTE,203.0.113.21,NederBank,inlog
+2026-10-14T08:24:57Z,A,spinner,203.0.113.77,NederBank,inlog
+2026-10-24T18:40:46+02:00,B,lantaarn,203.0.113.90,Duinkrediet,inlog
+2026-10-19T09:55:27Z,A,Lantaarn,203.0.113.90,Duinkrediet,inlog
+2026-10-22T17:44:38+02:00,B,dwaallicht,192.0.2.88,nederbank,buit_bekeken
+2026-10-19T11:27:53+02:00,B,spinner,203.0.113.77,Duinkrediet,inlog
+2026-10-21T15:37:42+02:00,B,MOTTE,203.0.113.21,polderbank,inlog
+2026-10-26T11:06:02+01:00,B,MOTTE,203.0.113.21,polderbank,inlog
+2026-10-25T09:14:42+01:00,B,Spinner,203.0.113.77,NederBank,buit_bekeken
+2026-10-20T10:44:19+02:00,B,Spinner,203.0.113.77,Neder Bank,buit_bekeken
+2026-10-24T07:53:55Z,A,lantaarn,203.0.113.90,polderbank,inlog
+2026-10-20T11:54:46Z,A,dwaallicht,192.0.2.88,Duinkrediet,inlog
+2026-10-30T11:27:55+01:00,B,MOTTE,203.0.113.21,Duinkrediet,buit_bekeken
+2026-10-26T08:53:33Z,A,spinner,198.51.100.14,polderbank,inlog
+2026-10-28T18:18:51Z,A,Spinner,198.51.100.14,nederbank,inlog
+2026-10-21T23:13:47Z,A,dwaallicht,192.0.2.88,Polderbank,buit_bekeken
+2026-10-13T18:28:21Z,A,dwaallicht,192.0.2.88,nederbank,inlog
+2026-10-14T06:31:49Z,A,kever,198.51.100.61,NEDERBANK,inlog
+2026-10-23T22:20:03+02:00,B,Spinner,203.0.113.77,Duinkrediet,inlog
+2026-10-19T14:11:40Z,A,Spinner,198.51.100.14,NEDERBANK,inlog
+2026-10-31T16:17:56+01:00,B,MOTTE,203.0.113.21,polderbank,inlog
+2026-10-24T14:10:28+02:00,B,kever,198.51.100.61,Neder Bank,inlog
+2026-10-25T11:36:22+01:00,B,Lantaarn,192.0.2.45,NederBank,inlog
+2026-10-20T10:13:53Z,A,Spinner,203.0.113.77,nederbank,inlog
+2026-10-22T22:50:32Z,A,Lantaarn,203.0.113.90,Polderbank,buit_bekeken
+2026-10-20T11:37:11+02:00,B,spinner,198.51.100.14,Duinkrediet,inlog
+2026-10-15T15:50:28+02:00,B,dwaallicht,192.0.2.88,Duinkrediet,inlog
+2026-10-20T09:25:56+02:00,B,Lantaarn,192.0.2.45,Neder Bank,buit_bekeken
+2026-10-23T00:41:21Z,A,lantaarn,203.0.113.90,NederBank,inlog
+2026-10-15T14:13:12Z,A,spinner,198.51.100.14,polderbank,buit_bekeken
+2026-10-17T10:20:59+02:00,B,dwaallicht,192.0.2.88,polderbank,export
+2026-10-20T07:42:20Z,A,Spinner,198.51.100.14,NederBank,inlog
+2026-10-16T09:23:15+02:00,B,motte,203.0.113.21,NederBank,inlog
+2026-10-14T10:28:55+02:00,B,spinner,203.0.113.77,Polderbank,inlog
+2026-10-24T08:11:15Z,A,spinner ,203.0.113.77,nederbank,inlog
+2026-10-15T13:54:25+02:00,B,spinner ,198.51.100.14,NEDERBANK,inlog
+2026-10-20T09:52:06+02:00,B,lantaarn,192.0.2.45,NederBank,buit_bekeken
+2026-10-18T17:12:53+02:00,B,spinner ,203.0.113.77,Duinkrediet,inlog
+2026-10-13T13:17:31Z,A,lantaarn,203.0.113.90,Polderbank,inlog
+2026-10-22T15:36:00+02:00,B,MOTTE,203.0.113.21,polderbank,buit_bekeken
+2026-10-25T09:01:33Z,A,MOTTE,203.0.113.21,Duinkrediet,inlog
+2026-10-26T12:53:51Z,A,spinner,198.51.100.14,NEDERBANK,inlog
+2026-10-20T07:15:04Z,A,spinner ,203.0.113.77,nederbank,export
+2026-10-27T17:11:24Z,A,MOTTE,198.51.100.30,NEDERBANK,inlog
+2026-10-19T17:44:53+02:00,B,Lantaarn,203.0.113.90,Duinkrediet,inlog
+2026-10-21T13:23:22+02:00,B,Lantaarn,203.0.113.90,Duinkrediet,inlog
+2026-10-15T20:03:40+02:00,B,spinner ,203.0.113.77,polderbank,buit_bekeken
+2026-10-23T11:43:25Z,A,MOTTE,198.51.100.30,NEDERBANK,inlog
+2026-10-23T09:28:45Z,A,Lantaarn,203.0.113.90,polderbank,inlog
+2026-10-26T11:37:48Z,A,spinner ,203.0.113.77,Polderbank,inlog
+2026-10-19T14:22:23+02:00,B,Lantaarn,192.0.2.45,NederBank,inlog
+2026-10-12T07:17:52Z,A,MOTTE,198.51.100.30,polderbank,export
+2026-10-20T07:51:22Z,A,MOTTE,203.0.113.21,Duinkrediet,inlog
+2026-10-14T12:03:08+02:00,B,Lantaarn,192.0.2.45,Duinkrediet,inlog
+2026-10-16T09:02:35Z,A,motte,203.0.113.21,NederBank,inlog
+2026-10-24T07:35:38Z,A,lantaarn,203.0.113.90,polderbank,export
+2026-10-12T18:19:37Z,A,spinner,198.51.100.14,NederBank,buit_bekeken
+2026-10-21T09:19:34Z,A,MOTTE,203.0.113.21,Neder Bank,export
+2026-10-24T12:16:25+02:00,B,kever,198.51.100.61,polderbank,inlog
+2026-10-31T11:30:02+01:00,B,spinner ,198.51.100.14,Polderbank,inlog
+2026-10-31T14:08:19Z,A,Lantaarn,192.0.2.45,nederbank,buit_bekeken
+2026-10-29T07:34:59Z,A,motte,203.0.113.21,Polderbank,inlog
+2026-10-29T09:52:42Z,A,lantaarn,203.0.113.90,NederBank,inlog
+2026-10-20T09:04:20+02:00,B,MOTTE,203.0.113.21,NederBank,buit_bekeken
+2026-10-21T15:36:32+02:00,B,motte,198.51.100.30,nederbank,inlog
+2026-10-20T15:45:20Z,A,dwaallicht,192.0.2.88,nederbank,export
+2026-10-29T16:54:35+01:00,B,lantaarn,192.0.2.45,Duinkrediet,inlog
+2026-10-30T10:28:42Z,A,lantaarn,192.0.2.45,Neder Bank,export
+2026-10-20T11:16:26+02:00,B,Lantaarn,203.0.113.90,Polderbank,inlog
+2026-10-28T13:52:18+01:00,B,spinner,198.51.100.14,nederbank,buit_bekeken
+2026-10-16T11:05:23Z,A,MOTTE,198.51.100.30,polderbank,inlog
+2026-10-13T10:37:25+02:00,B,MOTTE,203.0.113.21,Duinkrediet,inlog
+2026-10-26T06:53:57Z,A,lantaarn,192.0.2.45,nederbank,inlog
+2026-10-25T09:53:31+01:00,B,dwaallicht,192.0.2.88,Duinkrediet,inlog
+2026-10-18T17:56:35+02:00,B,Spinner,203.0.113.77,polderbank,inlog
+2026-10-24T15:36:44+02:00,B,spinner ,203.0.113.77,NederBank,inlog
+2026-10-20T09:36:57+02:00,B,MOTTE,198.51.100.30,Duinkrediet,inlog
+2026-10-14T11:27:08Z,A,MOTTE,198.51.100.30,Duinkrediet,inlog
+2026-10-15T14:39:15+02:00,B,spinner,198.51.100.14,NEDERBANK,inlog
+2026-10-17T16:50:01+02:00,B,kever,198.51.100.61,nederbank,buit_bekeken
+2026-10-17T09:37:37Z,A,dwaallicht,192.0.2.88,NEDERBANK,buit_bekeken
+2026-10-31T11:47:01Z,A,lantaarn,192.0.2.45,nederbank,inlog
+2026-10-26T21:36:27+01:00,B,dwaallicht,192.0.2.88,NEDERBANK,inlog
+2026-10-18T16:02:45+02:00,B,Lantaarn,192.0.2.45,Duinkrediet,export
+2026-10-31T16:16:51+01:00,B,Lantaarn,192.0.2.45,nederbank,inlog
+2026-10-24T15:08:19+02:00,B,Lantaarn,203.0.113.90,Neder Bank,inlog
+2026-10-20T08:41:24Z,A,MOTTE,198.51.100.30,polderbank,inlog
+2026-10-22T05:49:15+02:00,B,spinner,203.0.113.77,NederBank,inlog
+2026-10-21T11:29:10Z,A,spinner,198.51.100.14,NEDERBANK,inlog
+2026-10-15T18:30:01+02:00,B,Lantaarn,203.0.113.90,Polderbank,inlog
+2026-10-27T14:38:41+01:00,B,spinner ,203.0.113.77,nederbank,inlog
+2026-10-23T12:34:20+02:00,B,MOTTE,203.0.113.21,NederBank,export
+2026-10-26T19:44:26+01:00,B,motte,198.51.100.30,Polderbank,inlog
+2026-10-12T17:20:59+02:00,B,kever,198.51.100.61,polderbank,export
+2026-10-23T20:08:08+02:00,B,Lantaarn,192.0.2.45,nederbank,inlog
+2026-10-21T10:35:11Z,A,spinner,198.51.100.14,Polderbank,inlog
+2026-10-29T07:57:13+01:00,B,kever,198.51.100.61,Duinkrediet,inlog
+2026-10-25T14:23:53Z,A,Spinner,198.51.100.14,Duinkrediet,inlog
+2026-10-13T05:59:44+02:00,B,spinner,203.0.113.77,polderbank,export
+2026-10-29T10:59:11+01:00,B,kever,198.51.100.61,Duinkrediet,inlog
+2026-10-22T09:48:03Z,A,dwaallicht,192.0.2.88,Polderbank,buit_bekeken
+2026-10-17T20:19:38+02:00,B,lantaarn,203.0.113.90,polderbank,inlog
+2026-10-28T12:48:50Z,A,lantaarn,203.0.113.90,nederbank,buit_bekeken
+2026-10-22T22:34:06Z,A,lantaarn,192.0.2.45,Neder Bank,buit_bekeken
+2026-10-12T18:09:03Z,A,spinner,203.0.113.77,Duinkrediet,inlog
+2026-10-17T14:55:29Z,A,motte,203.0.113.21,nederbank,export
+2026-10-24T18:17:19Z,A,Lantaarn,192.0.2.45,Neder Bank,buit_bekeken
+2026-10-18T17:55:40+02:00,B,Lantaarn,203.0.113.90,NEDERBANK,inlog
+2026-10-25T14:05:10+01:00,B,MOTTE,203.0.113.21,polderbank,inlog
+2026-10-30T19:50:58Z,A,motte,203.0.113.21,Polderbank,buit_bekeken
+2026-10-20T13:22:15+02:00,B,MOTTE,198.51.100.30,polderbank,inlog
+2026-10-20T09:56:34+02:00,B,Spinner,203.0.113.77,Polderbank,inlog
+2026-10-24T14:20:14+02:00,B,lantaarn,192.0.2.45,Duinkrediet,inlog
+2026-10-16T12:08:37Z,A,MOTTE,203.0.113.21,Duinkrediet,inlog
+2026-10-21T14:51:18Z,A,MOTTE,203.0.113.21,NEDERBANK,buit_bekeken
+2026-10-23T21:00:00+02:00,B,MOTTE,198.51.100.30,nederbank,buit_bekeken
+2026-10-28T18:13:27+01:00,B,Lantaarn,192.0.2.45,Duinkrediet,inlog
+2026-10-14T18:36:34+02:00,B,spinner ,203.0.113.77,Duinkrediet,inlog
+2026-10-26T13:43:27Z,A,Spinner,198.51.100.14,Neder Bank,buit_bekeken
+2026-10-29T08:04:23+01:00,B,lantaarn,203.0.113.90,Neder Bank,buit_bekeken
+2026-10-13T17:38:40Z,A,spinner ,198.51.100.14,Duinkrediet,inlog
+2026-10-15T10:47:13+02:00,B,dwaallicht,192.0.2.88,Duinkrediet,inlog
+2026-10-12T20:31:37Z,A,dwaallicht,192.0.2.88,polderbank,inlog
+2026-10-28T21:14:17+01:00,B,motte,198.51.100.30,nederbank,inlog
+2026-10-19T07:42:15Z,A,dwaallicht,192.0.2.88,Polderbank,inlog
+2026-10-30T17:37:07+01:00,B,dwaallicht,192.0.2.88,polderbank,inlog
+2026-10-17T20:40:58+02:00,B,motte,203.0.113.21,NederBank,inlog
+2026-10-20T15:49:07+02:00,B,lantaarn,203.0.113.90,NederBank,buit_bekeken
+2026-10-22T13:14:08+02:00,B,spinner,203.0.113.77,nederbank,inlog
+2026-10-27T08:25:00Z,A,MOTTE,203.0.113.21,Duinkrediet,buit_bekeken
+2026-10-20T14:58:36+02:00,B,dwaallicht,192.0.2.88,NederBank,inlog
+2026-10-14T21:44:45+02:00,B,motte,198.51.100.30,Duinkrediet,inlog
+2026-10-23T16:45:28Z,A,dwaallicht,192.0.2.88,Polderbank,inlog
+2026-10-14T02:06:01Z,A,dwaallicht,192.0.2.88,NederBank,export
+2026-10-26T17:06:11+01:00,B,lantaarn,192.0.2.45,NEDERBANK,inlog
+2026-10-23T14:18:58+02:00,B,MOTTE,198.51.100.30,NederBank,inlog
+2026-10-26T06:51:07Z,A,dwaallicht,192.0.2.88,Polderbank,inlog
+2026-10-28T09:08:40+01:00,B,lantaarn,192.0.2.45,Neder Bank,buit_bekeken
+2026-10-13T10:54:56+02:00,B,MOTTE,198.51.100.30,Neder Bank,buit_bekeken
+2026-10-22T12:43:27Z,A,Spinner,203.0.113.77,nederbank,inlog
+2026-10-20T07:53:48Z,A,motte,198.51.100.30,Duinkrediet,inlog
+2026-10-14T14:29:59Z,A,lantaarn,203.0.113.90,nederbank,inlog
+2026-10-21T09:43:49+02:00,B,lantaarn,192.0.2.45,NederBank,inlog
+2026-10-14T13:14:53Z,A,dwaallicht,192.0.2.88,NEDERBANK,inlog
+2026-10-21T19:14:13Z,A,kever,198.51.100.61,nederbank,inlog
+2026-10-26T07:44:37Z,A,motte,203.0.113.21,NEDERBANK,inlog
+2026-10-26T14:18:25Z,A,lantaarn,192.0.2.45,nederbank,inlog
+2026-10-18T07:26:52Z,A,dwaallicht,192.0.2.88,polderbank,inlog
+2026-10-29T20:08:02+01:00,B,MOTTE,203.0.113.21,Neder Bank,inlog
+2026-10-26T09:39:16+01:00,B,dwaallicht,192.0.2.88,NEDERBANK,inlog
+2026-10-17T18:00:30+02:00,B,kever,198.51.100.61,NEDERBANK,inlog
+2026-10-17T06:49:04+02:00,B,MOTTE,198.51.100.30,NEDERBANK,buit_bekeken
+2026-10-18T13:38:27+02:00,B,Spinner,198.51.100.14,polderbank,buit_bekeken
+2026-10-20T07:56:52Z,A,Lantaarn,203.0.113.90,nederbank,buit_bekeken
+2026-10-26T16:01:02Z,A,Lantaarn,192.0.2.45,Neder Bank,inlog
+2026-10-14T13:32:50+02:00,B,spinner,198.51.100.14,nederbank,inlog
+2026-10-28T01:32:39+01:00,B,kever,198.51.100.61,polderbank,buit_bekeken
+2026-10-22T17:46:55Z,A,Spinner,203.0.113.77,Neder Bank,buit_bekeken
+2026-10-30T08:18:27+01:00,B,Lantaarn,203.0.113.90,Polderbank,inlog
+2026-10-31T15:59:04+01:00,B,Lantaarn,203.0.113.90,Duinkrediet,inlog
+2026-10-13T11:09:07Z,A,lantaarn,192.0.2.45,nederbank,inlog
+2026-10-19T10:43:00Z,A,spinner,198.51.100.14,Duinkrediet,inlog
+2026-10-24T18:41:05Z,A,spinner ,198.51.100.14,Neder Bank,export
+2026-10-18T09:42:26Z,A,lantaarn,192.0.2.45,Duinkrediet,buit_bekeken
+2026-10-16T11:37:06+02:00,B,spinner ,203.0.113.77,polderbank,inlog
+2026-10-18T18:32:53+02:00,B,dwaallicht,192.0.2.88,Polderbank,inlog
+2026-10-21T14:32:33Z,A,motte,198.51.100.30,Duinkrediet,buit_bekeken
+2026-10-16T18:18:17Z,A,Spinner,203.0.113.77,Duinkrediet,export
+2026-10-26T19:43:18Z,A,Spinner,198.51.100.14,Neder Bank,export
+2026-10-16T08:51:43Z,A,MOTTE,203.0.113.21,polderbank,inlog
+2026-10-26T09:55:45Z,A,Lantaarn,203.0.113.90,NEDERBANK,buit_bekeken
+2026-10-14T10:59:24Z,A,Lantaarn,192.0.2.45,Duinkrediet,inlog
+2026-10-20T10:28:45+02:00,B,spinner ,203.0.113.77,Neder Bank,export
+2026-10-30T21:37:57+01:00,B,motte,198.51.100.30,NederBank,buit_bekeken
+2026-10-26T15:09:24Z,A,motte,203.0.113.21,Duinkrediet,inlog
+2026-10-29T08:39:10+01:00,B,Spinner,203.0.113.77,nederbank,inlog
+2026-10-29T12:43:04Z,A,Lantaarn,192.0.2.45,polderbank,inlog
+2026-10-24T12:18:53+02:00,B,dwaallicht,192.0.2.88,Polderbank,inlog
+2026-10-16T13:04:35Z,A,kever,198.51.100.61,Neder Bank,inlog
+2026-10-20T16:21:17+02:00,B,kever,198.51.100.61,NederBank,inlog
+2026-10-27T14:45:24+01:00,B,dwaallicht,192.0.2.88,NederBank,inlog
+2026-10-19T18:33:16+02:00,B,spinner,198.51.100.14,Duinkrediet,inlog
+2026-10-14T22:52:42+02:00,B,lantaarn,192.0.2.45,Neder Bank,inlog
+2026-10-20T07:31:18Z,A,motte,198.51.100.30,Polderbank,buit_bekeken
+2026-10-25T19:13:56Z,A,lantaarn,192.0.2.45,Duinkrediet,inlog
+2026-10-16T10:58:02+02:00,B,MOTTE,198.51.100.30,Polderbank,inlog
+2026-10-19T09:14:43Z,A,Spinner,203.0.113.77,Duinkrediet,inlog
+2026-10-27T21:34:15Z,A,Lantaarn,192.0.2.45,Duinkrediet,inlog
+2026-10-20T14:20:39Z,A,lantaarn,203.0.113.90,NEDERBANK,inlog
+2026-10-12T18:24:03+02:00,B,motte,203.0.113.21,Neder Bank,buit_bekeken
+2026-10-20T09:08:07+02:00,B,spinner,203.0.113.77,Polderbank,buit_bekeken
+2026-10-20T09:42:56+02:00,B,Spinner,203.0.113.77,nederbank,inlog
+2026-10-23T18:18:04+02:00,B,motte,203.0.113.21,NEDERBANK,buit_bekeken
+2026-10-30T23:35:39Z,A,kever,198.51.100.61,Duinkrediet,inlog
+2026-10-24T12:21:18Z,A,dwaallicht,192.0.2.88,NEDERBANK,inlog
+2026-10-30T09:42:19+01:00,B,dwaallicht,192.0.2.88,NederBank,buit_bekeken
+2026-10-20T21:27:00Z,A,dwaallicht,192.0.2.88,NEDERBANK,inlog
+2026-10-26T11:56:07+01:00,B,MOTTE,203.0.113.21,Polderbank,inlog
+2026-10-14T11:29:28+02:00,B,MOTTE,203.0.113.21,Neder Bank,buit_bekeken
+2026-10-30T08:50:14Z,A,dwaallicht,192.0.2.88,polderbank,inlog
+2026-10-14T22:17:27Z,A,MOTTE,203.0.113.21,Polderbank,inlog
+2026-10-31T15:17:52Z,A,lantaarn,203.0.113.90,Polderbank,inlog
+2026-10-22T01:09:19+02:00,B,MOTTE,203.0.113.21,Polderbank,inlog
+2026-10-30T17:24:39Z,A,MOTTE,203.0.113.21,NederBank,buit_bekeken
+2026-10-19T19:39:23Z,A,spinner ,203.0.113.77,nederbank,buit_bekeken
+2026-10-29T22:46:28+01:00,B,Spinner,203.0.113.77,Duinkrediet,buit_bekeken
+2026-10-12T23:39:54+02:00,B,motte,203.0.113.21,nederbank,buit_bekeken
+2026-10-17T09:24:45+02:00,B,MOTTE,198.51.100.30,Polderbank,inlog
+2026-10-18T08:35:09+02:00,B,dwaallicht,192.0.2.88,NederBank,inlog
+2026-10-17T16:13:38Z,A,lantaarn,192.0.2.45,NederBank,buit_bekeken
+2026-10-29T22:25:48Z,A,dwaallicht,192.0.2.88,Polderbank,inlog
+2026-10-16T13:07:19Z,A,dwaallicht,192.0.2.88,polderbank,inlog
+2026-10-17T10:29:11Z,A,lantaarn,192.0.2.45,NEDERBANK,inlog
+2026-10-25T18:51:17Z,A,lantaarn,192.0.2.45,Duinkrediet,buit_bekeken
+2026-10-17T22:24:15+02:00,B,Spinner,203.0.113.77,Neder Bank,inlog
+2026-10-25T16:45:03Z,A,dwaallicht,192.0.2.88,Polderbank,inlog
+2026-10-17T14:23:20+02:00,B,dwaallicht,192.0.2.88,NederBank,inlog
+2026-10-30T07:55:18Z,A,spinner,203.0.113.77,polderbank,inlog
+2026-10-16T22:04:50Z,A,dwaallicht,192.0.2.88,Polderbank,inlog
+2026-10-18T15:20:56Z,A,lantaarn,203.0.113.90,Duinkrediet,inlog
+2026-10-28T06:39:03Z,A,motte,203.0.113.21,Neder Bank,inlog
+2026-10-26T10:40:00+01:00,B,Lantaarn,192.0.2.45,Duinkrediet,inlog
+2026-10-24T20:03:15+02:00,B,motte,203.0.113.21,Duinkrediet,inlog
+2026-10-30T21:51:09+01:00,B,lantaarn,203.0.113.90,Duinkrediet,inlog
+2026-10-20T17:19:14Z,A,motte,203.0.113.21,Duinkrediet,inlog
+2026-10-12T11:48:21Z,A,spinner ,203.0.113.77,NederBank,buit_bekeken
+2026-10-16T19:46:58Z,A,spinner,198.51.100.14,Polderbank,inlog
+2026-10-28T12:27:07+01:00,B,spinner,203.0.113.77,nederbank,inlog
+2026-10-17T08:31:15Z,A,dwaallicht,192.0.2.88,polderbank,buit_bekeken
+2026-10-22T09:03:04Z,A,Spinner,198.51.100.14,Duinkrediet,inlog
+2026-10-18T15:24:37+02:00,B,MOTTE,198.51.100.30,Polderbank,buit_bekeken
+2026-10-21T16:32:33+02:00,B,motte,198.51.100.30,Duinkrediet,buit_bekeken
+2026-10-15T16:47:44Z,A,spinner ,198.51.100.14,polderbank,buit_bekeken
+2026-10-20T07:20:21Z,A,dwaallicht,192.0.2.88,Polderbank,inlog
+2026-10-29T20:55:47+01:00,B,Lantaarn,192.0.2.45,Neder Bank,inlog
+2026-10-26T13:59:52+01:00,B,spinner,198.51.100.14,Duinkrediet,inlog
+2026-10-29T17:20:22Z,A,Spinner,198.51.100.14,NederBank,buit_bekeken
+2026-10-12T11:26:31+02:00,B,Lantaarn,192.0.2.45,Polderbank,inlog
+2026-10-16T20:32:54Z,A,Lantaarn,192.0.2.45,Polderbank,inlog
+2026-10-24T20:21:34Z,A,dwaallicht,192.0.2.88,polderbank,inlog
+2026-10-28T12:23:38Z,A,MOTTE,203.0.113.21,nederbank,inlog
+2026-10-18T09:50:13+02:00,B,spinner ,198.51.100.14,Duinkrediet,buit_bekeken
+2026-10-20T09:28:35+02:00,B,motte,198.51.100.30,Polderbank,inlog
+2026-10-22T08:38:52Z,A,Spinner,203.0.113.77,polderbank,buit_bekeken
+2026-10-23T20:46:53+02:00,B,motte,203.0.113.21,NEDERBANK,buit_bekeken
+2026-10-13T15:21:43+02:00,B,dwaallicht,192.0.2.88,polderbank,buit_bekeken
+2026-10-27T08:32:01+01:00,B,kever,198.51.100.61,NederBank,inlog
+2026-10-17T21:18:45Z,A,kever,198.51.100.61,Neder Bank,buit_bekeken
+2026-10-27T17:53:22+01:00,B,spinner ,203.0.113.77,Polderbank,inlog
+2026-10-21T09:45:48Z,A,Spinner,198.51.100.14,Duinkrediet,inlog
+2026-10-15T08:56:21Z,A,MOTTE,203.0.113.21,Neder Bank,inlog
+2026-10-30T11:33:56+01:00,B,motte,203.0.113.21,NederBank,inlog
+2026-10-29T10:18:04Z,A,motte,198.51.100.30,NEDERBANK,inlog
+2026-10-28T11:10:54Z,A,spinner,203.0.113.77,NEDERBANK,inlog
+2026-10-28T13:35:20+01:00,B,Spinner,203.0.113.77,Duinkrediet,inlog
+2026-10-18T12:27:07+02:00,B,lantaarn,203.0.113.90,NEDERBANK,buit_bekeken
+2026-10-30T08:38:18Z,A,lantaarn,203.0.113.90,Neder Bank,inlog
+2026-10-17T17:56:26Z,A,MOTTE,203.0.113.21,nederbank,export
+2026-10-21T11:25:54Z,A,lantaarn,203.0.113.90,polderbank,buit_bekeken
+2026-10-13T20:36:14Z,A,spinner ,198.51.100.14,nederbank,inlog
+2026-10-14T16:50:29+02:00,B,kever,198.51.100.61,Duinkrediet,buit_bekeken
+2026-10-30T11:53:16Z,A,Spinner,198.51.100.14,NederBank,buit_bekeken
+2026-10-19T14:44:06Z,A,Spinner,198.51.100.14,Polderbank,inlog
+2026-10-24T13:16:03Z,A,spinner ,203.0.113.77,Neder Bank,inlog
+2026-10-28T16:02:49Z,A,dwaallicht,192.0.2.88,Duinkrediet,inlog
+2026-10-20T23:07:20+02:00,B,Lantaarn,203.0.113.90,polderbank,inlog
+2026-10-23T18:00:27+02:00,B,motte,198.51.100.30,Neder Bank,inlog
+2026-10-31T16:23:56+01:00,B,spinner ,198.51.100.14,NederBank,inlog
+2026-10-15T21:31:26Z,A,Lantaarn,192.0.2.45,Duinkrediet,buit_bekeken
+2026-10-14T22:55:10Z,A,dwaallicht,192.0.2.88,NederBank,buit_bekeken
+2026-10-25T10:41:46Z,A,dwaallicht,192.0.2.88,Polderbank,buit_bekeken
+2026-10-24T19:50:46Z,A,Lantaarn,203.0.113.90,Duinkrediet,inlog
+2026-10-23T23:06:26+02:00,B,Spinner,198.51.100.14,NEDERBANK,inlog
+2026-10-24T08:53:02Z,A,lantaarn,192.0.2.45,Duinkrediet,inlog
+2026-10-18T06:13:15Z,A,dwaallicht,192.0.2.88,Duinkrediet,buit_bekeken
+2026-10-13T16:12:40+02:00,B,lantaarn,203.0.113.90,nederbank,inlog
+2026-10-20T08:26:07+02:00,B,Spinner,203.0.113.77,NEDERBANK,buit_bekeken
+2026-10-20T13:04:41Z,A,Lantaarn,203.0.113.90,Neder Bank,inlog
+2026-10-30T14:18:58Z,A,spinner,198.51.100.14,NEDERBANK,inlog
+2026-10-13T15:03:55+02:00,B,Lantaarn,203.0.113.90,Neder Bank,inlog
+2026-10-19T17:55:48Z,A,spinner,203.0.113.77,Neder Bank,inlog
+2026-10-30T10:36:43+01:00,B,spinner ,203.0.113.77,NederBank,inlog
+2026-10-30T16:34:59Z,A,dwaallicht,192.0.2.88,Polderbank,buit_bekeken
+2026-10-23T23:52:23Z,A,spinner,203.0.113.77,NEDERBANK,inlog
+2026-10-25T14:57:11Z,A,Spinner,198.51.100.14,nederbank,inlog
+2026-10-20T07:09:47Z,A,Lantaarn,192.0.2.45,Duinkrediet,buit_bekeken
+2026-10-28T22:29:27+01:00,B,spinner ,198.51.100.14,Duinkrediet,export
+2026-10-20T04:05:06+02:00,B,spinner,198.51.100.14,Duinkrediet,buit_bekeken
+2026-10-24T20:58:51Z,A,lantaarn,203.0.113.90,Duinkrediet,inlog
+2026-10-25T09:06:57+01:00,B,MOTTE,198.51.100.30,nederbank,buit_bekeken
+2026-10-27T10:06:11+01:00,B,motte,203.0.113.21,Duinkrediet,buit_bekeken
+2026-10-28T10:33:17Z,A,Lantaarn,192.0.2.45,Neder Bank,inlog
+2026-10-30T21:14:12Z,A,spinner ,203.0.113.77,NederBank,buit_bekeken
+2026-10-16T09:40:40+02:00,B,Spinner,203.0.113.77,Duinkrediet,inlog
+2026-10-24T13:05:45Z,A,motte,203.0.113.21,NEDERBANK,buit_bekeken
+2026-10-13T19:16:38Z,A,lantaarn,192.0.2.45,Polderbank,buit_bekeken
+2026-10-29T13:27:43Z,A,dwaallicht,192.0.2.88,NEDERBANK,inlog
+2026-10-30T22:48:18+01:00,B,lantaarn,203.0.113.90,Polderbank,inlog
+2026-10-12T15:28:33Z,A,motte,203.0.113.21,nederbank,inlog
+2026-10-14T15:44:34+02:00,B,Spinner,203.0.113.77,polderbank,buit_bekeken
+2026-10-12T11:21:31+02:00,B,spinner ,198.51.100.14,Polderbank,inlog
+2026-10-16T17:15:57+02:00,B,spinner,203.0.113.77,Duinkrediet,inlog
+2026-10-31T16:40:27Z,A,Lantaarn,203.0.113.90,Duinkrediet,inlog
+2026-10-25T11:05:11Z,A,lantaarn,203.0.113.90,NEDERBANK,inlog
+2026-10-27T13:46:19Z,A,Spinner,203.0.113.77,nederbank,inlog
+2026-10-14T10:08:22Z,A,lantaarn,192.0.2.45,Neder Bank,export
+2026-10-27T08:32:49Z,A,spinner,198.51.100.14,Polderbank,inlog
+2026-10-19T18:38:50Z,A,dwaallicht,192.0.2.88,NEDERBANK,inlog
+2026-10-14T06:42:36Z,A,Lantaarn,203.0.113.90,NEDERBANK,buit_bekeken
+2026-10-25T12:22:37Z,A,lantaarn,203.0.113.90,Duinkrediet,inlog
+2026-10-30T15:14:22+01:00,B,Lantaarn,192.0.2.45,Polderbank,buit_bekeken
+2026-10-15T18:29:57+02:00,B,MOTTE,203.0.113.21,polderbank,inlog
+2026-10-22T10:15:54+02:00,B,lantaarn,203.0.113.90,Neder Bank,inlog
+2026-10-30T14:28:56Z,A,MOTTE,198.51.100.30,Duinkrediet,inlog
+2026-10-12T18:39:02+02:00,B,dwaallicht,192.0.2.88,nederbank,inlog
+2026-10-26T06:20:50Z,A,spinner,203.0.113.77,Neder Bank,inlog
+2026-10-12T08:20:01Z,A,motte,203.0.113.21,Duinkrediet,inlog
+2026-10-12T12:46:44+02:00,B,lantaarn,203.0.113.90,Polderbank,buit_bekeken
+2026-10-27T07:31:59Z,A,spinner,198.51.100.14,Duinkrediet,buit_bekeken
+2026-10-28T19:34:08Z,A,MOTTE,203.0.113.21,NEDERBANK,inlog
+2026-10-22T08:12:51Z,A,spinner ,198.51.100.14,NEDERBANK,buit_bekeken
+2026-10-20T09:06:42+02:00,B,dwaallicht,192.0.2.88,Polderbank,export
+2026-10-13T10:37:24+02:00,B,spinner ,203.0.113.77,Neder Bank,inlog
+2026-10-14T21:34:36+02:00,B,spinner ,198.51.100.14,nederbank,buit_bekeken
+2026-10-30T12:37:02+01:00,B,dwaallicht,192.0.2.88,Duinkrediet,inlog
+2026-10-24T13:52:01Z,A,MOTTE,203.0.113.21,Neder Bank,inlog
+2026-10-27T12:40:11Z,A,MOTTE,198.51.100.30,NederBank,export
+2026-10-22T13:50:30Z,A,spinner,203.0.113.77,nederbank,inlog
+2026-10-28T10:25:13Z,A,motte,198.51.100.30,Duinkrediet,inlog
+2026-10-24T19:19:18+02:00,B,kever,198.51.100.61,polderbank,inlog
+2026-10-13T12:09:28Z,A,MOTTE,198.51.100.30,polderbank,inlog
+2026-10-31T15:20:10+01:00,B,spinner,203.0.113.77,nederbank,export
+2026-10-25T16:58:11+01:00,B,Lantaarn,192.0.2.45,nederbank,export
+2026-10-26T06:54:33+01:00,B,MOTTE,198.51.100.30,Duinkrediet,inlog
+2026-10-12T11:40:51Z,A,MOTTE,203.0.113.21,Duinkrediet,inlog
+2026-10-15T14:47:52Z,A,MOTTE,198.51.100.30,polderbank,inlog
+2026-10-30T03:07:26Z,A,motte,203.0.113.21,Polderbank,buit_bekeken
+2026-10-17T15:46:17+02:00,B,lantaarn,192.0.2.45,Duinkrediet,buit_bekeken
+2026-10-28T13:43:19Z,A,Spinner,198.51.100.14,NEDERBANK,buit_bekeken
+2026-10-17T19:44:30+02:00,B,MOTTE,198.51.100.30,Duinkrediet,inlog
+2026-10-21T20:50:51Z,A,lantaarn,192.0.2.45,polderbank,inlog
+2026-10-13T20:06:16Z,A,spinner ,198.51.100.14,polderbank,buit_bekeken
+2026-10-13T15:17:06+02:00,B,Spinner,198.51.100.14,Polderbank,export
+2026-10-17T06:52:00Z,A,Spinner,198.51.100.14,polderbank,inlog
+2026-10-27T09:49:31+01:00,B,lantaarn,203.0.113.90,NEDERBANK,inlog
+2026-10-29T23:58:06Z,A,spinner ,198.51.100.14,Duinkrediet,inlog
+2026-10-24T12:26:30Z,A,Lantaarn,192.0.2.45,polderbank,inlog
+2026-10-12T05:02:02Z,A,spinner,203.0.113.77,Duinkrediet,inlog
+2026-10-14T21:31:05+02:00,B,Lantaarn,203.0.113.90,Polderbank,inlog
+2026-10-27T15:06:36+01:00,B,lantaarn,192.0.2.45,NederBank,inlog
+2026-10-25T13:35:33Z,A,dwaallicht,192.0.2.88,Duinkrediet,inlog
+2026-10-23T08:09:40+02:00,B,spinner ,203.0.113.77,Neder Bank,inlog
+2026-10-20T09:42:27+02:00,B,Spinner,203.0.113.77,Duinkrediet,inlog
+2026-10-23T09:51:24+02:00,B,MOTTE,203.0.113.21,Duinkrediet,inlog
+2026-10-15T17:55:21Z,A,lantaarn,203.0.113.90,NederBank,export
+2026-10-18T01:45:22+02:00,B,dwaallicht,192.0.2.88,Neder Bank,inlog
+2026-10-18T13:45:14+02:00,B,MOTTE,198.51.100.30,polderbank,inlog
+2026-10-18T07:54:34Z,A,spinner,203.0.113.77,nederbank,inlog
+2026-10-25T21:05:47Z,A,Lantaarn,192.0.2.45,nederbank,inlog
+2026-10-13T10:54:56+02:00,B,MOTTE,198.51.100.30,Neder Bank,buit_bekeken
+2026-10-25T14:12:29+01:00,B,MOTTE,198.51.100.30,polderbank,buit_bekeken
+2026-10-13T15:05:07+02:00,B,kever,198.51.100.61,Polderbank,inlog
+2026-10-29T08:26:12+01:00,B,dwaallicht,192.0.2.88,polderbank,inlog
+2026-10-19T16:59:59Z,A,MOTTE,198.51.100.30,NEDERBANK,export
+2026-10-27T21:18:27+01:00,B,lantaarn,192.0.2.45,Neder Bank,inlog
+2026-10-19T13:39:03+02:00,B,motte,203.0.113.21,polderbank,inlog
+2026-10-26T11:12:28Z,A,motte,203.0.113.21,NEDERBANK,inlog
+2026-10-12T10:01:22+02:00,B,lantaarn,203.0.113.90,nederbank,buit_bekeken
+2026-10-16T04:57:49+02:00,B,motte,198.51.100.30,Neder Bank,inlog
+2026-10-18T07:40:59Z,A,spinner ,203.0.113.77,polderbank,inlog
+2026-10-24T12:30:34Z,A,MOTTE,203.0.113.21,NEDERBANK,buit_bekeken
+2026-10-23T10:14:01+02:00,B,Lantaarn,203.0.113.90,Duinkrediet,export
+2026-10-14T06:34:14Z,A,MOTTE,198.51.100.30,Polderbank,inlog
+2026-10-28T22:43:56+01:00,B,dwaallicht,192.0.2.88,polderbank,inlog
+2026-10-20T09:32:47+02:00,B,MOTTE,198.51.100.30,Duinkrediet,inlog
+2026-10-17T15:02:37Z,A,Spinner,198.51.100.14,nederbank,inlog
+2026-10-14T12:40:13+02:00,B,MOTTE,203.0.113.21,Polderbank,buit_bekeken
+2026-10-17T19:40:53Z,A,spinner,198.51.100.14,Neder Bank,export
+2026-10-29T09:14:39+01:00,B,kever,198.51.100.61,Polderbank,buit_bekeken
+2026-10-20T09:51:26+02:00,B,motte,203.0.113.21,NederBank,inlog
+2026-10-14T11:31:01+02:00,B,motte,203.0.113.21,Neder Bank,buit_bekeken
+2026-10-22T12:29:19+02:00,B,lantaarn,192.0.2.45,Polderbank,inlog
+2026-10-17T09:32:49Z,A,motte,203.0.113.21,Duinkrediet,buit_bekeken
+2026-10-24T01:57:27+02:00,B,Lantaarn,203.0.113.90,polderbank,inlog
+2026-10-14T08:52:08+02:00,B,dwaallicht,192.0.2.88,Duinkrediet,inlog
+2026-10-18T15:07:26+02:00,B,spinner,203.0.113.77,NederBank,inlog
+2026-10-17T16:57:51+02:00,B,Lantaarn,203.0.113.90,Neder Bank,inlog
+2026-10-30T17:22:30+01:00,B,MOTTE,198.51.100.30,Neder Bank,inlog
+2026-10-17T15:46:06Z,A,dwaallicht,192.0.2.88,Neder Bank,inlog
+2026-10-22T14:43:01+02:00,B,spinner ,203.0.113.77,Polderbank,inlog
+2026-10-18T13:19:31+02:00,B,motte,198.51.100.30,Neder Bank,inlog
+2026-10-19T08:18:48+02:00,B,dwaallicht,192.0.2.88,Polderbank,inlog
+2026-10-16T12:07:42+02:00,B,spinner,198.51.100.14,Duinkrediet,inlog
+2026-10-26T16:31:03+01:00,B,Lantaarn,203.0.113.90,nederbank,inlog
+2026-10-15T02:39:33Z,A,motte,198.51.100.30,NEDERBANK,inlog
+2026-10-20T15:48:14Z,A,MOTTE,198.51.100.30,Polderbank,buit_bekeken
+2026-10-21T08:29:18+02:00,B,lantaarn,203.0.113.90,nederbank,inlog
+2026-10-15T11:12:02Z,A,motte,198.51.100.30,nederbank,inlog
+2026-10-28T20:13:29Z,A,spinner ,198.51.100.14,NederBank,buit_bekeken
+2026-10-23T12:15:52Z,A,Lantaarn,192.0.2.45,NEDERBANK,inlog
+2026-10-28T07:00:28Z,A,spinner ,203.0.113.77,nederbank,export
+2026-10-30T16:38:05+01:00,B,motte,198.51.100.30,NederBank,inlog
+2026-10-31T08:21:04+01:00,B,lantaarn,203.0.113.90,Duinkrediet,inlog
+2026-10-17T14:15:26Z,A,MOTTE,198.51.100.30,Neder Bank,inlog
+2026-10-15T16:32:03+02:00,B,spinner,198.51.100.14,NederBank,inlog
+2026-10-20T09:56:18+02:00,B,motte,203.0.113.21,Duinkrediet,inlog
+2026-10-13T12:18:14+02:00,B,Spinner,198.51.100.14,Duinkrediet,inlog
+2026-10-18T19:46:30Z,A,dwaallicht,192.0.2.88,Duinkrediet,buit_bekeken
+2026-10-14T05:24:24+02:00,B,dwaallicht,192.0.2.88,Polderbank,inlog
+2026-10-20T11:01:44+02:00,B,lantaarn,203.0.113.90,polderbank,inlog
+2026-10-15T09:10:40Z,A,lantaarn,203.0.113.90,Duinkrediet,inlog
+2026-10-20T19:42:03+02:00,B,dwaallicht,192.0.2.88,NEDERBANK,inlog
+2026-10-20T09:48:12+02:00,B,kever,198.51.100.61,Duinkrediet,inlog
+2026-10-25T14:41:57Z,A,dwaallicht,192.0.2.88,Duinkrediet,inlog
+2026-10-30T08:25:41Z,A,Spinner,198.51.100.14,Duinkrediet,inlog
+2026-10-20T10:38:11Z,A,Spinner,198.51.100.14,NEDERBANK,inlog
+2026-10-17T10:20:15+02:00,B,motte,203.0.113.21,Neder Bank,inlog
+2026-10-12T22:38:44+02:00,B,MOTTE,198.51.100.30,polderbank,inlog
+2026-10-31T15:42:52+01:00,B,MOTTE,203.0.113.21,nederbank,inlog
+2026-10-31T16:09:21Z,A,spinner,203.0.113.77,Neder Bank,inlog
+2026-10-17T16:51:33Z,A,motte,198.51.100.30,nederbank,inlog
+2026-10-26T08:14:44Z,A,dwaallicht,192.0.2.88,nederbank,inlog
+2026-10-20T17:48:36+02:00,B,motte,198.51.100.30,NEDERBANK,inlog
+2026-10-20T20:42:02Z,A,dwaallicht,192.0.2.88,Polderbank,inlog
+2026-10-21T21:20:58+02:00,B,motte,203.0.113.21,Duinkrediet,inlog
+2026-10-22T18:30:32Z,A,Lantaarn,192.0.2.45,Polderbank,inlog
+2026-10-30T20:40:37Z,A,Spinner,198.51.100.14,Polderbank,buit_bekeken
+2026-10-30T19:02:58+01:00,B,kever,198.51.100.61,polderbank,inlog
+2026-10-28T11:08:56+01:00,B,Spinner,203.0.113.77,NEDERBANK,export
+2026-10-29T12:43:17+01:00,B,lantaarn,203.0.113.90,Polderbank,buit_bekeken
+2026-10-29T16:00:27Z,A,spinner,198.51.100.14,Duinkrediet,inlog
+2026-10-13T09:57:53+02:00,B,Spinner,203.0.113.77,nederbank,inlog
+2026-10-27T13:34:28Z,A,Lantaarn,192.0.2.45,NEDERBANK,buit_bekeken
+2026-10-16T01:15:28Z,A,Spinner,203.0.113.77,nederbank,buit_bekeken
+2026-10-28T02:22:43+01:00,B,Spinner,203.0.113.77,polderbank,buit_bekeken
+2026-10-29T02:32:03+01:00,B,motte,198.51.100.30,polderbank,export
+2026-10-17T13:08:57+02:00,B,Lantaarn,203.0.113.90,Duinkrediet,inlog
+2026-10-24T01:26:32Z,A,spinner,203.0.113.77,polderbank,inlog
+2026-10-29T21:27:07+01:00,B,MOTTE,203.0.113.21,Duinkrediet,inlog
+2026-10-20T15:20:37+02:00,B,motte,198.51.100.30,NederBank,inlog
+2026-10-25T08:37:37Z,A,Lantaarn,203.0.113.90,NederBank,export
+2026-10-13T10:02:14Z,A,spinner,198.51.100.14,polderbank,buit_bekeken
+2026-10-29T13:48:58+01:00,B,Lantaarn,192.0.2.45,Neder Bank,buit_bekeken
+2026-10-28T16:10:54Z,A,Lantaarn,203.0.113.90,Polderbank,buit_bekeken
+2026-10-14T11:00:49Z,A,motte,203.0.113.21,Duinkrediet,inlog
+2026-10-14T19:06:50Z,A,motte,203.0.113.21,Duinkrediet,buit_bekeken
+2026-10-12T08:54:57+02:00,B,kever,198.51.100.61,Neder Bank,inlog
+2026-10-31T11:09:31Z,A,spinner,203.0.113.77,Duinkrediet,buit_bekeken
+2026-10-21T09:35:44Z,A,Spinner,198.51.100.14,Duinkrediet,inlog
+2026-10-20T07:20:44Z,A,Spinner,198.51.100.14,Neder Bank,inlog
+2026-10-24T10:25:53+02:00,B,spinner ,198.51.100.14,NEDERBANK,inlog
+2026-10-21T05:08:39+02:00,B,lantaarn,192.0.2.45,nederbank,inlog
+2026-10-14T15:10:32Z,A,kever,198.51.100.61,Duinkrediet,export
+2026-10-31T11:58:28Z,A,spinner,203.0.113.77,nederbank,inlog
+2026-10-29T15:03:44Z,A,kever,198.51.100.61,Polderbank,inlog
+2026-10-12T18:36:27Z,A,Lantaarn,203.0.113.90,polderbank,inlog
+2026-10-28T07:27:03Z,A,spinner,198.51.100.14,NederBank,export
+2026-10-14T12:11:47+02:00,B,motte,203.0.113.21,NederBank,inlog
+2026-10-22T07:12:33Z,A,motte,203.0.113.21,Polderbank,inlog
+2026-10-17T21:28:46Z,A,spinner ,198.51.100.14,nederbank,inlog
+2026-10-25T00:39:03Z,A,motte,198.51.100.30,Neder Bank,inlog
+2026-10-28T17:01:20Z,A,lantaarn,203.0.113.90,Neder Bank,inlog
+2026-10-20T07:11:19Z,A,lantaarn,192.0.2.45,NEDERBANK,inlog
+2026-10-21T12:41:31Z,A,MOTTE,198.51.100.30,polderbank,inlog
+2026-10-17T19:19:25+02:00,B,Spinner,198.51.100.14,Duinkrediet,inlog
+2026-10-22T21:59:23+02:00,B,spinner ,198.51.100.14,Polderbank,buit_bekeken
+2026-10-25T18:51:17Z,A,lantaarn,192.0.2.45,Duinkrediet,buit_bekeken
+2026-10-27T09:44:18+01:00,B,spinner,198.51.100.14,Polderbank,inlog
+2026-10-19T22:36:26+02:00,B,Spinner,203.0.113.77,NederBank,inlog
+2026-10-30T15:50:21+01:00,B,MOTTE,198.51.100.30,NederBank,buit_bekeken
+2026-10-16T10:40:46+02:00,B,MOTTE,203.0.113.21,polderbank,inlog
+2026-10-24T07:23:37+02:00,B,Lantaarn,203.0.113.90,Duinkrediet,buit_bekeken
+2026-10-19T13:46:22Z,A,lantaarn,192.0.2.45,Polderbank,inlog
+2026-10-30T18:09:19Z,A,dwaallicht,192.0.2.88,Polderbank,inlog
+2026-10-19T11:56:28+02:00,B,lantaarn,203.0.113.90,Duinkrediet,export
+2026-10-14T14:33:01Z,A,MOTTE,198.51.100.30,NEDERBANK,inlog
+2026-10-25T23:37:43Z,A,lantaarn,203.0.113.90,Polderbank,inlog
+2026-10-21T10:25:27Z,A,dwaallicht,192.0.2.88,Duinkrediet,buit_bekeken
+2026-10-13T20:49:22+02:00,B,spinner ,203.0.113.77,NederBank,inlog
+2026-10-12T22:24:00+02:00,B,Spinner,203.0.113.77,NEDERBANK,buit_bekeken
+2026-10-23T18:24:37+02:00,B,spinner,203.0.113.77,Duinkrediet,inlog
+2026-10-30T13:51:38Z,A,spinner ,203.0.113.77,polderbank,inlog
+2026-10-18T13:44:23Z,A,spinner,198.51.100.14,NederBank,inlog
+2026-10-20T15:55:29Z,A,MOTTE,198.51.100.30,NEDERBANK,inlog
+2026-10-15T17:04:27+02:00,B,spinner ,203.0.113.77,polderbank,inlog
+2026-10-22T05:59:02Z,A,spinner ,198.51.100.14,polderbank,inlog
+2026-10-26T08:52:44+01:00,B,kever,198.51.100.61,Duinkrediet,inlog
+2026-10-12T04:25:16+02:00,B,motte,198.51.100.30,Neder Bank,inlog
+2026-10-19T20:20:35+02:00,B,dwaallicht,192.0.2.88,Duinkrediet,buit_bekeken
+2026-10-20T07:13:10Z,A,MOTTE,203.0.113.21,Duinkrediet,inlog
+2026-10-23T17:55:27Z,A,kever,198.51.100.61,nederbank,inlog
+2026-10-22T10:00:20Z,A,motte,203.0.113.21,NederBank,buit_bekeken
+2026-10-29T15:36:50+01:00,B,lantaarn,192.0.2.45,NederBank,inlog
+2026-10-15T10:01:32+02:00,B,motte,198.51.100.30,Duinkrediet,inlog
+2026-10-16T10:02:57Z,A,lantaarn,192.0.2.45,nederbank,buit_bekeken
+2026-10-24T17:57:02+02:00,B,spinner,198.51.100.14,polderbank,inlog
+2026-10-20T07:04:39Z,A,spinner ,203.0.113.77,Duinkrediet,inlog
+2026-10-18T16:58:32Z,A,spinner,203.0.113.77,NEDERBANK,inlog
+2026-10-20T09:44:11+02:00,B,lantaarn,203.0.113.90,Neder Bank,export
+2026-10-30T10:35:51+01:00,B,spinner,198.51.100.14,Duinkrediet,inlog
+2026-10-14T14:46:16Z,A,Lantaarn,203.0.113.90,Polderbank,buit_bekeken
+2026-10-20T13:01:56Z,A,dwaallicht,192.0.2.88,NederBank,buit_bekeken
+2026-10-26T16:24:11+01:00,B,spinner,203.0.113.77,Neder Bank,inlog
+2026-10-12T12:58:07+02:00,B,motte,198.51.100.30,nederbank,buit_bekeken
+2026-10-31T02:32:35Z,A,MOTTE,198.51.100.30,Neder Bank,inlog
+2026-10-29T13:23:36+01:00,B,Spinner,203.0.113.77,Polderbank,inlog
+2026-10-25T16:34:28Z,A,motte,198.51.100.30,polderbank,export
+2026-10-21T09:12:31Z,A,lantaarn,192.0.2.45,Neder Bank,inlog
+2026-10-18T07:08:21Z,A,MOTTE,203.0.113.21,Neder Bank,inlog
+2026-10-20T09:54:52+02:00,B,kever,198.51.100.61,Polderbank,inlog
+2026-10-29T07:10:12Z,A,motte,198.51.100.30,nederbank,inlog
+2026-10-15T18:11:55Z,A,Spinner,198.51.100.14,NederBank,buit_bekeken
+2026-10-15T08:34:49+02:00,B,motte,203.0.113.21,Polderbank,inlog
+2026-10-31T08:28:34Z,A,spinner,203.0.113.77,Duinkrediet,inlog
+2026-10-24T08:14:03+02:00,B,dwaallicht,192.0.2.88,NEDERBANK,inlog
+2026-10-21T08:24:41+02:00,B,MOTTE,198.51.100.30,Neder Bank,buit_bekeken
+2026-10-20T09:33:28+02:00,B,spinner,203.0.113.77,Neder Bank,inlog
+2026-10-15T07:16:47+02:00,B,MOTTE,198.51.100.30,Duinkrediet,inlog
+2026-10-15T09:45:36+02:00,B,Lantaarn,203.0.113.90,polderbank,buit_bekeken
+2026-10-15T10:24:44Z,A,motte,203.0.113.21,polderbank,inlog
+2026-10-18T08:48:42+02:00,B,dwaallicht,192.0.2.88,NEDERBANK,buit_bekeken
+2026-10-30T06:38:35Z,A,Lantaarn,192.0.2.45,NEDERBANK,inlog
+2026-10-23T09:19:42+02:00,B,dwaallicht,192.0.2.88,Duinkrediet,inlog
+2026-10-15T20:46:16+02:00,B,dwaallicht,192.0.2.88,nederbank,inlog
+2026-11-01T00:52:56+01:00,B,kever,198.51.100.61,NederBank,inlog
+2026-10-23T03:18:49+02:00,B,MOTTE,198.51.100.30,Duinkrediet,export
+2026-10-31T16:26:10+01:00,B,Spinner,203.0.113.77,NEDERBANK,inlog
+2026-10-20T09:25:56+02:00,B,Lantaarn,192.0.2.45,Neder Bank,buit_bekeken
+2026-10-20T07:07:56Z,A,motte,198.51.100.30,polderbank,inlog
+2026-10-26T14:55:45+01:00,B,spinner,198.51.100.14,nederbank,buit_bekeken
+2026-10-29T16:29:09+01:00,B,kever,198.51.100.61,Polderbank,inlog
+2026-10-25T19:15:45+01:00,B,MOTTE,198.51.100.30,Polderbank,inlog
+2026-10-18T19:18:59Z,A,dwaallicht,192.0.2.88,NEDERBANK,inlog
+2026-10-20T07:01:11Z,A,Lantaarn,192.0.2.45,Polderbank,buit_bekeken
+2026-10-15T11:21:44Z,A,lantaarn,203.0.113.90,Neder Bank,inlog
+2026-10-16T18:25:11Z,A,motte,198.51.100.30,Neder Bank,inlog
+2026-10-17T08:46:45Z,A,motte,198.51.100.30,NEDERBANK,buit_bekeken
+2026-10-17T18:02:06+02:00,B,motte,198.51.100.30,Duinkrediet,inlog
+2026-10-27T00:59:26+01:00,B,motte,203.0.113.21,Duinkrediet,export
+2026-10-26T01:53:38+01:00,B,motte,203.0.113.21,NederBank,buit_bekeken
+2026-10-21T20:05:12Z,A,kever,198.51.100.61,Neder Bank,buit_bekeken
+2026-10-18T12:33:06+02:00,B,spinner ,198.51.100.14,Duinkrediet,inlog
+2026-10-25T07:43:39+01:00,B,dwaallicht,192.0.2.88,NEDERBANK,buit_bekeken
+2026-10-15T18:00:34+02:00,B,spinner ,203.0.113.77,Neder Bank,inlog
+2026-10-25T20:04:12+01:00,B,lantaarn,192.0.2.45,NEDERBANK,inlog
+2026-10-20T09:18:41+02:00,B,dwaallicht,192.0.2.88,nederbank,inlog
+2026-10-17T08:13:04Z,A,spinner ,203.0.113.77,Polderbank,inlog
+2026-10-14T08:25:05+02:00,B,Lantaarn,192.0.2.45,NEDERBANK,inlog
+2026-10-20T09:57:22+02:00,B,Lantaarn,192.0.2.45,Duinkrediet,buit_bekeken
+2026-10-15T10:06:59+02:00,B,lantaarn,192.0.2.45,Duinkrediet,buit_bekeken
+2026-10-27T08:21:59Z,A,dwaallicht,192.0.2.88,Polderbank,buit_bekeken
+2026-10-29T08:21:35Z,A,MOTTE,198.51.100.30,Polderbank,inlog
+2026-10-25T08:33:19Z,A,spinner ,203.0.113.77,Polderbank,inlog
+2026-10-18T21:04:27Z,A,dwaallicht,192.0.2.88,Polderbank,buit_bekeken
+2026-10-27T08:54:57Z,A,dwaallicht,192.0.2.88,nederbank,inlog
+2026-10-27T10:08:54+01:00,B,dwaallicht,192.0.2.88,NederBank,inlog
+2026-10-15T07:31:38Z,A,kever,198.51.100.61,NederBank,inlog
+2026-10-19T05:50:16+02:00,B,Lantaarn,192.0.2.45,Polderbank,inlog
+2026-10-27T12:33:56Z,A,kever,198.51.100.61,Neder Bank,inlog
+2026-10-20T07:37:41Z,A,Spinner,203.0.113.77,Duinkrediet,buit_bekeken
+2026-10-14T11:58:46Z,A,MOTTE,203.0.113.21,NEDERBANK,inlog
+2026-10-18T23:28:47+02:00,B,motte,198.51.100.30,nederbank,inlog
+2026-10-18T07:36:39Z,A,MOTTE,198.51.100.30,polderbank,inlog
+2026-10-18T16:00:54+02:00,B,Lantaarn,203.0.113.90,Polderbank,inlog
+2026-10-28T09:06:25Z,A,lantaarn,192.0.2.45,Duinkrediet,inlog
+2026-10-12T21:42:44+02:00,B,dwaallicht,192.0.2.88,Duinkrediet,buit_bekeken
+2026-10-12T11:19:01Z,A,lantaarn,192.0.2.45,Polderbank,inlog
+2026-10-13T16:03:03Z,A,spinner ,198.51.100.14,Duinkrediet,inlog
+2026-10-20T07:27:59Z,A,spinner,198.51.100.14,Duinkrediet,inlog
+2026-10-19T15:17:13+02:00,B,motte,198.51.100.30,polderbank,export
+2026-10-20T23:09:24Z,A,dwaallicht,192.0.2.88,Polderbank,inlog
+2026-10-17T09:28:42+02:00,B,dwaallicht,192.0.2.88,Duinkrediet,buit_bekeken
+2026-10-16T08:28:35Z,A,lantaarn,192.0.2.45,polderbank,inlog
+2026-10-18T08:04:28Z,A,spinner ,198.51.100.14,Neder Bank,inlog
+2026-10-19T12:10:41+02:00,B,Lantaarn,203.0.113.90,Duinkrediet,inlog
+2026-10-27T12:49:06+01:00,B,MOTTE,203.0.113.21,NederBank,buit_bekeken
+2026-10-23T00:30:09+02:00,B,dwaallicht,192.0.2.88,NederBank,inlog
+2026-10-12T10:39:44+02:00,B,kever,198.51.100.61,Neder Bank,inlog
+2026-10-31T08:30:43+01:00,B,motte,198.51.100.30,Neder Bank,export
+2026-10-12T19:41:58+02:00,B,spinner,198.51.100.14,NEDERBANK,inlog
+2026-10-20T07:12:06Z,A,spinner ,203.0.113.77,NederBank,inlog
+2026-10-23T10:06:39+02:00,B,Lantaarn,192.0.2.45,Polderbank,export
+2026-10-15T09:18:39+02:00,B,lantaarn,203.0.113.90,Duinkrediet,buit_bekeken
+2026-10-22T22:50:32Z,A,Lantaarn,203.0.113.90,Polderbank,buit_bekeken
+2026-10-29T12:39:28+01:00,B,spinner ,198.51.100.14,Neder Bank,buit_bekeken
+2026-10-20T07:47:03Z,A,Spinner,203.0.113.77,NEDERBANK,inlog
+2026-10-19T15:24:25Z,A,motte,198.51.100.30,polderbank,buit_bekeken
+2026-10-20T09:24:33+02:00,B,Lantaarn,192.0.2.45,Duinkrediet,inlog
+2026-10-31T17:30:57Z,A,motte,198.51.100.30,polderbank,buit_bekeken
+2026-10-23T13:14:48+02:00,B,spinner,198.51.100.14,Polderbank,export
+2026-10-18T10:00:05Z,A,lantaarn,203.0.113.90,Duinkrediet,buit_bekeken
+2026-10-19T15:01:47Z,A,spinner,203.0.113.77,Neder Bank,inlog
+2026-10-30T15:42:29+01:00,B,motte,198.51.100.30,polderbank,buit_bekeken
+2026-10-27T09:00:20+01:00,B,Spinner,198.51.100.14,Neder Bank,export
+2026-10-23T17:16:11+02:00,B,spinner,198.51.100.14,NEDERBANK,buit_bekeken
+2026-10-18T09:40:53+02:00,B,Lantaarn,203.0.113.90,nederbank,inlog
+2026-10-15T04:39:33+02:00,B,motte,198.51.100.30,NEDERBANK,inlog
+2026-10-19T18:52:29+02:00,B,lantaarn,192.0.2.45,NederBank,buit_bekeken
+2026-10-19T20:28:56+02:00,B,Spinner,198.51.100.14,Duinkrediet,inlog
+2026-10-18T18:26:02+02:00,B,Lantaarn,192.0.2.45,NederBank,inlog
+2026-10-27T16:39:06+01:00,B,MOTTE,198.51.100.30,polderbank,buit_bekeken
+2026-10-17T19:22:04Z,A,lantaarn,203.0.113.90,Neder Bank,buit_bekeken
+2026-10-23T13:17:39Z,A,MOTTE,198.51.100.30,Neder Bank,buit_bekeken
+2026-10-29T12:36:52+01:00,B,motte,203.0.113.21,NEDERBANK,export
+2026-10-16T18:01:01+02:00,B,Spinner,203.0.113.77,NederBank,export
+2026-10-22T15:51:23+02:00,B,MOTTE,198.51.100.30,NEDERBANK,inlog
+2026-10-12T11:35:11+02:00,B,lantaarn,203.0.113.90,polderbank,inlog
+2026-10-23T14:04:02+02:00,B,MOTTE,198.51.100.30,nederbank,inlog
+2026-10-19T16:20:36Z,A,Spinner,198.51.100.14,polderbank,inlog
+2026-10-23T12:14:42Z,A,dwaallicht,192.0.2.88,nederbank,inlog
+2026-10-17T11:48:34Z,A,motte,203.0.113.21,Duinkrediet,inlog
+2026-10-29T00:59:32+01:00,B,Spinner,198.51.100.14,Duinkrediet,inlog
+2026-10-27T08:21:59Z,A,dwaallicht,192.0.2.88,Polderbank,buit_bekeken
+2026-10-23T14:02:12+02:00,B,Spinner,203.0.113.77,NEDERBANK,inlog
+2026-10-20T07:02:08Z,A,spinner ,203.0.113.77,Polderbank,inlog
+2026-10-13T09:39:33Z,A,MOTTE,203.0.113.21,NEDERBANK,inlog
+2026-10-31T12:03:07Z,A,MOTTE,203.0.113.21,nederbank,buit_bekeken
+2026-10-22T09:49:13+02:00,B,kever,198.51.100.61,Duinkrediet,export
+2026-10-30T08:44:14+01:00,B,dwaallicht,192.0.2.88,Polderbank,inlog
+2026-10-20T09:38:38+02:00,B,lantaarn,203.0.113.90,polderbank,buit_bekeken
+2026-10-12T10:06:15Z,A,motte,198.51.100.30,Duinkrediet,inlog
+2026-10-22T17:52:19Z,A,Spinner,198.51.100.14,NederBank,inlog
+2026-10-16T12:36:39+02:00,B,Lantaarn,192.0.2.45,nederbank,inlog
+2026-10-27T18:56:36Z,A,kever,198.51.100.61,nederbank,inlog
+2026-10-19T22:02:53+02:00,B,MOTTE,203.0.113.21,nederbank,inlog
+2026-10-14T10:38:22Z,A,Lantaarn,203.0.113.90,polderbank,inlog
+2026-10-30T08:40:43+01:00,B,spinner,203.0.113.77,Duinkrediet,inlog
+2026-10-28T11:17:13+01:00,B,Spinner,203.0.113.77,Duinkrediet,buit_bekeken
+2026-10-15T12:07:45+02:00,B,motte,203.0.113.21,Duinkrediet,inlog
+2026-10-17T21:12:21Z,A,motte,198.51.100.30,Neder Bank,buit_bekeken
+2026-10-18T15:37:57Z,A,kever,198.51.100.61,Neder Bank,inlog
+2026-10-26T09:38:38+01:00,B,motte,203.0.113.21,Duinkrediet,inlog
+2026-10-14T17:03:02+02:00,B,Lantaarn,203.0.113.90,nederbank,inlog
+2026-10-14T23:37:27+02:00,B,motte,198.51.100.30,Neder Bank,inlog
+2026-10-23T03:32:10Z,A,kever,198.51.100.61,Duinkrediet,inlog
+2026-10-13T23:35:43+02:00,B,spinner,203.0.113.77,Duinkrediet,inlog
+2026-10-19T12:57:33Z,A,lantaarn,192.0.2.45,NEDERBANK,inlog
+2026-10-19T15:52:31+02:00,B,kever,198.51.100.61,NEDERBANK,inlog
+2026-10-31T11:47:01Z,A,lantaarn,192.0.2.45,nederbank,inlog
+2026-10-22T10:21:51+02:00,B,dwaallicht,192.0.2.88,polderbank,export
+2026-10-20T14:39:46+02:00,B,spinner,198.51.100.14,Polderbank,inlog
+2026-10-19T07:12:07Z,A,MOTTE,203.0.113.21,polderbank,inlog
+2026-10-18T09:37:43Z,A,lantaarn,203.0.113.90,Polderbank,inlog
+2026-10-22T21:14:24+02:00,B,MOTTE,198.51.100.30,NederBank,inlog
+2026-10-25T11:56:58+01:00,B,motte,203.0.113.21,NEDERBANK,inlog
+2026-10-27T05:21:12Z,A,lantaarn,203.0.113.90,Polderbank,inlog
+2026-10-20T07:16:29Z,A,MOTTE,203.0.113.21,NEDERBANK,buit_bekeken
+2026-10-20T01:48:36+02:00,B,Lantaarn,203.0.113.90,polderbank,inlog
+2026-10-29T17:11:33+01:00,B,dwaallicht,192.0.2.88,polderbank,inlog
+2026-10-12T09:13:36Z,A,spinner ,203.0.113.77,Neder Bank,inlog
+2026-10-21T17:02:50+02:00,B,kever,198.51.100.61,Neder Bank,inlog
+2026-10-22T06:04:32+02:00,B,Lantaarn,203.0.113.90,NEDERBANK,inlog
+2026-10-13T13:50:19Z,A,motte,203.0.113.21,Duinkrediet,inlog
+2026-10-20T09:22:30+02:00,B,MOTTE,203.0.113.21,Polderbank,buit_bekeken
+2026-10-27T16:52:32Z,A,MOTTE,203.0.113.21,nederbank,inlog
+2026-10-24T11:12:03+02:00,B,dwaallicht,192.0.2.88,polderbank,inlog
+2026-10-20T09:44:43+02:00,B,motte,198.51.100.30,NederBank,inlog
+2026-10-19T08:21:58Z,A,Spinner,203.0.113.77,nederbank,inlog
+2026-10-22T11:02:06+02:00,B,MOTTE,203.0.113.21,NEDERBANK,inlog
+2026-10-24T23:12:33+02:00,B,Spinner,198.51.100.14,Duinkrediet,export
+2026-10-29T09:27:07Z,A,MOTTE,198.51.100.30,Duinkrediet,inlog
+2026-10-14T07:54:45Z,A,Spinner,203.0.113.77,nederbank,inlog
+2026-10-28T14:04:17+01:00,B,spinner,203.0.113.77,NederBank,export
+2026-10-25T18:11:30Z,A,kever,198.51.100.61,nederbank,inlog
+2026-10-29T09:12:51+01:00,B,Spinner,198.51.100.14,NederBank,buit_bekeken
+2026-10-19T17:08:11+02:00,B,spinner ,198.51.100.14,nederbank,buit_bekeken
+2026-10-30T06:28:08+01:00,B,motte,203.0.113.21,Neder Bank,inlog
+2026-10-23T08:23:05+02:00,B,spinner ,198.51.100.14,nederbank,inlog
+2026-10-30T07:10:20+01:00,B,MOTTE,203.0.113.21,Neder Bank,inlog
+2026-10-13T10:07:39+02:00,B,Spinner,203.0.113.77,NEDERBANK,inlog
+2026-10-26T10:03:40Z,A,Lantaarn,203.0.113.90,NEDERBANK,buit_bekeken
+2026-10-27T07:11:43Z,A,spinner ,198.51.100.14,Neder Bank,buit_bekeken
+2026-10-20T07:24:20Z,A,spinner ,198.51.100.14,Neder Bank,inlog
+2026-10-15T08:07:49Z,A,lantaarn,192.0.2.45,Duinkrediet,inlog
+2026-10-18T12:21:22+02:00,B,motte,203.0.113.21,NederBank,inlog
+2026-10-31T09:37:44Z,A,Spinner,203.0.113.77,Duinkrediet,inlog
+2026-10-14T18:49:10Z,A,MOTTE,198.51.100.30,NederBank,inlog
+2026-10-20T09:25:29+02:00,B,Spinner,198.51.100.14,polderbank,inlog
+2026-10-18T13:41:09+02:00,B,spinner,198.51.100.14,Duinkrediet,inlog
+2026-10-28T15:23:26Z,A,motte,198.51.100.30,Polderbank,inlog
+2026-10-20T09:17:21+02:00,B,kever,198.51.100.61,nederbank,inlog
+2026-10-29T11:40:15Z,A,Spinner,203.0.113.77,Duinkrediet,inlog
+2026-10-19T15:13:55Z,A,spinner,203.0.113.77,Neder Bank,inlog
+2026-10-23T18:58:45+02:00,B,spinner ,198.51.100.14,NederBank,inlog
+2026-10-29T12:02:30Z,A,spinner ,198.51.100.14,NederBank,inlog
+2026-10-15T18:58:05Z,A,kever,198.51.100.61,NederBank,inlog
+2026-10-22T15:56:46Z,A,dwaallicht,192.0.2.88,polderbank,inlog
+2026-10-28T04:31:43+01:00,B,lantaarn,203.0.113.90,Duinkrediet,inlog
+2026-10-15T14:23:46Z,A,Lantaarn,192.0.2.45,NEDERBANK,inlog
+2026-10-20T07:39:02Z,A,dwaallicht,192.0.2.88,Duinkrediet,buit_bekeken
+2026-10-12T09:47:30Z,A,motte,203.0.113.21,Polderbank,inlog
+2026-10-31T20:05:10Z,A,MOTTE,198.51.100.30,NEDERBANK,inlog
+2026-10-27T01:02:06Z,A,spinner,198.51.100.14,NederBank,export
+2026-10-20T15:57:33Z,A,motte,203.0.113.21,Duinkrediet,inlog
+2026-10-19T08:20:38+02:00,B,kever,198.51.100.61,nederbank,buit_bekeken
+2026-10-12T10:35:04+02:00,B,lantaarn,203.0.113.90,nederbank,buit_bekeken
+2026-10-13T20:05:20+02:00,B,dwaallicht,192.0.2.88,NEDERBANK,buit_bekeken
+2026-10-21T06:35:30Z,A,spinner,203.0.113.77,polderbank,export
+2026-10-15T09:56:42+02:00,B,dwaallicht,192.0.2.88,Duinkrediet,inlog
+2026-10-15T16:28:36Z,A,lantaarn,192.0.2.45,polderbank,export
+2026-10-15T12:04:56+02:00,B,MOTTE,203.0.113.21,Neder Bank,inlog
+2026-10-24T16:24:59+02:00,B,Spinner,203.0.113.77,Polderbank,buit_bekeken
+2026-10-24T15:53:58+02:00,B,spinner ,198.51.100.14,polderbank,inlog
+2026-10-17T09:11:59Z,A,lantaarn,203.0.113.90,NEDERBANK,inlog
+2026-10-30T09:51:25+01:00,B,spinner,198.51.100.14,NEDERBANK,buit_bekeken
+2026-10-19T18:00:23Z,A,motte,203.0.113.21,Neder Bank,inlog
+2026-10-29T16:12:14Z,A,spinner ,203.0.113.77,NederBank,buit_bekeken
+2026-10-20T17:54:29+02:00,B,MOTTE,203.0.113.21,polderbank,inlog
+2026-10-13T21:19:59Z,A,MOTTE,203.0.113.21,NederBank,inlog
+2026-10-16T18:39:26Z,A,Spinner,198.51.100.14,polderbank,inlog
+2026-10-30T07:18:09Z,A,MOTTE,203.0.113.21,Neder Bank,inlog
+2026-10-17T01:42:04+02:00,B,Lantaarn,192.0.2.45,Duinkrediet,inlog
+2026-10-31T22:46:05+01:00,B,dwaallicht,192.0.2.88,polderbank,buit_bekeken
+2026-10-16T13:06:21+02:00,B,Lantaarn,192.0.2.45,Polderbank,inlog
+2026-10-26T07:27:00+01:00,B,spinner,198.51.100.14,nederbank,inlog
+2026-10-20T07:20:44Z,A,Spinner,198.51.100.14,Neder Bank,inlog
+2026-10-28T10:11:40Z,A,spinner ,203.0.113.77,nederbank,buit_bekeken
+2026-10-20T07:30:25Z,A,MOTTE,198.51.100.30,polderbank,buit_bekeken
+2026-10-27T07:38:41+01:00,B,MOTTE,198.51.100.30,NederBank,inlog
+2026-10-30T06:05:27Z,A,dwaallicht,192.0.2.88,NederBank,inlog
+2026-10-17T21:23:32+02:00,B,Spinner,203.0.113.77,NEDERBANK,inlog
+2026-10-14T17:25:03+02:00,B,MOTTE,203.0.113.21,NederBank,inlog
+2026-10-15T19:25:35+02:00,B,motte,198.51.100.30,Polderbank,buit_bekeken
+2026-10-25T11:44:50+01:00,B,lantaarn,203.0.113.90,Polderbank,inlog
+2026-10-24T10:59:30+02:00,B,spinner,203.0.113.77,NederBank,buit_bekeken
+2026-10-14T15:52:21+02:00,B,spinner ,203.0.113.77,polderbank,inlog
+2026-10-15T11:03:39+02:00,B,MOTTE,203.0.113.21,NEDERBANK,buit_bekeken
+2026-10-12T10:01:22+02:00,B,lantaarn,203.0.113.90,nederbank,buit_bekeken
+2026-10-14T12:04:37+02:00,B,kever,198.51.100.61,Neder Bank,buit_bekeken
+2026-10-15T14:30:14Z,A,Spinner,198.51.100.14,NEDERBANK,buit_bekeken
+2026-10-26T09:31:50+01:00,B,MOTTE,198.51.100.30,Duinkrediet,inlog
+2026-10-12T16:22:55Z,A,lantaarn,192.0.2.45,Polderbank,inlog
+2026-10-29T06:04:20Z,A,Spinner,203.0.113.77,NederBank,inlog
+2026-10-23T07:00:45+02:00,B,lantaarn,203.0.113.90,nederbank,buit_bekeken
+2026-10-14T06:09:28Z,A,spinner ,203.0.113.77,polderbank,inlog
+2026-10-18T01:38:42+02:00,B,spinner ,203.0.113.77,Duinkrediet,inlog
+2026-10-28T06:23:38Z,A,MOTTE,198.51.100.30,Neder Bank,inlog
+2026-10-14T11:07:13Z,A,Lantaarn,203.0.113.90,Neder Bank,inlog
+2026-10-25T17:29:19Z,A,MOTTE,203.0.113.21,Neder Bank,inlog
+2026-10-25T16:55:17Z,A,MOTTE,198.51.100.30,Duinkrediet,inlog
+2026-10-23T05:00:14Z,A,Spinner,198.51.100.14,NederBank,inlog
+2026-10-21T09:58:22+02:00,B,dwaallicht,192.0.2.88,Duinkrediet,inlog
+2026-10-13T14:38:11Z,A,MOTTE,198.51.100.30,Neder Bank,inlog
+2026-10-21T15:54:04+02:00,B,Spinner,203.0.113.77,nederbank,inlog
+2026-10-15T23:01:13+02:00,B,spinner ,203.0.113.77,Polderbank,inlog
+2026-10-18T15:52:35+02:00,B,Spinner,198.51.100.14,Neder Bank,inlog
+2026-10-24T14:43:56+02:00,B,motte,203.0.113.21,Duinkrediet,inlog
+2026-10-31T17:05:04+01:00,B,MOTTE,198.51.100.30,Duinkrediet,inlog
+2026-10-26T06:06:46Z,A,motte,198.51.100.30,Neder Bank,inlog
+2026-10-22T19:30:02Z,A,dwaallicht,192.0.2.88,NEDERBANK,inlog
+2026-10-28T17:45:34Z,A,dwaallicht,192.0.2.88,polderbank,buit_bekeken
+2026-10-25T15:23:53+01:00,B,Spinner,198.51.100.14,Duinkrediet,inlog
+2026-10-19T10:10:42+02:00,B,dwaallicht,192.0.2.88,NederBank,export
+2026-10-18T03:22:30+02:00,B,Lantaarn,192.0.2.45,NEDERBANK,inlog
+2026-10-18T21:29:40Z,A,motte,203.0.113.21,NederBank,inlog
+2026-10-26T13:00:39Z,A,MOTTE,203.0.113.21,polderbank,inlog
+2026-10-17T12:34:51Z,A,spinner,198.51.100.14,NederBank,inlog
+2026-10-18T11:53:01Z,A,spinner,198.51.100.14,Duinkrediet,inlog
+2026-10-31T01:32:30+01:00,B,MOTTE,198.51.100.30,Neder Bank,inlog
+2026-10-20T02:07:12+02:00,B,spinner,198.51.100.14,nederbank,inlog
+2026-10-30T15:42:40Z,A,kever,198.51.100.61,Neder Bank,inlog
+2026-10-21T22:32:52Z,A,spinner ,198.51.100.14,NEDERBANK,buit_bekeken
+2026-10-14T18:55:11Z,A,lantaarn,203.0.113.90,nederbank,inlog
+2026-10-16T16:08:50Z,A,lantaarn,203.0.113.90,Duinkrediet,inlog
+2026-10-21T18:54:18+02:00,B,motte,203.0.113.21,Polderbank,inlog
+2026-10-23T13:07:07Z,A,lantaarn,203.0.113.90,nederbank,inlog
+2026-10-16T20:13:06+02:00,B,motte,198.51.100.30,nederbank,export
+2026-10-22T13:48:20Z,A,spinner,198.51.100.14,Neder Bank,buit_bekeken
+2026-10-26T12:17:23+01:00,B,motte,198.51.100.30,Neder Bank,inlog
+2026-10-26T08:55:17Z,A,Lantaarn,203.0.113.90,Neder Bank,inlog
+2026-10-20T16:26:05+02:00,B,lantaarn,192.0.2.45,polderbank,inlog
+2026-10-13T13:39:34Z,A,spinner ,198.51.100.14,nederbank,buit_bekeken
+2026-10-27T15:51:40Z,A,MOTTE,203.0.113.21,NEDERBANK,buit_bekeken
+2026-10-21T06:06:31+02:00,B,Lantaarn,192.0.2.45,Duinkrediet,inlog
+2026-10-21T10:55:04+02:00,B,MOTTE,198.51.100.30,NederBank,inlog
+2026-10-25T10:58:02Z,A,dwaallicht,192.0.2.88,Duinkrediet,inlog
+2026-10-12T20:09:03+02:00,B,spinner,203.0.113.77,Duinkrediet,inlog
+2026-10-23T17:36:15+02:00,B,motte,198.51.100.30,NEDERBANK,inlog
+2026-10-15T16:15:45Z,A,MOTTE,203.0.113.21,Polderbank,buit_bekeken
+2026-10-19T10:21:15+02:00,B,kever,198.51.100.61,NEDERBANK,inlog
+2026-10-30T13:28:36Z,A,dwaallicht,192.0.2.88,NederBank,inlog
+2026-10-22T22:52:08+02:00,B,MOTTE,203.0.113.21,polderbank,inlog
+2026-10-22T05:57:19Z,A,spinner ,203.0.113.77,NEDERBANK,inlog
+2026-10-17T20:20:02+02:00,B,MOTTE,203.0.113.21,NEDERBANK,inlog
+2026-10-24T18:06:54Z,A,MOTTE,198.51.100.30,Neder Bank,inlog
+2026-10-19T00:37:20Z,A,dwaallicht,192.0.2.88,Polderbank,export
+2026-10-28T07:06:52Z,A,MOTTE,203.0.113.21,NEDERBANK,inlog
+2026-10-20T07:42:27Z,A,spinner,203.0.113.77,NEDERBANK,buit_bekeken
+2026-10-25T16:41:25Z,A,Lantaarn,203.0.113.90,NEDERBANK,inlog
+2026-10-23T11:14:46Z,A,spinner ,198.51.100.14,Polderbank,inlog
+2026-10-31T11:07:47Z,A,dwaallicht,192.0.2.88,Neder Bank,buit_bekeken
+2026-10-18T13:30:08Z,A,Spinner,198.51.100.14,nederbank,inlog
+2026-10-17T14:15:17+02:00,B,dwaallicht,192.0.2.88,NederBank,buit_bekeken
+2026-10-29T14:47:40+01:00,B,spinner,198.51.100.14,nederbank,inlog
+2026-10-13T10:37:15Z,A,MOTTE,198.51.100.30,Polderbank,inlog
+2026-10-26T09:41:18+01:00,B,Spinner,198.51.100.14,polderbank,buit_bekeken
+2026-10-12T20:21:01Z,A,motte,198.51.100.30,NederBank,buit_bekeken
+2026-10-20T21:43:55Z,A,spinner,203.0.113.77,nederbank,buit_bekeken
+2026-10-13T13:55:48+02:00,B,Lantaarn,192.0.2.45,polderbank,inlog
+2026-10-25T20:36:40+01:00,B,kever,198.51.100.61,NederBank,buit_bekeken
+2026-10-28T10:29:30+01:00,B,Spinner,203.0.113.77,Duinkrediet,export
+2026-10-25T07:21:13+01:00,B,spinner ,203.0.113.77,Duinkrediet,buit_bekeken
+2026-10-12T17:47:19+02:00,B,kever,198.51.100.61,Duinkrediet,inlog
+2026-10-26T14:43:26Z,A,spinner,203.0.113.77,Duinkrediet,inlog
+2026-10-29T13:43:04+01:00,B,Lantaarn,192.0.2.45,polderbank,inlog
+2026-10-23T21:21:01+02:00,B,Spinner,198.51.100.14,Polderbank,inlog
+2026-10-22T08:06:37+02:00,B,spinner ,198.51.100.14,Duinkrediet,inlog
+2026-10-30T19:18:01Z,A,motte,198.51.100.30,NederBank,inlog
+2026-10-16T06:43:17Z,A,Spinner,198.51.100.14,Polderbank,export
+2026-10-17T01:15:16Z,A,Lantaarn,203.0.113.90,NEDERBANK,export
+2026-10-12T18:35:28Z,A,spinner ,198.51.100.14,polderbank,inlog
+2026-10-13T08:19:15+02:00,B,Lantaarn,203.0.113.90,NEDERBANK,inlog
+2026-10-24T10:24:41+02:00,B,lantaarn,203.0.113.90,nederbank,inlog
+2026-10-31T12:33:21Z,A,Lantaarn,192.0.2.45,nederbank,inlog
+2026-10-19T20:56:49+02:00,B,MOTTE,198.51.100.30,Polderbank,inlog
+2026-10-27T19:27:04+01:00,B,spinner ,203.0.113.77,polderbank,buit_bekeken
+2026-10-17T10:22:59+02:00,B,Spinner,198.51.100.14,Neder Bank,inlog
+2026-10-25T06:23:19Z,A,Lantaarn,203.0.113.90,polderbank,buit_bekeken
+2026-10-25T07:39:09+01:00,B,MOTTE,198.51.100.30,Polderbank,inlog
+2026-10-12T19:21:12+02:00,B,lantaarn,192.0.2.45,nederbank,inlog
+2026-10-14T13:28:14+02:00,B,spinner,203.0.113.77,Duinkrediet,inlog
+2026-10-23T09:20:29+02:00,B,motte,198.51.100.30,Polderbank,inlog
+2026-10-27T13:03:10Z,A,Lantaarn,203.0.113.90,Polderbank,export
+2026-10-22T10:14:10Z,A,Spinner,203.0.113.77,nederbank,inlog
+2026-10-21T17:28:28Z,A,MOTTE,198.51.100.30,NEDERBANK,inlog
+2026-10-22T19:22:10+02:00,B,motte,203.0.113.21,Neder Bank,export
+2026-10-20T07:12:11Z,A,motte,198.51.100.30,NEDERBANK,inlog
+2026-10-19T08:51:30Z,A,spinner,198.51.100.14,polderbank,inlog
+2026-10-31T11:17:49Z,A,dwaallicht,192.0.2.88,NEDERBANK,inlog
+2026-10-22T13:34:51+02:00,B,Lantaarn,203.0.113.90,NederBank,inlog
+2026-10-18T17:50:12+02:00,B,spinner ,203.0.113.77,Duinkrediet,inlog
+2026-10-25T10:42:25+01:00,B,lantaarn,203.0.113.90,Duinkrediet,inlog
+2026-10-28T21:21:09+01:00,B,spinner ,198.51.100.14,Neder Bank,inlog
+2026-10-30T07:51:51Z,A,motte,203.0.113.21,Neder Bank,buit_bekeken
+2026-10-25T08:33:19Z,A,spinner ,203.0.113.77,Polderbank,inlog
+2026-10-29T10:25:04+01:00,B,motte,198.51.100.30,NEDERBANK,inlog
+2026-10-25T07:06:07+01:00,B,dwaallicht,192.0.2.88,Duinkrediet,inlog
+2026-10-17T06:58:26Z,A,Spinner,203.0.113.77,Duinkrediet,buit_bekeken
+2026-10-19T22:57:16+02:00,B,spinner,198.51.100.14,Neder Bank,buit_bekeken
+2026-10-23T12:15:52Z,A,Lantaarn,192.0.2.45,NEDERBANK,inlog
+2026-10-12T10:48:03Z,A,spinner,198.51.100.14,NEDERBANK,inlog
+2026-10-15T22:32:31+02:00,B,dwaallicht,192.0.2.88,polderbank,inlog
+2026-10-19T09:31:06Z,A,spinner ,198.51.100.14,nederbank,inlog
+2026-10-26T13:29:20+01:00,B,dwaallicht,192.0.2.88,Duinkrediet,inlog
+2026-10-18T14:41:54+02:00,B,MOTTE,203.0.113.21,polderbank,buit_bekeken
+2026-10-20T09:19:03+02:00,B,spinner,203.0.113.77,polderbank,buit_bekeken
+2026-10-17T15:25:58Z,A,lantaarn,192.0.2.45,Duinkrediet,inlog
+2026-10-20T07:26:00Z,A,Spinner,198.51.100.14,Duinkrediet,inlog
+2026-10-16T05:23:28+02:00,B,motte,198.51.100.30,Polderbank,export
+2026-10-28T09:47:04+01:00,B,MOTTE,198.51.100.30,Duinkrediet,buit_bekeken
+2026-10-20T16:05:04+02:00,B,spinner,198.51.100.14,Duinkrediet,export
+2026-10-14T15:53:35Z,A,dwaallicht,192.0.2.88,nederbank,inlog
+2026-10-23T12:21:04+02:00,B,spinner ,198.51.100.14,Duinkrediet,inlog
+2026-10-29T08:33:16Z,A,motte,198.51.100.30,Duinkrediet,inlog
+2026-10-13T14:38:31Z,A,kever,198.51.100.61,nederbank,inlog
+2026-10-26T11:57:48+01:00,B,dwaallicht,192.0.2.88,NEDERBANK,export
+2026-10-29T21:49:50Z,A,dwaallicht,192.0.2.88,NEDERBANK,inlog
+2026-10-26T23:45:20+01:00,B,motte,203.0.113.21,NederBank,buit_bekeken
+2026-10-31T18:23:58+01:00,B,Spinner,203.0.113.77,NEDERBANK,inlog
+2026-10-30T07:47:37Z,A,motte,198.51.100.30,Neder Bank,inlog
+2026-10-13T16:37:29+02:00,B,motte,203.0.113.21,nederbank,buit_bekeken
+2026-10-24T10:33:22+02:00,B,motte,198.51.100.30,polderbank,inlog
+2026-10-17T11:37:30+02:00,B,Lantaarn,203.0.113.90,Neder Bank,inlog
+2026-10-17T20:24:15Z,A,Spinner,203.0.113.77,Neder Bank,inlog
+2026-10-16T20:14:15+02:00,B,spinner,198.51.100.14,polderbank,buit_bekeken
+2026-10-18T14:47:57+02:00,B,lantaarn,192.0.2.45,NederBank,buit_bekeken
+2026-10-18T11:35:12+02:00,B,lantaarn,203.0.113.90,Polderbank,inlog
+2026-10-18T11:49:29Z,A,spinner,203.0.113.77,Neder Bank,buit_bekeken
+2026-10-15T11:12:17Z,A,spinner,203.0.113.77,Polderbank,inlog
+2026-10-28T08:03:13+01:00,B,motte,198.51.100.30,nederbank,buit_bekeken
+2026-10-18T07:46:48+02:00,B,spinner,203.0.113.77,Duinkrediet,inlog
+2026-10-24T16:54:00+02:00,B,spinner ,198.51.100.14,Duinkrediet,inlog
+2026-10-29T16:10:58+01:00,B,spinner,198.51.100.14,Polderbank,inlog
+2026-10-25T09:07:05Z,A,Lantaarn,192.0.2.45,NEDERBANK,inlog
+2026-10-13T11:44:51Z,A,spinner,198.51.100.14,NEDERBANK,inlog
+2026-10-15T09:15:35+02:00,B,motte,203.0.113.21,Duinkrediet,inlog
+2026-10-23T10:48:13Z,A,kever,198.51.100.61,Neder Bank,inlog
+2026-10-20T07:01:10+02:00,B,MOTTE,198.51.100.30,nederbank,inlog
+2026-10-21T09:51:57Z,A,dwaallicht,192.0.2.88,nederbank,inlog
+2026-10-29T21:28:28Z,A,MOTTE,203.0.113.21,NEDERBANK,inlog
+2026-10-24T16:26:50Z,A,dwaallicht,192.0.2.88,polderbank,inlog
+2026-10-17T16:53:45+02:00,B,lantaarn,192.0.2.45,Polderbank,inlog
+2026-10-26T10:02:28Z,A,spinner,198.51.100.14,Polderbank,inlog
+2026-10-13T18:21:26+02:00,B,Lantaarn,192.0.2.45,Neder Bank,buit_bekeken
+2026-10-20T09:19:02+02:00,B,Lantaarn,203.0.113.90,Neder Bank,inlog
+2026-10-30T19:06:19Z,A,MOTTE,203.0.113.21,Neder Bank,inlog
+2026-10-16T06:05:50+02:00,B,spinner,198.51.100.14,Duinkrediet,inlog
+2026-10-22T13:39:15Z,A,spinner,203.0.113.77,NederBank,buit_bekeken
+2026-10-20T12:59:05Z,A,dwaallicht,192.0.2.88,Neder Bank,inlog
+2026-10-27T15:40:09Z,A,motte,203.0.113.21,NederBank,buit_bekeken
+2026-10-20T09:00:31+02:00,B,spinner ,198.51.100.14,NEDERBANK,inlog
+2026-10-13T14:09:28+02:00,B,MOTTE,198.51.100.30,polderbank,inlog
+2026-10-17T14:18:23+02:00,B,kever,198.51.100.61,NEDERBANK,export
+2026-10-19T22:26:38Z,A,Lantaarn,203.0.113.90,polderbank,inlog
+2026-10-16T04:51:34+02:00,B,Spinner,203.0.113.77,Duinkrediet,inlog
+2026-10-17T18:30:00+02:00,B,kever,198.51.100.61,NEDERBANK,buit_bekeken
+2026-10-30T12:47:37+01:00,B,MOTTE,198.51.100.30,nederbank,inlog
+2026-10-28T12:59:15+01:00,B,dwaallicht,192.0.2.88,Neder Bank,buit_bekeken
+2026-10-21T10:07:45Z,A,motte,198.51.100.30,Polderbank,buit_bekeken
+2026-10-25T16:54:15Z,A,spinner,198.51.100.14,Polderbank,inlog
+2026-10-26T19:14:48+01:00,B,spinner,203.0.113.77,NederBank,inlog
+2026-10-31T11:40:43Z,A,dwaallicht,192.0.2.88,Duinkrediet,export
+2026-10-13T09:46:08Z,A,Lantaarn,192.0.2.45,Duinkrediet,buit_bekeken
+2026-10-12T12:16:14+02:00,B,motte,203.0.113.21,Polderbank,buit_bekeken
+2026-10-14T09:41:22Z,A,spinner,198.51.100.14,Duinkrediet,inlog
+2026-10-31T02:47:13+01:00,B,Spinner,203.0.113.77,NEDERBANK,buit_bekeken
+2026-10-18T07:58:32+02:00,B,spinner ,198.51.100.14,Duinkrediet,inlog
+2026-10-23T15:21:19Z,A,dwaallicht,192.0.2.88,Duinkrediet,inlog
+2026-10-18T10:44:11+02:00,B,spinner ,203.0.113.77,Duinkrediet,inlog
+2026-10-27T07:31:55Z,A,motte,203.0.113.21,Polderbank,inlog
+2026-10-24T12:27:50+02:00,B,MOTTE,198.51.100.30,polderbank,inlog
+2026-10-23T15:36:45Z,A,dwaallicht,192.0.2.88,Duinkrediet,buit_bekeken
+2026-10-21T13:22:36+02:00,B,Lantaarn,203.0.113.90,nederbank,buit_bekeken
+2026-10-24T15:47:59Z,A,Lantaarn,203.0.113.90,Duinkrediet,inlog
+2026-10-26T10:44:26+01:00,B,kever,198.51.100.61,Neder Bank,inlog
+2026-10-19T13:21:12Z,A,motte,198.51.100.30,NEDERBANK,inlog
+2026-10-13T18:15:27+02:00,B,Spinner,198.51.100.14,Duinkrediet,buit_bekeken
+2026-10-14T10:33:07+02:00,B,lantaarn,192.0.2.45,polderbank,inlog
+2026-10-17T10:18:58Z,A,motte,198.51.100.30,nederbank,buit_bekeken
+2026-10-18T12:39:48Z,A,spinner ,198.51.100.14,nederbank,inlog
+2026-10-24T08:11:15Z,A,spinner ,203.0.113.77,nederbank,inlog
+2026-10-25T13:23:26+01:00,B,kever,198.51.100.61,Neder Bank,inlog
+2026-10-15T17:29:32+02:00,B,MOTTE,203.0.113.21,NEDERBANK,inlog
+2026-10-29T01:58:14Z,A,motte,198.51.100.30,nederbank,inlog
+2026-10-29T22:28:28+01:00,B,MOTTE,203.0.113.21,NEDERBANK,inlog
+2026-10-19T19:12:04Z,A,Lantaarn,192.0.2.45,Duinkrediet,buit_bekeken
+2026-10-20T02:06:45+02:00,B,kever,198.51.100.61,polderbank,buit_bekeken
+2026-10-18T03:41:23+02:00,B,spinner,198.51.100.14,Neder Bank,inlog
+2026-10-24T14:05:44+02:00,B,Lantaarn,192.0.2.45,Polderbank,inlog
+2026-10-19T13:28:48+02:00,B,spinner ,203.0.113.77,NederBank,inlog
+2026-10-27T17:02:58Z,A,spinner ,198.51.100.14,NEDERBANK,inlog
+2026-10-19T17:34:46+02:00,B,spinner ,203.0.113.77,polderbank,inlog
+2026-10-12T15:40:28Z,A,dwaallicht,192.0.2.88,Polderbank,inlog
+2026-10-17T18:30:17+02:00,B,lantaarn,192.0.2.45,NederBank,inlog
+2026-10-15T23:01:37+02:00,B,lantaarn,203.0.113.90,Polderbank,inlog
+2026-10-28T15:21:21Z,A,spinner,198.51.100.14,NEDERBANK,inlog
+2026-10-12T11:46:07+02:00,B,Spinner,198.51.100.14,Polderbank,inlog
+2026-10-30T08:48:04Z,A,Lantaarn,203.0.113.90,Neder Bank,inlog
+2026-10-18T13:49:29+02:00,B,spinner,203.0.113.77,Neder Bank,buit_bekeken
+2026-10-13T14:26:38Z,A,Spinner,203.0.113.77,Neder Bank,inlog
+2026-10-27T10:02:29Z,A,lantaarn,203.0.113.90,Duinkrediet,buit_bekeken
+2026-10-31T16:22:30Z,A,spinner,198.51.100.14,polderbank,inlog
+2026-10-13T18:05:20Z,A,dwaallicht,192.0.2.88,NEDERBANK,buit_bekeken
+2026-10-20T09:57:30+02:00,B,Spinner,203.0.113.77,Polderbank,inlog
+2026-10-19T09:55:49+02:00,B,motte,198.51.100.30,NederBank,buit_bekeken
+2026-10-15T19:32:45+02:00,B,dwaallicht,192.0.2.88,Polderbank,inlog
+2026-10-24T13:33:36+02:00,B,kever,198.51.100.61,polderbank,buit_bekeken
+2026-10-16T13:41:10Z,A,dwaallicht,192.0.2.88,Neder Bank,buit_bekeken
+2026-10-26T09:54:24+01:00,B,motte,198.51.100.30,Neder Bank,buit_bekeken
+2026-10-20T07:08:56Z,A,spinner,198.51.100.14,Neder Bank,inlog
+2026-10-18T19:18:59Z,A,dwaallicht,192.0.2.88,NEDERBANK,inlog
+2026-10-20T10:16:35+02:00,B,Spinner,198.51.100.14,Polderbank,inlog
+2026-10-17T18:08:58+02:00,B,MOTTE,198.51.100.30,NEDERBANK,inlog
+2026-10-26T07:36:47Z,A,motte,198.51.100.30,NEDERBANK,buit_bekeken
+2026-10-26T18:11:50+01:00,B,dwaallicht,192.0.2.88,NederBank,inlog
+2026-10-14T08:42:15Z,A,Lantaarn,203.0.113.90,NederBank,inlog
+2026-10-15T16:58:02+02:00,B,Spinner,203.0.113.77,Duinkrediet,inlog
+2026-10-12T11:11:25Z,A,lantaarn,192.0.2.45,NederBank,inlog
+2026-10-18T10:43:01Z,A,motte,198.51.100.30,polderbank,inlog
+2026-10-20T07:50:11Z,A,MOTTE,198.51.100.30,Polderbank,inlog
+2026-10-26T08:41:19+01:00,B,Spinner,198.51.100.14,NEDERBANK,inlog
+2026-10-14T09:27:34+02:00,B,spinner ,198.51.100.14,Polderbank,inlog
+2026-10-23T10:07:49Z,A,Lantaarn,203.0.113.90,polderbank,inlog
+2026-10-13T02:04:35+02:00,B,motte,198.51.100.30,Duinkrediet,inlog
+2026-10-17T12:45:25+02:00,B,dwaallicht,192.0.2.88,Polderbank,inlog
+2026-10-12T13:09:12+02:00,B,dwaallicht,192.0.2.88,nederbank,inlog
+2026-10-23T08:48:46+02:00,B,MOTTE,203.0.113.21,nederbank,inlog
+2026-10-28T09:33:49+01:00,B,Spinner,198.51.100.14,Neder Bank,inlog
+2026-10-24T13:14:58+02:00,B,spinner ,198.51.100.14,NederBank,inlog
+2026-10-17T15:35:46Z,A,spinner,203.0.113.77,Duinkrediet,inlog
+2026-10-26T14:10:00Z,A,spinner ,203.0.113.77,Duinkrediet,inlog
+2026-10-23T07:02:37+02:00,B,Spinner,198.51.100.14,nederbank,buit_bekeken
+2026-10-28T03:47:38Z,A,dwaallicht,192.0.2.88,NEDERBANK,buit_bekeken
+2026-10-30T07:37:04Z,A,Lantaarn,203.0.113.90,Neder Bank,inlog
+2026-10-19T19:43:33+02:00,B,motte,198.51.100.30,nederbank,inlog
+2026-10-30T14:04:21+01:00,B,MOTTE,203.0.113.21,NederBank,buit_bekeken
+2026-10-27T07:01:20+01:00,B,kever,198.51.100.61,NEDERBANK,inlog
+2026-10-12T15:36:59+02:00,B,MOTTE,198.51.100.30,Neder Bank,inlog
+2026-10-27T13:38:04+01:00,B,Spinner,198.51.100.14,NEDERBANK,inlog
+2026-10-12T14:01:52+02:00,B,lantaarn,203.0.113.90,polderbank,buit_bekeken
+2026-10-17T18:16:20Z,A,Spinner,198.51.100.14,Polderbank,inlog
+2026-10-12T17:16:42+02:00,B,spinner ,198.51.100.14,Polderbank,inlog
+2026-10-29T16:11:58Z,A,dwaallicht,192.0.2.88,Polderbank,inlog
+2026-10-26T19:53:33Z,A,spinner ,203.0.113.77,nederbank,inlog
+2026-10-14T16:03:01+02:00,B,Spinner,203.0.113.77,polderbank,buit_bekeken
+2026-10-20T07:59:44Z,A,Spinner,198.51.100.14,Duinkrediet,buit_bekeken
+2026-10-27T14:13:24Z,A,Lantaarn,192.0.2.45,NEDERBANK,buit_bekeken
+2026-10-27T19:03:53+01:00,B,Lantaarn,203.0.113.90,Neder Bank,inlog
+2026-10-18T12:47:29+02:00,B,spinner ,198.51.100.14,Duinkrediet,inlog
+2026-10-22T08:22:59+02:00,B,dwaallicht,192.0.2.88,polderbank,inlog
+2026-10-19T16:31:56Z,A,Spinner,198.51.100.14,polderbank,inlog
+2026-10-15T11:31:28Z,A,spinner,198.51.100.14,Polderbank,export
+2026-10-17T10:20:55+02:00,B,MOTTE,203.0.113.21,polderbank,export
+2026-10-16T15:17:31+02:00,B,Spinner,203.0.113.77,NEDERBANK,inlog
+2026-10-29T14:06:38+01:00,B,Lantaarn,203.0.113.90,polderbank,inlog
+2026-10-15T05:13:50Z,A,spinner ,203.0.113.77,Neder Bank,inlog
+2026-10-22T00:29:29+02:00,B,motte,198.51.100.30,Polderbank,buit_bekeken
+2026-10-30T17:35:33+01:00,B,kever,198.51.100.61,polderbank,inlog
+2026-10-16T20:29:50Z,A,lantaarn,192.0.2.45,Duinkrediet,inlog
+2026-10-14T08:14:37+02:00,B,motte,203.0.113.21,NederBank,inlog
+2026-10-26T09:55:12Z,A,spinner ,203.0.113.77,Duinkrediet,buit_bekeken
+2026-10-13T12:34:36Z,A,spinner,203.0.113.77,Polderbank,inlog
+2026-10-28T12:05:57+01:00,B,motte,203.0.113.21,NEDERBANK,inlog
+2026-10-16T12:59:47+02:00,B,Spinner,198.51.100.14,Polderbank,inlog
+2026-10-17T04:36:41+02:00,B,Spinner,198.51.100.14,nederbank,buit_bekeken
+2026-10-20T07:57:07Z,A,Spinner,198.51.100.14,polderbank,export
+2026-10-28T06:57:19Z,A,Spinner,198.51.100.14,Duinkrediet,buit_bekeken
+2026-10-21T07:17:26Z,A,motte,198.51.100.30,Neder Bank,inlog
+2026-10-22T05:30:21+02:00,B,spinner ,203.0.113.77,Polderbank,inlog
+2026-10-18T12:34:11+02:00,B,motte,198.51.100.30,NederBank,inlog
+2026-10-19T08:00:07Z,A,Lantaarn,192.0.2.45,Neder Bank,inlog
+2026-10-18T19:22:58+02:00,B,spinner,198.51.100.14,Duinkrediet,inlog
+2026-10-24T14:42:16Z,A,motte,203.0.113.21,polderbank,inlog
+2026-10-28T08:14:21Z,A,motte,198.51.100.30,Polderbank,inlog
+2026-10-30T15:22:41+01:00,B,kever,198.51.100.61,NEDERBANK,inlog
+2026-10-25T12:59:37+01:00,B,lantaarn,192.0.2.45,Polderbank,export
+2026-10-25T09:03:54Z,A,spinner,198.51.100.14,polderbank,inlog
+2026-10-28T13:49:16+01:00,B,lantaarn,192.0.2.45,NEDERBANK,buit_bekeken
+2026-10-20T09:16:16+02:00,B,lantaarn,203.0.113.90,Duinkrediet,inlog
+2026-10-13T13:17:14+02:00,B,lantaarn,192.0.2.45,nederbank,inlog
+2026-10-16T11:52:05+02:00,B,motte,198.51.100.30,polderbank,export
+2026-10-14T22:29:03+02:00,B,spinner,203.0.113.77,Polderbank,inlog
+2026-10-12T19:39:42Z,A,Spinner,198.51.100.14,Polderbank,inlog
+2026-10-17T11:06:38+02:00,B,Lantaarn,203.0.113.90,Duinkrediet,buit_bekeken
+2026-10-18T17:28:40Z,A,motte,198.51.100.30,polderbank,inlog
+2026-10-19T03:24:12+02:00,B,Spinner,203.0.113.77,nederbank,buit_bekeken
+2026-10-26T10:07:48+01:00,B,motte,198.51.100.30,Polderbank,buit_bekeken
+2026-10-20T13:54:25+02:00,B,lantaarn,192.0.2.45,polderbank,inlog
+2026-10-30T10:42:58+01:00,B,lantaarn,192.0.2.45,polderbank,inlog
+2026-10-15T01:14:49+02:00,B,lantaarn,192.0.2.45,Duinkrediet,inlog
+2026-10-13T14:57:36+02:00,B,lantaarn,203.0.113.90,NederBank,inlog
+2026-10-12T07:06:58Z,A,motte,198.51.100.30,NederBank,buit_bekeken
+2026-10-31T07:04:33Z,A,spinner ,198.51.100.14,NEDERBANK,inlog
+2026-10-31T22:56:01Z,A,Lantaarn,192.0.2.45,polderbank,inlog
+2026-10-20T07:22:10Z,A,spinner,198.51.100.14,NEDERBANK,inlog
+2026-10-28T09:23:28+01:00,B,spinner,198.51.100.14,Polderbank,buit_bekeken
+2026-10-20T09:41:44+02:00,B,lantaarn,203.0.113.90,Duinkrediet,inlog
+2026-10-19T15:06:08Z,A,Lantaarn,192.0.2.45,Duinkrediet,buit_bekeken
+2026-10-21T20:46:35+02:00,B,spinner ,198.51.100.14,Duinkrediet,inlog
+2026-10-24T20:01:36+02:00,B,motte,203.0.113.21,polderbank,inlog
+2026-10-18T22:34:02+02:00,B,motte,203.0.113.21,Neder Bank,inlog
+2026-10-23T14:37:33Z,A,Lantaarn,192.0.2.45,nederbank,inlog
+2026-10-22T15:01:42+02:00,B,lantaarn,192.0.2.45,Neder Bank,inlog
+2026-10-15T18:11:55Z,A,Spinner,198.51.100.14,NederBank,buit_bekeken
+2026-10-13T21:55:01+02:00,B,MOTTE,203.0.113.21,NederBank,buit_bekeken
+2026-10-24T12:52:02+02:00,B,spinner,198.51.100.14,polderbank,inlog
+2026-10-13T20:15:48+02:00,B,motte,203.0.113.21,Duinkrediet,buit_bekeken
+2026-10-22T07:47:08Z,A,spinner,203.0.113.77,polderbank,buit_bekeken
+2026-10-26T00:54:27Z,A,spinner,198.51.100.14,Polderbank,buit_bekeken
+2026-10-18T15:58:15Z,A,spinner ,198.51.100.14,polderbank,inlog
+2026-10-25T12:47:09+01:00,B,MOTTE,198.51.100.30,NEDERBANK,inlog
+2026-10-22T16:39:09+02:00,B,dwaallicht,192.0.2.88,Duinkrediet,inlog
+2026-10-31T17:44:26Z,A,MOTTE,198.51.100.30,Duinkrediet,inlog
+2026-10-26T09:14:17Z,A,motte,203.0.113.21,NederBank,inlog
+2026-10-13T09:45:56+02:00,B,spinner,198.51.100.14,Polderbank,inlog
+2026-10-24T10:32:08+02:00,B,spinner,203.0.113.77,Polderbank,inlog
+2026-10-24T16:22:43Z,A,dwaallicht,192.0.2.88,Duinkrediet,buit_bekeken
+2026-10-26T16:07:06+01:00,B,Spinner,203.0.113.77,Polderbank,export
+2026-10-22T18:41:46+02:00,B,Lantaarn,203.0.113.90,polderbank,buit_bekeken
+2026-10-17T03:16:36+02:00,B,Spinner,203.0.113.77,NEDERBANK,buit_bekeken
+2026-10-20T07:46:23Z,A,MOTTE,198.51.100.30,NEDERBANK,inlog
+2026-10-18T15:12:52+02:00,B,spinner,203.0.113.77,Polderbank,export
+2026-10-27T09:03:10Z,A,motte,198.51.100.30,NEDERBANK,inlog
+2026-10-27T23:06:59+01:00,B,Spinner,198.51.100.14,polderbank,inlog
+2026-10-26T20:54:21+01:00,B,kever,198.51.100.61,NEDERBANK,inlog
+2026-10-29T09:46:36Z,A,motte,198.51.100.30,Polderbank,buit_bekeken
+2026-10-30T19:23:09+01:00,B,spinner ,203.0.113.77,Polderbank,inlog
+2026-10-12T09:38:06Z,A,motte,198.51.100.30,Duinkrediet,inlog
+2026-10-23T17:34:26+02:00,B,dwaallicht,192.0.2.88,Duinkrediet,inlog
+2026-10-20T17:06:14+02:00,B,Lantaarn,203.0.113.90,polderbank,inlog
+2026-10-29T18:38:53Z,A,Spinner,203.0.113.77,Neder Bank,inlog
+2026-10-14T11:43:26+02:00,B,motte,198.51.100.30,Duinkrediet,export
+2026-10-17T19:34:56+02:00,B,Lantaarn,203.0.113.90,Neder Bank,inlog
+2026-10-28T12:24:58+01:00,B,kever,198.51.100.61,NEDERBANK,buit_bekeken
+2026-10-13T17:13:26Z,A,dwaallicht,192.0.2.88,NederBank,buit_bekeken
+2026-10-29T08:09:15Z,A,spinner ,198.51.100.14,NEDERBANK,inlog
+2026-10-25T14:42:56+01:00,B,MOTTE,198.51.100.30,Polderbank,inlog
+2026-10-13T11:32:04Z,A,lantaarn,203.0.113.90,NEDERBANK,buit_bekeken
+2026-10-25T19:30:08+01:00,B,Lantaarn,203.0.113.90,NederBank,buit_bekeken
+2026-10-16T09:01:25Z,A,spinner ,198.51.100.14,Duinkrediet,inlog
+2026-10-28T10:52:25Z,A,Spinner,203.0.113.77,polderbank,inlog
+2026-10-20T07:31:16Z,A,lantaarn,192.0.2.45,polderbank,inlog
+2026-10-30T09:18:27+01:00,B,MOTTE,198.51.100.30,Duinkrediet,buit_bekeken
+2026-10-12T07:45:53Z,A,MOTTE,198.51.100.30,Neder Bank,inlog
+2026-10-27T12:37:00Z,A,spinner ,198.51.100.14,polderbank,inlog
+2026-10-31T18:11:08Z,A,dwaallicht,192.0.2.88,polderbank,buit_bekeken
+2026-10-21T11:59:14+02:00,B,Spinner,198.51.100.14,Polderbank,inlog
+2026-10-26T19:58:05Z,A,Spinner,203.0.113.77,NederBank,inlog
+2026-10-17T10:25:21Z,A,dwaallicht,192.0.2.88,Duinkrediet,buit_bekeken
+2026-10-22T09:38:13Z,A,Lantaarn,203.0.113.90,NederBank,inlog
+2026-10-18T17:58:15+02:00,B,spinner ,198.51.100.14,polderbank,inlog
+2026-10-23T12:07:49+02:00,B,Lantaarn,203.0.113.90,polderbank,inlog
+2026-10-21T09:57:15+02:00,B,spinner,198.51.100.14,Neder Bank,inlog
+2026-10-20T09:40:34+02:00,B,dwaallicht,192.0.2.88,NederBank,inlog
+2026-10-22T18:22:45+02:00,B,Lantaarn,203.0.113.90,Polderbank,inlog
+2026-10-28T21:27:18+01:00,B,lantaarn,192.0.2.45,Neder Bank,inlog
+2026-10-17T15:40:06Z,A,dwaallicht,192.0.2.88,nederbank,export
+2026-10-26T14:55:33+01:00,B,Spinner,203.0.113.77,nederbank,inlog
+2026-10-23T11:46:02Z,A,spinner ,198.51.100.14,Neder Bank,inlog
+2026-10-20T09:26:23+02:00,B,Lantaarn,203.0.113.90,Duinkrediet,inlog
+2026-10-20T19:32:52Z,A,motte,198.51.100.30,Duinkrediet,buit_bekeken
+2026-10-17T09:50:04+02:00,B,Lantaarn,203.0.113.90,Duinkrediet,buit_bekeken
+2026-10-27T09:58:01Z,A,dwaallicht,192.0.2.88,NederBank,inlog
+2026-10-16T15:41:15+02:00,B,spinner,198.51.100.14,polderbank,inlog
+2026-10-12T12:27:31Z,A,spinner,203.0.113.77,nederbank,buit_bekeken
+2026-10-19T08:59:53Z,A,spinner,198.51.100.14,nederbank,inlog
+2026-10-27T18:31:05+01:00,B,Spinner,198.51.100.14,polderbank,inlog
+2026-10-28T05:31:03Z,A,lantaarn,192.0.2.45,Duinkrediet,inlog
+2026-10-20T09:08:06+02:00,B,MOTTE,198.51.100.30,Neder Bank,inlog
+2026-10-26T11:05:18+01:00,B,Spinner,203.0.113.77,polderbank,inlog
+2026-10-25T19:25:22+01:00,B,spinner ,198.51.100.14,Polderbank,inlog
+2026-10-23T07:20:15+02:00,B,MOTTE,203.0.113.21,NEDERBANK,inlog
+2026-10-22T21:03:32Z,A,Lantaarn,203.0.113.90,NEDERBANK,inlog
+2026-10-17T22:56:51Z,A,Lantaarn,192.0.2.45,NederBank,inlog
+2026-10-30T11:45:59Z,A,MOTTE,198.51.100.30,Polderbank,inlog
+2026-10-23T22:26:31Z,A,lantaarn,192.0.2.45,Duinkrediet,inlog
+2026-10-25T21:30:40+01:00,B,spinner,198.51.100.14,NEDERBANK,inlog
+2026-10-29T11:34:10+01:00,B,spinner ,203.0.113.77,Neder Bank,inlog
+2026-10-21T16:19:22Z,A,MOTTE,198.51.100.30,NederBank,inlog
+2026-10-21T10:18:19Z,A,Lantaarn,192.0.2.45,NEDERBANK,inlog
+2026-10-20T01:41:32+02:00,B,spinner ,198.51.100.14,nederbank,inlog
+2026-10-20T18:06:47+02:00,B,lantaarn,203.0.113.90,Neder Bank,inlog
+2026-10-18T12:55:24+02:00,B,MOTTE,203.0.113.21,nederbank,inlog
+2026-10-27T22:56:23+01:00,B,MOTTE,203.0.113.21,nederbank,inlog
+2026-10-22T03:19:27Z,A,spinner,198.51.100.14,Polderbank,inlog
+2026-10-23T22:09:33+02:00,B,spinner,203.0.113.77,Neder Bank,buit_bekeken
+2026-10-30T08:36:06+01:00,B,MOTTE,203.0.113.21,NederBank,inlog
+2026-10-30T14:53:17+01:00,B,lantaarn,192.0.2.45,polderbank,buit_bekeken
+2026-10-22T16:56:45+02:00,B,spinner ,203.0.113.77,nederbank,inlog
+2026-10-27T18:00:11Z,A,Lantaarn,203.0.113.90,NederBank,export
+2026-10-31T04:13:02+01:00,B,dwaallicht,192.0.2.88,Polderbank,inlog
+2026-10-26T15:20:12Z,A,lantaarn,203.0.113.90,NederBank,inlog
+2026-10-31T10:20:54+01:00,B,motte,198.51.100.30,NederBank,buit_bekeken
+2026-10-24T13:43:59Z,A,motte,198.51.100.30,polderbank,inlog
+2026-10-20T08:26:18Z,A,MOTTE,203.0.113.21,Duinkrediet,inlog
+2026-10-18T06:41:03+02:00,B,spinner ,198.51.100.14,Polderbank,inlog
+2026-10-15T11:54:11+02:00,B,Lantaarn,192.0.2.45,NEDERBANK,inlog
+2026-10-22T10:29:45Z,A,MOTTE,203.0.113.21,NEDERBANK,buit_bekeken
+2026-10-25T11:32:41Z,A,lantaarn,192.0.2.45,NEDERBANK,buit_bekeken
+2026-10-19T08:45:22Z,A,Lantaarn,203.0.113.90,Polderbank,inlog
+2026-10-13T16:16:57Z,A,Lantaarn,192.0.2.45,nederbank,buit_bekeken
+2026-10-13T18:18:41+02:00,B,MOTTE,198.51.100.30,Polderbank,inlog
+2026-10-22T13:14:08+02:00,B,spinner,203.0.113.77,nederbank,inlog
+2026-10-28T18:29:25+01:00,B,MOTTE,198.51.100.30,polderbank,inlog
+2026-10-17T17:47:35Z,A,MOTTE,198.51.100.30,polderbank,inlog
+2026-10-19T15:14:02+02:00,B,lantaarn,203.0.113.90,Duinkrediet,inlog
+2026-10-20T08:41:52Z,A,lantaarn,203.0.113.90,polderbank,inlog
+2026-10-16T13:41:13+02:00,B,MOTTE,198.51.100.30,NederBank,inlog
+2026-10-18T09:10:36+02:00,B,MOTTE,198.51.100.30,Polderbank,inlog
+2026-10-28T15:47:26Z,A,MOTTE,198.51.100.30,polderbank,inlog
+2026-10-20T07:16:44Z,A,dwaallicht,192.0.2.88,nederbank,inlog
+2026-10-27T15:58:27Z,A,kever,198.51.100.61,NederBank,inlog
+2026-10-17T11:05:50Z,A,spinner ,203.0.113.77,NEDERBANK,buit_bekeken
+2026-10-28T10:13:25+01:00,B,Lantaarn,192.0.2.45,polderbank,buit_bekeken
+2026-10-29T04:59:20Z,A,kever,198.51.100.61,nederbank,inlog
+2026-10-28T18:27:25+01:00,B,spinner ,198.51.100.14,Duinkrediet,buit_bekeken
+2026-10-23T05:39:15Z,A,spinner,198.51.100.14,Polderbank,inlog
+2026-10-20T13:13:04Z,A,spinner,198.51.100.14,Neder Bank,inlog
+2026-10-18T22:29:43Z,A,MOTTE,198.51.100.30,Neder Bank,inlog
+2026-10-18T23:40:18+02:00,B,MOTTE,203.0.113.21,polderbank,inlog
+2026-10-17T10:20:59+02:00,B,dwaallicht,192.0.2.88,polderbank,export
+2026-10-25T17:34:47Z,A,MOTTE,198.51.100.30,NederBank,inlog
+2026-10-20T18:14:46Z,A,Lantaarn,203.0.113.90,NederBank,inlog
+2026-10-20T22:07:05Z,A,spinner,203.0.113.77,nederbank,inlog
+2026-10-16T14:22:24+02:00,B,Lantaarn,192.0.2.45,Polderbank,inlog
+2026-10-27T06:49:34+01:00,B,spinner,198.51.100.14,Duinkrediet,inlog
+2026-10-16T15:08:00Z,A,Spinner,203.0.113.77,Duinkrediet,inlog
+2026-10-15T11:51:41Z,A,spinner ,203.0.113.77,Duinkrediet,inlog
+2026-10-17T10:22:05+02:00,B,MOTTE,203.0.113.21,NederBank,inlog
+2026-10-26T07:09:27Z,A,spinner,203.0.113.77,polderbank,inlog
+2026-10-20T09:27:46+02:00,B,spinner,203.0.113.77,NederBank,inlog
+2026-10-27T13:53:35Z,A,lantaarn,192.0.2.45,Polderbank,inlog
+2026-10-26T07:36:28Z,A,spinner ,203.0.113.77,NEDERBANK,inlog
+2026-10-24T15:48:47+02:00,B,spinner ,198.51.100.14,Polderbank,inlog
+2026-10-28T22:54:39Z,A,spinner ,203.0.113.77,Duinkrediet,buit_bekeken
+2026-10-14T15:44:34+02:00,B,Spinner,203.0.113.77,polderbank,buit_bekeken
+2026-10-20T09:44:32+02:00,B,lantaarn,192.0.2.45,Polderbank,buit_bekeken
+2026-10-30T03:41:59+01:00,B,Lantaarn,192.0.2.45,nederbank,inlog
+2026-10-20T07:36:50Z,A,MOTTE,198.51.100.30,polderbank,buit_bekeken
+2026-10-31T10:28:10Z,A,motte,198.51.100.30,Duinkrediet,inlog
+2026-10-20T08:30:55Z,A,lantaarn,192.0.2.45,NEDERBANK,inlog
+2026-10-14T09:55:20+02:00,B,motte,203.0.113.21,Duinkrediet,buit_bekeken
+2026-10-29T13:38:13Z,A,kever,198.51.100.61,Polderbank,buit_bekeken
+2026-10-13T08:00:05Z,A,motte,198.51.100.30,NEDERBANK,inlog
+2026-10-13T22:02:52+02:00,B,MOTTE,198.51.100.30,Neder Bank,inlog
+2026-10-19T18:12:23Z,A,MOTTE,198.51.100.30,nederbank,inlog
+2026-10-12T21:20:40+02:00,B,spinner ,203.0.113.77,NederBank,buit_bekeken
+2026-10-21T13:50:32Z,A,motte,198.51.100.30,Neder Bank,inlog
+2026-10-20T07:57:23Z,A,lantaarn,192.0.2.45,Duinkrediet,export
+2026-10-14T16:03:15+02:00,B,lantaarn,192.0.2.45,NEDERBANK,buit_bekeken
+2026-10-25T22:22:06Z,A,kever,198.51.100.61,Duinkrediet,inlog
+2026-10-17T10:59:23Z,A,spinner,203.0.113.77,Neder Bank,inlog
+2026-10-20T09:00:48+02:00,B,spinner,203.0.113.77,polderbank,inlog
+2026-10-19T22:50:02Z,A,lantaarn,203.0.113.90,nederbank,inlog
+2026-10-30T09:39:19+01:00,B,dwaallicht,192.0.2.88,polderbank,inlog
+2026-10-15T00:39:20Z,A,Lantaarn,203.0.113.90,polderbank,inlog
+2026-10-26T22:30:37+01:00,B,Spinner,203.0.113.77,Polderbank,buit_bekeken
+2026-10-12T07:07:59Z,A,kever,198.51.100.61,Neder Bank,inlog
+2026-10-25T19:53:42+01:00,B,motte,203.0.113.21,Duinkrediet,inlog
+2026-10-18T16:26:18+02:00,B,Lantaarn,203.0.113.90,NederBank,inlog
+2026-10-21T03:50:04Z,A,spinner,203.0.113.77,Duinkrediet,inlog
+2026-10-20T08:27:53Z,A,spinner,203.0.113.77,Neder Bank,inlog
+2026-10-31T16:12:47+01:00,B,kever,198.51.100.61,Polderbank,inlog
+2026-10-15T10:33:27Z,A,Lantaarn,203.0.113.90,Neder Bank,inlog
+2026-10-27T19:16:13Z,A,motte,198.51.100.30,Polderbank,export
+2026-10-20T13:31:05Z,A,lantaarn,192.0.2.45,Polderbank,buit_bekeken
+2026-10-31T07:51:29Z,A,MOTTE,203.0.113.21,polderbank,inlog
+2026-10-31T10:08:10+01:00,B,Lantaarn,203.0.113.90,Polderbank,inlog
+2026-10-13T16:35:40+02:00,B,MOTTE,203.0.113.21,Duinkrediet,inlog
+2026-10-22T10:24:02Z,A,Spinner,198.51.100.14,Neder Bank,inlog
+2026-10-25T15:02:47Z,A,lantaarn,192.0.2.45,Duinkrediet,buit_bekeken
+2026-10-25T19:19:22+01:00,B,Spinner,203.0.113.77,Neder Bank,inlog
+2026-10-29T16:23:39+01:00,B,Lantaarn,203.0.113.90,Duinkrediet,export
+2026-10-12T01:25:18Z,A,Spinner,198.51.100.14,Polderbank,buit_bekeken
+2026-10-16T14:07:54Z,A,motte,198.51.100.30,NEDERBANK,inlog
+2026-10-18T22:03:00+02:00,B,dwaallicht,192.0.2.88,nederbank,buit_bekeken
+2026-10-31T23:55:45+01:00,B,kever,198.51.100.61,polderbank,inlog
+2026-10-19T17:23:54+02:00,B,lantaarn,192.0.2.45,nederbank,inlog
+2026-10-15T15:31:54+02:00,B,spinner ,198.51.100.14,Neder Bank,inlog
+2026-10-31T13:04:27Z,A,spinner,198.51.100.14,polderbank,inlog
+2026-10-14T11:12:09+02:00,B,kever,198.51.100.61,polderbank,inlog
+2026-10-27T19:23:57+01:00,B,lantaarn,192.0.2.45,NEDERBANK,inlog
+2026-10-18T10:35:33+02:00,B,spinner,198.51.100.14,NEDERBANK,inlog
+2026-10-27T22:58:22+01:00,B,Lantaarn,203.0.113.90,nederbank,inlog
+2026-10-24T20:37:08+02:00,B,dwaallicht,192.0.2.88,Polderbank,inlog
+2026-10-28T18:54:46Z,A,motte,203.0.113.21,NEDERBANK,buit_bekeken
+2026-10-24T08:49:05Z,A,motte,198.51.100.30,nederbank,inlog
+2026-10-29T10:29:25Z,A,MOTTE,198.51.100.30,Polderbank,inlog
+2026-10-18T15:56:56+02:00,B,spinner ,203.0.113.77,Duinkrediet,inlog
+2026-10-16T14:07:34Z,A,spinner ,203.0.113.77,NederBank,inlog
+2026-10-18T16:31:01+02:00,B,MOTTE,203.0.113.21,Duinkrediet,inlog
+2026-10-18T01:10:58+02:00,B,Spinner,198.51.100.14,Neder Bank,buit_bekeken
+2026-10-22T10:11:19Z,A,MOTTE,198.51.100.30,polderbank,inlog
+2026-10-20T09:07:27+02:00,B,lantaarn,203.0.113.90,NEDERBANK,buit_bekeken
+2026-10-31T19:01:09Z,A,lantaarn,192.0.2.45,Duinkrediet,inlog
+2026-10-14T08:14:37+02:00,B,motte,203.0.113.21,NederBank,inlog
+2026-10-15T09:41:18Z,A,spinner ,203.0.113.77,nederbank,inlog
+2026-10-31T10:32:54Z,A,spinner,198.51.100.14,NEDERBANK,buit_bekeken
+2026-10-14T10:04:37Z,A,kever,198.51.100.61,Neder Bank,buit_bekeken
+2026-10-16T15:52:39Z,A,MOTTE,198.51.100.30,Duinkrediet,inlog
+2026-10-15T18:39:17Z,A,Spinner,198.51.100.14,Neder Bank,inlog
+2026-10-20T09:12:06+02:00,B,spinner ,203.0.113.77,NederBank,inlog
+2026-10-12T18:56:15+02:00,B,spinner ,203.0.113.77,Neder Bank,buit_bekeken
+2026-10-20T13:58:04Z,A,lantaarn,203.0.113.90,Neder Bank,buit_bekeken
+2026-10-26T12:03:37Z,A,spinner,198.51.100.14,Neder Bank,inlog
+2026-10-18T11:09:40Z,A,Lantaarn,203.0.113.90,Neder Bank,buit_bekeken
+2026-10-13T16:32:21+02:00,B,spinner,203.0.113.77,NEDERBANK,inlog
+2026-10-29T07:26:15Z,A,spinner,203.0.113.77,Polderbank,inlog
+2026-10-17T14:54:27Z,A,MOTTE,203.0.113.21,Duinkrediet,inlog
+2026-10-25T15:06:12+01:00,B,spinner,198.51.100.14,Duinkrediet,inlog
+2026-10-13T16:41:25Z,A,spinner ,198.51.100.14,polderbank,buit_bekeken
+2026-10-14T08:20:25+02:00,B,spinner ,203.0.113.77,Polderbank,inlog
+2026-10-20T10:19:01Z,A,Spinner,203.0.113.77,Duinkrediet,inlog
+2026-10-30T14:47:19Z,A,motte,198.51.100.30,polderbank,inlog
+2026-10-31T12:22:15+01:00,B,spinner,198.51.100.14,Neder Bank,inlog
+2026-10-31T13:57:18Z,A,spinner ,198.51.100.14,polderbank,inlog
+2026-10-15T14:33:06Z,A,MOTTE,203.0.113.21,Duinkrediet,inlog
+2026-10-17T11:54:29Z,A,lantaarn,192.0.2.45,Neder Bank,inlog
+2026-10-14T07:32:12Z,A,spinner ,198.51.100.14,nederbank,buit_bekeken
+2026-10-24T11:23:35Z,A,lantaarn,192.0.2.45,Polderbank,buit_bekeken
+2026-10-20T18:53:23Z,A,lantaarn,203.0.113.90,NederBank,inlog
+2026-10-14T13:58:06Z,A,spinner ,198.51.100.14,Duinkrediet,buit_bekeken
+2026-10-23T18:53:15+02:00,B,motte,198.51.100.30,Neder Bank,inlog
+2026-10-13T15:54:06Z,A,Spinner,203.0.113.77,Duinkrediet,export
+2026-10-16T22:28:31+02:00,B,lantaarn,203.0.113.90,NEDERBANK,inlog
+2026-10-28T15:42:32+01:00,B,Spinner,198.51.100.14,Duinkrediet,inlog
+2026-10-22T08:07:55Z,A,dwaallicht,192.0.2.88,NEDERBANK,export
+2026-10-14T03:38:32+02:00,B,spinner,198.51.100.14,nederbank,inlog
+2026-10-20T02:54:50Z,A,lantaarn,203.0.113.90,Duinkrediet,inlog
+2026-10-16T07:27:18Z,A,lantaarn,203.0.113.90,Duinkrediet,inlog
+2026-10-25T08:03:03+01:00,B,kever,198.51.100.61,Duinkrediet,inlog
+2026-10-18T13:00:41+02:00,B,spinner ,198.51.100.14,NederBank,inlog
+2026-10-19T14:28:01+02:00,B,lantaarn,192.0.2.45,Duinkrediet,inlog
+2026-10-31T11:29:56Z,A,dwaallicht,192.0.2.88,NEDERBANK,inlog
+2026-10-20T09:57:16+02:00,B,spinner,203.0.113.77,NEDERBANK,inlog
+2026-10-22T15:56:48+02:00,B,dwaallicht,192.0.2.88,Neder Bank,inlog
+2026-10-23T11:40:01Z,A,dwaallicht,192.0.2.88,nederbank,inlog
+2026-10-18T16:10:11Z,A,Lantaarn,192.0.2.45,Duinkrediet,inlog
+2026-10-13T17:30:05+02:00,B,MOTTE,198.51.100.30,Duinkrediet,buit_bekeken
+2026-10-23T08:48:46+02:00,B,MOTTE,203.0.113.21,nederbank,inlog
+2026-10-22T18:47:11+02:00,B,lantaarn,203.0.113.90,Neder Bank,inlog
+2026-10-20T07:35:18Z,A,spinner ,198.51.100.14,Duinkrediet,inlog
+2026-10-24T19:37:23+02:00,B,dwaallicht,192.0.2.88,Neder Bank,inlog
+2026-10-22T05:07:50+02:00,B,spinner,203.0.113.77,polderbank,inlog
+2026-10-25T07:23:37+01:00,B,MOTTE,198.51.100.30,NederBank,inlog
+2026-10-14T08:22:00Z,A,lantaarn,203.0.113.90,Duinkrediet,inlog
+2026-10-26T13:37:37+01:00,B,Lantaarn,192.0.2.45,nederbank,buit_bekeken
+2026-10-14T16:55:43Z,A,motte,203.0.113.21,NEDERBANK,inlog
+2026-10-21T18:25:47Z,A,lantaarn,203.0.113.90,NEDERBANK,buit_bekeken
+2026-10-29T21:30:36+01:00,B,MOTTE,203.0.113.21,Duinkrediet,buit_bekeken
+2026-10-28T14:22:35+01:00,B,spinner,203.0.113.77,Duinkrediet,inlog
+2026-10-31T06:42:03+01:00,B,Spinner,203.0.113.77,NEDERBANK,export
+2026-10-26T13:34:56Z,A,MOTTE,198.51.100.30,nederbank,buit_bekeken
+2026-10-20T09:10:52+02:00,B,MOTTE,203.0.113.21,polderbank,inlog
+2026-10-22T12:27:34+02:00,B,Spinner,198.51.100.14,NederBank,inlog
+2026-10-23T19:09:57+02:00,B,dwaallicht,192.0.2.88,nederbank,inlog
+2026-10-27T12:38:04Z,A,Spinner,198.51.100.14,NEDERBANK,inlog
+2026-10-30T18:49:05+01:00,B,Spinner,198.51.100.14,NEDERBANK,buit_bekeken
+2026-10-16T11:01:40+02:00,B,dwaallicht,192.0.2.88,NederBank,inlog
+2026-10-21T18:28:48Z,A,Spinner,203.0.113.77,Duinkrediet,inlog
+2026-10-19T22:42:11+02:00,B,spinner ,198.51.100.14,nederbank,inlog
+2026-10-13T09:23:33+02:00,B,Lantaarn,203.0.113.90,polderbank,inlog
+2026-10-29T19:30:31+01:00,B,MOTTE,198.51.100.30,NederBank,inlog
+2026-10-14T09:33:16Z,A,spinner ,198.51.100.14,polderbank,export
+2026-10-30T11:45:59Z,A,MOTTE,198.51.100.30,Polderbank,inlog
+2026-10-24T17:47:46+02:00,B,motte,198.51.100.30,Polderbank,inlog
+2026-10-17T13:10:04Z,A,motte,198.51.100.30,Polderbank,inlog
+2026-10-23T11:21:16+02:00,B,Lantaarn,192.0.2.45,Polderbank,buit_bekeken
+2026-10-23T00:05:15Z,A,Lantaarn,203.0.113.90,NederBank,inlog
+2026-10-20T11:03:00+02:00,B,motte,203.0.113.21,Duinkrediet,inlog
+2026-10-24T16:16:47+02:00,B,motte,203.0.113.21,NEDERBANK,inlog
+2026-10-16T09:13:16+02:00,B,Lantaarn,192.0.2.45,NEDERBANK,inlog
+2026-10-13T15:10:53Z,A,kever,198.51.100.61,NEDERBANK,inlog
+2026-10-31T14:35:42Z,A,MOTTE,198.51.100.30,NEDERBANK,inlog
+2026-10-15T15:01:06Z,A,spinner ,203.0.113.77,Duinkrediet,buit_bekeken
+2026-10-22T10:21:18Z,A,Lantaarn,203.0.113.90,Neder Bank,inlog
+2026-10-14T11:07:13Z,A,Lantaarn,203.0.113.90,Neder Bank,inlog
+2026-10-31T13:04:42Z,A,dwaallicht,192.0.2.88,NederBank,export
+2026-10-23T21:34:33+02:00,B,spinner,198.51.100.14,polderbank,inlog
+2026-10-13T09:39:33Z,A,MOTTE,203.0.113.21,NEDERBANK,inlog
+2026-10-25T23:00:41+01:00,B,motte,198.51.100.30,Neder Bank,inlog
+2026-10-13T13:50:37Z,A,spinner,203.0.113.77,polderbank,inlog
+2026-10-13T17:10:53+02:00,B,kever,198.51.100.61,NEDERBANK,inlog
+2026-10-13T15:07:45Z,A,kever,198.51.100.61,polderbank,inlog
+2026-10-13T12:27:01Z,A,lantaarn,192.0.2.45,NederBank,buit_bekeken
+2026-10-30T14:58:41Z,A,dwaallicht,192.0.2.88,Polderbank,inlog
+2026-10-30T12:33:10+01:00,B,lantaarn,192.0.2.45,polderbank,inlog
+2026-10-22T21:02:35+02:00,B,spinner ,203.0.113.77,Neder Bank,buit_bekeken
+2026-10-13T20:47:17Z,A,motte,203.0.113.21,Duinkrediet,inlog
+2026-10-21T10:26:44+02:00,B,lantaarn,192.0.2.45,NederBank,buit_bekeken
+2026-10-20T15:44:06+02:00,B,lantaarn,203.0.113.90,NEDERBANK,inlog
+2026-10-20T07:58:43Z,A,spinner ,198.51.100.14,Polderbank,buit_bekeken
+2026-10-20T17:46:10+02:00,B,Lantaarn,203.0.113.90,Duinkrediet,inlog
+2026-10-28T11:01:14Z,A,spinner,198.51.100.14,polderbank,inlog
+2026-10-12T10:54:13+02:00,B,MOTTE,198.51.100.30,NederBank,inlog
+2026-10-16T14:43:17Z,A,Spinner,198.51.100.14,polderbank,inlog
+2026-10-28T18:14:14Z,A,Lantaarn,192.0.2.45,Neder Bank,inlog
+2026-10-23T22:55:20+02:00,B,motte,203.0.113.21,NEDERBANK,inlog
+2026-10-23T16:56:20+02:00,B,spinner,203.0.113.77,NederBank,inlog
+2026-10-26T08:43:10Z,A,MOTTE,198.51.100.30,polderbank,inlog
+2026-10-22T14:05:45+02:00,B,motte,203.0.113.21,nederbank,inlog
+2026-10-13T19:04:48+02:00,B,MOTTE,203.0.113.21,Polderbank,inlog
+2026-10-17T19:32:17Z,A,dwaallicht,192.0.2.88,polderbank,inlog
+2026-10-20T07:03:37Z,A,lantaarn,203.0.113.90,polderbank,inlog
+2026-10-13T21:56:49+02:00,B,lantaarn,203.0.113.90,polderbank,inlog
+2026-10-23T23:54:57Z,A,Lantaarn,203.0.113.90,NEDERBANK,inlog
+2026-10-27T14:56:40+01:00,B,motte,198.51.100.30,Duinkrediet,inlog
+2026-10-12T06:58:43Z,A,motte,203.0.113.21,NederBank,inlog
+2026-10-20T09:31:56+02:00,B,spinner ,198.51.100.14,NederBank,inlog
+2026-10-17T09:26:43Z,A,Lantaarn,203.0.113.90,Neder Bank,inlog
+2026-10-24T06:04:47Z,A,spinner ,203.0.113.77,polderbank,inlog
+2026-10-20T09:40:01+02:00,B,motte,203.0.113.21,polderbank,inlog
+2026-10-29T19:31:01Z,A,spinner ,198.51.100.14,Duinkrediet,inlog
+2026-10-21T06:17:26Z,A,dwaallicht,192.0.2.88,Neder Bank,inlog
+2026-10-20T09:51:39+02:00,B,Lantaarn,192.0.2.45,polderbank,inlog
+2026-10-20T07:28:18Z,A,dwaallicht,192.0.2.88,polderbank,inlog
+2026-10-16T10:45:04Z,A,spinner ,203.0.113.77,Polderbank,inlog
+2026-10-28T21:06:07+01:00,B,Lantaarn,203.0.113.90,nederbank,buit_bekeken
+2026-10-22T19:19:56+02:00,B,Spinner,203.0.113.77,Duinkrediet,inlog
+2026-10-20T07:33:23Z,A,spinner ,203.0.113.77,NEDERBANK,buit_bekeken
+2026-10-31T05:35:18Z,A,lantaarn,203.0.113.90,Polderbank,inlog
+2026-10-25T06:30:40Z,A,motte,198.51.100.30,NederBank,buit_bekeken
+2026-10-19T19:35:18Z,A,spinner,198.51.100.14,Duinkrediet,inlog
+2026-10-31T13:19:55+01:00,B,dwaallicht,192.0.2.88,polderbank,buit_bekeken
+2026-10-21T19:49:56+02:00,B,Spinner,198.51.100.14,Duinkrediet,inlog
+2026-10-27T15:29:49+01:00,B,Spinner,198.51.100.14,Duinkrediet,inlog
+2026-10-25T17:35:10+01:00,B,dwaallicht,192.0.2.88,polderbank,inlog
+2026-10-16T11:34:06Z,A,spinner,203.0.113.77,Polderbank,inlog
+2026-10-14T14:22:55+02:00,B,Lantaarn,192.0.2.45,Duinkrediet,inlog
+2026-10-12T11:50:37+02:00,B,spinner,203.0.113.77,Duinkrediet,inlog
+2026-10-13T14:42:03Z,A,Spinner,198.51.100.14,polderbank,export
+2026-10-28T10:49:55Z,A,spinner ,198.51.100.14,Duinkrediet,inlog
+2026-10-13T08:28:56Z,A,MOTTE,198.51.100.30,NederBank,export
+2026-10-26T13:32:10+01:00,B,Spinner,198.51.100.14,polderbank,inlog
+2026-10-20T09:23:23+02:00,B,Lantaarn,192.0.2.45,Duinkrediet,inlog
+2026-10-12T17:22:29Z,A,MOTTE,203.0.113.21,Polderbank,inlog
+2026-10-31T06:11:51Z,A,MOTTE,198.51.100.30,polderbank,export
+2026-10-15T16:32:03+02:00,B,spinner,198.51.100.14,NederBank,inlog
+2026-10-21T17:27:05+02:00,B,dwaallicht,192.0.2.88,Duinkrediet,inlog
+2026-10-23T08:41:59Z,A,motte,198.51.100.30,Duinkrediet,export
+2026-10-13T08:27:26+02:00,B,spinner ,203.0.113.77,polderbank,inlog
+2026-10-22T03:08:36+02:00,B,spinner ,203.0.113.77,Polderbank,inlog
+2026-10-28T16:10:19Z,A,spinner ,198.51.100.14,NederBank,inlog
+2026-10-16T08:40:36Z,A,dwaallicht,192.0.2.88,Duinkrediet,inlog
+2026-10-16T14:47:48Z,A,spinner ,203.0.113.77,Duinkrediet,inlog
+2026-10-26T08:02:38Z,A,dwaallicht,192.0.2.88,Duinkrediet,inlog
+2026-10-17T12:16:11Z,A,spinner ,198.51.100.14,Duinkrediet,buit_bekeken
+2026-10-20T09:23:13+02:00,B,lantaarn,192.0.2.45,Polderbank,inlog
+2026-10-29T17:54:23+01:00,B,Spinner,198.51.100.14,nederbank,inlog
+2026-10-28T10:50:45Z,A,MOTTE,198.51.100.30,Neder Bank,inlog
+2026-10-31T20:43:34Z,A,dwaallicht,192.0.2.88,NEDERBANK,inlog
+2026-10-16T14:30:10Z,A,dwaallicht,192.0.2.88,Polderbank,buit_bekeken
+2026-10-23T16:09:47Z,A,Spinner,203.0.113.77,Duinkrediet,inlog
+2026-10-29T13:33:14+01:00,B,spinner ,203.0.113.77,polderbank,buit_bekeken
+2026-10-16T08:39:18Z,A,dwaallicht,192.0.2.88,polderbank,inlog
+2026-10-24T08:56:24+02:00,B,MOTTE,198.51.100.30,NederBank,inlog
+2026-10-28T19:46:47Z,A,MOTTE,198.51.100.30,NEDERBANK,buit_bekeken
+2026-10-31T17:11:29Z,A,spinner,203.0.113.77,Polderbank,inlog
+2026-10-18T15:58:15Z,A,spinner ,198.51.100.14,polderbank,inlog
+2026-10-14T19:57:29+02:00,B,spinner ,198.51.100.14,Duinkrediet,inlog
+2026-10-29T19:06:07Z,A,lantaarn,192.0.2.45,Polderbank,inlog
+2026-10-16T14:18:07+02:00,B,spinner,203.0.113.77,NederBank,buit_bekeken
+2026-10-27T12:04:16+01:00,B,motte,203.0.113.21,Duinkrediet,inlog
+2026-10-18T15:34:53+02:00,B,Spinner,198.51.100.14,NederBank,buit_bekeken
+2026-10-26T07:36:47Z,A,motte,198.51.100.30,NEDERBANK,buit_bekeken
+2026-10-18T01:43:16Z,A,dwaallicht,192.0.2.88,NederBank,inlog
+2026-10-24T18:53:34Z,A,MOTTE,203.0.113.21,Polderbank,inlog
+2026-10-27T12:24:25Z,A,motte,203.0.113.21,NederBank,inlog
+2026-10-15T13:21:13+02:00,B,motte,198.51.100.30,Duinkrediet,inlog
+2026-10-17T12:44:27Z,A,spinner ,203.0.113.77,Polderbank,inlog
+2026-10-14T17:10:32+02:00,B,kever,198.51.100.61,Duinkrediet,export
+2026-10-24T14:35:15Z,A,dwaallicht,192.0.2.88,Neder Bank,inlog
+2026-10-13T08:18:43+02:00,B,Lantaarn,192.0.2.45,Polderbank,inlog
+2026-10-14T10:43:30Z,A,spinner,198.51.100.14,Neder Bank,inlog
+2026-10-18T11:42:12Z,A,spinner ,198.51.100.14,Duinkrediet,inlog
+2026-10-20T09:01:51+02:00,B,dwaallicht,192.0.2.88,polderbank,buit_bekeken
+2026-10-27T09:45:50Z,A,spinner ,203.0.113.77,Neder Bank,inlog
+2026-10-18T11:12:44+02:00,B,spinner ,198.51.100.14,Duinkrediet,inlog
+2026-10-19T01:49:51Z,A,Lantaarn,203.0.113.90,nederbank,export
+2026-10-28T08:45:38+01:00,B,kever,198.51.100.61,polderbank,export
+2026-10-14T22:17:43Z,A,dwaallicht,192.0.2.88,polderbank,inlog
+2026-10-28T09:53:02+01:00,B,dwaallicht,192.0.2.88,Duinkrediet,buit_bekeken
+2026-10-15T12:06:54+02:00,B,spinner ,198.51.100.14,Duinkrediet,buit_bekeken
+2026-10-30T22:07:35Z,A,lantaarn,203.0.113.90,Polderbank,inlog
+2026-10-14T18:11:58+02:00,B,motte,198.51.100.30,Neder Bank,inlog
+2026-10-27T18:18:31Z,A,dwaallicht,192.0.2.88,NederBank,buit_bekeken
+2026-10-19T12:16:33Z,A,MOTTE,198.51.100.30,NEDERBANK,inlog
+2026-10-22T18:34:04Z,A,spinner ,198.51.100.14,Polderbank,buit_bekeken
+2026-10-15T19:10:02Z,A,lantaarn,192.0.2.45,NEDERBANK,inlog
+2026-10-22T09:44:04Z,A,spinner ,198.51.100.14,nederbank,export
+2026-10-12T16:12:02Z,A,spinner ,203.0.113.77,NederBank,inlog
+2026-10-24T10:27:34Z,A,motte,203.0.113.21,polderbank,inlog
+2026-10-22T07:47:36Z,A,MOTTE,203.0.113.21,Polderbank,buit_bekeken
+2026-10-12T18:19:37Z,A,spinner,198.51.100.14,NederBank,buit_bekeken
+2026-10-20T20:09:04+02:00,B,dwaallicht,192.0.2.88,Duinkrediet,inlog
+2026-10-20T11:01:44+02:00,B,lantaarn,203.0.113.90,polderbank,inlog
+2026-10-20T09:34:54+02:00,B,motte,203.0.113.21,Polderbank,inlog
+2026-10-31T08:30:43+01:00,B,motte,198.51.100.30,Neder Bank,export
+2026-10-22T15:36:21Z,A,lantaarn,192.0.2.45,nederbank,inlog
+2026-10-29T16:43:08+01:00,B,motte,198.51.100.30,Polderbank,inlog
+2026-10-25T08:06:06Z,A,spinner ,203.0.113.77,polderbank,inlog
+2026-10-20T09:52:01+02:00,B,spinner,203.0.113.77,nederbank,inlog
+2026-10-20T07:49:51Z,A,lantaarn,192.0.2.45,polderbank,inlog
+2026-10-20T09:40:06+02:00,B,motte,203.0.113.21,nederbank,inlog
+2026-10-31T20:55:00+01:00,B,spinner ,203.0.113.77,Duinkrediet,buit_bekeken
+2026-10-28T17:35:01Z,A,Spinner,198.51.100.14,Polderbank,export
+2026-10-21T08:08:36Z,A,kever,198.51.100.61,nederbank,inlog
+2026-10-16T20:42:07+02:00,B,MOTTE,198.51.100.30,NederBank,inlog
+2026-10-16T16:32:32+02:00,B,lantaarn,192.0.2.45,NEDERBANK,inlog
+2026-10-19T12:50:25+02:00,B,MOTTE,198.51.100.30,Duinkrediet,inlog
+2026-10-18T16:03:53+02:00,B,Spinner,198.51.100.14,NederBank,inlog
+2026-10-18T01:28:46Z,A,spinner ,198.51.100.14,nederbank,inlog
+2026-10-21T13:03:47Z,A,lantaarn,203.0.113.90,NEDERBANK,inlog
+2026-10-23T20:49:15Z,A,motte,203.0.113.21,Duinkrediet,inlog
+2026-10-20T09:39:36+02:00,B,MOTTE,198.51.100.30,nederbank,inlog
+2026-10-21T13:36:32Z,A,motte,198.51.100.30,nederbank,inlog
+2026-10-18T14:40:57+02:00,B,motte,198.51.100.30,Duinkrediet,inlog
+2026-10-28T23:32:03Z,A,MOTTE,203.0.113.21,NederBank,inlog
+2026-10-12T11:15:08+02:00,B,dwaallicht,192.0.2.88,Duinkrediet,inlog
+2026-10-24T09:37:46Z,A,Lantaarn,192.0.2.45,NederBank,inlog
+2026-10-22T21:46:59+02:00,B,kever,198.51.100.61,polderbank,inlog
+2026-10-21T10:25:41Z,A,spinner,198.51.100.14,NederBank,buit_bekeken
+2026-10-30T13:28:07Z,A,lantaarn,192.0.2.45,NEDERBANK,inlog
+2026-10-25T16:35:36+01:00,B,Spinner,198.51.100.14,NederBank,inlog
+2026-10-27T11:14:55+01:00,B,motte,198.51.100.30,NederBank,export
+2026-10-16T16:15:02+02:00,B,Lantaarn,192.0.2.45,Polderbank,inlog
+2026-10-16T06:13:01+02:00,B,spinner,198.51.100.14,nederbank,inlog
+2026-10-20T09:59:27Z,A,MOTTE,203.0.113.21,NederBank,inlog
+2026-10-20T13:11:58+02:00,B,dwaallicht,192.0.2.88,polderbank,inlog
+2026-10-21T18:55:52+02:00,B,MOTTE,198.51.100.30,Duinkrediet,export
+2026-10-30T08:19:51+01:00,B,spinner ,198.51.100.14,polderbank,inlog
+2026-10-21T21:09:08+02:00,B,MOTTE,198.51.100.30,Polderbank,buit_bekeken
+2026-10-15T11:12:02Z,A,motte,198.51.100.30,nederbank,inlog
+2026-10-27T07:09:40+01:00,B,spinner,203.0.113.77,Duinkrediet,inlog
+2026-10-27T06:12:58Z,A,Lantaarn,203.0.113.90,Polderbank,export
+2026-10-25T17:52:43+01:00,B,Lantaarn,203.0.113.90,polderbank,inlog
+2026-10-20T10:28:45+02:00,B,spinner ,203.0.113.77,Neder Bank,export
+2026-10-24T14:10:23Z,A,spinner,203.0.113.77,Duinkrediet,inlog
+2026-10-14T10:38:22Z,A,Lantaarn,203.0.113.90,polderbank,inlog
+2026-10-19T09:15:29Z,A,motte,203.0.113.21,Duinkrediet,inlog
+2026-10-14T09:55:20+02:00,B,motte,203.0.113.21,Duinkrediet,buit_bekeken
+2026-10-21T10:46:32+02:00,B,Spinner,203.0.113.77,Polderbank,inlog
+2026-10-24T16:55:44Z,A,lantaarn,192.0.2.45,nederbank,buit_bekeken
+2026-10-24T10:32:31+02:00,B,motte,198.51.100.30,Polderbank,inlog
+2026-10-27T09:48:57Z,A,lantaarn,203.0.113.90,Neder Bank,inlog
+2026-10-30T22:04:17+01:00,B,kever,198.51.100.61,Duinkrediet,inlog
+2026-10-19T02:58:33Z,A,lantaarn,192.0.2.45,Polderbank,buit_bekeken
+2026-10-25T04:41:32Z,A,spinner ,203.0.113.77,Polderbank,inlog
+2026-10-24T15:14:05+02:00,B,lantaarn,192.0.2.45,Neder Bank,inlog
+2026-10-30T16:22:56+01:00,B,Spinner,198.51.100.14,Polderbank,buit_bekeken
+2026-10-18T21:18:59+02:00,B,dwaallicht,192.0.2.88,NEDERBANK,inlog
+2026-10-25T07:06:14+01:00,B,lantaarn,192.0.2.45,NEDERBANK,inlog
+2026-10-17T22:36:45+02:00,B,motte,203.0.113.21,Polderbank,inlog
+2026-10-17T04:43:09Z,A,Lantaarn,203.0.113.90,polderbank,inlog
+2026-10-25T11:09:53Z,A,kever,198.51.100.61,nederbank,buit_bekeken
+2026-10-26T23:00:03+01:00,B,dwaallicht,192.0.2.88,NederBank,buit_bekeken
+2026-10-23T17:33:29+02:00,B,spinner,198.51.100.14,polderbank,inlog
+2026-10-19T19:23:38+02:00,B,kever,198.51.100.61,Polderbank,inlog
+2026-10-28T09:31:30Z,A,Spinner,198.51.100.14,Polderbank,buit_bekeken
+2026-10-31T15:00:41+01:00,B,lantaarn,203.0.113.90,NederBank,buit_bekeken
+2026-10-29T11:12:34Z,A,spinner,198.51.100.14,Neder Bank,buit_bekeken
+2026-10-19T08:36:49Z,A,dwaallicht,192.0.2.88,Duinkrediet,inlog
+2026-10-19T10:46:25Z,A,kever,198.51.100.61,polderbank,inlog
+2026-10-29T10:54:22+01:00,B,Spinner,198.51.100.14,Duinkrediet,inlog
+2026-10-21T12:26:52+02:00,B,Spinner,203.0.113.77,NederBank,inlog
+2026-10-13T15:29:52Z,A,lantaarn,192.0.2.45,Polderbank,buit_bekeken
+2026-10-21T06:18:24Z,A,spinner,203.0.113.77,Duinkrediet,inlog
+2026-10-19T08:07:43+02:00,B,motte,198.51.100.30,polderbank,inlog
+2026-10-13T10:20:52Z,A,spinner,198.51.100.14,Neder Bank,buit_bekeken
+2026-10-21T06:04:23Z,A,MOTTE,203.0.113.21,Duinkrediet,inlog
+2026-10-28T11:10:08+01:00,B,lantaarn,203.0.113.90,polderbank,inlog
+2026-10-30T11:32:30Z,A,Lantaarn,192.0.2.45,NEDERBANK,inlog
+2026-10-22T09:57:32Z,A,motte,198.51.100.30,Polderbank,export
+2026-10-20T09:52:42+02:00,B,MOTTE,198.51.100.30,Polderbank,buit_bekeken
+2026-10-17T11:54:29Z,A,lantaarn,192.0.2.45,Neder Bank,inlog
+2026-10-24T13:39:15+02:00,B,kever,198.51.100.61,Duinkrediet,buit_bekeken
+2026-10-30T09:36:43Z,A,spinner ,203.0.113.77,NederBank,inlog
+2026-10-29T23:12:46+01:00,B,spinner,198.51.100.14,polderbank,inlog
+2026-10-15T12:03:29+02:00,B,MOTTE,203.0.113.21,Polderbank,inlog
+2026-10-21T07:42:43Z,A,MOTTE,203.0.113.21,Neder Bank,inlog
+2026-10-15T16:33:51+02:00,B,motte,203.0.113.21,Neder Bank,inlog
+2026-10-15T15:10:36+02:00,B,MOTTE,198.51.100.30,polderbank,buit_bekeken
+2026-10-23T01:56:38+02:00,B,motte,203.0.113.21,polderbank,export
+2026-10-17T09:06:36Z,A,dwaallicht,192.0.2.88,polderbank,inlog
+2026-10-25T06:56:37Z,A,Spinner,203.0.113.77,Neder Bank,export
+2026-10-28T21:21:09+01:00,B,spinner ,198.51.100.14,Neder Bank,inlog
+2026-10-14T02:07:40+02:00,B,spinner,203.0.113.77,Polderbank,buit_bekeken
+2026-10-26T10:28:22+01:00,B,motte,198.51.100.30,Neder Bank,buit_bekeken
+2026-10-25T13:41:52+01:00,B,dwaallicht,192.0.2.88,Polderbank,export
+2026-10-17T10:01:29+02:00,B,spinner ,203.0.113.77,nederbank,buit_bekeken
+2026-10-23T05:11:00Z,A,Spinner,198.51.100.14,polderbank,export
+2026-10-15T12:08:24Z,A,dwaallicht,192.0.2.88,NederBank,inlog
+2026-10-17T04:38:11Z,A,spinner,198.51.100.14,Duinkrediet,buit_bekeken
+2026-10-26T10:21:33Z,A,Spinner,198.51.100.14,NEDERBANK,inlog
+2026-10-12T10:59:50+02:00,B,dwaallicht,192.0.2.88,Polderbank,inlog
+2026-10-13T13:39:54+02:00,B,MOTTE,203.0.113.21,nederbank,buit_bekeken
+2026-10-27T19:00:25Z,A,Spinner,203.0.113.77,NederBank,export
+2026-10-20T09:13:41+02:00,B,MOTTE,198.51.100.30,Polderbank,buit_bekeken
+2026-10-18T10:23:31Z,A,spinner,198.51.100.14,polderbank,inlog
+2026-10-17T11:28:39Z,A,motte,198.51.100.30,Duinkrediet,inlog
+2026-10-27T12:22:14Z,A,Spinner,203.0.113.77,nederbank,buit_bekeken
+2026-10-14T18:16:33+02:00,B,Lantaarn,192.0.2.45,Duinkrediet,inlog
+2026-10-26T11:49:37+01:00,B,spinner ,198.51.100.14,NEDERBANK,inlog
+2026-10-27T18:44:28Z,A,lantaarn,203.0.113.90,NederBank,export
+2026-10-13T07:39:00+02:00,B,lantaarn,203.0.113.90,NEDERBANK,buit_bekeken
+2026-10-13T14:49:12Z,A,Spinner,203.0.113.77,Duinkrediet,buit_bekeken
+2026-10-27T14:22:04Z,A,lantaarn,192.0.2.45,Duinkrediet,export
+2026-10-28T13:03:24Z,A,Spinner,198.51.100.14,polderbank,export
+2026-10-31T18:20:24Z,A,spinner,203.0.113.77,Polderbank,inlog
+2026-10-27T13:12:11Z,A,dwaallicht,192.0.2.88,Neder Bank,inlog
+2026-10-26T07:59:22+01:00,B,Spinner,203.0.113.77,Duinkrediet,inlog
+2026-10-20T07:44:53Z,A,motte,203.0.113.21,Duinkrediet,inlog
+2026-10-16T12:24:57Z,A,dwaallicht,192.0.2.88,Neder Bank,inlog
+2026-10-27T09:17:36Z,A,motte,203.0.113.21,Polderbank,buit_bekeken
+2026-10-23T23:49:43Z,A,MOTTE,198.51.100.30,Neder Bank,inlog
+2026-10-18T15:02:22+02:00,B,dwaallicht,192.0.2.88,NEDERBANK,inlog
+2026-10-21T07:45:33Z,A,spinner ,198.51.100.14,Duinkrediet,inlog
+2026-10-16T16:24:50Z,A,MOTTE,203.0.113.21,polderbank,inlog
+2026-10-15T15:45:19+02:00,B,dwaallicht,192.0.2.88,polderbank,inlog
+2026-10-31T08:43:13Z,A,spinner ,203.0.113.77,polderbank,inlog
+2026-10-14T08:09:12Z,A,Spinner,198.51.100.14,Neder Bank,inlog
+2026-10-14T13:10:34+02:00,B,Spinner,203.0.113.77,nederbank,inlog
+2026-10-27T13:54:45Z,A,lantaarn,203.0.113.90,nederbank,inlog
+2026-10-25T14:31:18+01:00,B,motte,198.51.100.30,NederBank,inlog
+2026-10-21T21:37:17Z,A,motte,203.0.113.21,Polderbank,inlog
+2026-10-29T09:27:00+01:00,B,spinner,198.51.100.14,Duinkrediet,inlog
+2026-10-26T07:51:38Z,A,dwaallicht,192.0.2.88,Neder Bank,export
+2026-10-19T03:14:42+02:00,B,MOTTE,203.0.113.21,Polderbank,inlog
+2026-10-24T14:22:52+02:00,B,dwaallicht,192.0.2.88,nederbank,inlog
+2026-10-27T18:07:51Z,A,Lantaarn,203.0.113.90,Duinkrediet,inlog
+2026-10-24T07:02:23+02:00,B,lantaarn,192.0.2.45,NEDERBANK,buit_bekeken
+2026-10-14T11:51:30+02:00,B,spinner,198.51.100.14,Polderbank,inlog
+2026-10-14T17:01:56+02:00,B,Lantaarn,203.0.113.90,polderbank,buit_bekeken
+2026-10-13T18:58:19+02:00,B,lantaarn,203.0.113.90,NederBank,inlog
+2026-10-15T01:40:10Z,A,spinner,203.0.113.77,nederbank,inlog
+2026-10-29T09:32:30Z,A,MOTTE,198.51.100.30,nederbank,inlog
+2026-10-19T09:20:26+02:00,B,Lantaarn,203.0.113.90,Duinkrediet,inlog
+2026-10-16T20:00:31Z,A,Lantaarn,203.0.113.90,Duinkrediet,inlog
+2026-10-19T15:04:53Z,A,MOTTE,203.0.113.21,NEDERBANK,inlog
+2026-10-19T11:39:16+02:00,B,MOTTE,198.51.100.30,NederBank,inlog
+2026-10-26T10:31:22Z,A,MOTTE,203.0.113.21,Duinkrediet,inlog
+2026-10-14T10:03:17Z,A,kever,198.51.100.61,Duinkrediet,inlog
+2026-10-14T18:35:26+02:00,B,Lantaarn,192.0.2.45,Neder Bank,buit_bekeken
+2026-10-30T10:31:17+01:00,B,motte,198.51.100.30,polderbank,inlog
+2026-10-26T07:39:09+01:00,B,spinner,203.0.113.77,Polderbank,inlog
+2026-10-18T08:01:53Z,A,dwaallicht,192.0.2.88,Duinkrediet,inlog
+2026-10-16T03:17:13+02:00,B,dwaallicht,192.0.2.88,Polderbank,buit_bekeken
+2026-10-26T11:43:47Z,A,motte,203.0.113.21,NederBank,buit_bekeken
+2026-10-13T16:33:04+02:00,B,spinner ,198.51.100.14,polderbank,inlog
+2026-10-25T08:14:58+01:00,B,spinner ,198.51.100.14,Neder Bank,inlog
+2026-10-27T09:38:03+01:00,B,dwaallicht,192.0.2.88,Polderbank,inlog
+2026-10-18T00:19:09Z,A,motte,198.51.100.30,Duinkrediet,inlog
+2026-10-23T23:44:02+02:00,B,lantaarn,192.0.2.45,NEDERBANK,inlog
+2026-10-14T14:39:39Z,A,spinner,203.0.113.77,nederbank,buit_bekeken
+2026-10-26T12:16:58Z,A,motte,198.51.100.30,Duinkrediet,buit_bekeken
+2026-10-17T10:31:15+02:00,B,dwaallicht,192.0.2.88,polderbank,buit_bekeken
+2026-10-15T12:57:45+02:00,B,MOTTE,198.51.100.30,Polderbank,inlog
+2026-10-22T03:30:21Z,A,spinner ,203.0.113.77,Polderbank,inlog
+2026-10-25T05:05:19+01:00,B,motte,198.51.100.30,Duinkrediet,inlog
+2026-10-16T22:25:05+02:00,B,spinner,198.51.100.14,Neder Bank,inlog
+2026-10-31T21:40:36+01:00,B,motte,203.0.113.21,Polderbank,export
+2026-10-23T21:29:52Z,A,lantaarn,203.0.113.90,Polderbank,inlog
+2026-10-30T19:58:25+01:00,B,spinner ,198.51.100.14,Neder Bank,export
+2026-10-19T15:10:40+02:00,B,kever,198.51.100.61,NederBank,inlog
+2026-10-24T15:03:55Z,A,lantaarn,192.0.2.45,Neder Bank,inlog
+2026-10-15T17:39:39+02:00,B,dwaallicht,192.0.2.88,polderbank,inlog
+2026-10-23T16:52:32+02:00,B,motte,198.51.100.30,Duinkrediet,inlog
+2026-10-17T17:58:37Z,A,spinner,198.51.100.14,polderbank,inlog
+2026-10-22T11:49:30+02:00,B,lantaarn,192.0.2.45,polderbank,inlog
+2026-10-20T09:38:38+02:00,B,lantaarn,203.0.113.90,polderbank,buit_bekeken
+2026-10-16T09:16:52+02:00,B,MOTTE,203.0.113.21,Neder Bank,inlog
+2026-10-28T09:03:23Z,A,spinner,198.51.100.14,NEDERBANK,inlog
+2026-10-31T11:05:31+01:00,B,MOTTE,198.51.100.30,polderbank,inlog
+2026-10-25T15:13:13Z,A,spinner,203.0.113.77,Duinkrediet,buit_bekeken
+2026-10-25T17:05:57+01:00,B,Spinner,203.0.113.77,NederBank,inlog
+2026-10-18T14:01:23+02:00,B,Spinner,203.0.113.77,Duinkrediet,buit_bekeken
+2026-10-14T16:49:55Z,A,motte,198.51.100.30,polderbank,buit_bekeken
+2026-10-31T08:42:23Z,A,dwaallicht,192.0.2.88,nederbank,inlog
+2026-10-24T11:33:57+02:00,B,dwaallicht,192.0.2.88,Polderbank,inlog
+2026-10-28T07:30:42+01:00,B,motte,198.51.100.30,Duinkrediet,inlog
+2026-10-13T09:54:02Z,A,kever,198.51.100.61,Neder Bank,inlog
+2026-10-30T10:32:52+01:00,B,Lantaarn,192.0.2.45,nederbank,inlog
+2026-10-20T07:16:45Z,A,lantaarn,203.0.113.90,nederbank,inlog
+2026-10-13T11:13:46Z,A,MOTTE,203.0.113.21,NEDERBANK,inlog
+2026-10-14T09:30:02+02:00,B,Spinner,198.51.100.14,nederbank,inlog
+2026-10-14T13:59:15Z,A,MOTTE,203.0.113.21,polderbank,inlog
+2026-10-27T07:58:55Z,A,Spinner,198.51.100.14,Neder Bank,inlog
+2026-10-20T09:32:50+02:00,B,MOTTE,198.51.100.30,Duinkrediet,inlog
+2026-10-23T07:20:29Z,A,motte,198.51.100.30,Polderbank,inlog
+2026-10-22T13:53:28Z,A,motte,203.0.113.21,Duinkrediet,inlog
+2026-10-20T16:53:29Z,A,lantaarn,203.0.113.90,Neder Bank,inlog
+2026-10-16T11:53:26+02:00,B,MOTTE,203.0.113.21,Duinkrediet,inlog
+2026-10-21T08:37:50Z,A,dwaallicht,192.0.2.88,nederbank,inlog
+2026-10-28T07:43:53Z,A,dwaallicht,192.0.2.88,NederBank,inlog
+2026-10-18T05:03:41Z,A,MOTTE,198.51.100.30,Polderbank,inlog
+2026-10-13T09:35:18Z,A,Lantaarn,203.0.113.90,NederBank,buit_bekeken
+2026-10-12T09:37:33Z,A,Lantaarn,203.0.113.90,polderbank,inlog
+2026-10-16T14:36:06+02:00,B,Lantaarn,203.0.113.90,nederbank,buit_bekeken
+2026-10-27T08:12:28+01:00,B,Spinner,198.51.100.14,Duinkrediet,buit_bekeken
+2026-10-21T14:25:56Z,A,Spinner,203.0.113.77,NederBank,inlog
+2026-10-18T13:05:59Z,A,spinner ,198.51.100.14,nederbank,inlog
+2026-10-14T15:31:29Z,A,Spinner,203.0.113.77,NederBank,buit_bekeken
+2026-10-30T06:59:55Z,A,dwaallicht,192.0.2.88,Duinkrediet,inlog
+2026-10-20T07:10:56Z,A,dwaallicht,192.0.2.88,NEDERBANK,inlog
+2026-10-17T09:36:55Z,A,Spinner,203.0.113.77,polderbank,inlog
+2026-10-25T11:55:53+01:00,B,lantaarn,203.0.113.90,Neder Bank,inlog
+2026-10-26T06:43:44+01:00,B,Lantaarn,192.0.2.45,Neder Bank,inlog
+2026-10-28T19:28:18+01:00,B,spinner,198.51.100.14,Duinkrediet,inlog
+2026-10-19T15:15:33+02:00,B,spinner,203.0.113.77,nederbank,inlog
+2026-10-20T09:56:41+02:00,B,MOTTE,198.51.100.30,Polderbank,inlog
+2026-10-30T12:00:24+01:00,B,spinner,203.0.113.77,polderbank,inlog
+2026-10-31T15:48:27Z,A,motte,203.0.113.21,Duinkrediet,export
+2026-10-27T11:25:50Z,A,spinner ,198.51.100.14,NEDERBANK,inlog
+2026-10-29T03:13:29Z,A,Lantaarn,203.0.113.90,Duinkrediet,inlog
+2026-10-27T15:10:54Z,A,kever,198.51.100.61,nederbank,inlog
+2026-10-22T13:00:40+02:00,B,MOTTE,198.51.100.30,Polderbank,inlog
+2026-10-14T11:54:03+02:00,B,lantaarn,192.0.2.45,Duinkrediet,inlog
+2026-10-18T08:04:28Z,A,spinner ,198.51.100.14,Neder Bank,inlog
+2026-10-20T12:31:02Z,A,dwaallicht,192.0.2.88,nederbank,buit_bekeken
+2026-10-16T19:09:29Z,A,Lantaarn,203.0.113.90,Duinkrediet,inlog
+2026-10-25T12:46:33+01:00,B,MOTTE,198.51.100.30,Neder Bank,inlog
+2026-10-29T16:13:42+01:00,B,spinner,203.0.113.77,Polderbank,inlog
+2026-10-21T16:37:00+02:00,B,dwaallicht,192.0.2.88,Duinkrediet,inlog
+2026-10-20T07:48:08Z,A,dwaallicht,192.0.2.88,polderbank,buit_bekeken
+2026-10-20T07:54:05Z,A,spinner,198.51.100.14,NEDERBANK,export
+2026-10-24T06:26:31Z,A,Spinner,198.51.100.14,Polderbank,inlog
+2026-10-27T15:29:58+01:00,B,Lantaarn,192.0.2.45,Neder Bank,inlog
+2026-10-17T11:26:43+02:00,B,Lantaarn,203.0.113.90,Neder Bank,inlog
+2026-10-22T08:34:30+02:00,B,Spinner,198.51.100.14,Neder Bank,inlog
+2026-10-23T14:18:23+02:00,B,motte,198.51.100.30,Neder Bank,buit_bekeken
+2026-10-14T04:38:52Z,A,motte,198.51.100.30,Neder Bank,inlog
+2026-10-14T15:46:42Z,A,kever,198.51.100.61,nederbank,inlog
+2026-10-18T22:26:05Z,A,spinner,198.51.100.14,nederbank,buit_bekeken
+2026-10-16T05:20:51Z,A,Lantaarn,192.0.2.45,polderbank,inlog
+2026-10-13T17:09:26+02:00,B,spinner ,198.51.100.14,Neder Bank,inlog
+2026-10-31T12:01:59+01:00,B,spinner,203.0.113.77,Duinkrediet,inlog
+2026-10-13T09:10:46+02:00,B,spinner,203.0.113.77,NEDERBANK,buit_bekeken
+2026-10-28T08:15:04+01:00,B,Lantaarn,192.0.2.45,Duinkrediet,buit_bekeken
+2026-10-25T16:35:36+01:00,B,Spinner,198.51.100.14,NederBank,inlog
+2026-10-15T09:36:08+02:00,B,MOTTE,198.51.100.30,nederbank,inlog
+2026-10-24T14:31:26Z,A,kever,198.51.100.61,NEDERBANK,inlog
+2026-10-13T11:10:31+02:00,B,dwaallicht,192.0.2.88,polderbank,buit_bekeken
+2026-10-14T15:23:28Z,A,motte,198.51.100.30,Duinkrediet,buit_bekeken
+2026-10-12T03:04:39+02:00,B,Spinner,203.0.113.77,NederBank,buit_bekeken
+2026-10-15T05:58:10+02:00,B,kever,198.51.100.61,polderbank,buit_bekeken
+2026-10-20T12:53:06Z,A,kever,198.51.100.61,polderbank,inlog
+2026-10-28T18:21:54Z,A,dwaallicht,192.0.2.88,Duinkrediet,inlog
+2026-10-15T07:46:03+02:00,B,Lantaarn,203.0.113.90,nederbank,inlog
+2026-10-23T12:48:55Z,A,Spinner,203.0.113.77,Neder Bank,export
+2026-10-23T18:54:28+02:00,B,Spinner,198.51.100.14,nederbank,inlog
+2026-10-24T07:39:54Z,A,motte,198.51.100.30,NEDERBANK,inlog
+2026-10-27T13:13:42+01:00,B,lantaarn,192.0.2.45,Duinkrediet,inlog
+2026-10-15T08:04:50Z,A,MOTTE,198.51.100.30,NederBank,inlog
+2026-10-31T10:20:42+01:00,B,spinner ,203.0.113.77,polderbank,inlog
+2026-10-13T11:51:23Z,A,Lantaarn,192.0.2.45,NEDERBANK,inlog
+2026-10-21T15:27:24+02:00,B,dwaallicht,192.0.2.88,Duinkrediet,buit_bekeken
+2026-10-16T15:01:06+02:00,B,spinner ,203.0.113.77,Neder Bank,export
+2026-10-20T09:35:36+02:00,B,dwaallicht,192.0.2.88,NederBank,export
+2026-10-26T11:49:56Z,A,lantaarn,203.0.113.90,nederbank,inlog
+2026-10-16T14:59:21Z,A,MOTTE,203.0.113.21,NederBank,inlog
+2026-10-29T16:43:52+01:00,B,motte,203.0.113.21,NEDERBANK,inlog
+2026-10-12T21:39:54Z,A,motte,203.0.113.21,nederbank,buit_bekeken
+2026-10-12T20:15:22Z,A,dwaallicht,192.0.2.88,polderbank,inlog
+2026-10-22T19:09:20Z,A,dwaallicht,192.0.2.88,nederbank,inlog
+2026-10-29T21:41:18Z,A,Lantaarn,192.0.2.45,NEDERBANK,inlog
+2026-10-30T12:05:17Z,A,motte,198.51.100.30,nederbank,buit_bekeken
+2026-10-26T09:23:43+01:00,B,kever,198.51.100.61,NederBank,buit_bekeken
+2026-10-30T10:09:22Z,A,Lantaarn,192.0.2.45,Duinkrediet,buit_bekeken
+2026-10-24T10:59:45Z,A,motte,203.0.113.21,NederBank,inlog
+2026-10-21T15:43:32+02:00,B,spinner,198.51.100.14,Duinkrediet,inlog
+2026-10-31T17:46:03+01:00,B,spinner,198.51.100.14,Neder Bank,inlog
+2026-10-30T08:26:14Z,A,spinner ,203.0.113.77,polderbank,buit_bekeken
+2026-10-14T19:07:34Z,A,lantaarn,203.0.113.90,NEDERBANK,buit_bekeken
+2026-10-20T07:10:56Z,A,dwaallicht,192.0.2.88,NEDERBANK,inlog
+2026-10-26T10:56:23+01:00,B,kever,198.51.100.61,polderbank,inlog
+2026-10-16T03:49:49Z,A,motte,198.51.100.30,NederBank,export
+2026-10-18T21:50:15Z,A,dwaallicht,192.0.2.88,Duinkrediet,buit_bekeken
+2026-10-31T18:38:17Z,A,kever,198.51.100.61,Duinkrediet,inlog
+2026-10-23T12:35:57+02:00,B,spinner,198.51.100.14,Polderbank,inlog
+2026-10-12T22:39:23+02:00,B,Lantaarn,203.0.113.90,NederBank,inlog
+2026-10-12T12:45:49Z,A,Spinner,198.51.100.14,Duinkrediet,export
+2026-10-15T17:07:12Z,A,motte,198.51.100.30,Duinkrediet,inlog
+2026-10-27T02:39:45+01:00,B,Lantaarn,192.0.2.45,polderbank,buit_bekeken
+2026-10-26T15:25:18Z,A,spinner ,198.51.100.14,Duinkrediet,inlog
+2026-10-24T12:18:12Z,A,motte,198.51.100.30,Neder Bank,inlog
+2026-10-13T07:21:08Z,A,Lantaarn,192.0.2.45,Polderbank,inlog
+2026-10-14T06:02:32Z,A,spinner,198.51.100.14,Neder Bank,inlog
+2026-10-21T00:48:28Z,A,MOTTE,198.51.100.30,Duinkrediet,inlog
+2026-10-20T07:32:20Z,A,motte,198.51.100.30,Polderbank,buit_bekeken
+2026-10-27T13:03:10Z,A,Lantaarn,203.0.113.90,Polderbank,export
+2026-10-26T07:19:46+01:00,B,lantaarn,192.0.2.45,Polderbank,buit_bekeken
+2026-10-13T09:23:33+02:00,B,Lantaarn,203.0.113.90,polderbank,inlog
+2026-10-28T18:03:30Z,A,MOTTE,198.51.100.30,nederbank,buit_bekeken
+2026-10-18T08:27:26+02:00,B,lantaarn,203.0.113.90,Neder Bank,export
+2026-10-12T21:17:52+02:00,B,spinner ,203.0.113.77,polderbank,inlog
+2026-10-15T12:45:53Z,A,MOTTE,203.0.113.21,Neder Bank,export
+2026-10-15T12:40:00+02:00,B,motte,203.0.113.21,Duinkrediet,inlog
+2026-10-29T15:15:30+01:00,B,spinner,203.0.113.77,Polderbank,buit_bekeken
+2026-10-12T11:01:22+02:00,B,Spinner,198.51.100.14,Duinkrediet,inlog
+2026-10-15T11:12:03Z,A,kever,198.51.100.61,Polderbank,buit_bekeken
+2026-10-13T11:12:33+02:00,B,motte,203.0.113.21,Duinkrediet,inlog
+2026-10-24T20:16:17+02:00,B,lantaarn,192.0.2.45,Polderbank,inlog
+2026-10-13T11:52:32+02:00,B,Spinner,203.0.113.77,nederbank,inlog
+2026-10-24T15:20:06Z,A,Spinner,198.51.100.14,Neder Bank,inlog
+2026-10-18T21:16:24+02:00,B,dwaallicht,192.0.2.88,Polderbank,inlog
+2026-10-20T23:17:15+02:00,B,MOTTE,203.0.113.21,nederbank,inlog
+2026-10-26T06:59:48+01:00,B,spinner ,198.51.100.14,polderbank,inlog
+2026-10-15T19:41:45Z,A,Lantaarn,203.0.113.90,Polderbank,inlog
+2026-10-30T23:35:09+01:00,B,spinner ,203.0.113.77,NEDERBANK,inlog
+2026-10-13T14:59:50Z,A,spinner,203.0.113.77,Polderbank,inlog
+2026-10-17T22:09:35+02:00,B,spinner ,198.51.100.14,polderbank,export
+2026-10-27T09:41:20+01:00,B,MOTTE,198.51.100.30,Duinkrediet,export
+2026-10-13T06:26:59Z,A,dwaallicht,192.0.2.88,polderbank,inlog
+2026-10-20T16:57:12+02:00,B,spinner,198.51.100.14,polderbank,inlog
+2026-10-29T07:25:51Z,A,spinner,203.0.113.77,NederBank,export
+2026-10-23T10:26:32+02:00,B,Lantaarn,192.0.2.45,Duinkrediet,inlog
+2026-10-14T02:07:40+02:00,B,spinner,203.0.113.77,Polderbank,buit_bekeken
+2026-10-22T12:20:11+02:00,B,dwaallicht,192.0.2.88,Duinkrediet,export
+2026-10-26T09:44:15+01:00,B,Spinner,198.51.100.14,Polderbank,inlog
+2026-10-12T21:04:15Z,A,MOTTE,203.0.113.21,NederBank,buit_bekeken
+2026-10-25T09:56:55+01:00,B,dwaallicht,192.0.2.88,Polderbank,inlog
+2026-10-30T14:50:20+01:00,B,kever,198.51.100.61,NederBank,inlog
+2026-10-13T15:24:56Z,A,motte,203.0.113.21,NEDERBANK,buit_bekeken
+2026-10-20T11:26:24Z,A,kever,198.51.100.61,polderbank,inlog
+2026-10-12T10:47:03+02:00,B,motte,203.0.113.21,polderbank,inlog
+2026-10-22T15:30:42+02:00,B,dwaallicht,192.0.2.88,Neder Bank,buit_bekeken
+2026-10-31T03:34:35Z,A,spinner,203.0.113.77,polderbank,export
+2026-10-13T07:27:55Z,A,lantaarn,203.0.113.90,NederBank,export
+2026-10-28T13:44:17Z,A,motte,198.51.100.30,Neder Bank,inlog
+2026-10-16T23:08:03+02:00,B,lantaarn,203.0.113.90,NEDERBANK,buit_bekeken
+2026-10-21T18:54:38+02:00,B,motte,198.51.100.30,Duinkrediet,inlog
+2026-10-25T15:22:47+01:00,B,kever,198.51.100.61,NEDERBANK,inlog
+2026-10-31T10:31:33Z,A,kever,198.51.100.61,nederbank,inlog
+2026-10-25T12:35:39Z,A,MOTTE,203.0.113.21,Polderbank,buit_bekeken
+2026-10-15T13:01:49+02:00,B,spinner ,198.51.100.14,Neder Bank,export
+2026-10-24T14:44:54+02:00,B,MOTTE,198.51.100.30,NederBank,inlog
+2026-10-22T02:07:02Z,A,spinner ,203.0.113.77,NederBank,inlog
+2026-10-27T09:38:48+01:00,B,Lantaarn,203.0.113.90,nederbank,export
+2026-10-19T10:10:42+02:00,B,dwaallicht,192.0.2.88,NederBank,export
+2026-10-31T07:28:29+01:00,B,spinner,203.0.113.77,Duinkrediet,inlog
+2026-10-18T08:15:47Z,A,spinner,198.51.100.14,nederbank,inlog
+2026-10-30T12:33:21+01:00,B,Spinner,203.0.113.77,NEDERBANK,inlog
+2026-10-28T23:44:45+01:00,B,spinner ,203.0.113.77,polderbank,inlog
+2026-10-15T14:00:23+02:00,B,motte,198.51.100.30,Polderbank,export
+2026-10-20T13:31:26+02:00,B,dwaallicht,192.0.2.88,NederBank,inlog
+2026-10-26T21:24:52Z,A,spinner,198.51.100.14,Polderbank,inlog
+2026-10-23T17:37:53+02:00,B,kever,198.51.100.61,nederbank,inlog
+2026-10-22T14:24:50Z,A,Spinner,198.51.100.14,Neder Bank,buit_bekeken
+2026-10-20T07:53:14Z,A,spinner,203.0.113.77,nederbank,inlog
+2026-10-28T00:25:24+01:00,B,Lantaarn,203.0.113.90,Neder Bank,inlog
+2026-10-25T09:09:08Z,A,spinner ,198.51.100.14,polderbank,inlog
+2026-10-14T09:44:53Z,A,motte,198.51.100.30,Duinkrediet,export
+2026-10-25T13:37:11Z,A,dwaallicht,192.0.2.88,Duinkrediet,inlog
+2026-10-22T05:53:50+02:00,B,spinner ,203.0.113.77,nederbank,inlog
+2026-10-23T09:03:25+02:00,B,spinner,203.0.113.77,Neder Bank,inlog
+2026-10-13T13:06:09+02:00,B,motte,203.0.113.21,Duinkrediet,buit_bekeken
+2026-10-30T10:54:16+01:00,B,Spinner,203.0.113.77,nederbank,inlog
+2026-10-26T05:12:15Z,A,spinner,198.51.100.14,Duinkrediet,buit_bekeken
+2026-10-15T20:12:14Z,A,lantaarn,192.0.2.45,Duinkrediet,inlog
+2026-10-12T21:25:31+02:00,B,spinner,203.0.113.77,polderbank,buit_bekeken
+2026-10-20T13:28:47Z,A,Lantaarn,203.0.113.90,Neder Bank,buit_bekeken
+2026-10-15T13:05:10+02:00,B,motte,203.0.113.21,polderbank,inlog
+2026-10-27T12:33:56Z,A,kever,198.51.100.61,Neder Bank,inlog
+2026-10-30T07:49:11Z,A,spinner,203.0.113.77,polderbank,inlog
+2026-10-31T11:20:04+01:00,B,MOTTE,198.51.100.30,NEDERBANK,inlog
+2026-10-27T09:26:48+01:00,B,motte,198.51.100.30,nederbank,inlog
+2026-10-13T22:30:35+02:00,B,spinner ,198.51.100.14,Neder Bank,buit_bekeken
+2026-10-29T12:26:35+01:00,B,dwaallicht,192.0.2.88,nederbank,buit_bekeken
+2026-10-20T09:56:41+02:00,B,MOTTE,198.51.100.30,Polderbank,inlog
+2026-10-29T08:24:15+01:00,B,spinner ,198.51.100.14,nederbank,inlog
+2026-10-17T19:37:58+02:00,B,MOTTE,198.51.100.30,Duinkrediet,export
+2026-10-22T14:57:32Z,A,MOTTE,203.0.113.21,Duinkrediet,inlog
+2026-10-31T12:52:19+01:00,B,Spinner,198.51.100.14,Neder Bank,inlog
+2026-10-20T17:43:03Z,A,kever,198.51.100.61,polderbank,inlog
+2026-10-22T08:33:57Z,A,motte,203.0.113.21,NederBank,inlog
+2026-10-23T12:46:31Z,A,lantaarn,203.0.113.90,Neder Bank,inlog
+2026-10-19T22:50:18Z,A,lantaarn,203.0.113.90,NederBank,buit_bekeken
+2026-10-25T09:36:13Z,A,motte,203.0.113.21,Duinkrediet,buit_bekeken
+2026-10-21T16:52:59+02:00,B,spinner ,203.0.113.77,polderbank,inlog
+2026-10-14T09:09:22Z,A,spinner ,203.0.113.77,polderbank,inlog
+2026-10-12T10:42:08Z,A,lantaarn,192.0.2.45,nederbank,buit_bekeken
+2026-10-29T18:14:12Z,A,spinner ,203.0.113.77,nederbank,inlog
+2026-10-31T11:19:07Z,A,MOTTE,203.0.113.21,NEDERBANK,buit_bekeken
+2026-10-22T15:20:14+02:00,B,MOTTE,198.51.100.30,Duinkrediet,inlog
+2026-10-23T12:56:38Z,A,Spinner,198.51.100.14,Polderbank,inlog
+2026-10-28T06:39:03Z,A,motte,203.0.113.21,Neder Bank,inlog
+2026-10-19T14:22:23+02:00,B,Lantaarn,192.0.2.45,NederBank,inlog
+2026-10-19T15:08:11Z,A,spinner ,198.51.100.14,nederbank,buit_bekeken
+2026-10-22T07:07:26Z,A,MOTTE,203.0.113.21,Polderbank,inlog
