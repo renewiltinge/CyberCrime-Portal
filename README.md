@@ -151,6 +151,7 @@ Een apart pad voor de functie tactisch analist bij een politieteam cybercrime, g
 7. **Coachen, coördineren en het intelligence-netwerk** — analysewerk sturen, collega's coachen, vraag en aanbod verbinden.
 8. **Solliciteren en het assessment voorbereiden** — de procedure, STAR, een oefen-assessment en je ontwikkelplan.
 9. **Casus: Operatie Zwarte Rots** — drie incidenten, één bulletproof-hostingdienst: van dwarsverband tot BLUF-product.
+10. **Praktijkproject: Operatie Nachtvlinder** — een echt dataproject buiten de browser met Python, pandas, SQLite en networkx; het project staat in [`projecten/dataproject-nachtvlinder/`](projecten/dataproject-nachtvlinder/README.md).
 
 ### 💧 Datastromen volgen
 Word expert in geld- en datastromen — de rode draad van bijna elke cybercrimezaak.

@@ -1,6 +1,6 @@
 # Dekkingsmatrix: Cyber Dojo tegenover certificeringen en kaders
 
-> **Lees dit eerst.** Dit portaal vervangt geen erkend examen en levert geen certificaat op. Deze matrix is een eigen inschatting van de makers, niet beoordeeld of goedgekeurd door CompTIA, ISC2, INE, TCM Security, OffSec, Security Blue Team, GIAC, EC-Council, MITRE of een andere exameninstantie. Laatst gecontroleerd op 2026-11-13, tegen 135 rooms in `content/rooms/`.
+> **Lees dit eerst.** Dit portaal vervangt geen erkend examen en levert geen certificaat op. Deze matrix is een eigen inschatting van de makers, niet beoordeeld of goedgekeurd door CompTIA, ISC2, INE, TCM Security, OffSec, Security Blue Team, GIAC, EC-Council, MITRE of een andere exameninstantie. Laatst gecontroleerd op 2026-11-13, tegen 136 rooms in `content/rooms/`.
 
 ## Hoe je deze matrix leest
 
@@ -193,7 +193,7 @@ GCFA (GIAC) en CHFI (EC-Council) worden hier alleen als thematische richting geb
 | Intelligenceproducten (BLUF, niveaus, interventieadvies) | gedekt | `intelligenceproducten`, `werkblad-intel`, `operatie-spiegelstroom` | |
 | Digitale entiteiten duiden en entity resolution | gedekt | `ta-entiteiten-duiden`, `osint-pivoting` | Inclusief CGNAT, Tor-exit en bulletproof hosting. |
 | Sociale netwerkanalyse en criminele samenwerkingsverbanden | gedekt | `ta-samenwerkingsverbanden`, `ta-casus-bulletproof` | Degree, betweenness, closeness, brokers. |
-| Kwantitatieve analyse van grote datasets (SQL, Python, visualisatie) | deels | `ta-data-doorgronden` | Concepten en terminal-oefening; geen echte database of pandas in de browser. |
+| Kwantitatieve analyse van grote datasets (SQL, Python, visualisatie) | gedekt | `ta-data-doorgronden`, `ta-dataproject` | In de browser concepten en terminal; het praktijkproject gebruikt echte Python, pandas, SQLite en networkx. |
 | Kwalitatieve methoden en case linkage | gedekt | `ta-kwalitatief-dwarsverbanden` | Coderen, triangulatie, dwarsverbanden tussen incidenten. |
 | Interventiekansen en integrale aanpak | gedekt | `ta-interventies`, `crime-scripting`, `cybercrime-ecosysteem` | |
 | Coachen en coördineren van analisten, netwerkregie | gedekt | `ta-coach-netwerk` | |

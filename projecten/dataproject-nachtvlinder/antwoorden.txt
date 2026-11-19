@@ -1,0 +1,29 @@
+# Operatie Nachtvlinder — jouw antwoorden
+# Vul achter elke dubbele punt je antwoord in en draai: python controleer.py
+
+# Stap 1 — inladen en opschonen
+Q1:
+Q2:
+Q3:
+
+# Stap 2 — tellen, groeperen en koppelen (SQL)
+Q4:
+Q5:
+Q6:
+Q7:
+
+# Stap 3 — patronen en afwijkingen
+Q8:
+Q9:
+Q10:
+Q11:
+
+# Stap 4 — het netwerk
+Q12:
+Q13:
+Q14:
+
+# Stap 5 — de geldstroom
+Q15:
+Q16:
+Q17:

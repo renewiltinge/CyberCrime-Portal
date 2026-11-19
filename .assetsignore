@@ -9,3 +9,5 @@ wrangler.jsonc
 .assetsignore
 *.md
 nineminds/sync.ps1
+projecten/*/uitwerking
+projecten/*/genereer_data.py

@@ -35,7 +35,7 @@ DDoS, malware, hacking en bulletproof hosting, met een internationale component 
 | Collect, Store, Analyse, Engage | `intelligencecyclus` |
 | Digitale entiteiten verzamelen en duiden (IP, personen, bedrijven) | `ta-entiteiten-duiden`, `osint-pivoting`, `osint-infrastructuur` |
 | Informatiestromen, verdachtenkenmerken, samenwerkingsverbanden | `ta-samenwerkingsverbanden`, `follow-the-money` |
-| Programmeertaal, databasesoftware, visualisatiesoftware, grote datasets | `ta-data-doorgronden` |
+| Programmeertaal, databasesoftware, visualisatiesoftware, grote datasets | `ta-data-doorgronden`, `ta-dataproject` (met `projecten/dataproject-nachtvlinder/`) |
 | Kwantitatieve en kwalitatieve methoden, dwarsverbanden, hoofd- en bijzaken | `ta-kwalitatief-dwarsverbanden`, `redeneren-met-kansen` |
 | Interventiekansen, integrale aanpak, publiek-private partners | `ta-interventies`, `botnet-ddos-economie`, `ransomware-respons` |
 | Intelligenceproducten voor minder gespecialiseerde partners | `intelligenceproducten`, `ta-interventies` |
