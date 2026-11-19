@@ -10,7 +10,7 @@ laadt de bestanden als gewone `<script>`-tags, zodat het ook werkt door `index.h
 /* Room: Netwerken — de basis */
 CS.registerRoom({
   id: 'netwerken-basis',            // gelijk aan de bestandsnaam, kebab-case
-  path: 'fundamenten',              // 'fundamenten' | 'security-kern' | 'offensief' | 'defensief' | 'forensie' | 'intelligence' | 'datastromen' | 'puzzels' | 'meesterproeven' | 'gamerooms' | 'uitdagingen' | 'eindopdracht'
+  path: 'fundamenten',              // 'fundamenten' | 'security-kern' | 'offensief' | 'defensief' | 'forensie' | 'intelligence' | 'tactisch-analist' | 'datastromen' | 'puzzels' | 'meesterproeven' | 'gamerooms' | 'uitdagingen' | 'eindopdracht'
   order: 2,                         // volgorde binnen het leerpad
   title: 'Netwerken: de basis',
   icon: '🌐',                       // optioneel; de interface toont het niet meer (een leerpad heeft een getekend teken, zie docs/adr/0001)

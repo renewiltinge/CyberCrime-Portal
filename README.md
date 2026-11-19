@@ -140,6 +140,18 @@ Van fenomeen naar interventie: denken en werken als intelligence-analist.
 13. **IoT-botnet & de DDoS-economie** — hoe botnets ontstaan, DDoS-typen, booter/stresser-diensten en de geldstroom, plus mitigatie.
 14. **Infostealers & gestolen-datamarkten** — infostealers, stealer logs, combolists en credential stuffing, de geldstroom en je verdediging.
 
+### 🔎 Tactisch analist cybercrime
+Een apart pad voor de functie tactisch analist bij een politieteam cybercrime, gebouwd op de vacature van het Team Cybercrime in Den Haag. De analyse van de vacature staat in [`docs/analyse-vacature-tactisch-analist.md`](docs/analyse-vacature-tactisch-analist.md); de leerroute met dezelfde naam combineert dit pad met de intelligence-rooms en sluit af met een proefexamen.
+1. **De functie: tactisch analist cybercrime** — de vier rollen, DRIO en DRR, het landelijke netwerk, de eisen per room en de voorwaarden.
+2. **Digitale entiteiten verzamelen en duiden** — IP-adressen, domeinen, personen en bedrijven duiden, entity resolution en bulletproof hosting herkennen.
+3. **Criminele samenwerkingsverbanden in kaart brengen** — netwerkanalyse, brokers en rollen, en verdachtenkenmerken zonder vooroordeel.
+4. **Grote datasets doorgronden: kwantitatief werken** — opschonen, tellen, koppelen (SQL, Python, terminal) en visualiseren.
+5. **Kwalitatief onderzoek en dwarsverbanden tussen zaken** — coderen, triangulatie, case linkage en een vraagstuk uiteenrafelen.
+6. **Interventiekansen en de integrale aanpak** — strafrecht, verstoren en voorkomen afwegen met publiek-private en internationale partners.
+7. **Coachen, coördineren en het intelligence-netwerk** — analysewerk sturen, collega's coachen, vraag en aanbod verbinden.
+8. **Solliciteren en het assessment voorbereiden** — de procedure, STAR, een oefen-assessment en je ontwikkelplan.
+9. **Casus: Operatie Zwarte Rots** — drie incidenten, één bulletproof-hostingdienst: van dwarsverband tot BLUF-product.
+
 ### 💧 Datastromen volgen
 Word expert in geld- en datastromen — de rode draad van bijna elke cybercrimezaak.
 1. **Witwassen & structurering** — de drie witwasfasen, smurfing betrappen onder de Wwft-meldgrens, de geldstroom volgen tot de cash-out en met ACH wegen wie erachter zit.
@@ -288,7 +300,7 @@ Je verdient **XP**, **badges** en een **rang**, en je voortgang wordt per vraag 
 | **Oefenarena** | Vrij oefenen, survival (tot je eerste fout) of een tijdsaanval van 90 seconden. |
 | **Scorebord** | Je rang, je zwakke plekken per onderwerp met een knop "Oefen dit", je badges en records. |
 | **Check jezelf** | Onderaan elke room: vijf vragen in een ander jasje, in drie minuten. |
-| **Leerroutes** (`#/routes`) | Vijf routes naar een rol (SOC-analist, digitaal rechercheur, intelligence-analist, financieel rechercheur, security-tester), elk met een proefexamen als eindtoets. |
+| **Leerroutes** (`#/routes`) | Zes routes naar een rol (SOC-analist, digitaal rechercheur, intelligence-analist, tactisch analist cybercrime, financieel rechercheur, security-tester), elk met een proefexamen als eindtoets. |
 | **Proefexamen** (`#/proefexamen`) | 40 tot 90 vragen met een tijdslimiet, markeren voor later, geen terugkoppeling tot het eind en daarna een analyse per domein. Oefening, geen erkend examen. |
 | **Resultaatkaart** (`#/kaart`) | Een afdrukbare kaart per voltooid leerpad. Geen erkend certificaat; je naam blijft in je browser. |
 

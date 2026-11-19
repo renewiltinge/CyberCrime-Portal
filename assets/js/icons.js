@@ -50,6 +50,7 @@
     'path-defensief': '<path d="M12 3 5 6v5.5c0 4.4 3 8 7 9.5 4-1.5 7-5.1 7-9.5V6l-7-3Z"/><path d="m9 12 2.2 2.2L15.5 10"/>',
     'path-forensie': '<circle cx="10.5" cy="10.5" r="6"/><path d="m20 20-5.2-5.2M8 8.8c.8-1.3 2.6-1.7 3.9-.9M7.8 12.2c.6 1.5 2.4 2.3 4 1.7"/>',
     'path-intelligence': '<circle cx="6" cy="7" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="12" cy="13" r="2.2"/><circle cx="7" cy="19" r="2"/><circle cx="18" cy="18" r="2"/><path d="m7.6 8.3 3 3.2M16.6 7.4l-3.2 3.9M10.8 14.8l-2.6 2.6M13.6 14.6l3 2.2"/>',
+    'path-tactisch-analist': '<circle cx="11" cy="11" r="7"/><path d="m20.5 20.5-4.5-4.5"/><circle cx="8.5" cy="9" r="1.3"/><circle cx="13.5" cy="8.5" r="1.3"/><circle cx="11" cy="13.5" r="1.3"/><path d="M9.6 9.6l.9 2.8M12.4 9.3l-.9 3"/>',
     'path-datastromen': '<path d="M3 8c3-3 6 3 9 0s6 3 9 0M3 16c3-3 6 3 9 0s6 3 9 0"/><path d="m17 11 2-3M7 13l-2 3"/>',
     'path-puzzels': '<path d="M4 4h7v3a2 2 0 1 0 4 0V4h5v7h-3a2 2 0 1 0 0 4h3v5h-7v-3a2 2 0 1 0-4 0v3H4v-7h3a2 2 0 1 0 0-4H4V4Z"/>',
     'path-meesterproeven': '<path d="m3 20 6.5-11 3.5 6 2.5-4L21 20H3Z"/><path d="M9.5 9V4l3.5 1.5L9.5 7"/>',
